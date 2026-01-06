@@ -1,3 +1,5 @@
+[![CMake](https://github.com/ttdecomp/saga/actions/workflows/cmake-multi-platform.yml/badge.svg)](https://github.com/ttdecomp/saga/actions/workflows/cmake-multi-platform.yml)
+
 # Decompilation of "LEGO Star Wars: The Complete Saga" 
 
 This repository contains the decompiled source code of the game "LEGO Star Wars: The Complete Saga" from
