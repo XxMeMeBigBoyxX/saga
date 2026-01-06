@@ -3,30 +3,34 @@
 #include "nu2api.saga/nustr/nustr.h"
 #include "nu2api.saga/nuthread/nuthread.h"
 
+#include <stddef.h>
+#include <string.h>
+
 #include "decomp.h"
 
-int NuFileOpen(const char *path, OpenMode mode) {
+NuFileHandle NuFileOpen(const char *path, OpenMode mode) {
     return NuFileOpenDF(path, mode, curr_dat);
 }
 
-int NuFileOpenDF(const char *path, OpenMode mode, nudathdr_s *header) {
-    int fileId;
+NuFileHandle NuFileOpenDF(const char *path, OpenMode mode, nudathdr_s *header) {
+    NuFileHandle file;
 
     NuFileDevice *device = NuFileGetDeviceFromPath(path);
 
     if (device == (NuFileDevice *)0x0) {
         if (mode != MODE_WRITE && mode != MODE_APPEND) {
-            fileId = 0;
-            if (header == (nudathdr_s *)0x0) {
+            file = 0;
+            if (header == NULL) {
                 UNIMPLEMENTED();
                 // if (g_apkFileDevice != 0) {
-                // fileId = NuFileAndroidAPK::OpenFile(path, 0);
+                // file = NuFileAndroidAPK::OpenFile(path, 0);
                 // }
             } else {
-                fileId = NuDatFileOpen(header, path, mode);
+                file = NuDatFileOpen(header, path, mode);
             }
-            if (0 < fileId) {
-                return fileId;
+
+            if (file > 0) {
+                return file;
             }
         }
         device = default_device;
@@ -105,35 +109,36 @@ NuFileDevice *NuFileGetDeviceFromPath(const char *path) {
 
     if (i < 8) {
         for (int index = 0; index < _numdevices; index++) {
-            if (NuStrNICmp(path, index * 0x234 + 0x6c93b4, devices[index].length) == 0) {
-                return &devices[index];
-            }
+            // if (NuStrNICmp(path, index * 0x234 + 0x6c93b4, devices[index].length) == 0) {
+            // return &devices[index];
+            //}
+            UNIMPLEMENTED();
         }
     }
 
     return NULL;
 }
 
-unsigned int NameToHash(const char *name) {
-    unsigned int hash = 0x811c9dc5;
+int32_t NameToHash(const char *name) {
+    int32_t hash = 0x811c9dc5;
 
     for (; *name != 0; name = name + 1) {
-        hash = (hash ^ (int)*name) * 0x199933;
+        hash = (hash ^ (int32_t)*name) * 0x199933;
     }
 
     return hash;
 }
 
-int BinarySearch(int element, int *array, int length) {
-    int end = length - 1;
-    int start = 0;
+size_t BinarySearch(int32_t element, int32_t *array, size_t length) {
+    size_t end = length - 1;
+    size_t start = 0;
 
     while (1) {
         if (end < start) {
             return -1;
         }
 
-        int index = (end + start) / 2;
+        size_t index = (end + start) / 2;
         if (array[index] == element) {
             return index;
         } else if (array[index] < element) {
@@ -144,11 +149,11 @@ int BinarySearch(int element, int *array, int length) {
     }
 }
 
-int NuDatFileGetFreeInfo(void) {
+int32_t NuDatFileGetFreeInfo(void) {
     NuThreadCriticalSectionBegin(file_criticalsection);
 
-    int found = -1;
-    for (int i = 0; i < 20; i++) {
+    int32_t found = -1;
+    for (int32_t i = 0; i < 20; i++) {
         if (dat_file_infos[i].used == 0) {
             dat_file_infos[i].used = 1;
             found = i;
@@ -160,14 +165,14 @@ int NuDatFileGetFreeInfo(void) {
     return found;
 }
 
-int NuPSFileRead(int index, void *dest, int len) {
+size_t NuPSFileRead(int32_t index, void *dest, size_t len) {
     return fread(dest, 1, len, g_fileHandles[index]);
 }
 
-int NuMemFileRead(int file, char *dest, int size) {
-    if (file < 0x800) {
-        int i = file - 0x400;
-        int remaining = ((int)memfiles[i].end - (int)memfiles[i].ptr) + 1;
+size_t NuMemFileRead(int32_t file, char *dest, size_t size) {
+    if (NUFILE_IS_MEM(file)) {
+        int32_t i = NUFILE_INDEX_MEM(file);
+        ptrdiff_t remaining = memfiles[i].end - memfiles[i].ptr + 1;
 
         if (remaining <= size) {
             size = remaining;
@@ -175,11 +180,19 @@ int NuMemFileRead(int file, char *dest, int size) {
 
         if (size != 0) {
             memcpy(dest, memfiles[i].ptr, size);
-            memfiles[i].ptr = (void *)((int)memfiles[i].ptr + size);
+            memfiles[i].ptr = ((char *)memfiles[i].ptr + size);
         }
 
         return size;
     } else {
         return NuDatFileRead(file, dest, size);
     }
+}
+
+NuFileHandle NuDatFileOpen(nudathdr_s *header, const char *name, int32_t mode) {
+    UNIMPLEMENTED();
+}
+
+size_t NuDatFileRead(NuFileHandle file, void *dest, size_t size) {
+    UNIMPLEMENTED();
 }

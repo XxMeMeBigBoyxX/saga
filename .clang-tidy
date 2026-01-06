@@ -1,0 +1,2 @@
+Checks:
+  - readability-avoid-unfixed-integer-types

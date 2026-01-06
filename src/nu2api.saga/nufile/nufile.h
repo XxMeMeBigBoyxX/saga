@@ -1,17 +1,18 @@
 #pragma once
 
+#include <stdint.h>
 #include <stdio.h>
 
 typedef struct nudathdr_s nudathdr_s;
-typedef enum OpenMode {
+typedef enum OpenMode : int32_t {
     MODE_READ = 0,
     MODE_WRITE = 1,
     MODE_APPEND = 2,
 } OpenMode;
 
 typedef struct NuFileDevice {
-    int field0_0x0;
-    int field1_0x4;
+    int32_t field0_0x0;
+    int32_t field1_0x4;
     char field2_0x8;
     char field3_0x9;
     char field4_0xa;
@@ -562,7 +563,7 @@ typedef struct NuFileDevice {
 } NuFileDevice;
 
 typedef struct nudatfileinfo_s { /* PlaceHolder Structure */
-    int index;
+    int32_t index;
     char field1_0x4;
     char field2_0x5;
     char field3_0x6;
@@ -571,8 +572,8 @@ typedef struct nudatfileinfo_s { /* PlaceHolder Structure */
     char field6_0x9;
     char field7_0xa;
     char field8_0xb;
-    int *field9_0xc;
-    int *field10_0x10;
+    int32_t *field9_0xc;
+    int32_t *field10_0x10;
     char field11_0x14;
     char field12_0x15;
     char field13_0x16;
@@ -585,8 +586,8 @@ typedef struct nudatfileinfo_s { /* PlaceHolder Structure */
     char field20_0x1d;
     char field21_0x1e;
     char field22_0x1f;
-    int used;
-    int *field24_0x24;
+    int32_t used;
+    int32_t *field24_0x24;
 } nudatfileinfo_s;
 
 typedef struct NuMemFile {
@@ -606,12 +607,43 @@ typedef struct NuMemFile {
     char field13_0x13;
 } NuMemFile;
 
+typedef uint32_t NuFileHandle;
+enum NuFileHandleRanges {
+    NUFILE_HANDLE_RANGE_PS = 0,
+    NUFILE_HANDLE_RANGE_MEM = 0x400,
+    NUFILE_HANDLE_RANGE_MC = 0x1000,
+    NUFILE_HANDLE_RANGE_NATIVE = 0x2000,
+};
+#define NUFILE_PS(index) (index + NUFILE_HANDLE_RANGE_PS)
+#define NUFILE_MEM(index) (index + NUFILE_HANDLE_RANGE_MEM)
+#define NUFILE_MC(index) (index + NUFILE_HANDLE_RANGE_MC)
+#define NUFILE_NATIVE(index) (index + NUFILE_HANDLE_RANGE_NATIVE)
+#define NUFILE_INDEX_PS(handle) (handle - NUFILE_HANDLE_RANGE_PS)
+#define NUFILE_INDEX_MEM(handle) (handle - NUFILE_HANDLE_RANGE_MEM)
+#define NUFILE_INDEX_MC(handle) (handle - NUFILE_HANDLE_RANGE_MC)
+#define NUFILE_INDEX_NATIVE(handle) (handle - NUFILE_HANDLE_RANGE_NATIVE)
+#define NUFILE_IS_PS(handle) (handle < NUFILE_HANDLE_RANGE_MEM)
+#define NUFILE_IS_MEM(handle) ((handle >= NUFILE_HANDLE_RANGE_MEM) && (handle < NUFILE_HANDLE_RANGE_MC))
+#define NUFILE_IS_MC(handle) ((handle >= NUFILE_HANDLE_RANGE_MC) && (handle < NUFILE_HANDLE_RANGE_NATIVE))
+#define NUFILE_IS_NATIVE(handle) (handle >= NUFILE_HANDLE_RANGE_NATIVE)
+
 static nudathdr_s *curr_dat;
 static NuFileDevice *default_device;
-static int nufile_buffering_enabled;
-static int _numdevices;
+static int32_t nufile_buffering_enabled;
+static int32_t _numdevices;
 static NuFileDevice devices[1];
-static int file_criticalsection;
+static int32_t file_criticalsection;
 static nudatfileinfo_s dat_file_infos[20];
 static FILE *g_fileHandles[1];
 static NuMemFile memfiles[16];
+
+NuFileHandle NuFileOpen(const char *path, OpenMode mode);
+NuFileHandle NuFileOpenDF(const char *path, OpenMode mode, nudathdr_s *header);
+NuFileDevice *NuFileGetDeviceFromPath(const char *path);
+int32_t NameToHash(const char *name);
+size_t BinarySearch(int32_t element, int32_t *array, size_t length);
+int32_t NuDatFileGetFreeInfo(void);
+size_t NuPSFileRead(int32_t index, void *dest, size_t len);
+size_t NuMemFileRead(int32_t file, char *dest, size_t size);
+NuFileHandle NuDatFileOpen(nudathdr_s *header, const char *name, int32_t mode);
+size_t NuDatFileRead(NuFileHandle file, void *dest, size_t size);
