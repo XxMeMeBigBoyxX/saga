@@ -7,6 +7,7 @@ set(SAGA_SOURCE_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/nu2api.saga/nuthread/nuthread.c
     ${CMAKE_CURRENT_SOURCE_DIR}/nu2api.saga/numath/numtx.c
     ${CMAKE_CURRENT_SOURCE_DIR}/nu2api.saga/numath/nutrig.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/nu2api.saga/nucore/nutime.c
 )
 
 set(SAGA_INCLUDE_DIRS
