@@ -1,0 +1,50 @@
+target = "res/libTTapp.so"
+
+[[unit]]
+path = "nu2api.saga/numath/nuvec.c"
+symbols = [
+    "NuVecAdd",
+    "NuVecSub",
+    "NuVecScale",
+    "NuVecAddScale",
+    "NuVecScaleAccum",
+    "NuVecInvScale",
+    "NuVecCross",
+    "NuVecCrossRel",
+    "NuVecDot",
+    "NuVecMax",
+    "NuVecMin",
+    "NuVecMagSqr",
+    "NuVecMag",
+    "NuVecMagXZ",
+    "NuVecNorm",
+    "NuVecSurfaceNormal",
+    "NuVecDist",
+    "NuVecDistSqr",
+    "NuVecXZDist",
+    "NuVecXZDistSqr",
+    "NuVecLerp",
+    "NuVecCompareTolerance",
+]
+
+[[unit]]
+path = "nu2api.saga/numath/nufloat.c"
+symbols = [
+    "NuFabs",
+    "NuFnabs",
+    "NuFneg",
+    "NuFsign",
+    "NuFsqrt",
+]
+
+[[unit]]
+path = "nu2api.saga/numath/numtx.c"
+symbols = [
+    "numtx_zero",
+    "numtx_identity",
+    "NuMtxSetZero",
+    "NuMtxSetIdentity",
+    "NuMtxSetTranslation",
+    "NuMtxSetTranslationNeg",
+    "NuMtxSetScale",
+]
