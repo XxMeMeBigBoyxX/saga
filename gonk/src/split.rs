@@ -1,3 +1,5 @@
+use std::collections::{HashMap, HashSet};
+
 use anyhow::Context;
 use object::{Object, ObjectSection as _, ObjectSymbol as _};
 
@@ -9,9 +11,9 @@ struct CompileCommand {
 }
 
 /// construct a new object file containing only the specified symbols from the original object file
-pub fn make_object<'a>(
+fn make_object<'a>(
     lib: &object::read::elf::ElfFile32<'_>,
-    symbols: &[&str],
+    symbols: &[impl AsRef<str> + std::fmt::Debug],
 ) -> anyhow::Result<object::write::Object<'a>> {
     log::info!("making object with symbols: {:?}", symbols);
 
@@ -21,37 +23,61 @@ pub fn make_object<'a>(
         object::Endianness::Little,
     );
 
-    let lib_section = lib
-        .section_by_name(".text")
-        .context("Failed to find .text section")?;
-
-    let new_section = obj.add_section(vec![], b".text".to_vec(), object::SectionKind::Text);
+    let mut sections = HashMap::new();
 
     for symbol in symbols {
-        let Some(symbol) = lib.symbol_by_name(symbol) else {
-            log::warn!("Failed to find symbol '{symbol}' in original object, skipping");
+        let Some(symbol) = lib.symbol_by_name(symbol.as_ref()) else {
+            log::warn!("Failed to find symbol '{symbol:?}' in original object, skipping");
             continue;
         };
 
-        let data_offset = (symbol.address() - lib_section.address()) as usize;
-        let data =
-            &lib_section.data().unwrap_or(&[])[data_offset..data_offset + symbol.size() as usize];
+        let name = symbol.name().context("Failed to get symbol name")?;
 
-        let offset = obj.append_section_data(new_section, data, 8);
+        let Some(section) = lib
+            .sections()
+            .find(|s| s.address() <= symbol.address() && symbol.address() < s.address() + s.size())
+        else {
+            log::warn!(
+                "Failed to find section for symbol '{:?}' at address {:#x}, skipping",
+                name,
+                symbol.address()
+            );
+            continue;
+        };
+
+        let section_id = *sections
+            .entry(section.name().context("Failed to get section name")?)
+            .or_insert_with(|| {
+                obj.add_section(
+                    Vec::new(),
+                    section
+                        .name()
+                        .expect("Section should have a name")
+                        .as_bytes()
+                        .to_vec(),
+                    section.kind(),
+                )
+            });
+
+        let offset = if section.kind() == object::SectionKind::UninitializedData {
+            obj.append_section_bss(section_id, symbol.size(), 1)
+        } else {
+            let bytes = section.data().context("Failed to get section data")?;
+            let bytes = &bytes[(symbol.address() - section.address()) as usize
+                ..(symbol.address() - section.address() + symbol.size()) as usize];
+
+            obj.append_section_data(section_id, bytes, 8)
+        };
 
         // add symbol to output
         obj.add_symbol(object::write::Symbol {
-            name: symbol
-                .name()
-                .context("Failed to get symbol name")?
-                .as_bytes()
-                .to_vec(),
+            name: name.as_bytes().to_vec(),
             value: offset,
             size: symbol.size(),
-            kind: object::SymbolKind::Text,
+            kind: symbol.kind(),
             scope: object::SymbolScope::Dynamic,
             weak: false,
-            section: object::write::SymbolSection::Section(new_section),
+            section: object::write::SymbolSection::Section(section_id),
             flags: object::SymbolFlags::None,
         });
     }
@@ -73,6 +99,30 @@ struct ObjDiffUnit {
     base_path: String,
 }
 
+fn symbol_filter<'a>(symbol: &impl object::ObjectSymbol<'a>) -> bool {
+    let Ok(name) = symbol.name() else {
+        return false;
+    };
+
+    if name.is_empty()
+        || name.starts_with("__x86.get_pc_thunk")
+        || ["__discard", "_GLOBAL_OFFSET_TABLE_"].contains(&name)
+        || symbol.size() == 0
+    {
+        return false;
+    }
+
+    match symbol.kind() {
+        object::SymbolKind::Text | object::SymbolKind::Data => {}
+        k => {
+            log::warn!("skipping symbol '{name}' of unsupported type {k:?}");
+            return false;
+        }
+    };
+
+    true
+}
+
 pub fn split() -> anyhow::Result<()> {
     let contents = std::fs::read_to_string("build/compile_commands.json")
         .context("Failed to read compile_commands.json")?;
@@ -83,7 +133,10 @@ pub fn split() -> anyhow::Result<()> {
     let original_lib = object::read::elf::ElfFile32::parse(&*contents)
         .context("Failed to parse original libTTapp.so")?;
 
+    std::fs::create_dir_all("build/split").context("Failed to create build/split directory")?;
+
     let mut objdiff_units = vec![];
+    let mut used_symbols = HashSet::<String>::new();
 
     for command in compile_commands.iter() {
         log::info!("processing file '{}'", command.file);
@@ -92,40 +145,19 @@ pub fn split() -> anyhow::Result<()> {
 
         let contents = std::fs::read(&binary)
             .with_context(|| format!("Failed to read object file: {}", command.output))?;
-        let elf = elf::ElfBytes::<elf::endian::LittleEndian>::minimal_parse(&contents)
+        let elf = object::read::elf::ElfFile32::<'_, object::LittleEndian, _>::parse(&*contents)
             .context("Failed to parse ELF file")?;
 
-        let common = elf
-            .find_common_data()
-            .context("Failed to find common data")?;
-
-        let strings = common.symtab_strs.unwrap();
-
-        let mut symbols = vec![];
-
-        for sym in common.symtab.unwrap() {
-            let name = strings
-                .get(sym.st_name as usize)
-                .context("Failed to get symbol name")?;
-
-            log::debug!("found symbol '{:?}'", sym);
-
-            if name.is_empty()
-                || name.starts_with("__x86.get_pc_thunk")
-                || ["__discard", "_GLOBAL_OFFSET_TABLE_"].contains(&name)
-                || sym.st_size == 0
-                || sym.st_info & 0xf != elf::abi::STT_FUNC
-            {
-                log::debug!("skipping symbol '{}'", name);
-                continue;
-            }
-
-            symbols.push(name);
-        }
+        let symbols = elf
+            .symbols()
+            .filter(symbol_filter)
+            .filter_map(|s| s.name().ok())
+            .map(|s| s.to_string())
+            .collect::<Vec<String>>();
 
         let new_obj = make_object(&original_lib, &symbols)?;
 
-        std::fs::create_dir_all("build/split").context("Failed to create build/split directory")?;
+        used_symbols.extend(symbols);
 
         let output_path = std::path::Path::new("build/split")
             .join(std::path::Path::new(&command.output).file_name().unwrap());
@@ -156,6 +188,25 @@ pub fn split() -> anyhow::Result<()> {
             base_path: binary.display().to_string(),
         });
     }
+
+    // add a unit for the remaining symbols
+    let remaining_symbols = original_lib
+        .symbols()
+        .filter(symbol_filter)
+        .filter_map(|s| s.name().ok())
+        .filter(|&name| !used_symbols.contains(name))
+        .collect::<Vec<_>>();
+
+    log::info!("remaining symbols: {remaining_symbols:?}");
+
+    let remaining = make_object(&original_lib, &remaining_symbols)?;
+    let bytes = remaining.write()?;
+    std::fs::write("build/split/remaining.o", bytes).context("Failed to write remaining.o")?;
+    objdiff_units.push(ObjDiffUnit {
+        name: "remaining".to_string(),
+        target_path: "build/split/remaining.o".to_string(),
+        base_path: String::from("doesnotexist"),
+    });
 
     std::fs::write(
         "objdiff.json",

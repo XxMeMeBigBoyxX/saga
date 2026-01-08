@@ -23,7 +23,7 @@ NuFileDevice *NuFileGetDeviceFromPath(const char *path) {
     }
 
     if (i < 8) {
-        for (int index = 0; index < _numdevices; index++) {
+        for (int index = 0; index < numdevices; index++) {
             // if (NuStrNICmp(path, index * 0x234 + 0x6c93b4, devices[index].length) == 0) {
             // return &devices[index];
             //}

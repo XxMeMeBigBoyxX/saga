@@ -979,17 +979,18 @@ enum NuFileHandleRanges {
 #define NUFILE_INDEX_NATIVE(handle) ((handle) - NUFILE_HANDLE_RANGE_NATIVE)
 #define NUFILE_INVALID ((NuFileHandle)(0))
 
+C_API_START
+
 static nudathdr_s *curr_dat;
 static NuFileDevice *default_device;
 static int32_t nufile_buffering_enabled;
-static int32_t _numdevices;
+static int32_t numdevices;
 static NuFileDevice devices[1];
 static int32_t file_criticalsection;
 static nudatfileinfo_s dat_file_infos[20];
 static FILE *g_fileHandles[1];
 static NuMemFile memfiles[16];
 
-C_API_START
 NuFileHandle NuFileOpen(const char *path, NuFileOpenMode mode);
 NuFileHandle NuFileOpenDF(const char *path, NuFileOpenMode mode, nudathdr_s *header);
 size_t NuFileRead(NuFileHandle index, void *dest, size_t length);
