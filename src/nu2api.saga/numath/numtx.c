@@ -46,8 +46,7 @@ void NuMtxSetScale(NUMTX *m, NUVEC *s) {
 }
 
 void NuMtxSetRotationX(NUMTX *m, NUANG a) {
-    m->_22 = NU_COS_LUT(a);
-    m->_11 = m->_22;
+    m->_11 = m->_22 = NU_COS_LUT(a);
     m->_12 = NU_SIN_LUT(a);
     m->_21 = -m->_12;
     m->_00 = 1.0f;
@@ -56,8 +55,7 @@ void NuMtxSetRotationX(NUMTX *m, NUANG a) {
 }
 
 void NuMtxSetRotationY(NUMTX *m, NUANG a) {
-    m->_22 = NU_COS_LUT(a);
-    m->_00 = m->_22;
+    m->_00 = m->_22 = NU_COS_LUT(a);
     m->_20 = NU_SIN_LUT(a);
     m->_02 = -m->_20;
     m->_11 = 1.0f;
@@ -66,13 +64,12 @@ void NuMtxSetRotationY(NUMTX *m, NUANG a) {
 }
 
 void NuMtxSetRotationZ(NUMTX *m, NUANG a) {
-    m->_11 = NU_COS_LUT(a);
-    m->_00 = m->_11;
-    m->_10 = NU_SIN_LUT(a);
-    m->_01 = -m->_10;
-    m->_22 = 1.0f;
-    m->_02 = m->_12 = m->_03 = m->_23 = m->_13 = m->_20 = m->_21 = m->_30 = m->_31 = m->_32 = 0.0f;
-    m->_33 = 1.0f;
+    m->_00 = m->_11 = NU_COS_LUT(a);
+    m->_01 = NU_SIN_LUT(a);
+    m->_10 = -m->_01;
+    m->_22 = 1.0;
+    m->_02 = m->_12 = m->_03 = m->_23 = m->_20 = m->_21 = m->_13 = m->_30 = m->_31 = m->_32 = 0.0f;
+    m->_33 = 1.0;
 }
 
 void NuMtxSetRotationAxis(NUMTX *m, NUANG ang, NUVEC *ax) {
@@ -123,4 +120,14 @@ void NuMtxTranslateNeg(NUMTX *m, NUVEC *t) {
     m->_30 -= t->x;
     m->_31 -= t->y;
     m->_32 -= t->z;
+}
+
+void NuMtxPreTranslate(NUMTX *m, NUVEC *t) {
+    m->_30 += t->x;
+    m->_31 += t->y;
+    m->_32 += t->z;
+}
+
+void NuMtxPreTranslateX(NUMTX *m, float tx) {
+    m->_30 += tx;
 }
