@@ -201,11 +201,11 @@ pub fn split() -> anyhow::Result<()> {
 
     let remaining = make_object(&original_lib, &remaining_symbols)?;
     let bytes = remaining.write()?;
-    std::fs::write("build/split/remaining.o", bytes).context("Failed to write remaining.o")?;
+    std::fs::write("build/split/remaining.c.o", bytes).context("Failed to write remaining.o")?;
     objdiff_units.push(ObjDiffUnit {
         name: "remaining".to_string(),
-        target_path: "build/split/remaining.o".to_string(),
-        base_path: String::from("doesnotexist"),
+        target_path: "build/split/remaining.c.o".to_string(),
+        base_path: String::from("remaining.c.o"),
     });
 
     std::fs::write(
