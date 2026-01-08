@@ -3,6 +3,8 @@
 #include <stdint.h>
 #include <stdio.h>
 
+#include "decomp.h"
+
 typedef enum NuFileOpenMode {
     MODE_READ = 0,
     MODE_WRITE = 1,
@@ -987,6 +989,7 @@ static nudatfileinfo_s dat_file_infos[20];
 static FILE *g_fileHandles[1];
 static NuMemFile memfiles[16];
 
+C_API_START
 NuFileHandle NuFileOpen(const char *path, NuFileOpenMode mode);
 NuFileHandle NuFileOpenDF(const char *path, NuFileOpenMode mode, nudathdr_s *header);
 size_t NuFileRead(NuFileHandle index, void *dest, size_t length);
@@ -1001,7 +1004,9 @@ NuFileHandle NuDatFileOpen(nudathdr_s *header, const char *name, int32_t mode);
 size_t NuDatFileRead(NuFileHandle file, void *dest, size_t size);
 nudathdr_s *NuDatOpen(char *name, void **bufferBase, int32_t zero);
 nudathdr_s *NuDatOpenEx(char *name, void **bufferBase, int zero, short mode);
-int32_t NuDatFileGetFreeInfo(void);
+C_API_END
 
-int32_t NameToHash(const char *name);
+CPP_API_START
+int32_t NuDatFileGetFreeInfo(void);
 size_t BinarySearch(int32_t element, int32_t *array, size_t length);
+CPP_API_END

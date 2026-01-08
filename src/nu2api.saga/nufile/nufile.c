@@ -34,52 +34,6 @@ NuFileDevice *NuFileGetDeviceFromPath(const char *path) {
     return NULL;
 }
 
-int32_t NameToHash(const char *name) {
-    int32_t hash = 0x811c9dc5;
-
-    for (; *name != 0; name = name + 1) {
-        hash = (hash ^ (int32_t)*name) * 0x199933;
-    }
-
-    return hash;
-}
-
-size_t BinarySearch(int32_t element, int32_t *array, size_t length) {
-    size_t end = length - 1;
-    size_t start = 0;
-
-    while (1) {
-        if (end < start) {
-            return -1;
-        }
-
-        size_t index = (end + start) / 2;
-        if (array[index] == element) {
-            return index;
-        } else if (array[index] < element) {
-            start = index + 1;
-        } else {
-            end = index - 1;
-        }
-    }
-}
-
-int32_t NuDatFileGetFreeInfo(void) {
-    NuThreadCriticalSectionBegin(file_criticalsection);
-
-    int32_t found = -1;
-    for (int32_t i = 0; i < 20; i++) {
-        if (dat_file_infos[i].used == 0) {
-            dat_file_infos[i].used = 1;
-            found = i;
-            break;
-        }
-    }
-
-    NuThreadCriticalSectionEnd(file_criticalsection);
-    return found;
-}
-
 size_t NuPSFileRead(int32_t index, void *dest, size_t len) {
     return fread(dest, 1, len, g_fileHandles[index]);
 }

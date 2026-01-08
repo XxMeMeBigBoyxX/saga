@@ -1,6 +1,31 @@
 target = "res/libTTapp.so"
 
 [[unit]]
+path = "nu2api.saga/nufile/nufile.cpp"
+symbols = [
+    "_Z12BinarySearchjPjj",
+    "_Z20NuDatFileGetFreeInfov",
+    "_ZL10NameToHashPc",
+]
+
+[[unit]]
+path = "nu2api.saga/nufile/nufile.c"
+symbols = [
+    "NuFileOpen",
+    "NuFileOpenDF",
+    "NuFileRead",
+    "NuFileGetDeviceFromPath",
+    "NuFileOpenSize",
+    "NuFileSeek",
+    "NuPSFileRead",
+    "NuMemFileRead",
+    "NuDatFileOpen",
+    "NuDatFileRead",
+    "NuDatOpen",
+    "NuDatOpenEx",
+]
+
+[[unit]]
 path = "nu2api.saga/numath/nuvec.c"
 symbols = [
     "NuVecAdd",
@@ -29,13 +54,7 @@ symbols = [
 
 [[unit]]
 path = "nu2api.saga/numath/nufloat.c"
-symbols = [
-    "NuFabs",
-    "NuFnabs",
-    "NuFneg",
-    "NuFsign",
-    "NuFsqrt",
-]
+symbols = ["NuFabs", "NuFnabs", "NuFneg", "NuFsign", "NuFsqrt"]
 
 [[unit]]
 path = "nu2api.saga/numath/numtx.c"
@@ -63,17 +82,11 @@ symbols = [
 
 [[unit]]
 path = "nu2api.saga/numath/nutrig_gen.cpp"
-symbols = [
-    "NuTrigTable",
-    "NuTrigInit",
-]
+symbols = ["NuTrigTable", "NuTrigInit"]
 
 [[unit]]
 path = "nu2api.saga/numath/nutrig.cpp"
-symbols = [
-    "_ZL3ang",
-    "_ZL2xyjj",
-]
+symbols = ["_ZL3ang", "_ZL2xyjj"]
 
 [[unit]]
 path = "nu2api.saga/nucore/nustring.c"

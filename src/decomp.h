@@ -17,3 +17,19 @@ static inline void *buffer_alloc(void **buffer, size_t size, size_t align) {
     *buffer = (void *)(aligned + size);
     return (void *)aligned;
 }
+
+#ifdef __cplusplus
+#define C_API_START extern "C" {
+#define C_API_END }
+#else
+#define C_API_START
+#define C_API_END
+#endif
+
+#ifdef __cplusplus
+#define CPP_API_START
+#define CPP_API_END
+#else
+#define CPP_API_START void __discard(void) {
+#define CPP_API_END }
+#endif
