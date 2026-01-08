@@ -57,6 +57,13 @@ symbols = [
 ]
 
 [[unit]]
+path = "nu2api.saga/numath/nutrig.cpp"
+symbols = [
+    "_ZL3ang",
+    "_ZL2xyjj",
+]
+
+[[unit]]
 path = "nu2api.saga/nucore/nustring.c"
 symbols = [
     "NuStrCat",
