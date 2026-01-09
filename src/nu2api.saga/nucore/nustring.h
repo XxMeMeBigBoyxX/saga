@@ -3,9 +3,9 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include "decomp.h"
+
+C_API_START
 
 void NuStrCat(char *str, const char *ext);
 char *NuStrChr(char *src, char c);
@@ -15,6 +15,4 @@ int32_t NuStrNICmp(const char *a, const char *b, size_t n);
 unsigned char NuToLower(unsigned char c);
 unsigned char NuToUpper(unsigned char c);
 
-#ifdef __cplusplus
-}
-#endif
+C_API_END

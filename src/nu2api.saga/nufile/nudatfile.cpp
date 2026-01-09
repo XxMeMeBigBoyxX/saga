@@ -15,16 +15,12 @@ static int32_t NameToHash(char *name) {
     return hash;
 }
 
-size_t BinarySearch(int32_t element, int32_t *array, size_t length) {
-    size_t end = length - 1;
+size_t BinarySearch(uint32_t element, uint32_t *array, size_t length) {
     size_t start = 0;
+    size_t end = length - 1;
 
-    while (1) {
-        if (end < start) {
-            return -1;
-        }
-
-        size_t index = (end + start) / 2;
+    while (end >= start) {
+        size_t index = (start + end) / 2;
         if (array[index] == element) {
             return index;
         } else if (array[index] < element) {
@@ -33,12 +29,15 @@ size_t BinarySearch(int32_t element, int32_t *array, size_t length) {
             end = index - 1;
         }
     }
+
+    return -1;
 }
 
 int32_t NuDatFileGetFreeInfo(void) {
+    int32_t found = -1;
+
     NuThreadCriticalSectionBegin(file_criticalsection);
 
-    int32_t found = -1;
     for (int32_t i = 0; i < 20; i++) {
         if (dat_file_infos[i].used == 0) {
             dat_file_infos[i].used = 1;
@@ -48,5 +47,6 @@ int32_t NuDatFileGetFreeInfo(void) {
     }
 
     NuThreadCriticalSectionEnd(file_criticalsection);
+
     return found;
 }

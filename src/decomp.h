@@ -1,13 +1,15 @@
 #pragma once
 
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#define UNIMPLEMENTED(...)                                                                                             \
-    do {                                                                                                               \
-        fprintf(stderr, "%s:%d: %s: UNIMPLEMENTED", __FILE__, __LINE__, __func__);                                     \
-        fprintf(stderr, ": " __VA_ARGS__ "\n");                                                                        \
-        exit(EXIT_FAILURE);                                                                                            \
-    } while (0)
+
+static void __attribute__((noreturn)) __unimplemented(const char *file, int line, const char *func, const char *msg) {
+    fprintf(stderr, "%s:%d: %s: UNIMPLEMENTED: %s\n", file, line, func, msg);
+    exit(EXIT_FAILURE);
+}
+
+#define UNIMPLEMENTED(...) __unimplemented(__FILE__, __LINE__, __func__, #__VA_ARGS__)
 
 #define BUFFER_ALLOC(buffer, T) (T *)buffer_alloc((void **)(buffer), sizeof(T), _Alignof(T))
 
@@ -30,6 +32,21 @@ static inline void *buffer_alloc(void **buffer, size_t size, size_t align) {
 #define CPP_API_START
 #define CPP_API_END
 #else
-#define CPP_API_START void __discard(void) {
+#define CPP_API_START void UNIQUE_FUNC(base)(void) {
 #define CPP_API_END }
 #endif
+
+#define CONCAT(a, b) a##b
+#define CONCAT_EXPAND(a, b) CONCAT(a, b)
+#define UNIQUE_FUNC(base) CONCAT_EXPAND(base, __COUNTER__)
+
+static inline uint64_t CONCAT44(uint32_t left, uint32_t right) {
+    uint64_t result = 0;
+    result |= (((uint64_t)left) << 32) & 0xffffffff00000000;
+    result |= right;
+    return result;
+}
+
+static inline uint32_t CARRY4(uint32_t a, uint32_t b) {
+    return (a + b) < a;
+}
