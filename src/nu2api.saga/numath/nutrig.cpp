@@ -40,10 +40,18 @@ static unsigned short ang[ANG_COUNT] = {
     0x1F1B, 0x1F26, 0x1F30, 0x1F3B, 0x1F45, 0x1F50, 0x1F5A, 0x1F65, 0x1F6F, 0x1F7A, 0x1F84, 0x1F8F, 0x1F99, 0x1FA4,
     0x1FAE, 0x1FB8, 0x1FC3, 0x1FCD, 0x1FD7, 0x1FE1, 0x1FEC, 0x1FF6, 0x2000};
 
-// static unsigned int xy(unsigned int x, unsigned int y) {
-//     if (x <= y) {
-//         return 16384 - ang[(y << 9) / x];
-//     } else {
-//         return ang[(x << 9) / y];
-//     }
-// }
+#define NU_ATAN2_LUT(y, x) ang[(y << 9) / x]
+    
+static unsigned short xy(unsigned int x, unsigned int y) {
+    if (x > y) {
+        return NUANG_90DEG - NU_ATAN2_LUT(y, x);
+    } else {
+        return NU_ATAN2_LUT(x, y);
+    }
+}
+
+#undef NU_ATAN2_LUT
+
+int NuAtani(int dx, int dy) {
+
+}

@@ -555,21 +555,50 @@ void NuMtxSkewSymmetric(NUMTX *m, NUVEC *v) {
 }
 
 void NuMtxGetXAxis(NUMTX *m, NUVEC *x) {
+    x->x = m->_00;
+    x->y = m->_01;
+    x->z = m->_02;
 }
+
 void NuMtxGetYAxis(NUMTX *m, NUVEC *y) {
+    y->x = m->_10;
+    y->y = m->_11;
+    y->z = m->_12;
 }
+
 void NuMtxGetZAxis(NUMTX *m, NUVEC *z) {
+    z->x = m->_20;
+    z->y = m->_21;
+    z->z = m->_22;
 }
+
 void NuMtxGetTranslation(NUMTX *m, NUVEC *t) {
+    t->x = m->_30;
+    t->y = m->_31;
+    t->z = m->_32;
 }
+
 int NuMtxCompare(NUMTX *a, NUMTX *b) {
+
 }
+
 void NuMtxTruncate24Bit(NUMTX *trunc, NUMTX *mtx) {
 }
-void NuMtxRotateAng(int ang, float x, float z, float *rx, float *rz) {
+
+void NuMtxRotateAng(NUANG ang, float x, float z, float *rx, float *rz) {
+    float fVar1;
+    float fVar2;
+    
+    fVar1 = NU_SIN_LUT(ang);
+    fVar2 = NU_COS_LUT(ang);
+    *rx = x * fVar2 - z * fVar1;
+    *rz = x * fVar1 + z * fVar2;
 }
+
 void NuMtxGetEulerXYZ(NUMTX *Mat, NUANG *x, NUANG *y, NUANG *z) {
+
 }
+
 void NuMtxLookAtD3D(NUMTX *mtx, NUVEC *eye, NUVEC *center, NUVEC *up) {
 }
 void NuMtxSetPerspectiveD3D(NUMTX *mtx, float fovy, float aspect, float zNear, float zFar) {
@@ -654,7 +683,9 @@ void NuMtxOrth(NUMTX *m) {
 }
 
 void NuMtxVecToEulerXYZ(NUVEC *XVec, NUVEC *ZVec, NUANG *x, NUANG *y, NUANG *z) {
+    
 }
+
 void NuMtxSSE(NUMTX *a, NUMTX *b) {
 }
 

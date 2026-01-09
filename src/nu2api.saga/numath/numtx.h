@@ -146,7 +146,7 @@ void NuMtxGetZAxis(NUMTX *m, NUVEC *z);
 void NuMtxGetTranslation(NUMTX *m, NUVEC *t);
 int NuMtxCompare(NUMTX *a, NUMTX *b);
 void NuMtxTruncate24Bit(NUMTX *trunc, NUMTX *mtx);
-void NuMtxRotateAng(int ang, float x, float z, float *rx, float *rz);
+void NuMtxRotateAng(NUANG ang, float x, float z, float *rx, float *rz);
 void NuMtxGetEulerXYZ(NUMTX *Mat, NUANG *x, NUANG *y, NUANG *z);
 void NuMtxLookAtD3D(NUMTX *mtx, NUVEC *eye, NUVEC *center, NUVEC *up);
 void NuMtxSetPerspectiveD3D(NUMTX *mtx, float fovy, float aspect, float zNear, float zFar);
