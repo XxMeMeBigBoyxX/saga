@@ -2,7 +2,7 @@ res/libTTapp.so
 res/main.1060.com.wb.lego.tcs.obb
 build/
 .cache/
-ndk/android-ndk-r8e
+ndk/
 gonk/target/
 gonk/Cargo.lock
 objdiff.json
