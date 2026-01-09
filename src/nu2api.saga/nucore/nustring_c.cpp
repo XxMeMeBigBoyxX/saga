@@ -6,16 +6,10 @@ void NuStrCat(char *str, const char *ext) {
     }
 
     if (ext != NULL) {
-        while (1) {
+        do {
             *str = *ext;
             str += 1;
-
-            if (*ext == '\0') {
-                break;
-            }
-
-            ext += 1;
-        }
+        } while (*(ext++) != '\0');
     }
 }
 
@@ -62,7 +56,7 @@ char *NuStrChr(char *src, char c) {
     return NULL;
 }
 
-size_t NuStrCpy(char *dst, const char *src) {
+ssize_t NuStrCpy(char *dst, const char *src) {
     char *orig = dst;
 
     if (src != NULL) {
@@ -117,7 +111,7 @@ void NuStrFixExtPlatform(char *dst, char *src, char *ext, int dst_size, char *pl
         NuStrCat(p, ext);
     }
 
-    NuStrLen(dst);
+    if (NuStrLen(dst) == dst_size - 1) {}
 }
 
 int NuStrICmp(const char *a, const char *b) {
@@ -151,8 +145,8 @@ int NuStrICmp(const char *a, const char *b) {
     return 0;
 }
 
-size_t NuStrLen(const char *str) {
-    size_t i = 0;
+ssize_t NuStrLen(const char *str) {
+    ssize_t i = 0;
 
     for (; *str != '\0'; str += 1) {
         i++;
@@ -161,7 +155,7 @@ size_t NuStrLen(const char *str) {
     return i;
 }
 
-int NuStrNCmp(const char *a, const char *b, size_t n) {
+int NuStrNCmp(const char *a, const char *b, ssize_t n) {
     char c1;
     char c2;
 
@@ -203,7 +197,7 @@ int NuStrNCmp(const char *a, const char *b, size_t n) {
     return 0;
 }
 
-int NuStrNICmp(const char *a, const char *b, size_t n) {
+int NuStrNICmp(const char *a, const char *b, ssize_t n) {
     char c1;
     char c2;
 
@@ -245,7 +239,7 @@ int NuStrNICmp(const char *a, const char *b, size_t n) {
     return 0;
 }
 
-int NuStrNCpy(char *dst, const char *src, int n) {
+int NuStrNCpy(char *dst, const char *src, ssize_t n) {
     int count = 0;
 
     if (src == NULL) {
@@ -253,7 +247,7 @@ int NuStrNCpy(char *dst, const char *src, int n) {
         return 0;
     }
 
-    for (; *src != '\0'; src += 1) {
+    do {
         n -= 1;
         if (n < 1) {
             *dst = '\0';
@@ -266,7 +260,7 @@ int NuStrNCpy(char *dst, const char *src, int n) {
         dst = dst + 1;
 
         count += 1;
-    }
+    } while (*(src++) != '\0');
 
     return count - 1;
 }
