@@ -90,6 +90,8 @@ struct ObjDiff {
     build_base: bool,
     build_targets: bool,
     units: Vec<ObjDiffUnit>,
+    custom_make: String,
+    custom_args: Vec<String>,
 }
 
 #[derive(serde::Serialize)]
@@ -211,9 +213,14 @@ pub fn split() -> anyhow::Result<()> {
     std::fs::write(
         "objdiff.json",
         serde_json::to_string(&ObjDiff {
-            build_base: false,
-            build_targets: true,
+            build_base: true,
+            build_targets: false,
             units: objdiff_units,
+            custom_make: String::from("sh"),
+            custom_args: vec![
+                "-c".to_owned(),
+                "cmake -B build && make -C build".to_owned(),
+            ],
         })?,
     )
     .context("Failed to write objdiff.json")?;
