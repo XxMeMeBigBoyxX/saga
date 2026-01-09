@@ -4,6 +4,12 @@
 
 #include "nu2api.saga/numath/nufloat.h"
 
+NUVEC v000 = { 0 };
+NUVEC v100 = { 1.0f, 0.0f, 0.0f };
+NUVEC v010 = { 0.0f, 1.0f, 0.0f };
+NUVEC v001 = { 0.0f, 0.0f, 1.0f };
+NUVEC v111 = { 1.0f, 1.0f, 1.0f };
+
 void NuVecNeg(NUVEC *v, NUVEC *v0) {
     v->x = -v0->x;
     v->y = -v0->y;

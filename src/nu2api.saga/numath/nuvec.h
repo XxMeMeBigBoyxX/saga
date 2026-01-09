@@ -15,6 +15,12 @@ struct nuvec_s {
 
 typedef struct nuvec_s NUVEC;
 
+extern NUVEC v000;
+extern NUVEC v100;
+extern NUVEC v010;
+extern NUVEC v001;
+extern NUVEC v111;
+
 #ifdef __cplusplus
 extern "C" {
 #endif
