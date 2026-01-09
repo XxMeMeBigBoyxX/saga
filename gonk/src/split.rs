@@ -217,7 +217,10 @@ pub fn split() -> anyhow::Result<()> {
             build_targets: false,
             units: objdiff_units,
             custom_make: String::from("sh"),
-            custom_args: vec!["-c".to_owned(), "cmake --build build".to_owned()],
+            custom_args: vec![
+                "-c".to_owned(),
+                "cmake -B build && cmake --build build -- ".to_owned(),
+            ],
         })?,
     )
     .context("Failed to write objdiff.json")?;
