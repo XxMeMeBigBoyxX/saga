@@ -17,13 +17,13 @@ PROGRESS=$(grep -o '"fuzzy_match_percent":[^,}]*' report.json | head -1 | cut -d
 PROGRESS=$(printf "%.2f" "$PROGRESS")
 
 # determine badge color
-if (( $(echo "$PROGRESS >= 90" | bc -l) )); then
+if awk "BEGIN {exit !($PROGRESS >= 90)}"; then
     COLOR="brightgreen"
-elif (( $(echo "$PROGRESS >= 70" | bc -l) )); then
+elif awk "BEGIN {exit !($PROGRESS >= 70)}"; then
     COLOR="green"
-elif (( $(echo "$PROGRESS >= 50" | bc -l) )); then
+elif awk "BEGIN {exit !($PROGRESS >= 50)}"; then
     COLOR="yellow"
-elif (( $(echo "$PROGRESS >= 30" | bc -l) )); then
+elif awk "BEGIN {exit !($PROGRESS >= 30)}"; then
     COLOR="orange"
 else
     COLOR="red"
