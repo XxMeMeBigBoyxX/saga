@@ -35,3 +35,11 @@ float NuFsqrt(float f) {
 
     return 0.0f;
 }
+
+float NuFdiv(float a, float b) {
+    if ((a == 0.0f) || (b == 0.0f)) {
+        return 0.0f;
+    }
+
+    return a / b;
+}

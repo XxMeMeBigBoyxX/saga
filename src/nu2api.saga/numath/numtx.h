@@ -159,6 +159,30 @@ void NuMtxGetPerspectiveD3D(NUMTX *mtx, float *fovy, float *aspect, float *zNear
 void NuMtxGetPerspectiveBlend(NUMTX *mtx, float *fovy, float *aspect, float *zNear, float *zFar);
 void NuMtxGetFrustumD3D(NUMTX *mtx, float *l, float *r, float *b, float *t, float *n, float *f);
 void NuMtxGetFrustumBlend(NUMTX *mtx, float *l, float *r, float *b, float *t, float *n, float *f);
+void NuMtxSetRotateXYZ(NUMTX *m, NUANGVEC *a);
+void NuMtxMul(NUMTX *m, NUMTX *m0, NUMTX *m1);
+void NuMtxMulH(NUMTX *m, NUMTX *m0, NUMTX *m1);
+void NuMtxMulR(NUMTX *m, NUMTX *m0, NUMTX *m1);
+void NuMtxInvRSS(NUMTX *inv, NUMTX *T);
+void NuMtxInvRSSH(NUMTX *inv, NUMTX *T);
+void NuMtxInvH(NUMTX *mi, NUMTX *m0);
+void NuMtxAlignX(NUMTX *m, NUVEC *v);
+void NuMtxAlignY(NUMTX *m, NUVEC *v);
+void NuMtxAlignZ(NUMTX *m, NUVEC *v);
+void NuMtxOrth(NUMTX *m);
+void NuMtxVecToEulerXYZ(NUVEC *XVec, NUVEC *ZVec, NUANG *x, NUANG *y, NUANG *z);
+void NuMtxSSE(NUMTX *a, NUMTX *b);
+void NuMtx24BitCorrection(NUMTX *X, NUMTX *mtx);
+void NuMtxInvRSS(NUMTX *inv, NUMTX *T);
+void NuMtxInvRSSH(NUMTX *inv, NUMTX *T);
+void NuMtxInvH(NUMTX *mi, NUMTX *m0);
+void NuMtxAlignX(NUMTX *m, NUVEC *v);
+void NuMtxAlignY(NUMTX *m, NUVEC *v);
+void NuMtxAlignZ(NUMTX *m, NUVEC *v);
+void NuMtxOrth(NUMTX *m);
+void NuMtxVecToEulerXYZ(NUVEC *XVec, NUVEC *ZVec, NUANG *x, NUANG *y, NUANG *z);
+void NuMtxSSE(NUMTX *a, NUMTX *b);
+void NuMtx24BitCorrection(NUMTX *X, NUMTX *mtx);
 
 #ifdef __cplusplus
 }

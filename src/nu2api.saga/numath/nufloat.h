@@ -51,6 +51,13 @@ float NuFsign(float f);
 /// @return The square root of the float
 float NuFsqrt(float f);
 
+/// @brief Compute the division of two floats
+/// @details Computes the division of the float a divided by b and returns the result. Returns 0 if b is 0.
+/// @param a The float to divide
+/// @param b The float to divide by
+/// @return The division of the float a and b
+float NuFdiv(float a, float b);
+
 #ifdef __cplusplus
 }
 #endif

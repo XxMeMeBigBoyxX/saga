@@ -8,4 +8,12 @@ typedef int NUANG;
 #define NUANG_270DEG (NUANG)(0xC000)
 #define NUANG_360DEG (NUANG)(0x10000)
 
+struct nuangvec_s {
+    NUANG x;
+    NUANG y;
+    NUANG z;
+};
+
+typedef struct nuangvec_s NUANGVEC;
+
 #endif // NU2API_SAGA_NUMATH_NUANG_H
