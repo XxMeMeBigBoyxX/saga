@@ -2,6 +2,7 @@
 
 #include "nu2api.saga/numath/nufloat.h"
 #include "nu2api.saga/numath/nutrig.h"
+#include "nu2api.saga/numath/nuvec.h"
 
 NUMTX numtx_zero = {0};
 
@@ -552,6 +553,22 @@ void NuMtxSubR(NUMTX *m, NUMTX *m0, NUMTX *m1) {
 }
 
 void NuMtxSkewSymmetric(NUMTX *m, NUVEC *v) {
+    m->_00 = 0.0;
+    m->_01 = -v->z;
+    m->_02 = v->y;
+    m->_03 = 0.0;
+    m->_10 = v->z;
+    m->_11 = 0.0;
+    m->_12 = -v->x;
+    m->_13 = 0.0;
+    m->_20 = -v->y;
+    m->_21 = v->x;
+    m->_22 = 0.0;
+    m->_23 = 0.0;
+    m->_30 = 0.0;
+    m->_31 = 0.0;
+    m->_32 = 0.0;
+    m->_33 = 1.0;
 }
 
 void NuMtxGetXAxis(NUMTX *m, NUVEC *x) {
@@ -586,21 +603,52 @@ void NuMtxTruncate24Bit(NUMTX *trunc, NUMTX *mtx) {
 }
 
 void NuMtxRotateAng(NUANG ang, float x, float z, float *rx, float *rz) {
-    float fVar1;
-    float fVar2;
-    
-    fVar1 = NU_SIN_LUT(ang);
-    fVar2 = NU_COS_LUT(ang);
-    *rx = x * fVar2 - z * fVar1;
-    *rz = x * fVar1 + z * fVar2;
+    float sinx = NU_SIN_LUT(ang);
+    float cosx = NU_COS_LUT(ang);
+
+    *rx = x * cosx - z * sinx;
+    *rz = x * sinx + z * cosx;
 }
 
 void NuMtxGetEulerXYZ(NUMTX *Mat, NUANG *x, NUANG *y, NUANG *z) {
-
+    NUVEC XVec;
+    NUVEC ZVec;
+    
+    NuMtxGetXAxis(Mat, &XVec);
+    NuMtxGetZAxis(Mat, &ZVec);
+    NuMtxVecToEulerXYZ(&XVec,&ZVec,x,y,z);
 }
 
 void NuMtxLookAtD3D(NUMTX *mtx, NUVEC *eye, NUVEC *center, NUVEC *up) {
+    NUVEC ax;
+    NUVEC ay;
+    NUVEC az;
+    
+    NuVecSub(&az,center,eye);
+    NuVecNorm(&az,&az);
+    NuVecCross(&ax,up,&az);
+    NuVecNorm(&ax,&ax);
+    NuVecCross(&ay,&az,&ax);
+    NuVecNorm(&ay,&ay);
+    
+    mtx->_00 = ax.x;
+    mtx->_01 = ay.x;
+    mtx->_02 = az.x;
+    mtx->_03 = 0.0;
+    mtx->_10 = ax.y;
+    mtx->_11 = ay.y;
+    mtx->_12 = az.y;
+    mtx->_13 = 0.0;
+    mtx->_20 = ax.z;
+    mtx->_21 = ay.z;
+    mtx->_22 = az.z;
+    mtx->_23 = 0.0;
+    mtx->_30 = (-eye->x * ax.x - eye->y * ax.y) - eye->z * ax.z;
+    mtx->_31 = (-eye->x * ay.x - eye->y * ay.y) - eye->z * ay.z;
+    mtx->_32 = (-eye->x * az.x - eye->y * az.y) - eye->z * az.z;
+    mtx->_33 = 1.0;
 }
+
 void NuMtxSetPerspectiveD3D(NUMTX *mtx, float fovy, float aspect, float zNear, float zFar) {
 }
 void NuMtxSetPerspectiveBlend(NUMTX *mtx, float fovy, float aspect, float zNear, float zFar) {
@@ -683,11 +731,20 @@ void NuMtxOrth(NUMTX *m) {
 }
 
 void NuMtxVecToEulerXYZ(NUVEC *XVec, NUVEC *ZVec, NUANG *x, NUANG *y, NUANG *z) {
-    
+    NUVEC XVec2;
+    NUVEC ZVec2;
+
+    *z = NuAtan2D(XVec->y,XVec->x);
+    NuMtxRotateAng(-*z,XVec->x,XVec->y,&XVec2.x,&XVec2.y);
+    XVec2.z = XVec->z;
+    NuMtxRotateAng(-*z,ZVec->x,ZVec->y,&ZVec2.x,&ZVec2.y);
+    ZVec2.z = ZVec->z;
+    *y = -NuAtan2D(XVec2.z,XVec2.x);
+    NuMtxRotateAng(*y,ZVec2.x,ZVec2.z,&ZVec2.x,&ZVec2.z);
+    *x = -NuAtan2D(ZVec2.y,ZVec2.z);
 }
 
-void NuMtxSSE(NUMTX *a, NUMTX *b) {
-}
+void NuMtxSSE(NUMTX *a, NUMTX *b) {}
 
 void NuMtx24BitCorrection(NUMTX *X, NUMTX *mtx) {
 }

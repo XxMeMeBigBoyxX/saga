@@ -1,5 +1,10 @@
 #include "nu2api.saga/numath/nutrig.h"
+
+#include <limits.h>
+
 #include "nu2api.saga/numath/nuang.h"
+
+
 
 #define ANG_COUNT 513
 static unsigned short ang[ANG_COUNT] = {
@@ -78,4 +83,8 @@ int NuAtan2D(float dx, float dy) {
     } else {
         return fxyd(dx, dy);
     }
+}
+
+float NuAtan2(float dx, float dy) {
+    return NuAtan2D(dx, dy) * (float)(2.0f * M_PI / USHRT_MAX); // the number of radians per discrete integer angle
 }
