@@ -1,4 +1,5 @@
-[![CMake](https://github.com/ttdecomp/saga/actions/workflows/cmake-multi-platform.yml/badge.svg)](https://github.com/ttdecomp/saga/actions/workflows/cmake-multi-platform.yml)
+[![Target build](https://github.com/ttdecomp/saga/actions/workflows/build-target.yaml/badge.svg)](https://github.com/ttdecomp/saga/actions/workflows/build-target.yaml)
+[![Linux i686 build](https://github.com/ttdecomp/saga/actions/workflows/build-linux-i686.yaml/badge.svg)](https://github.com/ttdecomp/saga/actions/workflows/build-linux-i686.yaml)
 ![Progress](https://img.shields.io/badge/matching-0.77%25-red)
 
 # Decompilation of "LEGO Star Wars: The Complete Saga" 

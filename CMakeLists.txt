@@ -4,42 +4,64 @@ project(saga)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 
-# Download Android NDK if not present
-set(NDK_DIR "${CMAKE_SOURCE_DIR}/ndk")
-set(NDK_EXTRACT_DIR "${NDK_DIR}/android-ndk-r8e")
-set(NDK_ARCHIVE "${NDK_DIR}/android-ndk-r8e-linux-x86_64.tar.bz2")
-set(NDK_URL "https://dl.google.com/android/ndk/android-ndk-r8e-linux-x86_64.tar.bz2")
+# add option to compile for host
+option(BUILD_FOR_HOST "Build for host system" OFF)
 
-if(NOT EXISTS "${NDK_EXTRACT_DIR}")
-    file(MAKE_DIRECTORY "${NDK_DIR}")
+function(get_ndk)
+    # Download Android NDK if not present
+    set(NDK_DIR "${CMAKE_SOURCE_DIR}/ndk")
+    set(NDK_EXTRACT_DIR "${NDK_DIR}/android-ndk-r8e")
+    set(NDK_ARCHIVE "${NDK_DIR}/android-ndk-r8e-linux-x86_64.tar.bz2")
+    set(NDK_URL "https://dl.google.com/android/ndk/android-ndk-r8e-linux-x86_64.tar.bz2")
 
-    if(NOT EXISTS "${NDK_ARCHIVE}")
-        message(STATUS "Downloading Android NDK r8e...")
-        file(DOWNLOAD "${NDK_URL}" "${NDK_ARCHIVE}"
-            SHOW_PROGRESS
-            STATUS download_status)
-        list(GET download_status 0 download_code)
-        if(NOT download_code EQUAL 0)
-            message(FATAL_ERROR "Failed to download NDK: ${download_status}")
+    if(NOT EXISTS "${NDK_EXTRACT_DIR}")
+        file(MAKE_DIRECTORY "${NDK_DIR}")
+
+        if(NOT EXISTS "${NDK_ARCHIVE}")
+            message(STATUS "Downloading Android NDK r8e...")
+            file(DOWNLOAD "${NDK_URL}" "${NDK_ARCHIVE}"
+                SHOW_PROGRESS
+                STATUS download_status)
+            list(GET download_status 0 download_code)
+            if(NOT download_code EQUAL 0)
+                message(FATAL_ERROR "Failed to download NDK: ${download_status}")
+            endif()
         endif()
-    endif()
 
-    message(STATUS "Extracting Android NDK r8e...")
-    execute_process(
-        COMMAND ${CMAKE_COMMAND} -E tar xjf "${NDK_ARCHIVE}"
-        WORKING_DIRECTORY "${NDK_DIR}"
-        RESULT_VARIABLE extract_result)
-    if(NOT extract_result EQUAL 0)
-        message(FATAL_ERROR "Failed to extract NDK")
-    endif()
+        message(STATUS "Extracting Android NDK r8e...")
+        execute_process(
+            COMMAND ${CMAKE_COMMAND} -E tar xjf "${NDK_ARCHIVE}"
+            WORKING_DIRECTORY "${NDK_DIR}"
+            RESULT_VARIABLE extract_result)
+        if(NOT extract_result EQUAL 0)
+            message(FATAL_ERROR "Failed to extract NDK")
+        endif()
 
-    file(REMOVE "${NDK_ARCHIVE}")
-    message(STATUS "Android NDK r8e ready")
+        file(REMOVE "${NDK_ARCHIVE}")
+        message(STATUS "Android NDK r8e ready")
+    else()
+        message(STATUS "Android NDK r8e already present")
+    endif()
+endfunction()
+
+if (BUILD_FOR_HOST)
+    message(STATUS "Building for host system")
+    
+    set(CMAKE_C_COMPILER "gcc")
+    set(CMAKE_CXX_COMPILER "g++")
+    set(CMAKE_SYSROOT "")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m32 -fno-stack-protector -march=i686")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m32 -fno-stack-protector -march=i686")
+else()
+    message(STATUS "Building for Android x86")
+
+    get_ndk()
+
+    set(CMAKE_C_COMPILER "${CMAKE_SOURCE_DIR}/ndk/android-ndk-r8e/toolchains/x86-4.7/prebuilt/linux-x86_64/bin/i686-linux-android-gcc")
+    set(CMAKE_CXX_COMPILER "${CMAKE_SOURCE_DIR}/ndk/android-ndk-r8e/toolchains/x86-4.7/prebuilt/linux-x86_64/bin/i686-linux-android-g++")
+    set(CMAKE_SYSROOT "${CMAKE_SOURCE_DIR}/ndk/android-ndk-r8e/platforms/android-9/arch-x86")
+    include_directories("${CMAKE_SOURCE_DIR}/ndk/android-ndk-r8e/sources/cxx-stl/stlport/stlport/")
 endif()
-
-set(CMAKE_C_COMPILER "${CMAKE_SOURCE_DIR}/ndk/android-ndk-r8e/toolchains/x86-4.7/prebuilt/linux-x86_64/bin/i686-linux-android-gcc")
-set(CMAKE_CXX_COMPILER "${CMAKE_SOURCE_DIR}/ndk/android-ndk-r8e/toolchains/x86-4.7/prebuilt/linux-x86_64/bin/i686-linux-android-g++")
-set(CMAKE_SYSROOT "${CMAKE_SOURCE_DIR}/ndk/android-ndk-r8e/platforms/android-9/arch-x86")
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/build")
 
@@ -67,6 +89,7 @@ set(SAGA_SOURCE_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nucore/nustring_c.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nucore/nutime.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/numath/nutrig.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/numemory/numemory.cpp
 )
 
 set(SAGA_INCLUDE_DIRS
