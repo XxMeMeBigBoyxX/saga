@@ -6,33 +6,35 @@
 
 #include "decomp.h"
 
-extern "C" size_t NuPSFileRead(NuFileHandle index, void *dest, size_t len) {
-    FILE **files = g_fileHandles;
-    return fread(dest, 1, len, files[index]);
+extern "C" size_t NuPSFileRead(int32_t index, void *dest, size_t len) {
+    LOG("index=%d, dest=%p, len=%zu", index, dest, len);
+
+    return fread(dest, 1, len, g_fileHandles[index]);
 }
 
-extern "C" size_t NuPSFileWrite(NuFileHandle index, const void *src, size_t len) {
+extern "C" size_t NuPSFileWrite(int32_t index, const void *src, size_t len) {
+    LOG("index=%d, src=%p, len=%zu", index, src, len);
+
     FILE **files = g_fileHandles;
     return fwrite(src, 1, len, files[index]);
 }
 
-extern "C" NuFileHandle NuPSFileOpen(const char *name, NuFileOpenMode mode) {
+extern "C" int32_t NuPSFileOpen(const char *name, NuFileOpenMode mode) {
+    LOG("name=%s, mode=%d", name, mode);
+
     char path[1024];
 
     memset(path, 0, sizeof(path));
     NuStrCpy(path, name);
 
-    NuFileHandle ret = NUFILE_INVALID;
-
     if (mode != 5) {
-
         for (char *c = path; *c != '\0'; c++) {
             if (*c == '\\') {
                 *c = '/';
             }
         }
 
-        int i = NuGetFileHandlePS();
+        int32_t i = NuGetFileHandlePS();
 
         FILE *file = NULL;
 
@@ -42,23 +44,27 @@ extern "C" NuFileHandle NuPSFileOpen(const char *name, NuFileOpenMode mode) {
             file = fopen(path, "wb");
         } else if (mode == NUFILE_OPENMODE_APPEND) {
             file = fopen(path, "ab+");
+        } else {
+            return -1;
         }
 
         if (file != NULL) {
             g_fileHandles[i] = file;
-            ret = NUFILE_PS(i);
+
+            LOG("Opened file %s with index %d", path, i);
+            return i;
         }
     }
 
-    return ret;
+    return -1;
 }
 
-extern "C" NuFileHandle NuGetFileHandlePS(void) {
-    for (int32_t i = 0; i < 0x20; i++) {
-        if (g_fileHandles[i] == (FILE *)0x0) {
-            return NUFILE_PS(i);
+extern "C" int32_t NuGetFileHandlePS(void) {
+    for (int32_t i = 0; i < 32; i++) {
+        if (g_fileHandles[i] == NULL) {
+            return i;
         }
     }
 
-    return NUFILE_INVALID;
+    return -1;
 }

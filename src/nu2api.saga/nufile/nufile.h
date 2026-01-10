@@ -18,7 +18,7 @@ typedef struct nudathdr_s nudathdr_s;
 
 typedef uint32_t NuFileHandle;
 enum NuFileHandleRanges {
-    NUFILE_HANDLE_RANGE_PS = 0,
+    NUFILE_HANDLE_RANGE_PS = 1,
     NUFILE_HANDLE_RANGE_MEM = 0x400,
     NUFILE_HANDLE_RANGE_DAT = 0x800,
     NUFILE_HANDLE_RANGE_MC = 0x1000,
@@ -51,31 +51,37 @@ typedef struct nudathdr_struct2 nudathdr_struct2;
 
 C_API_START
 
-static nudathdr_s *curr_dat;
-static NuFileDevice *default_device;
-static int32_t numdevices;
-static NuFileDevice devices[1];
-static int32_t file_criticalsection;
-static nudatfileinfo_s dat_file_infos[20];
-static FILE *g_fileHandles[1];
-static NuMemFile memfiles[16];
-static int32_t nufile_buffering_enabled;
-static fileinfo_s file_info[32];
+extern nudathdr_s *curr_dat;
+extern NuFileDevice host_device;
+extern NuFileDevice *default_device;
+extern int32_t numdevices;
+extern NuFileDevice devices[16];
+extern int32_t file_criticalsection;
+extern nudatfileinfo_s dat_file_infos[20];
+extern FILE *g_fileHandles[32];
+extern NuMemFile memfiles[16];
+extern int32_t nufile_buffering_enabled;
+extern fileinfo_s file_info[32];
+
+uint8_t DEV_FormatName(NuFileDevice *device, char *dest, char *path, int length);
+
+void NuFileCorrectSlashes(NuFileDevice *device, char *path);
+void NuFileReldirFix(NuFileDevice *device, char *path);
 
 NuFileHandle NuFileOpen(const char *path, NuFileOpenMode mode);
 int32_t NuFileStatus(NuFileHandle file);
 NuFileHandle NuFileOpenDF(const char *path, NuFileOpenMode mode, nudathdr_s *header);
 size_t NuFileRead(NuFileHandle index, void *dest, size_t length);
 NuFileDevice *NuFileGetDeviceFromPath(const char *path);
-size_t NuFileOpenSize(NuFileHandle file);
+uint32_t NuFileOpenSize(NuFileHandle file);
 int32_t NuFileSeek(NuFileHandle file, int64_t offset, int32_t seekMode);
 
-NuFileHandle NuPSFileOpen(const char *path, NuFileOpenMode mode);
-NuFileHandle NuGetFileHandlePS(void);
-int32_t NuPSFileClose(NuFileHandle index);
-size_t NuPSFileRead(NuFileHandle index, void *dest, size_t len);
-size_t NuPSFileWrite(NuFileHandle index, const void *src, size_t len);
-int64_t NuPSFileLSeek(NuFileHandle index, int64_t offset, int32_t seekMode);
+int32_t NuGetFileHandlePS(void);
+int32_t NuPSFileOpen(const char *path, NuFileOpenMode mode);
+int32_t NuPSFileClose(int32_t index);
+size_t NuPSFileRead(int32_t index, void *dest, size_t len);
+size_t NuPSFileWrite(int32_t index, const void *src, size_t len);
+int64_t NuPSFileLSeek(int32_t index, int64_t offset, int32_t seekMode);
 
 size_t NuMemFileRead(NuFileHandle file, char *dest, size_t size);
 
@@ -83,6 +89,9 @@ NuFileHandle NuDatFileOpen(nudathdr_s *header, const char *name, int32_t mode);
 size_t NuDatFileRead(NuFileHandle file, void *dest, size_t size);
 nudathdr_s *NuDatOpen(char *name, void **bufferBase, int32_t zero);
 nudathdr_s *NuDatOpenEx(char *name, void **bufferBase, int zero, short mode);
+
+nudathdr_s *NuDatSet(nudathdr_s *header);
+
 C_API_END
 
 CPP_API_START

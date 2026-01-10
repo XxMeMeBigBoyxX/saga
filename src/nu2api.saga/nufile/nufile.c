@@ -7,47 +7,123 @@
 
 #include "decomp.h"
 
+nudathdr_s *curr_dat = NULL;
+
+NuFileDevice host_device = {
+    .pathSeparator = '/',
+    .formatNameFunc = (void *)DEV_FormatName,
+};
+
+NuFileDevice *default_device = &host_device;
+
+int32_t numdevices = 0;
+
+NuFileDevice devices[16] = {0};
+
+int32_t file_criticalsection;
+nudatfileinfo_s dat_file_infos[20];
+FILE *g_fileHandles[32] = {NULL};
+NuMemFile memfiles[16];
+int32_t nufile_buffering_enabled;
+fileinfo_s file_info[32];
+
+void NuFileCorrectSlashes(NuFileDevice *device, char *path) {
+    char sep;
+
+    if (device == (NuFileDevice *)0x0) {
+        sep = '\\';
+    } else {
+        sep = device->pathSeparator;
+    }
+    for (; *path != '\0'; path = path + 1) {
+        if ((*path == '\\') || (*path == '/')) {
+            *path = sep;
+        }
+    }
+    return;
+}
+
+void NuFileReldirFix(NuFileDevice *device, char *path) {
+    char *pcVar1;
+    char *ptr;
+    char *ptr2;
+
+    ptr = path;
+    ptr2 = path;
+    do {
+        if (*ptr2 == '\0') {
+            *ptr = '\0';
+            return;
+        }
+        if ((((*ptr2 == device->pathSeparator) && (ptr2[1] == '.')) && (ptr2[2] == '.')) &&
+            (ptr2[3] == device->pathSeparator)) {
+            ptr = ptr2;
+            pcVar1 = ptr;
+            do {
+                ptr = pcVar1;
+                if (ptr <= path)
+                    goto LAB_00268be2;
+                pcVar1 = ptr + -1;
+                if (*pcVar1 == device->pathSeparator) {
+                    ptr2 = ptr2 + 3;
+                    ptr = pcVar1;
+                    goto LAB_00268be2;
+                }
+            } while (*pcVar1 != ':');
+            ptr2 = ptr2 + 4;
+        }
+    LAB_00268be2:
+        *ptr = *ptr2;
+        ptr = ptr + 1;
+        ptr2 = ptr2 + 1;
+    } while (1);
+}
+
+nudathdr_s *NuDatSet(nudathdr_s *header) {
+    nudathdr_s *dat = curr_dat;
+    curr_dat = header;
+    return dat;
+}
+
 NuFileHandle NuFileOpen(const char *path, NuFileOpenMode mode) {
     return NuFileOpenDF(path, mode, curr_dat);
 }
 
 int32_t NuFileStatus(NuFileHandle file) {
-    int32_t ret;
-
-    if (0x1fff < file) {
-        do {
-            /* WARNING: Do nothing block with infinite loop */
-        } while (1);
-    }
-    if (file < 0x400) {
-        if (file < 0x800) {
-            ret = 0;
-        } else {
-            ret =
-                NuFileStatus((dat_file_infos[file + -0x800].ptr)->openFiles[dat_file_infos[file + -0x800].index].file);
+    if (NUFILE_IS_NATIVE(file)) {
+        while (1) {
         }
-    } else {
-        ret = 0;
     }
-    return ret;
+
+    if (NUFILE_IS_MEM(file)) {
+        return 0;
+    }
+
+    nudatfileinfo_s *fileInfo = &dat_file_infos[NUFILE_INDEX_DAT(file)];
+    return NuFileStatus(fileInfo->ptr->openFiles[fileInfo[NUFILE_INDEX_DAT(file)].index].file);
 }
 
 NuFileHandle NuFileOpenDF(const char *path, NuFileOpenMode mode, nudathdr_s *header) {
+    LOG("path=%s, mode=%d, header=%p", path, mode, header);
+
     NuFileDevice *device = NuFileGetDeviceFromPath(path);
     int fileId;
 
     if (device == NULL) {
         if (mode != 1 && mode != 2) {
             fileId = 0;
+
             if (header == NULL) {
                 // if (g_apkFileDevice != (NuFileDeviceAndroidAPK *)0x0) {
                 // fileId = NuFileAndroidAPK::OpenFile(path, 0);
                 //}
-                UNIMPLEMENTED("android specific");
+                // UNIMPLEMENTED("android specific");
+                fileId = NUFILE_PS(NuPSFileOpen(path, mode));
             } else {
                 fileId = NuDatFileOpen(header, path, mode);
             }
-            if (0 < fileId) {
+
+            if (fileId > 0) {
                 return fileId;
             }
         }
@@ -57,8 +133,8 @@ NuFileHandle NuFileOpenDF(const char *path, NuFileOpenMode mode, nudathdr_s *hea
 
     char buf[256];
 
-    typedef void (*openFuncType)(NuFileDevice *, char *, const char *, int);
-    (*(openFuncType)device->openFunc)(device, buf, path, 0x100);
+    typedef void (*formatFuncType)(NuFileDevice *, char *, const char *, int32_t);
+    (*(formatFuncType)device->formatNameFunc)(device, buf, path, 0x100);
 
     if (device->vtable == 2) {
         NuStrCat(buf, ";1");
@@ -124,23 +200,25 @@ NuFileHandle NuFileOpenDF(const char *path, NuFileOpenMode mode, nudathdr_s *hea
         }
     }
 
-    return NUFILE_PS(index);
+    return index;
 }
 
 NuFileDevice *NuFileGetDeviceFromPath(const char *path) {
-    int i;
+    LOG("path=%s", path);
 
-    for (i = 0; i < 8 && (path[i] != ':'); i++) {
+    int i;
+    for (i = 0; (i < 8 && (path[i] != ':')); i = i + 1) {
     }
 
     if (i < 8) {
-        for (int index = 0; index < numdevices; index++) {
-            // if (NuStrNICmp(path, index * 0x234 + 0x6c93b4, devices[index].length) == 0) {
-            // return &devices[index];
-            //}
-            UNIMPLEMENTED();
+        for (int32_t index = 0; index < numdevices; index++) {
+            if (NuStrNICmp(path, devices[index].path, devices[index].length) == 0) {
+                return &devices[index];
+            }
         }
     }
+
+    LOG("No device found for path=%s", path);
 
     return NULL;
 }
@@ -269,10 +347,56 @@ size_t NuFileRead(NuFileHandle file, void *dest, size_t length) {
 }
 
 int32_t NuFileSeek(NuFileHandle file, int64_t offset, int32_t seekMode) {
-    UNIMPLEMENTED();
+    LOG("file=%d, offset=%lld, seekMode=%d", file, offset, seekMode);
+
+    int iVar1;
+    uint uVar2;
+    longlong lVar4;
+    T in_stack_ffffffb4;
+    undefined4 local_20;
+
+    if (file < 0x2000) {
+        if (file < 0x1000) {
+            if (file < 0x400) {
+                int index = NUFILE_INDEX_PS(file);
+                if (file_info[index].offset.i[1] == 0) {
+                    lVar4 = NuPSFileLSeek(NUFILE_INDEX_PS(file), offset, seekMode);
+                } else {
+                    if (seekMode == 1) {
+                        file_info[index].field1_0x4.l = offset + file_info[index].field1_0x4.l;
+                    } else if (seekMode == 2) {
+                        file_info[index].field1_0x4.l = offset - file_info[index].size.l;
+                    } else {
+                        file_info[index].field1_0x4.l = offset;
+                    }
+                    lVar4 = file_info[index].field1_0x4.l;
+                }
+            } else {
+                // lVar4 = NuMemFileSeek(file, (uint)offset, (int)(uint)offset >> 31, seekMode);
+                UNIMPLEMENTED();
+            }
+        } else {
+            // iVar3 = NuMcSeek(file + -0x1000, (uint)offset, seekMode, 0);
+            // lVar4 = (longlong)iVar3;
+            UNIMPLEMENTED("memory card specific");
+        }
+    } else {
+        if (seekMode == 1) {
+            local_20 = 1;
+        } else if (seekMode == 2) {
+            local_20 = 2;
+        } else {
+            local_20 = 0;
+        }
+        // NuFileAndroidAPK::SeekFile((NuFileAndroidAPK *)file, (uint)offset, CONCAT44(local_20, offset._4_4_),
+        // in_stack_ffffffb4);
+        UNIMPLEMENTED("android specific");
+    }
+    return lVar4;
 }
 
 nudathdr_s *NuDatOpen(char *name, void **bufferBase, int32_t zero) {
+    LOG("name=%s bufferBase=%p zero=%d", name, bufferBase, zero);
     return NuDatOpenEx(name, bufferBase, zero, 0);
 }
 
@@ -281,14 +405,18 @@ void APIEndianSwap(void *data, size_t count, size_t size) {
 }
 
 nudathdr_s *NuDatOpenEx(char *name, void **bufferBase, int zero, short mode) {
+    LOG("name=%s bufferBase=%p zero=%d mode=%d", name, bufferBase, zero, mode);
+
     uint uVar3;
-    int file;
+    int mode_;
+    int file_;
     int len;
     nudathdr_struct1 *puVar4;
     nudathdr_struct1 *puVar5;
+    nudathdr_s *header;
     char *str;
     int buffer[2];
-    nudathdr_s *header;
+    int file;
     int j;
     int local_38;
     uint local_34;
@@ -299,20 +427,19 @@ nudathdr_s *NuDatOpenEx(char *name, void **bufferBase, int zero, short mode) {
     nudathdr_struct2 *struct2;
     int uVar1;
     undefined4 uVar2;
-    undefined4 uVar6;
     undefined4 uVar7;
 
-    uVar2 = nufile_buffering_enabled;
-    mode = (int)mode;
+    len = nufile_buffering_enabled;
+    mode_ = (int)mode;
     uVar7 = 0;
-    uVar6 = 0;
-    file = NuFileOpenDF(name, mode, (nudathdr_s *)0x0);
-    if (file == 0) {
-        header = (nudathdr_s *)0x0;
-        nufile_buffering_enabled = uVar2;
+    uVar2 = 0;
+    file_ = NuFileOpenDF(name, mode_, NULL);
+    if (file_ == 0) {
+        header = NULL;
+        nufile_buffering_enabled = len;
     } else {
-        NuFileOpenSize(file);
-        NuFileRead(file, buffer, 8);
+        NuFileOpenSize(file_);
+        NuFileRead(file_, buffer, 8);
         APIEndianSwap(buffer, 2, 4);
         offsetH = buffer[0] >> 31;
         offsetL = buffer[0];
@@ -320,7 +447,7 @@ nudathdr_s *NuDatOpenEx(char *name, void **bufferBase, int zero, short mode) {
             offsetL = (int)((ulonglong)(uint)buffer[0] * 0xffffff00);
             offsetH = (offsetH * -0x100 - buffer[0]) + (int)((ulonglong)(uint)buffer[0] * 0xffffff00 >> 0x20);
         }
-        NuFileSeek(file, CONCAT44(offsetH, offsetL), 0);
+        NuFileSeek(file_, CONCAT44(offsetH, offsetL), 0);
         len = NuStrLen(name);
         header = (nudathdr_s *)*bufferBase;
         *bufferBase = (void *)((int)*bufferBase + 0x178);
@@ -329,79 +456,85 @@ nudathdr_s *NuDatOpenEx(char *name, void **bufferBase, int zero, short mode) {
         header->path = (char *)*bufferBase;
         *bufferBase = (void *)((int)*bufferBase + (len + 0x10U & 0xfffffff0));
         NuStrCpy(header->path, name);
-        NuFileRead(file, header, 4);
+        NuFileRead(file_, header, 4);
         APIEndianSwap(header, 1, 4);
-        NuFileRead(file, &header->hashesCount, 4);
-        APIEndianSwap(&header->hashesCount, 1, 4);
-        header->arr1 = (nudathdr_struct1 *)((int)*bufferBase + 0x1fU & 0xffffffe0);
+        NuFileRead(file_, &header->filesCount, 4);
+        APIEndianSwap(&header->filesCount, 1, 4);
+        header->finfo = (nudathdr_struct1 *)((int)*bufferBase + 0x1fU & 0xffffffe0);
         *bufferBase = (void *)((int)*bufferBase + 0x1fU & 0xffffffe0);
-        *bufferBase = (void *)((int)*bufferBase + header->hashesCount * 0x10);
-        NuFileRead(file, header->arr1, header->hashesCount << 4);
-        for (i = 0; i < header->hashesCount; i = i + 1) {
-            APIEndianSwap(header->arr1 + i, 1, 4);
-            APIEndianSwap(&header->arr1[i].field1_0x4, 1, 4);
-            APIEndianSwap(&header->arr1[i].field2_0x8, 1, 4);
+        *bufferBase = (void *)((int)*bufferBase + header->filesCount * 0x10);
+        NuFileRead(file_, header->finfo, header->filesCount << 4);
+        for (i = 0; i < header->filesCount; i = i + 1) {
+            APIEndianSwap(header->finfo + i, 1, 4);
+            APIEndianSwap(&header->finfo[i].field1_0x4, 1, 4);
+            APIEndianSwap(&header->finfo[i].field2_0x8, 1, 4);
         }
-        NuFileRead(file, &header->count2, 4);
-        APIEndianSwap(&header->count2, 1, 4);
-        header->arr2 = (nudathdr_struct2 *)*bufferBase;
-        *bufferBase = (void *)((int)*bufferBase + header->count2 * 0xc);
-        if (header->field0_0x0 < -4) {
-            NuFileRead(file, header->arr2, header->count2 * 0xc);
+        NuFileRead(file_, &header->treeCount, 4);
+        APIEndianSwap(&header->treeCount, 1, 4);
+        header->filetree = (nudathdr_struct2 *)*bufferBase;
+        *bufferBase = (void *)((int)*bufferBase + header->treeCount * 0xc);
+
+        if (header->version < -4) {
+            NuFileRead(file_, header->filetree, header->treeCount * 0xc);
         } else {
-            NuFileRead(file, header->arr2, header->count2 << 3);
-            struct2 = header->arr2;
-            k = header->count2;
+            NuFileRead(file_, header->filetree, header->treeCount << 3);
+            struct2 = header->filetree;
+            k = header->treeCount;
             while (k = k + -1, 0 < k) {
-                header->arr2[k].field4_0xa = 0;
-                header->arr2[k].field3_0x8 = 0;
-                header->arr2[k].someName = *(char **)((int)struct2 + k * 8 + 4);
-                header->arr2[k].field1_0x2 = *(short *)((int)struct2 + k * 8 + 2);
-                header->arr2[k].field0_0x0 = *(short *)(k * 8 + (int)struct2);
+                header->filetree[k].field4_0xa = 0;
+                header->filetree[k].field3_0x8 = 0;
+                header->filetree[k].someName = *(char **)((int)struct2 + k * 8 + 4);
+                header->filetree[k].field1_0x2 = *(short *)((int)struct2 + k * 8 + 2);
+                header->filetree[k].field0_0x0 = *(short *)(k * 8 + (int)struct2);
             }
         }
-        for (k = 0; k < header->count2; k = k + 1) {
-            APIEndianSwap(header->arr2 + k, 1, 2);
-            APIEndianSwap(&header->arr2[k].field1_0x2, 1, 2);
-            APIEndianSwap(&header->arr2[k].someName, 1, 4);
-            if (header->field0_0x0 < -4) {
-                APIEndianSwap(&header->arr2[k].field3_0x8, 1, 2);
-                APIEndianSwap(&header->arr2[k].field4_0xa, 1, 2);
+
+        for (k = 0; k < header->treeCount; k = k + 1) {
+            APIEndianSwap(header->filetree + k, 1, 2);
+            APIEndianSwap(&header->filetree[k].field1_0x2, 1, 2);
+            APIEndianSwap(&header->filetree[k].someName, 1, 4);
+            if (header->version < -4) {
+                APIEndianSwap(&header->filetree[k].field3_0x8, 1, 2);
+                APIEndianSwap(&header->filetree[k].field4_0xa, 1, 2);
             }
         }
-        NuFileRead(file, &header->field5_0x14, 4);
-        APIEndianSwap(&header->field5_0x14, 1, 4);
-        header->field6_0x18 = (int)*bufferBase;
-        *bufferBase = (void *)((int)*bufferBase + header->field5_0x14);
-        NuFileRead(file, (void *)header->field6_0x18, header->field5_0x14);
-        for (k = 0; k < header->count2; k = k + 1) {
-            header->arr2[k].someName = header->arr2[k].someName + header->field6_0x18;
+
+        NuFileRead(file_, &header->leafnamesize, 4);
+        APIEndianSwap(&header->leafnamesize, 1, 4);
+
+        header->leafnames = (char *)*bufferBase;
+        *bufferBase = (void *)((int)*bufferBase + header->leafnamesize);
+
+        NuFileRead(file_, header->leafnames, header->leafnamesize);
+        for (k = 0; k < header->treeCount; k = k + 1) {
+            header->filetree[k].someName += (size_t)header->leafnames;
         }
-        header->arr2->someName = (char *)0x0;
-        *bufferBase = (void *)((int)*bufferBase - header->field5_0x14);
-        *bufferBase = (void *)((int)*bufferBase + header->count2 * -0xc);
-        header->arr2 = (nudathdr_struct2 *)0x0;
-        header->field6_0x18 = 0;
-        header->arr3hashes = (uint *)0x0;
+
+        header->filetree->someName = NULL;
+        *bufferBase = (void *)((int)*bufferBase - header->leafnamesize);
+        *bufferBase = (void *)((int)*bufferBase + header->treeCount * -0xc);
+        header->filetree = NULL;
+        header->leafnames = NULL;
+        header->arr3hashes = NULL;
         header->count3 = 0;
         header->count4 = 0;
-        header->arr4 = (char *)0x0;
-        if (header->field0_0x0 < -1) {
+        header->arr4 = NULL;
+        if (header->version < -1) {
             header->arr3hashes = (uint *)((int)*bufferBase + 0x1fU & 0xffffffe0);
             *bufferBase = (void *)((int)*bufferBase + 0x1fU & 0xffffffe0);
-            *bufferBase = (void *)((int)*bufferBase + header->hashesCount * 4);
-            NuFileRead(file, header->arr3hashes, header->hashesCount << 2);
-            for (k = 0; k < header->hashesCount; k = k + 1) {
+            *bufferBase = (void *)((int)*bufferBase + header->filesCount * 4);
+            NuFileRead(file_, header->arr3hashes, header->filesCount << 2);
+            for (k = 0; k < header->filesCount; k = k + 1) {
                 APIEndianSwap(header->arr3hashes + k, 1, 4);
             }
-            NuFileRead(file, &header->count3, 4);
+            NuFileRead(file_, &header->count3, 4);
             APIEndianSwap(&header->count3, 1, 4);
-            NuFileRead(file, &header->count4, 4);
+            NuFileRead(file_, &header->count4, 4);
             APIEndianSwap(&header->count4, 1, 4);
             header->arr4 = (char *)((int)*bufferBase + 0x1fU & 0xffffffe0);
             *bufferBase = (void *)((int)*bufferBase + 0x1fU & 0xffffffe0);
             *bufferBase = (void *)((int)*bufferBase + header->count4);
-            NuFileRead(file, header->arr4, header->count4);
+            NuFileRead(file_, header->arr4, header->count4);
             str = header->arr4;
             for (k = 0; k < header->count3; k = k + 1) {
                 len = NuStrLen(str);
@@ -413,22 +546,25 @@ nudathdr_s *NuDatOpenEx(char *name, void **bufferBase, int zero, short mode) {
                 str = str + 2;
             }
         }
+
         for (k = 0; k < 20; k = k + 1) {
             header->openFiles[k].field1_0x4 = -1;
             header->openFiles[k].file = 0;
             header->openFiles[k].position.i[0] = 0;
             header->openFiles[k].position.i[1] = 0;
         }
-        header->openFiles[0].file = file;
+
+        header->openFiles[0].file = file_;
         header->openFiles[0].position.i[0] = 0;
         header->openFiles[0].position.i[1] = 0;
         header->mode = mode;
-        if (-3 < header->field0_0x0) {
-            for (i = 0; i < header->hashesCount + -1; i = i + 1) {
+
+        if (-3 < header->version) {
+            for (i = 0; i < header->filesCount + -1; i = i + 1) {
                 local_34 = header->arr3hashes[i];
                 local_38 = i;
                 j = i;
-                while (j = j + 1, j < header->hashesCount) {
+                while (j = j + 1, j < header->filesCount) {
                     if (header->arr3hashes[j] <= local_34) {
                         local_34 = header->arr3hashes[j];
                         local_38 = j;
@@ -438,20 +574,20 @@ nudathdr_s *NuDatOpenEx(char *name, void **bufferBase, int zero, short mode) {
                     uVar3 = header->arr3hashes[i];
                     header->arr3hashes[i] = header->arr3hashes[local_38];
                     header->arr3hashes[local_38] = uVar3;
-                    puVar5 = header->arr1 + i;
-                    file = puVar5->field0_0x0;
-                    len = puVar5->field1_0x4;
+                    puVar5 = header->finfo + i;
+                    len = puVar5->field0_0x0;
+                    file_ = puVar5->field1_0x4;
                     uVar1 = puVar5->field2_0x8;
                     uVar2 = puVar5->field3_0xc;
-                    puVar4 = header->arr1 + i;
-                    puVar5 = header->arr1 + local_38;
+                    puVar4 = header->finfo + i;
+                    puVar5 = header->finfo + local_38;
                     puVar4->field0_0x0 = puVar5->field0_0x0;
                     puVar4->field1_0x4 = puVar5->field1_0x4;
                     puVar4->field2_0x8 = puVar5->field2_0x8;
                     puVar4->field3_0xc = puVar5->field3_0xc;
-                    puVar5 = header->arr1 + local_38;
-                    puVar5->field0_0x0 = file;
-                    puVar5->field1_0x4 = len;
+                    puVar5 = header->finfo + local_38;
+                    puVar5->field0_0x0 = len;
+                    puVar5->field1_0x4 = file_;
                     puVar5->field2_0x8 = uVar1;
                     puVar5->field3_0xc = uVar2;
                 }
@@ -462,26 +598,56 @@ nudathdr_s *NuDatOpenEx(char *name, void **bufferBase, int zero, short mode) {
     return header;
 }
 
-size_t NuFileOpenSize(NuFileHandle file) {
-    UNIMPLEMENTED();
+uint32_t NuFileOpenSize(NuFileHandle file) {
+    LOG("file=%d", file);
+
+    uint32_t size;
+
+    if (file < 0x2000) {
+        if (file < 0x1000) {
+            if (file < 0x800) {
+                if (file < 0x400) {
+                    size = (uint32_t)file_info[NUFILE_INDEX_PS(file)].size.l;
+                } else {
+                    // size = NuMemFileOpenSize(file);
+                    UNIMPLEMENTED();
+                }
+            } else {
+                // size = NuDatFileOpenSize(file);
+                UNIMPLEMENTED();
+            }
+        } else {
+            // size = NuMcFileOpenSize(file);
+            UNIMPLEMENTED("memory card specific");
+        }
+    } else {
+        // size = NuFileAndroidAPK::GetFileSize(file);
+        UNIMPLEMENTED("android specific");
+    }
+
+    LOG("size=%u", size);
+
+    return size;
 }
 
 static int32_t CSWTCH_152[3] = {1, 2, 0};
 
-int64_t NuPSFileLSeek(NuFileHandle file, int64_t offset, int32_t seekMode) {
+int64_t NuPSFileLSeek(int32_t index, int64_t offset, int32_t seekMode) {
+    LOG("file=%d, offset=%lld, seekMode=%d", index, offset, seekMode);
+
     int whence = 0;
-    long value;
-    int bit32;
 
     if (seekMode - 1U < 2) {
         whence = CSWTCH_152[seekMode - 1U];
     }
-    whence = fseek(g_fileHandles[file], offset, whence);
-    bit32 = 0;
-    value = 0;
-    if (whence == 0) {
-        value = ftell(g_fileHandles[file]);
+
+    long value = 0;
+    int bit32 = 0;
+
+    if (fseek(g_fileHandles[index], offset, whence) == 0) {
+        value = ftell(g_fileHandles[index]);
         bit32 = value >> 31;
     }
+
     return CONCAT44(bit32, value);
 }

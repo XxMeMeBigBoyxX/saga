@@ -11,6 +11,17 @@ static void __attribute__((noreturn)) __unimplemented(const char *file, int line
 
 #define UNIMPLEMENTED(...) __unimplemented(__FILE__, __LINE__, __func__, #__VA_ARGS__)
 
+#ifdef HOST_BUILD
+#define LOG(...)                                                                                                       \
+    do {                                                                                                               \
+        fprintf(stderr, "%s:%d: %s: ", __FILENAME__, __LINE__, __func__);                                              \
+        fprintf(stderr, __VA_ARGS__);                                                                                  \
+        fprintf(stderr, "\n");                                                                                         \
+    } while (0)
+#else
+#define LOG(...)
+#endif
+
 #define BUFFER_ALLOC(buffer, T) (T *)buffer_alloc((void **)(buffer), sizeof(T), _Alignof(T))
 
 static inline void *buffer_alloc(void **buffer, size_t size, size_t align) {
