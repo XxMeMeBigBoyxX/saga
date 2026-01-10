@@ -2,6 +2,8 @@
 #include "nu2api.saga/nufile/nufile.h"
 #include "nu2api.saga/nuthread/nuthread.h"
 
+#include <cstring>
+
 #include "decomp.h"
 
 extern "C" size_t NuPSFileRead(NuFileHandle index, void *dest, size_t len) {

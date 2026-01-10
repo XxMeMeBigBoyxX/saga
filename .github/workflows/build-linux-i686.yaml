@@ -1,4 +1,4 @@
-name: CMake
+name: Linux i686 build
 
 on:
   push:
@@ -12,6 +12,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: install gcc for i686
+        run: sudo apt-get install gcc-multilib g++-multilib
 
       - name: Install CMake 4.x
         uses: lukka/get-cmake@latest

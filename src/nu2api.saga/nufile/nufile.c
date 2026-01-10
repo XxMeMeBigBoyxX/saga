@@ -64,6 +64,8 @@ NuFileHandle NuFileOpenDF(const char *path, NuFileOpenMode mode, nudathdr_s *hea
         NuStrCat(buf, ";1");
     }
 
+    int index;
+
     if (device->vtable == 1) {
         UNIMPLEMENTED("memory card specific");
         int _local[2];
@@ -78,7 +80,6 @@ NuFileHandle NuFileOpenDF(const char *path, NuFileOpenMode mode, nudathdr_s *hea
     } else {
         int fileIndex = NuPSFileOpen(buf, mode);
 
-        int index;
         if (fileIndex < 0) {
             index = 0;
         } else {
