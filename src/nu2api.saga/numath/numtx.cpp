@@ -450,68 +450,68 @@ float NuMtxDet3(NUMTX *m) {
 
 void NuMtxLookAtX(NUMTX *m, NUVEC *pnt) {
     NUVEC v;
-  
+
     v.x = pnt->x - m->_30;
     v.y = pnt->y - m->_31;
     v.z = pnt->z - m->_32;
 
-    NuVecNorm(&v,&v);
-    NuMtxAlignX(m,&v);
+    NuVecNorm(&v, &v);
+    NuMtxAlignX(m, &v);
 }
 
 void NuMtxLookAtY(NUMTX *m, NUVEC *pnt) {
     NUVEC v;
-  
+
     v.x = pnt->x - m->_30;
     v.y = pnt->y - m->_31;
     v.z = pnt->z - m->_32;
 
-    NuVecNorm(&v,&v);
-    NuMtxAlignY(m,&v);
+    NuVecNorm(&v, &v);
+    NuMtxAlignY(m, &v);
 }
 
 void NuMtxLookAtZ(NUMTX *m, NUVEC *pnt) {
     NUVEC v;
-  
+
     v.x = pnt->x - m->_30;
     v.y = pnt->y - m->_31;
     v.z = pnt->z - m->_32;
 
-    NuVecNorm(&v,&v);
-    NuMtxAlignZ(m,&v);
+    NuVecNorm(&v, &v);
+    NuMtxAlignZ(m, &v);
 }
 
 void NuMtxInvLookAtX(NUMTX *m, NUVEC *pnt) {
     NUVEC v;
-  
+
     v.x = m->_30 - pnt->x;
     v.y = m->_31 - pnt->y;
     v.z = m->_32 - pnt->z;
 
-    NuVecNorm(&v,&v);
-    NuMtxAlignX(m,&v);
+    NuVecNorm(&v, &v);
+    NuMtxAlignX(m, &v);
 }
 
 void NuMtxInvLookAtY(NUMTX *m, NUVEC *pnt) {
     NUVEC v;
-  
+
     v.x = m->_30 - pnt->x;
     v.y = m->_31 - pnt->y;
     v.z = m->_32 - pnt->z;
 
-    NuVecNorm(&v,&v);
-    NuMtxAlignY(m,&v);
+    NuVecNorm(&v, &v);
+    NuMtxAlignY(m, &v);
 }
 
 void NuMtxInvLookAtZ(NUMTX *m, NUVEC *pnt) {
     NUVEC v;
-  
+
     v.x = m->_30 - pnt->x;
     v.y = m->_31 - pnt->y;
     v.z = m->_32 - pnt->z;
 
-    NuVecNorm(&v,&v);
-    NuMtxAlignZ(m,&v);
+    NuVecNorm(&v, &v);
+    NuMtxAlignZ(m, &v);
 }
 
 void NuMtxAddR(NUMTX *m, NUMTX *m0, NUMTX *m1) {
@@ -596,7 +596,6 @@ void NuMtxGetTranslation(NUMTX *m, NUVEC *t) {
 }
 
 int NuMtxCompare(NUMTX *a, NUMTX *b) {
-
 }
 
 void NuMtxTruncate24Bit(NUMTX *trunc, NUMTX *mtx) {
@@ -613,24 +612,24 @@ void NuMtxRotateAng(NUANG ang, float x, float z, float *rx, float *rz) {
 void NuMtxGetEulerXYZ(NUMTX *Mat, NUANG *x, NUANG *y, NUANG *z) {
     NUVEC XVec;
     NUVEC ZVec;
-    
+
     NuMtxGetXAxis(Mat, &XVec);
     NuMtxGetZAxis(Mat, &ZVec);
-    NuMtxVecToEulerXYZ(&XVec,&ZVec,x,y,z);
+    NuMtxVecToEulerXYZ(&XVec, &ZVec, x, y, z);
 }
 
 void NuMtxLookAtD3D(NUMTX *mtx, NUVEC *eye, NUVEC *center, NUVEC *up) {
     NUVEC ax;
     NUVEC ay;
     NUVEC az;
-    
-    NuVecSub(&az,center,eye);
-    NuVecNorm(&az,&az);
-    NuVecCross(&ax,up,&az);
-    NuVecNorm(&ax,&ax);
-    NuVecCross(&ay,&az,&ax);
-    NuVecNorm(&ay,&ay);
-    
+
+    NuVecSub(&az, center, eye);
+    NuVecNorm(&az, &az);
+    NuVecCross(&ax, up, &az);
+    NuVecNorm(&ax, &ax);
+    NuVecCross(&ay, &az, &ax);
+    NuVecNorm(&ay, &ay);
+
     mtx->_00 = ax.x;
     mtx->_01 = ay.x;
     mtx->_02 = az.x;
@@ -704,7 +703,7 @@ void NuMtxAlignX(NUMTX *m, NUVEC *v) {
     m->_12 = m->_20 * m->_01 - m->_21 * m->_00;
 }
 
-void NuMtxAlignY(NUMTX *m, NUVEC *v) { 
+void NuMtxAlignY(NUMTX *m, NUVEC *v) {
     m->_10 = v->x;
     m->_11 = v->y;
     m->_12 = v->z;
@@ -724,7 +723,38 @@ void NuMtxAlignY(NUMTX *m, NUVEC *v) {
 }
 
 void NuMtxAlignZ(NUMTX *m, NUVEC *v) {
+    float xLenSq = m->_00 * m->_00 + m->_01 * m->_01 + m->_02 * m->_02;
+    float yLenSq = m->_10 * m->_10 + m->_11 * m->_11 + m->_12 * m->_12;
+    float zLenSq = m->_20 * m->_20 + m->_21 * m->_21 + m->_22 * m->_22;
 
+    float len = NuFsqrt(NuFdiv(zLenSq, v->x * v->x + v->y * v->y + v->z * v->z));
+    m->_20 = v->x * len;
+    m->_21 = v->y * len;
+    m->_22 = v->z * len;
+
+    if (NuFabs(NuVecDot(NUMTX_GET_ROW_VEC(m, 1), NUMTX_GET_ROW_VEC(m, 2))) > 0.8660254f) {
+        NuVecCross(NUMTX_GET_ROW_VEC(m, 1), NUMTX_GET_ROW_VEC(m, 2), NUMTX_GET_ROW_VEC(m, 0));
+        len = NuFsqrt(NuFdiv(yLenSq, m->_10 * m->_10 + m->_11 * m->_11 + m->_12 * m->_12));
+        m->_10 = m->_10 * len;
+        m->_11 = m->_11 * len;
+        m->_12 = m->_12 * len;
+        NuVecCross(NUMTX_GET_ROW_VEC(m, 0), NUMTX_GET_ROW_VEC(m, 1), NUMTX_GET_ROW_VEC(m, 2));
+        len = NuFsqrt(NuFdiv(xLenSq, m->_00 * m->_00 + m->_01 * m->_01 + m->_02 * m->_02));
+        m->_00 = m->_00 * len;
+        m->_01 = m->_01 * len;
+        m->_02 = m->_02 * len;
+    } else {
+        NuVecCross(NUMTX_GET_ROW_VEC(m, 0), NUMTX_GET_ROW_VEC(m, 1), NUMTX_GET_ROW_VEC(m, 2));
+        len = NuFsqrt(NuFdiv(xLenSq, m->_00 * m->_00 + m->_01 * m->_01 + m->_02 * m->_02));
+        m->_00 = m->_00 * len;
+        m->_01 = m->_01 * len;
+        m->_02 = m->_02 * len;
+        NuVecCross(NUMTX_GET_ROW_VEC(m, 1), NUMTX_GET_ROW_VEC(m, 2), NUMTX_GET_ROW_VEC(m, 0));
+        len = NuFsqrt(NuFdiv(yLenSq, m->_10 * m->_10 + m->_11 * m->_11 + m->_12 * m->_12));
+        m->_10 = m->_10 * len;
+        m->_11 = m->_11 * len;
+        m->_12 = m->_12 * len;
+    }
 }
 
 void NuMtxOrth(NUMTX *m) {
@@ -734,17 +764,18 @@ void NuMtxVecToEulerXYZ(NUVEC *XVec, NUVEC *ZVec, NUANG *x, NUANG *y, NUANG *z) 
     NUVEC XVec2;
     NUVEC ZVec2;
 
-    *z = NuAtan2D(XVec->y,XVec->x);
-    NuMtxRotateAng(-*z,XVec->x,XVec->y,&XVec2.x,&XVec2.y);
+    *z = NuAtan2D(XVec->y, XVec->x);
+    NuMtxRotateAng(-*z, XVec->x, XVec->y, &XVec2.x, &XVec2.y);
     XVec2.z = XVec->z;
-    NuMtxRotateAng(-*z,ZVec->x,ZVec->y,&ZVec2.x,&ZVec2.y);
+    NuMtxRotateAng(-*z, ZVec->x, ZVec->y, &ZVec2.x, &ZVec2.y);
     ZVec2.z = ZVec->z;
-    *y = -NuAtan2D(XVec2.z,XVec2.x);
-    NuMtxRotateAng(*y,ZVec2.x,ZVec2.z,&ZVec2.x,&ZVec2.z);
-    *x = -NuAtan2D(ZVec2.y,ZVec2.z);
+    *y = -NuAtan2D(XVec2.z, XVec2.x);
+    NuMtxRotateAng(*y, ZVec2.x, ZVec2.z, &ZVec2.x, &ZVec2.z);
+    *x = -NuAtan2D(ZVec2.y, ZVec2.z);
 }
 
-void NuMtxSSE(NUMTX *a, NUMTX *b) {}
+void NuMtxSSE(NUMTX *a, NUMTX *b) {
+}
 
 void NuMtx24BitCorrection(NUMTX *X, NUMTX *mtx) {
 }
