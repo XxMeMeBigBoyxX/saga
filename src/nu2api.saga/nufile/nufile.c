@@ -565,7 +565,7 @@ int64_t NuMemFileSeek(NUFILE file, int64_t seek, NUFILESEEK whence) {
 }
 
 int8_t NuFileReadChar(NUFILE file) {
-    int8_t value;
+    int8_t value = 0;
     NuFileRead(file, &value, sizeof(int8_t));
     return value;
 }
@@ -595,7 +595,7 @@ int16_t NuFileReadShort(NUFILE file) {
 }
 
 uint8_t NuFileReadUnsignedChar(NUFILE file) {
-    uint8_t value = 1;
+    uint8_t value = 0;
     NuFileRead(file, &value, sizeof(uint8_t));
     return value;
 }
@@ -613,7 +613,7 @@ uint16_t NuFileReadUnsignedShort(NUFILE file) {
 }
 
 uint16_t NuFileReadWChar(NUFILE file) {
-    int16_t value;
+    int16_t value = 0;
     NuFileRead(file, &value, sizeof(uint16_t));
     return value;
 }
