@@ -93,6 +93,17 @@ int32_t NuFileExists(const char *name);
 uint64_t NuFileSize(const char *name);
 uint64_t NuFilePos(NUFILE file);
 
+// read types
+int8_t NuFileReadChar(NUFILE file);
+int32_t NuFileReadDir(NUFILE file);
+float NuFileReadFloat(NUFILE file);
+int32_t NuFileReadInt(NUFILE file);
+int16_t NuFileReadShort(NUFILE file);
+uint8_t NuFileReadUnsignedChar(NUFILE file);
+uint32_t NuFileReadUnsignedInt(NUFILE file);
+uint16_t NuFileReadUnsignedShort(NUFILE file);
+uint16_t NuFileReadWChar(NUFILE file);
+
 // Platform-specific file functions
 int32_t NuGetFileHandlePS(void);
 int32_t NuPSFileOpen(const char *path, NUFILEMODE mode);

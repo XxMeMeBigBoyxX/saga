@@ -563,3 +563,57 @@ int64_t NuMemFileSeek(NUFILE file, int64_t seek, NUFILESEEK whence) {
         return NuDatFileSeek(file, seek, whence);
     }
 }
+
+int8_t NuFileReadChar(NUFILE file) {
+    int8_t value;
+    NuFileRead(file, &value, sizeof(int8_t));
+    return value;
+}
+
+int32_t NuFileReadDir(NUFILE file) {
+    int32_t value;
+    NuFileRead(file, &value, sizeof(int32_t));
+    return value;
+}
+
+float NuFileReadFloat(NUFILE file) {
+    float value;
+    NuFileRead(file, &value, sizeof(float));
+    return value;
+}
+
+int32_t NuFileReadInt(NUFILE file) {
+    int32_t value;
+    NuFileRead(file, &value, sizeof(int32_t));
+    return value;
+}
+
+int16_t NuFileReadShort(NUFILE file) {
+    int16_t value;
+    NuFileRead(file, &value, sizeof(int16_t));
+    return value;
+}
+
+uint8_t NuFileReadUnsignedChar(NUFILE file) {
+    uint8_t value;
+    NuFileRead(file, &value, sizeof(uint8_t));
+    return value;
+}
+
+uint32_t NuFileReadUnsignedInt(NUFILE file) {
+    uint32_t value;
+    NuFileRead(file, &value, sizeof(uint32_t));
+    return value;
+}
+
+uint16_t NuFileReadUnsignedShort(NUFILE file) {
+    uint16_t value;
+    NuFileRead(file, &value, sizeof(uint16_t));
+    return value;
+}
+
+uint16_t NuFileReadWChar(NUFILE file) {
+    int16_t value;
+    NuFileRead(file, &value, sizeof(uint16_t));
+    return value;
+}
