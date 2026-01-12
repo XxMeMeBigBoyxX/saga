@@ -41,14 +41,6 @@ static inline void *buffer_alloc_aligned(void **buffer, size_t size, size_t alig
 #define C_API_END
 #endif
 
-#ifdef __cplusplus
-#define CPP_API_START
-#define CPP_API_END
-#else
-#define CPP_API_START static void UNIQUE_FUNC(base)(void) {
-#define CPP_API_END }
-#endif
-
 #define CONCAT(a, b) a##b
 #define CONCAT_EXPAND(a, b) CONCAT(a, b)
 #define UNIQUE_FUNC(base) CONCAT_EXPAND(base, __COUNTER__)

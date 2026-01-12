@@ -140,7 +140,7 @@ void NuFileUpCase(void *param_1, char *path);
 
 C_API_END
 
-CPP_API_START
+#ifdef __cplusplus
 
 int64_t NuDatCalcPos(NUDATHDR *header, int32_t index);
 
@@ -149,4 +149,4 @@ int32_t NuDatFileGetFreeInfo(void);
 int32_t NuDatFileGetFreeHandleIX(NUDATHDR *header, int32_t freeIndex);
 // static int32_t OpenDatFileBase(NUDATHDR *header, int32_t someIndex);
 
-CPP_API_END
+#endif
