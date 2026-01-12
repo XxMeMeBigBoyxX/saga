@@ -55,7 +55,7 @@ NUDATHDR *NuDatOpenEx(char *name, void **bufferBase, int zero, short mode) {
 
     int32_t buffering = nufile_buffering_enabled;
 
-    NUFILE file = NuFileOpenDF(name, (int32_t)mode, NULL);
+    NUFILE file = NuFileOpenDF(name, (int32_t)mode, NULL, 0);
     if (file != 0) {
         int32_t size = NuFileOpenSize(file);
 

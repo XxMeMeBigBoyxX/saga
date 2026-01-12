@@ -83,7 +83,9 @@ set(SAGA_SOURCE_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/numath/nuvec.c
     ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/numath/nufloat.c
     ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nufile/nufile.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nufile/nufile.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nufile/nupsfile.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nufile/numc.c
     ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nufile/nudatfile.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nufile/nudat.c
     ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nuthread/nuthread.c
@@ -97,18 +99,18 @@ set(SAGA_SOURCE_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/numemory/numemory.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nuandroid/nuios.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/implode/implode.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/globals.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/world.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/level.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/area.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/timer.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/lostandfound.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/saveload/saveload.cpp
 )
 
 set(SAGA_INCLUDE_DIRS
     ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 
-set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nufile/nufile.cpp PROPERTIES COMPILE_OPTIONS "-O2")
 set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nufile/nupsfile.cpp PROPERTIES COMPILE_OPTIONS "-O2")
 set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nuandroid/nuios.cpp PROPERTIES COMPILE_OPTIONS "-O2")
 set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/game/world.cpp PROPERTIES COMPILE_OPTIONS "-O3")

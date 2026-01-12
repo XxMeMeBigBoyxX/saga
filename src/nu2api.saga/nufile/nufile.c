@@ -81,30 +81,7 @@ void NuFileReldirFix(NuFileDevice *device, char *path) {
 }
 
 NUFILE NuFileOpen(const char *path, NUFILEMODE mode) {
-    return NuFileOpenDF(path, mode, curr_dat);
-}
-
-void NuFileClose(NUFILE file) {
-    if (NUFILE_IS_PS(file)) {
-        int32_t index = NUFILE_INDEX_PS(file);
-
-        while (NuPSFileClose(index) < 0) {
-        }
-
-        if (file_info[index].buffer != NULL) {
-            (file_info[index].buffer)->fileinfo = NULL;
-        }
-
-        memset(&file_info[index], 0, sizeof(fileinfo_s));
-    } else if (NUFILE_IS_MEM(file) || NUFILE_IS_DAT(file)) {
-        NuMemFileClose(file);
-    } else if (NUFILE_IS_MC(file)) {
-        // NuMcClose(NUFILE_INDEX_MC(file), 0);
-        UNIMPLEMENTED("memory card specific");
-    } else {
-        // NuFileAndroidAPK::CloseFile(index);
-        UNIMPLEMENTED("android specific");
-    }
+    return NuFileOpenDF(path, mode, curr_dat, 0);
 }
 
 int32_t NuFileStatus(NUFILE file) {
@@ -121,29 +98,28 @@ int32_t NuFileStatus(NUFILE file) {
     return NuFileStatus(fileInfo->ptr->openFiles[fileInfo[NUFILE_INDEX_DAT(file)].index].file);
 }
 
-NUFILE NuFileOpenDF(const char *path, NUFILEMODE mode, NUDATHDR *header) {
+NUFILE NuFileOpenDF(const char *path, NUFILEMODE mode, NUDATHDR *header, int32_t _unused) {
     LOG("path=%s, mode=%d, header=%p", path, mode, header);
 
     NuFileDevice *device = NuFileGetDeviceFromPath(path);
-    int fileId;
+    NUFILE file;
 
     if (device == NULL) {
         if (mode != 1 && mode != 2) {
-            fileId = 0;
+            file = 0;
 
             if (header == NULL) {
                 // if (g_apkFileDevice != (NuFileDeviceAndroidAPK *)0x0) {
                 // fileId = NuFileAndroidAPK::OpenFile(path, 0);
                 //}
                 // UNIMPLEMENTED("android specific");
-                fileId = NUFILE_PS(NuPSFileOpen(path, mode));
+                file = NUFILE_PS(NuPSFileOpen(path, mode));
             } else {
-                // fileId = NuDatFileOpen(header, path, mode);
-                UNIMPLEMENTED();
+                file = NuDatFileOpen(header, path, mode);
             }
 
-            if (fileId > 0) {
-                return fileId;
+            if (file > 0) {
+                return file;
             }
         }
 
@@ -261,56 +237,6 @@ size_t NuMemFileRead(NUFILE file, char *dest, size_t size) {
         // return NuDatFileRead(file, dest, size);
         UNIMPLEMENTED();
     }
-}
-
-int32_t NuFileSeek(NUFILE file, int64_t offset, NUFILESEEK seekMode) {
-    LOG("file=%d, offset=0x%llx, seekMode=%d", file, offset, seekMode);
-
-    int iVar1;
-    uint uVar2;
-    longlong lVar4;
-    T in_stack_ffffffb4;
-    undefined4 local_20;
-
-    if (file < 0x2000) {
-        if (file < 0x1000) {
-            if (file < 0x400) {
-                int index = NUFILE_INDEX_PS(file);
-                if (file_info[index].offset.i[1] == 0) {
-                    lVar4 = NuPSFileLSeek(NUFILE_INDEX_PS(file), offset, seekMode);
-                } else {
-                    if (seekMode == 1) {
-                        file_info[index].field1_0x4.l = offset + file_info[index].field1_0x4.l;
-                    } else if (seekMode == 2) {
-                        file_info[index].field1_0x4.l = offset - file_info[index].size.l;
-                    } else {
-                        file_info[index].field1_0x4.l = offset;
-                    }
-                    lVar4 = file_info[index].field1_0x4.l;
-                }
-            } else {
-                // lVar4 = NuMemFileSeek(file, (uint)offset, (int)(uint)offset >> 31, seekMode);
-                UNIMPLEMENTED();
-            }
-        } else {
-            // iVar3 = NuMcSeek(file + -0x1000, (uint)offset, seekMode, 0);
-            // lVar4 = (longlong)iVar3;
-            UNIMPLEMENTED("memory card specific");
-        }
-    } else {
-        if (seekMode == 1) {
-            local_20 = 1;
-        } else if (seekMode == 2) {
-            local_20 = 2;
-        } else {
-            local_20 = 0;
-        }
-        // NuFileAndroidAPK::SeekFile((NuFileAndroidAPK *)file, (uint)offset, CONCAT44(local_20, offset._4_4_),
-        // in_stack_ffffffb4);
-        UNIMPLEMENTED("android specific");
-    }
-
-    return lVar4;
 }
 
 uint32_t NuFileOpenSize(NUFILE file) {
@@ -618,4 +544,22 @@ uint8_t DEV_FormatName(NuFileDevice *device, char *dest, char *path, int length)
     LOG("Formatted path: %s, returning %d", buf, len < length);
 
     return len < length;
+}
+
+int64_t NuMemFileSeek(NUFILE file, int64_t seek, NUFILESEEK whence) {
+    if (NUFILE_IS_MEM(file)) {
+        int32_t index = NUFILE_INDEX_MEM(file);
+
+        if (whence == NUFILE_SEEK_CURRENT) {
+            memfiles[index].ptr = (void *)((size_t)memfiles[index].ptr + seek);
+        } else if (whence == NUFILE_SEEK_END) {
+            memfiles[index].ptr = (void *)((size_t)memfiles[index].end - seek);
+        } else {
+            memfiles[index].ptr = (void *)((size_t)memfiles[index].buffer + seek);
+        }
+
+        return (int64_t)((size_t)memfiles[index].ptr - (size_t)memfiles[index].buffer);
+    } else {
+        return NuDatFileSeek(file, seek, whence);
+    }
 }

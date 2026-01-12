@@ -128,7 +128,7 @@ static int32_t OpenDatFileBase(nudathdr_s *header, int32_t someIndex) {
     nudatopenfileinfo_s *fileInfo = header->openFiles + someIndex;
 
     if (fileInfo->file == 0) {
-        fileInfo->file = NuFileOpenDF(header->path, (NUFILEMODE)header->mode, NULL);
+        fileInfo->file = NuFileOpenDF(header->path, (NUFILEMODE)header->mode, NULL, 0);
         header->openFiles[someIndex].position.l = 0;
     }
 

@@ -83,7 +83,7 @@ void NuFileReldirFix(NuFileDevice *device, char *path);
 NUFILE NuFileOpen(const char *path, NUFILEMODE mode);
 void NuFileClose(NUFILE file);
 int32_t NuFileStatus(NUFILE file);
-NUFILE NuFileOpenDF(const char *path, NUFILEMODE mode, NUDATHDR *header);
+NUFILE NuFileOpenDF(const char *path, NUFILEMODE mode, NUDATHDR *header, int32_t _unused);
 int32_t NuFileRead(NUFILE index, void *dest, int32_t length);
 NuFileDevice *NuFileGetDeviceFromPath(const char *path);
 uint32_t NuFileOpenSize(NUFILE file);
@@ -105,6 +105,11 @@ int64_t NuPSFileLSeek(int32_t index, int64_t offset, NUFILESEEK seekMode);
 size_t NuMemFileRead(NUFILE file, char *dest, size_t size);
 int32_t NuMemFilePos(NUFILE file);
 void NuMemFileClose(NUFILE file);
+int64_t NuMemFileSeek(NUFILE file, int64_t seek, NUFILESEEK whence);
+
+// Memory card functions
+int32_t NuMcClose(int32_t, int32_t);
+int64_t NuMcSeek(int32_t, int64_t, NUFILESEEK);
 
 // NuDat functions
 NUDATHDR *NuDatOpen(char *name, void **bufferBase, int32_t zero);

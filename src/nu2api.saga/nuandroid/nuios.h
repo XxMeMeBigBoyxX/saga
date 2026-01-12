@@ -1,16 +1,15 @@
-#ifndef NU2API_SAGA_NUANDROID_NUIOS_H
-#define NU2API_SAGA_NUANDROID_NUIOS_H
+#pragma once
 
-extern int g_isLowEndDevice;
+#include <stdint.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include "decomp.h"
 
-int NuIOS_IsLowEndDevice(void);
+C_API_START
 
-#ifdef __cplusplus
-}
-#endif
+extern int32_t g_isLowEndDevice;
 
-#endif // NU2API_SAGA_NUANDROID_NUIOS_H
+int32_t NuIOS_IsLowEndDevice(void);
+
+char *NuIOS_GetDocumentsPath(void);
+
+C_API_END

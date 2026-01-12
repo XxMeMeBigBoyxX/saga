@@ -1,7 +1,10 @@
 #include <stdint.h>
 
+#include "globals.h"
+#include "nu2api.saga/nucore/nustring.h"
 #include "nu2api.saga/nufile/nufile.h"
 #include "nu2api.saga/numemory/numemory.h"
+#include "saveload/saveload.h"
 
 void NuMtlInitEx(void **bufferBase, int32_t usually512) {
     // iVar2 = AndroidOBBUtils::LookupPackagePath(path, 1);
@@ -27,17 +30,51 @@ void NuMtlInitEx(void **bufferBase, int32_t usually512) {
             buf[i] = ' ';
         }
     }
-    LOG("badwords: %*s", size, buf);
+    LOG("%*s", size, buf);
 }
 
 void NuInitHardware(void **bufferBase, void **bufferEnd, int32_t zero) {
     NuMtlInitEx(bufferBase, 512);
 }
 
-int32_t SUPERBUFFERSIZE = 0x2EB8EEB;
-void *permbuffer_base = NULL;
-void *original_permbuffer_base = NULL;
-void *superbuffer_end = NULL;
+struct GAMESAVE_s {
+    char data[0x7e58];
+};
+
+GAMESAVE_s Game;
+
+short MakeSaveHash(void) {
+    return *(short *)((size_t)Game.data + 0x7C24);
+}
+
+int32_t drawautosaveicon = 0;
+
+void DrawAutoSaveIcon(void) {
+    drawautosaveicon = 1;
+    return;
+}
+
+char SuperOptions[24] = {0};
+
+void InitGameBeforeConfig() {
+    if (PAL == 0) {
+        NuStrCpy(prodcode, "BASLUS-21409");
+        FRAMETIME = 0.016666668;
+    } else {
+        NuStrCpy(prodcode, "BESLES-54221");
+        FRAMETIME = 0.02;
+    }
+    DEFAULTFPS = 1.0 / FRAMETIME;
+    DEFAULTFRAMETIME = 0.016666668;
+    MAXFRAMETIME = 0.1;
+    permbuffer_ptr = permbuffer_base;
+    permbuffer_end = superbuffer_end;
+
+    saveloadInit(&permbuffer_base, superbuffer_end, 0x7e58, prodcode, iconname, unicodename, 4);
+    original_permbuffer_base = permbuffer_base;
+    SaveSystemInitialise(3, (void *)MakeSaveHash, &Game, sizeof(GAMESAVE_s), 1, (void *)DrawAutoSaveIcon, SuperOptions,
+                         sizeof(SuperOptions));
+}
 
 void InitOnce(int32_t argc, char **param_2) {
     NuMemory *memory = NuMemoryGet();
@@ -47,7 +84,7 @@ void InitOnce(int32_t argc, char **param_2) {
     superbuffer_end = (void *)(SUPERBUFFERSIZE + (size_t)permbuffer_base);
     original_permbuffer_base = permbuffer_base;
 
-    // InitGameBeforeConfig();
+    InitGameBeforeConfig();
     //  Game_NuPad = Game_NuPad_Store;
 
     NuInitHardware(&permbuffer_base, &superbuffer_end, 0);
@@ -55,6 +92,7 @@ void InitOnce(int32_t argc, char **param_2) {
 
 extern "C" int32_t NuMain(int32_t argc, char **argv) {
     InitOnce(argc, argv);
+    TriggerExtraDataLoad();
     return 0;
 }
 
