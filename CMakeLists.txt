@@ -105,6 +105,9 @@ set(SAGA_SOURCE_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/area.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/timer.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/saveload/saveload.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nucore/nuapi.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/gamelib/nuwind.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/numath/nuvec4.c
 )
 
 set(SAGA_INCLUDE_DIRS
@@ -117,6 +120,7 @@ set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/game/world.cpp PROPE
 set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/game/level.cpp PROPERTIES COMPILE_OPTIONS "-O3")
 set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/game/area.cpp PROPERTIES COMPILE_OPTIONS "-O3")
 set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/game/timer.cpp PROPERTIES COMPILE_OPTIONS "-O3")
+set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/gamelib/nuwind.cpp PROPERTIES COMPILE_OPTIONS "-O3")
 
 add_executable(saga ${SAGA_SOURCE_FILES})
 
