@@ -11,10 +11,10 @@ void NuAPIInit(void) {
     memset(&nuapi, 0, sizeof(NUAPI));
     nuapi.fps = 60.0f;
     nuapi.video_mode = NUVIDEOMODE_NTSC;
-    nuapi.swap_mode = NUVIDEO_SWAPMODE_ROLLING;
+    nuapi.video_swap_mode = NUVIDEO_SWAPMODE_ROLLING;
     nuapi.field0_0x0 = 1;
-    nuapi.field3_0xc = 0;
-    nuapi.field77_0x88 = 0;
+    nuapi.video_aspect = 0;
+    nuapi.disable_os_menu_freeze = 0;
     nuapi.forced_frame_time = nuapi_forced_frame_time;
     nuapi.maxFps = nuapi_max_fps;
     NuTimeGet(&nuapi.time);
@@ -25,3 +25,7 @@ void NuAPIInit(void) {
 }
 
 void NuCommandLine(int argc, char** argv) {}
+
+void NuDisableOSMenuFreeze(void) {
+    nuapi.disable_os_menu_freeze = 1;
+}

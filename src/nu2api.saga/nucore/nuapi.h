@@ -3,43 +3,16 @@
 
 #include "nu2api.saga/nucore/nutime.h"
 #include "gamelib/nuwind.h"
-
-enum NUVIDEO_SWAPMODE {
-    NUVIDEO_SWAPMODE_INVALID = 0,
-    NUVIDEO_SWAPMODE_ASYNC = 1,
-    NUVIDEO_SWAPMODE_FIELDSYNC = 2,
-    NUVIDEO_SWAPMODE_FRAMESYNC = 3,
-    NUVIDEO_SWAPMODE_MIN2FIELD = 4,
-    NUVIDEO_SWAPMODE_ROLLING = 5,
-    NUVIDEO_SWAPMODE_ROLLING2FRAMES = 6,
-    NUVIDEO_SWAPMODE_CNT = 7
-};
-
-typedef enum NUVIDEO_SWAPMODE NUVIDEO_SWAPMODE;
-
-enum NUVIDEOMODE {
-	NUVIDEOMODE_UNDEFINED = 0,
-	NUVIDEOMODE_UNUSED1 = 1,
-	NUVIDEOMODE_NTSC = 2,
-	NUVIDEOMODE_PAL = 3,
-	NUVIDEOMODE_PALFF = 4,
-	NUVIDEOMODE_NTSCFF = 5,
-	NUVIDEOMODE_NTSC_J = 6
-};
-
-typedef enum NUVIDEOMODE NUVIDEOMODE;
+#include "nu2api.saga/nucore/nuvideo.h"
 
 struct nuapi_s {
     int field0_0x0;
-    NUVIDEOMODE video_mode;
-    NUVIDEO_SWAPMODE swap_mode;
-    int field3_0xc;
-    unsigned int screen_width;
-    unsigned int screen_height;
-    char field6_0x18;
-    char field7_0x19;
-    char field8_0x1a;
-    char field9_0x1b;
+    int video_mode;
+    NUVIDEO_SWAPMODE video_swap_mode;
+    int video_aspect;
+    int screen_width;
+    int screen_height;
+    int video_is_pal;
     float fps;
     int nuframe_begin_cnt;
     char field12_0x24;
@@ -82,10 +55,7 @@ struct nuapi_s {
     char field49_0x63;
     int field50_0x64;
     int field51_0x68;
-    char field52_0x6c;
-    char field53_0x6d;
-    char field54_0x6e;
-    char field55_0x6f;
+    int pad_recording;
     char field56_0x70;
     char field57_0x71;
     char field58_0x72;
@@ -107,11 +77,8 @@ struct nuapi_s {
     char field74_0x85;
     char field75_0x86;
     char field76_0x87;
-    int field77_0x88;
-    char field78_0x8c;
-    char field79_0x8d;
-    char field80_0x8e;
-    char field81_0x8f;
+    int disable_os_menu_freeze;
+    int video_brightness;
 };
 
 typedef struct nuapi_s NUAPI;
@@ -124,7 +91,8 @@ void NuAPIInit(void);
 extern "C" {
 #endif
 
-    void NuCommandLine(int argc, char **argv);
+void NuCommandLine(int argc, char **argv);
+void NuDisableOSMenuFreeze(void);
 
 #ifdef __cplusplus
 }
