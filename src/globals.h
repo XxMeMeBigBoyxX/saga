@@ -1,7 +1,9 @@
 #pragma once
 
-#include "decomp.h"
 #include <stdint.h>
+
+#include "decomp.h"
+#include "export.h"
 
 C_API_START
 
@@ -21,5 +23,7 @@ extern void *permbuffer_end;
 extern char prodcode[16];
 extern char *iconname;
 extern char unicodename[64];
+
+extern GAMESAVE_s Game;
 
 C_API_END

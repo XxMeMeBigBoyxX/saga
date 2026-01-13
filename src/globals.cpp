@@ -16,3 +16,5 @@ void *permbuffer_end = NULL;
 char prodcode[16] = {0};
 char *iconname = "lego.ico";
 char unicodename[64] = "LEGO Star Wars Saga";
+
+GAMESAVE_s Game = {0};

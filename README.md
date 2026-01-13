@@ -17,7 +17,10 @@ game assets, media, or any other copyrighted material.
 
 ## Build Instructions
 
-... (to be added)
+Android x86 build:
+`cmake -B build -DBUILD_FOR_HOST=OFF && cmake --build build`
+Host build:
+`cmake -B build -DBUILD_FOR_HOST=ON && cmake --build build`
 
 ## Contributing
 

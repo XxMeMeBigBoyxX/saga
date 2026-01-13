@@ -69,6 +69,8 @@ static int32_t saveload_getinfo(void) {
             fseek(file, -4, 2);
             fread(&saveload_slotcode[i], 4, 1, file);
 
+            LOG("slot %d code=%08X", i, saveload_slotcode[i]);
+
             saveload_savepresent = 1;
 
             fclose(file);
@@ -175,7 +177,9 @@ int32_t TriggerExtraDataLoad(void) {
 
     if (saveloadLoadSlot(SAVESLOTS, buffer, memcard_extra_savedatasize + 4) != 0) {
         int32_t checksum = *(int32_t *)((size_t)buffer + memcard_extra_savedatasize);
-        if (ChecksumSaveData(buffer, memcard_extra_savedatasize) == checksum) {
+        int32_t correct = ChecksumSaveData(buffer, memcard_extra_savedatasize);
+        LOG("checksum=%08X, correct=%08X", checksum, correct);
+        if (correct == checksum) {
             memmove(memcard_extra_savedata, buffer, memcard_extra_savedatasize);
             return 1;
         }
@@ -221,10 +225,10 @@ int32_t PCSaveSlot(int32_t slot, void *extradata, int32_t extradataSize, uint32_
         save.field4_0x10 = 0;
         save.extradataOffset = 0;
         memset(save.field6_0x18, 0, 0x10);
-        save.field4101_0x1028 = 0;
-        save.field6148_0x1828 = 0;
+        save.field11_0x1028 = 0;
+        save.field13_0x1828 = 0;
         save.field7_0x28 = 0;
-        save.field2054_0x828 = 0;
+        save.field9_0x828 = 0;
 
         fwrite(&save, sizeof(SaveLoad), 1, file);
         fwrite(extradata, extradataSize, 1, file);
@@ -245,11 +249,20 @@ static int32_t statuswait = 0;
 static NUTIME savetimer;
 static int32_t saveload_slotid = -1;
 
-extern "C" void saveloadASSave(int slot, void *buffer, int size, int hash) {
+void saveloadASSave(int32_t slot, void *buffer, int32_t size, uint32_t hash) {
     statuswait = 1;
     NuTimeGet(&savetimer);
     saveload_status = 11;
     PCSaveSlot(slot, buffer, size, hash);
     saveload_autosave = slot;
     saveload_slotid = slot;
+}
+
+void saveloadASLoad(int32_t slot, void *buffer, int32_t size) {
+    saveload_status = 7;
+    saveloadLoadSlot(slot, buffer, size);
+    statuswait = 1;
+    NuTimeGet(&savetimer);
+    saveload_slotid = slot;
+    saveload_autosave = slot;
 }

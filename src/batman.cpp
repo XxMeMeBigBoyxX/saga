@@ -37,14 +37,8 @@ void NuInitHardware(void **bufferBase, void **bufferEnd, int32_t zero) {
     NuMtlInitEx(bufferBase, 512);
 }
 
-struct GAMESAVE_s {
-    char data[0x7e58];
-};
-
-GAMESAVE_s Game;
-
-short MakeSaveHash(void) {
-    return *(short *)((size_t)Game.data + 0x7C24);
+uint16_t MakeSaveHash(void) {
+    return Game.completion;
 }
 
 int32_t drawautosaveicon = 0;
@@ -93,6 +87,7 @@ void InitOnce(int32_t argc, char **param_2) {
 extern "C" int32_t NuMain(int32_t argc, char **argv) {
     InitOnce(argc, argv);
     TriggerExtraDataLoad();
+
     return 0;
 }
 
