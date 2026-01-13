@@ -1,7 +1,10 @@
 #include "game/character.h"
 
 #include "globals.h"
+#include "nu2api.saga/nucore/nufpar.h"
 #include "nu2api.saga/nucore/nustring.h"
+
+#include <string.h>
 
 extern "C" {
     int16_t id_WEIRDO1 = -1;
@@ -425,25 +428,133 @@ extern "C" {
 }
 
 int32_t CHARCOUNT = 0;
-
 CHARACTERDATA *CDataList = NULL;
+GAMECHARACTERDATA *GCDataList = NULL;
 
 int32_t CharIDFromName(char *name) {
-    int iVar1;
-    int offset;
-    int i;
-
-    if (0 < CHARCOUNT) {
-        offset = 0;
-        i = 0;
-        do {
-            iVar1 = NuStrICmp(*(char **)((int)CDataList->names + offset), name);
-            if (iVar1 == 0) {
-                return i;
-            }
-            i = i + 1;
-            offset = offset + 0x4c;
-        } while (i < CHARCOUNT);
+    for (int32_t i = 0; i < CHARCOUNT; i++) {
+        if (NuStrICmp(CDataList[i].file, name) == 0) {
+            return i;
+        }
     }
+
     return -1;
+}
+
+CHARACTERDATA *ConfigureCharacterList(char *file, void **bufferStart, void **bufferEnd, int count, int *countDest,
+                                      int count2, GAMECHARACTERDATA **dataList) {
+    bool bVar1;
+    bool bVar2;
+    nufpar_s *fp;
+    CHARACTERDATA *characterdata;
+    short dirnameOffsets[500];
+    short filenameOffsets[500];
+    char buf[10000];
+    CHARACTERDATA *cdatas;
+    int j;
+    size_t offset;
+    int i;
+    CHARACTERDATA *cdata;
+
+    fp = NuFParCreate(file);
+    if (500 < count) {
+        count = 500;
+    }
+    *bufferStart = (void *)((int)*bufferStart + 3U & 0xfffffffc);
+    characterdata = (CHARACTERDATA *)*bufferStart;
+    i = 0;
+
+    memset(buf, 0, 10000);
+
+    buf[0] = '\0';
+    offset = 0;
+    bVar2 = false;
+    cdata = characterdata;
+    while (NuFParGetLine(fp) != 0) {
+        NuFParGetWord(fp);
+        if (*fp->word_buf != '\0') {
+            if (bVar2) {
+                if (NuStrICmp(fp->word_buf, "char_end") == 0) {
+                    bVar2 = false;
+                    if ((dirnameOffsets[i] != -1) && (filenameOffsets[i] != -1)) {
+                        i = i + 1;
+                        cdata = cdata + 1;
+                    }
+                } else if (NuStrICmp(fp->word_buf, "dir") == 0 && NuFParGetWord(fp) != 0) {
+                    int32_t len = NuStrLen(fp->word_buf);
+                    if ((len + offset + 1) < 10000) {
+                        NuStrCpy(buf + offset, fp->word_buf);
+                        dirnameOffsets[i] = (short)offset;
+                        offset = offset + len + 1;
+                    }
+                } else if (NuStrICmp(fp->word_buf, "file") == 0 && NuFParGetWord(fp) != 0) {
+                    int32_t len = NuStrLen(fp->word_buf);
+                    if ((len + offset + 1) < 10000) {
+                        NuStrCpy(buf + offset, fp->word_buf);
+                        filenameOffsets[i] = (short)offset;
+                        offset = offset + len + 1;
+                    }
+                }
+            } else {
+                if (NuStrICmp(fp->word_buf, "char_start") == 0 && i < count) {
+                    bVar1 = true;
+                } else {
+                    bVar1 = false;
+                }
+
+                if (bVar1) {
+                    bVar2 = true;
+                    dirnameOffsets[i] = -1;
+                    filenameOffsets[i] = -1;
+                    cdata->field0_0x0 = -1;
+                    cdata->field1_0x4 = 0;
+                    cdata->dir = (char *)0x0;
+                    cdata->file = (char *)0x0;
+                    cdata->field4_0x10 = 0;
+                    cdata->field5_0x14 = 0;
+                    cdata->field8_0x18 = 0;
+                    cdata->field9_0x1c = 0;
+                    cdata->field10_0x20 = 0;
+                    cdata->field11_0x24 = 0;
+                    cdata->field12_0x28 = 0;
+                    cdata->field13_0x2c = 1.0;
+                    cdata->field14_0x30 = 0.5;
+                    cdata->field15_0x34 = -0.5;
+                    cdata->field16_0x38 = 0.5;
+                    cdata->field17_0x3c = 1.0;
+                    cdata->flags = cdata->flags & 0xfe;
+                    cdata->field20_0x42 = -1;
+                    cdata->field21_0x44 = 0;
+                    cdata->field22_0x48 = 0;
+                }
+            }
+        }
+    }
+    NuFParDestroy(fp);
+    if (i < 1) {
+        characterdata = NULL;
+    } else {
+        *bufferStart = cdata;
+        memmove(*bufferStart, buf, offset);
+        for (j = 0; j < i; j = j + 1) {
+            characterdata[j].dir = (char *)((int)dirnameOffsets[j] + (int)*bufferStart);
+            characterdata[j].file = (char *)((int)filenameOffsets[j] + (int)*bufferStart);
+        }
+        *bufferStart = (void *)((int)*bufferStart + offset);
+        *bufferStart = (void *)((int)*bufferStart + 3U & 0xfffffffc);
+        if (0 < count2) {
+            if (dataList != NULL) {
+                *dataList = (gamecharacterdata_s *)*bufferStart;
+            }
+            for (j = 0; j < i; j = j + 1) {
+                characterdata[j].field11_0x24 = *bufferStart;
+                *bufferStart = (void *)((int)*bufferStart + count2);
+            }
+        }
+        *bufferStart = (void *)((int)*bufferStart + 3U & 0xfffffffc);
+        if (countDest != (int *)0x0) {
+            *countDest = i;
+        }
+    }
+    return characterdata;
 }

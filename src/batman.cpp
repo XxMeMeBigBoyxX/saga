@@ -13,8 +13,8 @@ extern "C" int32_t NuMain(int32_t argc, char **argv) {
 
     LOG_INFO("COMPLETIONPOINTS=%d", COMPLETIONPOINTS);
     for (int32_t i = 0; i < 3; i++) {
-        LOG_INFO("slot %d used=%d completion=%f%%", i, saveload_slotused[i],
-                 (float)saveload_slotcode[i] * 100.0f / COMPLETIONPOINTS);
+        float completion = (float)saveload_slotcode[i] * 100.0f / COMPLETIONPOINTS;
+        LOG_INFO("slot %d used=%d completion=%f%% (%.1f%%)", i, saveload_slotused[i], completion, completion);
     }
 
     return 0;

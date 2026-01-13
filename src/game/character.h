@@ -320,25 +320,25 @@ struct gamecharacterdata_s { /* PlaceHolder Structure */
 typedef struct gamecharacterdata_s GAMECHARACTERDATA;
 
 struct characterdata_s { /* PlaceHolder Structure */
-    undefined4 field0_0x0;
-    int flags;
-    char *field2_0x8;
-    char *names[1];
+    int field0_0x0;
+    undefined4 field1_0x4;
+    char *dir;
+    char *file;
     undefined4 field4_0x10;
     undefined2 field5_0x14;
     undefined field6_0x16;
     undefined field7_0x17;
-    int field8_0x18;
-    int field9_0x1c;
+    undefined4 field8_0x18;
+    undefined4 field9_0x1c;
     undefined4 field10_0x20;
-    struct GAMECHARACTERDATA_s *field11_0x24;
+    void *field11_0x24;
     undefined4 field12_0x28;
     float field13_0x2c;
     float field14_0x30;
     float field15_0x34;
     float field16_0x38;
     float field17_0x3c;
-    byte field18_0x40;
+    byte flags;
     undefined field19_0x41;
     short field20_0x42;
     undefined4 field21_0x44;
@@ -346,4 +346,11 @@ struct characterdata_s { /* PlaceHolder Structure */
 };
 typedef struct characterdata_s CHARACTERDATA;
 
+extern int32_t CHARCOUNT;
+extern CHARACTERDATA *CDataList;
+extern GAMECHARACTERDATA *GCDataList;
+
 int32_t CharIDFromName(char *name);
+
+CHARACTERDATA *ConfigureCharacterList(char *file, void **bufferStart, void **bufferEnd, int32_t count,
+                                      int32_t *countDest, int32_t count2, GAMECHARACTERDATA **dest);

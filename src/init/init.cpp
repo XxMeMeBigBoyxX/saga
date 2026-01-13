@@ -1,9 +1,13 @@
 #include "init/init.hpp"
 #include "game/area.h"
+#include "game/character.h"
 #include "game/cheat.h"
+#include "game/collection.h"
 #include "game/episode.h"
 #include "game/level.h"
+#include "game/mission.h"
 #include "globals.h"
+#include "nu2api.saga/nucore/nufpar.h"
 #include "nu2api.saga/nucore/nustring.h"
 #include "nu2api.saga/nufile/nufile.h"
 #include "nu2api.saga/numemory/numemory.h"
@@ -104,19 +108,9 @@ int32_t Episode_ContainsArea(int32_t areaId, int32_t *areaIndex) {
     return -1;
 }
 
+MISSIONSYS *MissionSys = NULL;
+
 void InitGameAfterConfig(void) {
-    // char cVar1;
-    // char cVar2;
-    // ushort uVar3;
-    // undefined2 uVar4;
-    // int iVar6;
-    // int iVar8;
-    // LEVELDATA *pLVar11;
-    // int local_2c;
-    // int local_28;
-    // int local_24;
-    // int local_20[3];
-    // undefined4 uStack_14;
 
     AREADATA *pAVar5 = ADataList;
 
@@ -212,77 +206,99 @@ void InitGameAfterConfig(void) {
         } while (areaId < AREACOUNT);
     }
 
-    //  pAVar5 = ADataList;
-    //  iVar6 = AREACOUNT;
-    //  iVar9 = LEVELCOUNT;
-    //  uVar4 = tUNKNOWN;
-    //  if (0 < LEVELCOUNT) {
-    //      local_2c = 0;
-    //      pLVar11 = LDataList;
-    //      do {
-    //          if (799 < (ushort)pLVar11->field2_0x60) {
-    //              pLVar11->field2_0x60 = uVar4;
-    //          }
-    //          pLVar11->field22_0xaf = 0xff;
-    //          pLVar11->field41_0xd4 = 0xff;
-    //          if (iVar6 < 1) {
-    //              local_20[0] = 0;
-    //          } else {
-    //              local_20[0] = 0;
-    //              pAVar10 = pAVar5;
-    //              do {
-    //                  if (pAVar10->field_0x7d != '\0') {
-    //                      iVar8 = 0;
-    //                      do {
-    //                          if (*(short *)(&pAVar10->field_0x60 + iVar8 * 2) == local_2c) {
-    //                              pLVar11->field22_0xaf = (char)local_20[0];
-    //                              pLVar11->field41_0xd4 = (char)iVar8;
-    //                              cVar1 = (char)local_20[0];
-    //                          } else {
-    //                              cVar1 = pLVar11->field22_0xaf;
-    //                          }
-    //                          if (cVar1 != -1) {
-    //                              local_20[0] = local_20[0] + 1;
-    //                              cVar2 = pAVar5[cVar1].field_0x86;
-    //                              pLVar11->field21_0xae = cVar2;
-    //                              if ((pAVar5[cVar1].field_0x7a & 1) != 0) {
-    //                                  pLVar11->field46_0xd9 = 0x32;
-    //                                  pLVar11->field47_0xda = 0x14;
-    //                              }
-    //                              if (((cVar2 != -1) && ((*(ushort *)&pAVar5[cVar1].field_0x7a & 0x106) == 0)) &&
-    //                                  ((pLVar11->flags & (LEVEL_STATUS | LEVEL_OUTRO | LEVEL_MIDTRO |
-    //                                  LEVEL_INTRO)) ==
-    //                                   0)) {
-    //                                  pLVar11->flags = pLVar11->flags | 0x2000;
-    //                              }
-    //                              goto LAB_0012cb40;
-    //                          }
-    //                          iVar8 = iVar8 + 1;
-    //                      } while (iVar8 < (int)(uint)(byte)pAVar10->field_0x7d);
-    //                  }
-    //                  local_20[0] = local_20[0] + 1;
-    //                  pAVar10 = pAVar10 + 1;
-    //              } while (local_20[0] != iVar6);
-    //          }
-    //      LAB_0012cb40:
-    //          local_2c = local_2c + 1;
-    //          pLVar11 = pLVar11 + 1;
-    //      } while (local_2c < iVar9);
-    //  }
+    // char cVar1;
+    // char cVar2;
+    // ushort uVar3;
+    // int iVar8;
+
+    // int local_28;
+    // int local_24;
+    // int local_20[3];
+
+    // int16_t uVar4 = tUNKNOWN;
+
+    AREADATA *pAVar2 = ADataList;
+    int32_t iVar3 = AREACOUNT;
+    int32_t areaId = LEVELCOUNT;
+
+    // int16_t tab = tUNKNOWN;
+    AREADATA *area;
+    uint8_t episode;
+    uint8_t bVar1;
+
+    int32_t areaIndex;
+
+    if (0 < LEVELCOUNT) {
+        int32_t i = 0;
+        LEVELDATA *level = LDataList;
+        do {
+            if (799 < level->field2_0x60) {
+                // level->field2_0x60 = tab;
+            }
+            level->field22_0xaf = 0xff;
+            level->field41_0xd4 = 0xff;
+            if (iVar3 < 1) {
+                areaIndex = 0;
+            } else {
+                areaIndex = 0;
+                area = pAVar2;
+                do {
+                    if (area->field28_0x7d != 0) {
+                        int32_t iVar4 = 0;
+                        do {
+                            if (area->field2_0x60[iVar4] == i) {
+                                level->field22_0xaf = (byte)areaIndex;
+                                level->field41_0xd4 = (byte)iVar4;
+                                episode = (byte)areaIndex;
+                            } else {
+                                episode = level->field22_0xaf;
+                            }
+                            if (episode != 0xff) {
+                                areaIndex = areaIndex + 1;
+                                bVar1 = pAVar2[(char)episode].episodeIndex;
+                                level->field21_0xae = bVar1;
+                                if ((pAVar2[(char)episode].flags & 1) != 0) {
+                                    level->field46_0xd9 = 0x32;
+                                    level->field47_0xda = 0x14;
+                                }
+                                if (((bVar1 != 0xff) && ((pAVar2[(char)episode].flags & 0x106) == 0)) &&
+                                    ((level->flags & (LEVEL_STATUS | LEVEL_OUTRO | LEVEL_MIDTRO | LEVEL_INTRO)) == 0)) {
+                                    level->flags |= (LEVELFLAGS)0x2000;
+                                }
+                                goto LAB_0012cb40;
+                            }
+                            iVar4 = iVar4 + 1;
+                        } while (iVar4 < (int)(uint)area->field28_0x7d);
+                    }
+                    areaIndex = areaIndex + 1;
+                    area = area + 1;
+                } while (areaIndex != iVar3);
+            }
+        LAB_0012cb40:
+            i = i + 1;
+            level = level + 1;
+        } while (i < areaId);
+    }
+
     //  Level_RegisterGameConfigKeywords((nufpcomjmp_s *)LevelConfigKeywords_BeforeLoad,
-    //  &LevelConfigKeywords_AfterLoad); Suits_Init(); Collection_Configure("chars\\collection.txt",
-    //  &permbuffer_ptr, &permbuffer_end); CompletionPointInfo._8_4_ = CompletionPointInfo._8_4_ +
-    //  POINTS_PER_CHARACTER * COLLECTION_COMPLETIONCOUNT; COMPLETIONPOINTS = COMPLETIONPOINTS +
-    //  POINTS_PER_CHARACTER * COLLECTION_COMPLETIONCOUNT; MissionSys = Missions_Configure("levels\\missions.txt",
-    //  &permbuffer_ptr, &permbuffer_end,
-    //                                  (MISSIONSAVE_s *)&Game.missionSave);
-    //  if (MissionSys != (MISSIONSYS_s *)0x0) {
-    //      iVar9 = (uint)(byte)MissionSys->field_0x1c * POINTS_PER_MISSION;
-    //      COMPLETIONPOINTS = COMPLETIONPOINTS + iVar9;
-    //      CompletionPointInfo._12_4_ = CompletionPointInfo._12_4_ + iVar9;
-    //      GOLDBRICKPOINTS = GOLDBRICKPOINTS + (uint)(byte)MissionSys->field_0x1c;
-    //  }
-    //  Tag_DrawIconFn = Tag_DrawIcon_LSW;
+    //  &LevelConfigKeywords_AfterLoad);
+    //  Suits_Init();
+
+    Collection_Configure("chars\\collection.txt", &permbuffer_ptr, &permbuffer_end);
+    LOG_INFO("Loaded %d collection items", COLLECTION_COMPLETIONCOUNT);
+
+    CompletionPointInfo[2] = CompletionPointInfo[2] + POINTS_PER_CHARACTER * COLLECTION_COMPLETIONCOUNT;
+    COMPLETIONPOINTS = COMPLETIONPOINTS + POINTS_PER_CHARACTER * COLLECTION_COMPLETIONCOUNT;
+
+    MissionSys = Missions_Configure("levels\\missions.txt", &permbuffer_ptr, &permbuffer_end, &Game.missionSave);
+    if (MissionSys != NULL) {
+        areaId = (uint32_t)MissionSys->count * POINTS_PER_MISSION;
+        COMPLETIONPOINTS = COMPLETIONPOINTS + areaId;
+        CompletionPointInfo[3] = CompletionPointInfo[3] + areaId;
+        GOLDBRICKPOINTS = GOLDBRICKPOINTS + (uint32_t)MissionSys->count;
+    }
+
+    // Tag_DrawIconFn = Tag_DrawIcon_LSW;
     //_DAT_006312e8 = 0x5d;
     //_DAT_006312ea = 0x5e;
     //_DAT_0063138c = 0x5f;
@@ -562,14 +578,16 @@ void InitGameAfterConfig(void) {
     //  GameMsg_GetExtraObjFn = GameMsg_GetExtraObj;
     //  Jump_EndOfLandContextFn = Jump_EndOfLandContext;
     //  BigJump_EndOfLandFn = BigJump_EndOfLand;
-    //  COMPLETIONPOINTS = POINTS_PER_CHEAT * 0x2c + COMPLETIONPOINTS;
-    //  CompletionPointInfo._16_4_ = POINTS_PER_CHEAT * 0x2c + CompletionPointInfo._16_4_;
-    //  if (0 < SHOPGOLDBRICKS) {
-    //      iVar9 = (SHOPGOLDBRICKS + -1) * POINTS_PER_GOLDBRICK;
-    //      CompletionPointInfo._24_4_ = CompletionPointInfo._24_4_ + POINTS_PER_GOLDBRICK + iVar9;
-    //      COMPLETIONPOINTS = POINTS_PER_GOLDBRICK + COMPLETIONPOINTS + iVar9;
-    //      GOLDBRICKPOINTS = SHOPGOLDBRICKS + -1 + GOLDBRICKPOINTS + 1;
-    //  }
+
+    COMPLETIONPOINTS = POINTS_PER_CHEAT * 0x2c + COMPLETIONPOINTS;
+    CompletionPointInfo[4] = POINTS_PER_CHEAT * 0x2c + CompletionPointInfo[4];
+    if (0 < SHOPGOLDBRICKS) {
+        areaId = (SHOPGOLDBRICKS + -1) * POINTS_PER_GOLDBRICK;
+        CompletionPointInfo[6] = CompletionPointInfo[6] + POINTS_PER_GOLDBRICK + areaId;
+        COMPLETIONPOINTS = POINTS_PER_GOLDBRICK + COMPLETIONPOINTS + areaId;
+        GOLDBRICKPOINTS = SHOPGOLDBRICKS + -1 + GOLDBRICKPOINTS + 1;
+    }
+
     //  iVar9 = CutScenePlayer_Available();
     //  CutScenePlayCount = 0;
     //  if (iVar9 != 0) {
@@ -582,6 +600,13 @@ void InitGameAfterConfig(void) {
 }
 
 void LoadPermData(BGPROCINFO *proc) {
+    CDataList =
+        ConfigureCharacterList("chars\\chars.txt", &permbuffer_ptr, &permbuffer_end, 340, &CHARCOUNT, 288, &GCDataList);
+    for (int i = 0; i < CHARCOUNT; i++) {
+        LOG_INFO("Character %d: %s / %s", i, CDataList[i].dir, CDataList[i].file);
+    }
+    LOG_INFO("Loaded %d characters", CHARCOUNT);
+
     LDataList = Levels_ConfigureList("levels\\levels.txt", &permbuffer_ptr, &permbuffer_end, 365, &LEVELCOUNT,
                                      (void *)Level_SetDefaults);
     // FixUpLevels(&LevFixUp);

@@ -481,3 +481,14 @@ void NuUnicodeToAscii(char *dst, NUWCHAR16 *src) {
 
     dst[pos] = '\0';
 }
+
+void NuStrUpr(char *dest, char *src) {
+    char c;
+
+    for (; *src != '\0'; src = src + 1) {
+        c = NuToUpper(*src);
+        *dest = c;
+        dest = dest + 1;
+    }
+    *dest = *src;
+}

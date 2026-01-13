@@ -107,6 +107,9 @@ set(SAGA_SOURCE_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/cheat.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/timer.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/character.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/collection.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/mission.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/store.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/saveload/saveload.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nucore/nuapi.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/gamelib/nuwind/nuwind.cpp

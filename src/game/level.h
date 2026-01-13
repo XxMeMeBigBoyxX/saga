@@ -25,13 +25,13 @@ struct leveldatadisplay_s { /* PlaceHolder Structure */
 typedef struct leveldatadisplay_s LEVELDATADISPLAY;
 
 enum levelflags_e {
-    LEVEL_INTRO = 32,
-    LEVEL_MIDTRO = 64,
-    LEVEL_OUTRO = 128,
-    LEVEL_TEST = 512,
-    LEVEL_STATUS = 1024,
-    LEVEL_NEWGAME = 65536,
-    LEVEL_LOADGAME = 131072,
+    LEVEL_INTRO = 0x20,
+    LEVEL_MIDTRO = 0x40,
+    LEVEL_OUTRO = 0x80,
+    LEVEL_TEST = 0x200,
+    LEVEL_STATUS = 0x400,
+    LEVEL_NEWGAME = 0x10000,
+    LEVEL_LOADGAME = 0x20000,
 };
 typedef enum levelflags_e LEVELFLAGS;
 
