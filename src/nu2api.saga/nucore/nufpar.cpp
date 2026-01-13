@@ -141,33 +141,48 @@ int NuFParGetWord(NUFPAR *parser) {
     while (parser->line_buf[CLAMP_LINE(parser->line_pos)] != 0) {
         char c = parser->line_buf[parser->line_pos];
 
-        if (parser->separator_tokens != NULL && !in_quoted_text && NuStrChr(parser->separator_tokens, c) != NULL) {
-            if (len == 0) {
-                parser->word_buf[len] = c;
-                len++;
-                parser->line_pos++;
-            }
+        if (parser->separator_tokens != NULL && !in_quoted_text) {
+            if (NuStrChr(parser->separator_tokens, c) != NULL) {
+                if (len == 0) {
+                    parser->word_buf[len] = c;
+                    len++;
+                    parser->line_pos++;
+                }
 
-            parser->word_buf[CLAMP_WORD(len)] = '\0';
-
-            return len;
-        }
-
-        if (parser->separator_list != NULL && !in_quoted_text && NuStrChr(parser->separator_list, c) != NULL) {
-            c = ' ';
-        }
-
-        if ((c == ' ' || c == ',' || c == '\t') && !in_quoted_text) {
-            if (len != 0) {
                 parser->word_buf[CLAMP_WORD(len)] = '\0';
+
                 return len;
             }
-        } else if (c == '"') {
-            in_quoted_text = 1 - in_quoted_text;
-            found_quotes = 1;
-        } else {
-            parser->word_buf[CLAMP_WORD(len)] = c;
-            len++;
+        }
+
+        if (parser->separator_list != NULL && !in_quoted_text) {
+            if (NuStrChr(parser->separator_list, c) != NULL) {
+                c = ' ';
+            }
+        }
+
+        switch (c) {
+            case ' ':
+            case ',':
+            case '\t':
+                if (!in_quoted_text) {
+                    if (len != 0) {
+                        parser->word_buf[CLAMP_WORD(len)] = '\0';
+                        return len;
+                    }
+
+                    break;
+                }
+            default:
+                if (c == '"') {
+                    in_quoted_text = 1 - in_quoted_text;
+                    found_quotes = 1;
+                } else {
+                    parser->word_buf[CLAMP_WORD(len)] = c;
+                    len++;
+                }
+
+                break;
         }
 
         parser->line_pos++;
@@ -197,37 +212,52 @@ int NuFParGetWordW(NUFPAR *parser) {
     while (line[CLAMP_WIDE_LINE(parser->line_pos)] != 0) {
         c = line[parser->line_pos];
 
-        if (parser->separator_tokens != NULL && !in_quoted_text && NuStrChr(parser->separator_tokens, c) != NULL) {
-            if (len == 0) {
-                word[len] = c;
-                len++;
-                parser->line_pos++;
-            }
+        if (parser->separator_tokens != NULL && !in_quoted_text) {
+            if (NuStrChr(parser->separator_tokens, c) != NULL) {
+                if (len == 0) {
+                    word[len] = c;
+                    len++;
+                    parser->line_pos++;
+                }
 
-            word[CLAMP_WIDE_WORD(len)] = '\0';
-            return len;
-        }
-
-        if (parser->separator_list != NULL && !in_quoted_text && NuStrChr(parser->separator_list, c) != NULL) {
-            c = ' ';
-        }
-
-        if ((((c & 0xff) == ' ') || (c & 0xff) == ',' || (c & 0xff) == '\t') && !in_quoted_text) {
-            if (len != 0) {
                 word[CLAMP_WIDE_WORD(len)] = '\0';
                 return len;
             }
-        } else if (c == '"') {
-            if (in_quoted_text && line[parser->line_pos + 1] == '"') {
-                word[CLAMP_WIDE_WORD(len)] = c;
-                len++;
-                parser->line_pos++;
-            } else {
-                in_quoted_text = 1 - in_quoted_text;
+        }
+
+        if (parser->separator_list != NULL && !in_quoted_text) {
+            if (NuStrChr(parser->separator_list, c) != NULL) {
+                c = ' ';
             }
-        } else {
-            word[CLAMP_WIDE_WORD(len)] = c;
-            len++;
+        }
+
+        switch (c & 0xff) {
+            case ' ':
+            case ',':
+            case '\t':
+                if (!in_quoted_text) {
+                    if (len != 0) {
+                        word[CLAMP_WIDE_WORD(len)] = '\0';
+                        return len;
+                    }
+
+                    break;
+                }
+            default:
+                if (c == '"') {
+                    if (in_quoted_text && line[parser->line_pos + 1] == '"') {
+                        word[CLAMP_WIDE_WORD(len)] = c;
+                        len++;
+                        parser->line_pos++;
+                    } else {
+                        in_quoted_text = 1 - in_quoted_text;
+                    }
+                } else {
+                    word[CLAMP_WIDE_WORD(len)] = c;
+                    len++;
+                }
+
+                break;
         }
 
         parser->line_pos++;
