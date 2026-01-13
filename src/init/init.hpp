@@ -1,0 +1,17 @@
+#pragma once
+
+#include <stdint.h>
+
+#include "nu2api.saga/nucore/nustring.h"
+#include "nu2api.saga/nufile/nufile.h"
+#include "nu2api.saga/numemory/numemory.h"
+#include "saveload/saveload.h"
+
+struct bgprocinfo_s;
+typedef struct bgprocinfo_s BGPROCINFO;
+
+void InitOnce(int32_t argc, char **param_2);
+
+void StartPerm();
+void LoadPerm();
+void EndPerm();

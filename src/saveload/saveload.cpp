@@ -17,7 +17,7 @@ int32_t saveload_autosave = 0;
 int32_t saveload_savepresent = 0;
 
 int32_t saveload_slotused[6] = {0};
-char *saveload_slotcode[6] = {0};
+int32_t saveload_slotcode[6] = {0};
 
 char *slotname(int32_t index) {
     static char name[4096];
@@ -41,10 +41,8 @@ char *slotfolder(int32_t index) {
 char *fullslotname(int32_t index) {
     static char name[4096];
 
-    strcpy(name, slotfolder(index));
-
-    int32_t len = strlen(name);
-
+    char *folder = slotfolder(index);
+    strcpy(name, folder);
     strcat(name, "/");
     strcat(name, slotname(index));
 
@@ -265,4 +263,14 @@ void saveloadASLoad(int32_t slot, void *buffer, int32_t size) {
     NuTimeGet(&savetimer);
     saveload_slotid = slot;
     saveload_autosave = slot;
+}
+
+void saveloadASDelete(int32_t slot) {
+    char *path = slotname(slot);
+    remove(path);
+
+    saveload_slotid = slot;
+    if (saveload_autosave == slot) {
+        saveload_autosave = -1;
+    }
 }

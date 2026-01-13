@@ -106,10 +106,12 @@ set(SAGA_SOURCE_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/timer.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/saveload/saveload.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nucore/nuapi.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/gamelib/nuwind.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/gamelib/nuwind/nuwind.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/gamelib/characters/characters.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/numath/nuvec4.c
     ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nucore/nupad.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nucore/nuvideo.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/init/init.cpp
 )
 
 set(SAGA_INCLUDE_DIRS

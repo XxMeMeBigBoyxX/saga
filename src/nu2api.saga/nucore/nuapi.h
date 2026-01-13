@@ -1,8 +1,8 @@
 #ifndef NU2API_SAGA_NUCORE_NUAPI_H
 #define NU2API_SAGA_NUCORE_NUAPI_H
 
+#include "gamelib/nuwind/nuwind.h"
 #include "nu2api.saga/nucore/nutime.h"
-#include "gamelib/nuwind.h"
 #include "nu2api.saga/nucore/nuvideo.h"
 
 struct nuapi_s {
@@ -91,8 +91,8 @@ void NuAPIInit(void);
 extern "C" {
 #endif
 
-void NuCommandLine(int argc, char **argv);
-void NuDisableOSMenuFreeze(void);
+    void NuCommandLine(int argc, char **argv);
+    void NuDisableOSMenuFreeze(void);
 
 #ifdef __cplusplus
 }

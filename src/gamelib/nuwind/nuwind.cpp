@@ -1,4 +1,4 @@
-#include "gamelib/nuwind.h"
+#include "gamelib/nuwind/nuwind.h"
 
 #include <emmintrin.h>
 
