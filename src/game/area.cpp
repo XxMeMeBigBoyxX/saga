@@ -13,6 +13,25 @@ AREADATA *HUB_ADATA = NULL;
 int32_t AREA_DEFAULTBONUSTIMETRIALTIME = 0x12C;
 int32_t AREA_DEFAULTCHALLENGETIME = 0x258;
 
+AREADATA *Area_FindByName(char *name, int32_t *indexDest) {
+    for (int32_t i = 0; i < AREACOUNT; i++) {
+        AREADATA *area = &ADataList[i];
+
+        if (NuStrICmp(area->file, name) == 0) {
+            if (indexDest != NULL) {
+                *indexDest = i;
+            }
+            return area;
+        }
+    }
+
+    if (indexDest != NULL) {
+        *indexDest = -1;
+    }
+
+    return NULL;
+}
+
 AREADATA *Areas_ConfigureList(char *file, void **bufferStart, void **bufferEnd, int count, int *countDest) {
     byte bVar3;
     undefined2 uVar4;

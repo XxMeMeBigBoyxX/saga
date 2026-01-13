@@ -7,13 +7,6 @@
 
 C_API_START
 
-struct episodedata_s {
-    int32_t _0;
-    int16_t areaIds[10];
-    int8_t areaCount;
-};
-typedef struct episodedata_s EPISODEDATA;
-
 struct cheat_s { /* PlaceHolder Structure */
     char *name;
     undefined field1_0x4;
@@ -50,8 +43,6 @@ struct cheatsystem_s {
 typedef struct cheatsystem_s CHEATSYSTEM;
 
 extern CHEATSYSTEM CheatSystem;
-
-extern EPISODEDATA *EDataList;
 
 extern int32_t PAL;
 extern float FRAMETIME;

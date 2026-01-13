@@ -1,6 +1,7 @@
 #include "init/init.hpp"
 #include "game/area.h"
 #include "game/cheat.h"
+#include "game/episode.h"
 #include "game/level.h"
 #include "globals.h"
 #include "nu2api.saga/nucore/nustring.h"
@@ -590,7 +591,7 @@ void LoadPermData(BGPROCINFO *proc) {
     }
     LOG_INFO("Loaded %d levels", LEVELCOUNT);
 
-    ADataList = Areas_ConfigureList("levels\\areas.txt", &permbuffer_ptr, &permbuffer_end, 0x48, &AREACOUNT);
+    ADataList = Areas_ConfigureList("levels\\areas.txt", &permbuffer_ptr, &permbuffer_end, 72, &AREACOUNT);
     // FixUpAreas();
 
     for (int i = 0; i < AREACOUNT; i++) {
@@ -598,7 +599,12 @@ void LoadPermData(BGPROCINFO *proc) {
     }
     LOG_INFO("Loaded %d areas", AREACOUNT);
 
-    // EDataList = Episodes_ConfigureList("levels\\episodes.txt", &permbuffer_ptr, &permbuffer_end, 6, &EPISODECOUNT);
+    EDataList = Episodes_ConfigureList("levels\\episodes.txt", &permbuffer_ptr, &permbuffer_end, 6, &EPISODECOUNT);
+
+    for (int i = 0; i < EPISODECOUNT; i++) {
+        LOG_INFO("Episode %d: %hu areas", i, EDataList[i].areaCount);
+    }
+    LOG_INFO("Loaded %d episodes", EPISODECOUNT);
 
     InitGameAfterConfig();
 }

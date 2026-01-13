@@ -102,6 +102,7 @@ set(SAGA_SOURCE_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/globals.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/world.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/level.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/episode.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/area.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/cheat.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/timer.cpp

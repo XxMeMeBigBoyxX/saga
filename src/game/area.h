@@ -80,6 +80,8 @@ C_API_END
 
 #ifdef __cplusplus
 
+AREADATA *Area_FindByName(char *name, int32_t *indexDest);
+
 AREADATA *Areas_ConfigureList(char *file, void **bufferStart, void **bufferEnd, int count, int *countDest);
 
 static inline AREAFLAGS operator|(AREAFLAGS a, AREAFLAGS b) {
