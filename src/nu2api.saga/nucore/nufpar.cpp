@@ -59,27 +59,27 @@ NUFPAR *NuFParOpen(NUFILE file_handle) {
         parser->word_buf_size = 0x200;
 
         NUWCHAR first = NuFileReadWChar(file_handle);
-        parser->unicode = 0;
-        parser->utf8 = 0;
+        parser->is_utf16 = 0;
+        parser->is_utf8 = 0;
 
         unsigned char next;
         if (first == 0xfffe) {
-            parser->unicode = 2;
+            parser->is_utf16 = 2;
         } else if (first == 0xfeff) {
-            parser->unicode = 1;
+            parser->is_utf16 = 1;
         } else if (first == 0xbbef) {
             next = NuFileReadChar(file_handle);
             if (next == 0xbf) {
-                parser->utf8 = 1;
+                parser->is_utf8 = 1;
             }
         } else if (first == 0xefbb) {
             next = NuFileReadChar(file_handle);
             if (next == 0xbf) {
-                parser->utf8 = 2;
+                parser->is_utf8 = 2;
             }
         }
 
-        if (parser->unicode == 0 && parser->utf8 == 0) {
+        if (parser->is_utf16 == 0 && parser->is_utf8 == 0) {
             NuFileSeek(file_handle, 0, NUFILE_SEEK_START);
         }
 
@@ -135,7 +135,7 @@ int NuFParGetLine(NUFPAR *parser) {
 
     in_quoted_text = 0;
 
-    if (parser->unicode) {
+    if (parser->is_utf16) {
         return NuFParGetLineW(parser);
     }
 
@@ -314,7 +314,7 @@ int NuFParGetWord(NUFPAR *parser) {
     int in_quoted_text;
     int found_quotes = 0;
 
-    if (parser->unicode) {
+    if (parser->is_utf16) {
         return NuFParGetWordW(parser);
     }
 
@@ -457,7 +457,7 @@ float NuFParGetFloat(NUFPAR *parser) {
     char buf[64];
 
     NuFParGetWord(parser);
-    if (parser->unicode) {
+    if (parser->is_utf16) {
         NuUnicodeToAscii(buf, (NUWCHAR16 *)parser->word_buf);
     } else {
         NuStrCpy(buf, parser->word_buf);
@@ -474,7 +474,7 @@ int NuFParGetInt(NUFPAR *parser) {
     char buf[64];
 
     NuFParGetWord(parser);
-    if (parser->unicode) {
+    if (parser->is_utf16) {
         NuUnicodeToAscii(buf, (NUWCHAR16 *)parser->word_buf);
     } else {
         NuStrCpy(buf, parser->word_buf);
@@ -552,7 +552,7 @@ int NuFParInterpretWord(NUFPAR *parser) {
     char buf[64];
     int i;
 
-    if (parser->unicode) {
+    if (parser->is_utf16) {
         NuUnicodeToAscii(buf, (NUWCHAR16 *)parser->word_buf);
     } else {
         NuStrCpy(buf, parser->word_buf);
@@ -597,7 +597,7 @@ int NuFParInterpretWordCTX(NUFPAR *parser, void *ctx) {
     char buf[64];
     int i;
 
-    if (parser->unicode) {
+    if (parser->is_utf16) {
         NuUnicodeToAscii(buf, (NUWCHAR16 *)parser->word_buf);
     } else {
         NuStrCpy(buf, parser->word_buf);

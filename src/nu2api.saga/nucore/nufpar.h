@@ -51,8 +51,8 @@ typedef struct nufpar_s {
     int command_pos;
 
     int size;
-    char unicode;
-    char utf8;
+    char is_utf16;
+    char is_utf8;
     char *separator_list;
     char *separator_tokens;
 } NUFPAR;
