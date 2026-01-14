@@ -126,6 +126,99 @@ static int old_line_pos;
 #define CLAMP_WIDE_LINE(pos) pos &((parser->line_buf_size >> 1) - 1)
 #define CLAMP_WIDE_WORD(pos) pos &((parser->word_buf_size >> 1) - 1)
 
+int NuFParGetLine(NUFPAR *parser) {
+    char c;
+    int len;
+    int at_end_of_line;
+    int is_done;
+    int in_quoted_text;
+
+    in_quoted_text = 0;
+
+    if (parser->unicode) {
+        return NuFParGetLineW(parser);
+    }
+
+    len = 0;
+    parser->line_pos = 0;
+    parser->line_num++;
+    is_done = false;
+
+    do {
+        c = NuGetChar(parser);
+        switch (c) {
+            case '\r':
+                NuGetChar(parser);
+            case '\n':
+                if (len == 0 || !is_done) {
+                    parser->line_num++;
+                    is_done = false;
+
+                    break;
+                }
+            case '\0':
+                parser->line_buf[len] = '\0';
+                return len;
+            case '"':
+                in_quoted_text = 1 - in_quoted_text;
+                is_done = true;
+                parser->line_buf[CLAMP_LINE(len)] = c;
+                len++;
+                break;
+            case ';':
+                if (!in_quoted_text) {
+                    if (len == 0 || !is_done) {
+                        at_end_of_line = false;
+
+                        do {
+                            c = NuGetChar(parser);
+                            switch (c) {
+                                case '\r':
+                                    NuGetChar(parser);
+                                case '\n':
+                                case '\0':
+                                    at_end_of_line = true;
+                                    break;
+                                default:
+                                    break;
+                            }
+                        } while (!at_end_of_line);
+
+                        len = 0;
+                        parser->line_pos = 0;
+                        parser->line_num++;
+                        is_done = false;
+                    } else {
+                        do {
+                            c = NuGetChar(parser);
+                            switch (c) {
+                                case '\r':
+                                    NuGetChar(parser);
+                                case '\n':
+                                case '\0':
+                                    parser->line_buf[len] = '\0';
+                                    return len;
+                                default:
+                                    break;
+                            }
+                        } while (true);
+
+                        return len;
+                    }
+
+                    break;
+                }
+            default:
+                is_done = true;
+            case '\t':
+            case ' ':
+                parser->line_buf[CLAMP_LINE(len)] = c;
+                len++;
+                break;
+        }
+    } while (true);
+}
+
 int NuFParGetLineW(NUFPAR *parser) {
     NUWCHAR c;
     int len;
@@ -545,128 +638,33 @@ int NuFParInterpretWordCTX(NUFPAR *parser, void *ctx) {
     return 0;
 }
 
-int NuFParGetLine(NUFPAR *parser) {
-    bool bVar1;
-    char cVar2;
-    uint uVar3;
-    int local_1c;
-    uint local_10;
-
-    local_1c = 0;
-    if (parser->unicode != '\0') {
-        // uVar3 = NuFParGetLineW(parser);
-        // return uVar3;
-        UNIMPLEMENTED();
-    }
-    local_10 = 0;
-    parser->line_pos = 0;
-    parser->line_num = parser->line_num + 1;
-    bVar1 = false;
-LAB_0026f78b:
-    do {
-        cVar2 = NuGetChar(parser);
-        switch (cVar2) {
-            case '\0':
-            L859:
-                parser->line_buf[local_10] = '\0';
-                return local_10;
-            default:
-            L858:
-                bVar1 = true;
-            case '\t':
-            case ' ':
-                parser->line_buf[parser->line_buf_size - 1U & local_10] = cVar2;
-                local_10 = local_10 + 1;
-                break;
-            case '\n':
-                goto L861;
-            case '\r':
-                NuGetChar(parser);
-            L861:
-                if ((local_10 != 0) && (bVar1))
-                    goto L859;
-                parser->line_num = parser->line_num + 1;
-                bVar1 = false;
-                break;
-            case '\"':
-                local_1c = 1 - local_1c;
-                bVar1 = true;
-                parser->line_buf[parser->line_buf_size - 1U & local_10] = cVar2;
-                local_10 = local_10 + 1;
-                break;
-            case ';':
-                if (local_1c != 0)
-                    goto L858;
-                if ((local_10 == 0) || (!bVar1))
-                    goto LAB_0026f859;
-                goto LAB_0026f8d6;
-        }
-    } while (true);
-LAB_0026f859:
-    bVar1 = false;
-    do {
-        cVar2 = NuGetChar(parser);
-        if (cVar2 == '\n') {
-        LAB_0026f88d:
-            bVar1 = true;
-        } else {
-            if (cVar2 == '\r') {
-                NuGetChar(parser);
-                goto LAB_0026f88d;
-            }
-            if (cVar2 == '\0')
-                goto LAB_0026f88d;
-        }
-    } while (!bVar1);
-    local_10 = 0;
-    parser->line_pos = 0;
-    parser->line_num = parser->line_num + 1;
-    bVar1 = false;
-    goto LAB_0026f78b;
-    while (true) {
-        if (cVar2 == '\r') {
-            NuGetChar(parser);
-            break;
-        }
-        if (cVar2 == '\0')
-            break;
-    LAB_0026f8d6:
-        cVar2 = NuGetChar(parser);
-        if (cVar2 == '\n')
-            break;
-    }
-    parser->line_buf[local_10] = '\0';
-    return local_10;
-}
-
 char NuGetChar(NUFPAR *parser) {
-    char cVar1;
-    int iVar2;
+    char c;
+    int len;
     int length;
 
-    iVar2 = parser->buf_end;
-    if (iVar2 < 0) {
-        iVar2 = 0;
-    }
-    if (parser->buf_end < parser->char_pos) {
-        if (parser->size < parser->buf_end + 1) {
+    int read_to = parser->buf_end >= 0 ? parser->buf_end : 0;
+
+    if (parser->char_pos > parser->buf_end) {
+        if (parser->buf_end + 1 <= parser->size) {
+            len = NuFileRead(parser->file_handle, parser->file_buf,
+                             parser->size - read_to <= 0x1000 ? parser->size - read_to : 0x1000);
+
+            parser->buf_start = parser->buf_end + 1;
+            parser->buf_end += len;
+        } else {
             return '\0';
         }
-        iVar2 = parser->size - iVar2;
-        length = 0x1000;
-        if (iVar2 < 0x1001) {
-            length = iVar2;
-        }
-        iVar2 = NuFileRead(parser->file_handle, parser->file_buf, length);
-        parser->buf_start = parser->buf_end + 1;
-        parser->buf_end = parser->buf_end + iVar2;
-        if (iVar2 == 0) {
+
+        if (len == 0) {
             return '\0';
         }
     }
-    cVar1 = parser->file_buf[parser->char_pos - parser->buf_start];
-    parser->char_pos = parser->char_pos + 1;
-    return cVar1;
+
+    c = parser->file_buf[parser->char_pos - parser->buf_start];
+    parser->char_pos++;
+
+    return c;
 }
 
 NUWCHAR NuGetWChar(NUFPAR *parser) {
