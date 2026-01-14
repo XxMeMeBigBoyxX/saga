@@ -1,6 +1,7 @@
 #ifndef NU2API_SAGA_NUCORE_NUFPAR
 #define NU2API_SAGA_NUCORE_NUFPAR
 
+#include "nu2api.saga/nucore/nustring.h"
 #include "nu2api.saga/nufile/nufile.h"
 
 #include "decomp.h"
@@ -66,6 +67,8 @@ void NuFParClose(NUFPAR *parser);
 NUFPAR *NuFParCreate(char *filename);
 void NuFParDestroy(NUFPAR *parser);
 
+int NuFParGetLine(NUFPAR *parser);
+int NuFParGetLineW(NUFPAR *parser);
 int NuFParGetWord(NUFPAR *parser);
 int NuFParGetWordW(NUFPAR *parser);
 void NuFParUnGetWord(NUFPAR *parser);
@@ -83,9 +86,10 @@ nufpcomfn *NuFParSetInterpreterErrorHandler(nufpcomfn *fn);
 int NuFParInterpretWord(NUFPAR *parser);
 int NuFParInterpretWordCTX(NUFPAR *parser, void *ctx);
 
-char NuGetChar(nufpar_s *parser);
-uint NuFParGetLine(nufpar_s *parser);
+NUWCHAR NuGetWChar(NUFPAR *parser);
 
 C_API_END
+
+char NuGetChar(NUFPAR *parser);
 
 #endif

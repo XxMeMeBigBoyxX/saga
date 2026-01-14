@@ -123,6 +123,98 @@ static int old_line_pos;
 
 #define CLAMP_LINE(pos) pos &(parser->line_buf_size - 1)
 #define CLAMP_WORD(pos) pos &(parser->word_buf_size - 1)
+#define CLAMP_WIDE_LINE(pos) pos &((parser->line_buf_size >> 1) - 1)
+#define CLAMP_WIDE_WORD(pos) pos &((parser->word_buf_size >> 1) - 1)
+
+int NuFParGetLineW(NUFPAR *parser) {
+    NUWCHAR c;
+    int len;
+    NUWCHAR *line;
+    int at_end_of_line;
+    int is_done;
+    int in_quoted_text;
+
+    in_quoted_text = 0;
+    line = (NUWCHAR *)parser->line_buf;
+    len = 0;
+    parser->line_pos = 0;
+    parser->line_num++;
+    is_done = false;
+
+    do {
+        c = NuGetWChar(parser);
+        switch (c) {
+            case '\r':
+                NuGetWChar(parser);
+            case '\n':
+                if (len == 0 || !is_done) {
+                    parser->line_num++;
+                    is_done = false;
+
+                    break;
+                }
+            case '\0':
+                line[len] = '\0';
+                return len;
+            case '"':
+                in_quoted_text = 1 - in_quoted_text;
+                is_done = true;
+                line[CLAMP_WIDE_WORD(len)] = c;
+                len++;
+                break;
+            case ';':
+                if (!in_quoted_text) {
+                    if (len == 0 || !is_done) {
+                        at_end_of_line = false;
+
+                        do {
+                            c = NuGetWChar(parser);
+                            switch (c) {
+                                case '\r':
+                                    NuGetWChar(parser);
+                                case '\n':
+                                case '\0':
+                                    at_end_of_line = true;
+                                    break;
+                                default:
+                                    break;
+                            }
+                        } while (!at_end_of_line);
+
+                        len = 0;
+                        parser->line_pos = 0;
+                        parser->line_num++;
+                        is_done = false;
+                    } else {
+                        do {
+                            c = NuGetWChar(parser);
+                            switch (c) {
+                                case '\r':
+                                    NuGetWChar(parser);
+                                case '\n':
+                                case '\0':
+                                    line[len] = '\0';
+                                    return len;
+                                default:
+                                    break;
+                            }
+                        } while (true);
+
+                        return len;
+                    }
+
+                    break;
+                }
+            default:
+                is_done = true;
+            case '\t':
+            case ' ':
+                line[CLAMP_WIDE_WORD(len)] = c;
+                len++;
+                break;
+        }
+    } while (true);
+}
 
 int NuFParGetWord(NUFPAR *parser) {
     int len;
@@ -195,9 +287,6 @@ int NuFParGetWord(NUFPAR *parser) {
     parser->word_buf[CLAMP_WORD(len)] = '\0';
     return len;
 }
-
-#define CLAMP_WIDE_LINE(pos) pos &((parser->line_buf_size >> 1) - 1)
-#define CLAMP_WIDE_WORD(pos) pos &((parser->word_buf_size >> 1) - 1)
 
 int NuFParGetWordW(NUFPAR *parser) {
     NUWCHAR *line = (NUWCHAR *)parser->line_buf;
@@ -456,7 +545,7 @@ int NuFParInterpretWordCTX(NUFPAR *parser, void *ctx) {
     return 0;
 }
 
-uint NuFParGetLine(nufpar_s *parser) {
+int NuFParGetLine(NUFPAR *parser) {
     bool bVar1;
     char cVar2;
     uint uVar3;
@@ -550,7 +639,7 @@ LAB_0026f859:
     return local_10;
 }
 
-char NuGetChar(nufpar_s *parser) {
+char NuGetChar(NUFPAR *parser) {
     char cVar1;
     int iVar2;
     int length;
@@ -578,4 +667,17 @@ char NuGetChar(nufpar_s *parser) {
     cVar1 = parser->file_buf[parser->char_pos - parser->buf_start];
     parser->char_pos = parser->char_pos + 1;
     return cVar1;
+}
+
+NUWCHAR NuGetWChar(NUFPAR *parser) {
+    unsigned char lo;
+    unsigned char hi;
+    NUWCHAR c;
+
+    lo = NuGetChar(parser);
+    hi = NuGetChar(parser);
+
+    c = lo + (hi << 8);
+
+    return c;
 }
