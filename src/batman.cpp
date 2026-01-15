@@ -2,6 +2,7 @@
 
 #include "globals.h"
 #include "init/init.hpp"
+#include "nu2api.saga/nuplatform/nuplatform.hpp"
 
 extern "C" int32_t NuMain(int32_t argc, char **argv) {
     InitOnce(argc, argv);
@@ -21,6 +22,9 @@ extern "C" int32_t NuMain(int32_t argc, char **argv) {
 }
 
 int main(int argc, char **argv) {
+    NuPlatform::Create();
+    NuPlatform::ms_instance->SetCurrentPlatform(ANDROID_ETC1_PLATFORM);
+
     NuMain(argc, argv);
 
     return 0;

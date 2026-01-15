@@ -71,7 +71,8 @@ set(CMAKE_CXX_STANDARD 11)
 
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-exceptions -fno-rtti")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-exceptions -fno-rtti -Wwrite-strings")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wwrite-strings")
 
 set(CMAKE_BUILD_TYPE Debug)
 
@@ -98,7 +99,8 @@ set(SAGA_SOURCE_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/numath/nutrig.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/numemory/numemory.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nuandroid/nuios.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/implode/implode.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/deflate/deflate.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/deflate/deflate_noopt.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/globals.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/world.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/level.cpp
@@ -116,6 +118,8 @@ set(SAGA_SOURCE_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/numath/nuvec4.c
     ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nucore/nupad.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nucore/nuvideo.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nuplatform/nuplatform.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nu3d/nutex.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/init/init.cpp
 )
 
@@ -130,6 +134,7 @@ set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/game/level.cpp PROPE
 set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/game/area.cpp PROPERTIES COMPILE_OPTIONS "-O3")
 set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/game/timer.cpp PROPERTIES COMPILE_OPTIONS "-O3")
 set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/gamelib/nuwind.cpp PROPERTIES COMPILE_OPTIONS "-O3")
+set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/deflate/deflate.cpp PROPERTIES COMPILE_OPTIONS "-O3")
 
 add_executable(saga ${SAGA_SOURCE_FILES})
 

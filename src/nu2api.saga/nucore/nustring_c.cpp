@@ -73,6 +73,9 @@ ssize_t NuStrCpy(char *dst, const char *src) {
 }
 
 void NuStrFixExtPlatform(char *dst, char *src, char *ext, int dst_size, char *platform_string) {
+    LOG_DEBUG("dst=%p, src=%s, ext=%s, dst_size=%d, platform_string=%s", dst, src, ext, dst_size,
+              platform_string != NULL ? platform_string : "NULL");
+
     char *period;
     char *sep;
     char *win_sep;

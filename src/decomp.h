@@ -7,7 +7,7 @@
 #define SAGA_NOMATCH __attribute__((section(".text.nomatch")))
 #define UNIMPLEMENTED(...) __unimplemented(__FILE__, __LINE__, __func__, #__VA_ARGS__)
 
-static void __attribute__((noreturn)) __unimplemented(const char *file, int line, const char *func, const char *msg) {
+static void *__attribute__((noreturn)) __unimplemented(const char *file, int line, const char *func, const char *msg) {
     fprintf(stderr, "%s:%d: %s: UNIMPLEMENTED: %s\n", file, line, func, msg);
     exit(EXIT_FAILURE);
 }

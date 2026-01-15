@@ -7,6 +7,7 @@
 #include "game/level.h"
 #include "game/mission.h"
 #include "globals.h"
+#include "nu2api.saga/nu3d/nutex.h"
 #include "nu2api.saga/nucore/nufpar.h"
 #include "nu2api.saga/nucore/nustring.h"
 #include "nu2api.saga/nufile/nufile.h"
@@ -16,6 +17,7 @@
 void NuMtlInitEx(void **bufferBase, int32_t usually512) {
     // iVar2 = AndroidOBBUtils::LookupPackagePath(path, 1);
     char *path = "res/main.1060.com.wb.lego.tcs.obb";
+    // char *path = "/home/fabian/git/lstcs-decomp/game/GAME.DAT";
 
     nudathdr_s *dat = NuDatOpen(path, bufferBase, 0);
     NuDatSet(dat);
@@ -600,6 +602,9 @@ void InitGameAfterConfig(void) {
 }
 
 void LoadPermData(BGPROCINFO *proc) {
+    void *legalTex = (void **)((int)superbuffer_end + -0x400000);
+    int32_t legal_tid = NuTexRead("stuff\\legal\\LEGAL_ENGLISH", &legalTex);
+
     CDataList =
         ConfigureCharacterList("chars\\chars.txt", &permbuffer_ptr, &permbuffer_end, 340, &CHARCOUNT, 288, &GCDataList);
     for (int i = 0; i < CHARCOUNT; i++) {

@@ -3,7 +3,7 @@
 #include "nu2api.saga/nucore/nustring.h"
 #include "nu2api.saga/nuthread/nuthread.h"
 
-#include "implode/implode.h"
+#include "deflate/deflate.h"
 
 #include "decomp.h"
 
@@ -44,6 +44,63 @@ size_t BinarySearch(uint32_t element, uint32_t *array, size_t length) {
     }
 
     return -1;
+}
+
+static nudatfileinfo_s *unpack_file_info = NULL;
+static nudatopenfileinfo_s *unpack_file_odi = 0;
+static int64_t unpack_file_pos = -1;
+
+void NuDatFileDecodeNewFile(nudatfileinfo_s *file, nudatopenfileinfo_s *openFile) {
+    unpack_file_info = file;
+    unpack_file_odi = openFile;
+    unpack_file_pos = file->pos.l;
+    decode_buffer_left = 0;
+}
+
+void NuDatFileDecodeNext(void) {
+    uint uVar1;
+    int size;
+    uint uVar2;
+    int buffer[3];
+    char buf[24];
+    nudatopenfileinfo_s *openFile;
+    nudatfileinfo_s *file;
+    nudatopenfileinfo_s *openFile2;
+
+    if (unpack_file_info->compressionMode == 2) {
+        NuFileRead(unpack_file_odi->file, buf, 12);
+        read_buffer_decoded_size = ExplodeBufferSize(buf);
+        size = ExplodeCompressedSize(buf);
+        read_buffer_size = size + -12;
+        NuFileRead(unpack_file_odi->file, read_buffer, read_buffer_size);
+
+        file = unpack_file_info;
+        uVar2 = read_buffer_size + 0xc;
+        uVar1 = (unpack_file_info->pos2).u[0];
+        size = (unpack_file_info->pos2).i[1];
+        (unpack_file_info->pos2).i[0] = uVar2 + uVar1;
+        (file->pos2).i[1] = ((int)uVar2 >> 0x1f) + size + (uint)CARRY4(uVar2, uVar1);
+        openFile = unpack_file_odi;
+        size = (unpack_file_info->pos2).i[1];
+        (unpack_file_odi->position).i[0] = (unpack_file_info->pos2).i[0];
+        (openFile->position).i[1] = size;
+    } else if (unpack_file_info->compressionMode == 3) {
+        NuFileRead(unpack_file_odi->file, buffer, 0xc);
+        read_buffer_decoded_size = buffer[2];
+        read_buffer_size = buffer[1];
+        NuFileRead(unpack_file_odi->file, read_buffer, buffer[1]);
+
+        file = unpack_file_info;
+        uVar2 = read_buffer_size + 0xc;
+        uVar1 = (unpack_file_info->pos2).u[0];
+        size = (unpack_file_info->pos2).i[1];
+        (unpack_file_info->pos2).i[0] = uVar2 + uVar1;
+        (file->pos2).i[1] = ((int)uVar2 >> 0x1f) + size + (uint)CARRY4(uVar2, uVar1);
+        openFile2 = unpack_file_odi;
+        size = (unpack_file_info->pos2).i[1];
+        (unpack_file_odi->position).i[0] = (unpack_file_info->pos2).i[0];
+        (openFile2->position).i[1] = size;
+    }
 }
 
 int32_t NuDatFileGetFreeInfo(void) {
@@ -219,8 +276,7 @@ NUFILE NuDatFileOpen(NUDATHDR *header, char *name, NUFILEMODE mode) {
                 lVar2 = NuFileSeek(header->openFiles[fileIndex].file, dat_file_infos[index].pos.l, NUFILE_SEEK_START);
             } while (lVar2 < 0);
             if ((dat_file_infos[index].compressionMode == 2) || (dat_file_infos[index].compressionMode == 3)) {
-                // NuDatFileDecodeNewFile(dat_file_infos + index, header->openFiles + fileIndex);
-                UNIMPLEMENTED();
+                NuDatFileDecodeNewFile(&dat_file_infos[index], &header->openFiles[fileIndex]);
             }
             NuThreadCriticalSectionEnd(file_criticalsection);
             return index + 0x800;
@@ -324,6 +380,8 @@ int32_t NuDatFileLoadBuffer(nudathdr_s *dat, char *name, void *dest, int32_t max
 }
 
 int32_t NuDatFileRead(NUFILE file, void *dest, int32_t size) {
+    LOG_DEBUG("file=0x%X dest=%p size=%d", file, dest, size);
+
     nudathdr_s *pnVar1;
     uint uVar2;
     size_t n;
@@ -377,24 +435,26 @@ int32_t NuDatFileRead(NUFILE file, void *dest, int32_t size) {
         pos = 0;
         for (; size != 0; size = size - n) {
             if (decode_buffer_left == 0) {
-                // NuDatFileDecodeNext();
-                UNIMPLEMENTED();
+                NuDatFileDecodeNext();
 
                 if (read_buffer_size == read_buffer_decoded_size) {
                     memcpy(decode_buffer, read_buffer, read_buffer_size);
                 } else if (dat_file_infos[fileIndex].compressionMode == 2) {
                     ExplodeBufferNoHeader(read_buffer, decode_buffer, read_buffer_size, read_buffer_decoded_size);
                 } else if (dat_file_infos[fileIndex].compressionMode == 3) {
-                    InflateBuffer(decode_buffer, read_buffer_decoded_size, read_buffer, read_buffer_size);
+
+                    InflateBuffer(decode_buffer, read_buffer_decoded_size, (uint8_t *)read_buffer, read_buffer_size);
                 }
 
                 decode_buffer_pos = 0;
                 decode_buffer_left = read_buffer_decoded_size;
             }
+
             n = decode_buffer_left;
             if (size < decode_buffer_left) {
                 n = size;
             }
+
             memcpy(dest, decode_buffer + decode_buffer_pos, n);
             dest = (void *)((int)dest + n);
             decode_buffer_pos = n + decode_buffer_pos;
