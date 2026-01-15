@@ -6,6 +6,8 @@
 #include "decomp.h"
 #include "export.h"
 
+#include "nu2api.saga/nucore/types.h"
+
 enum nufilemode_e {
     NUFILE_MODE_READ = 0,
     NUFILE_MODE_WRITE = 1,
@@ -89,6 +91,7 @@ NuFileDevice *NuFileGetDeviceFromPath(const char *path);
 uint32_t NuFileOpenSize(NUFILE file);
 int32_t NuFileSeek(NUFILE file, int64_t offset, NUFILESEEK seekMode);
 int32_t NuFileLoadBuffer(const char *name, void *dest, int32_t size);
+int32_t NuFileLoadBufferVP(char *filepath, VARIPTR *buf, VARIPTR *buf_end);
 int32_t NuFileExists(const char *name);
 uint64_t NuFileSize(const char *name);
 uint64_t NuFilePos(NUFILE file);

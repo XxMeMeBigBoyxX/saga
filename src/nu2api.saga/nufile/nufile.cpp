@@ -75,3 +75,13 @@ int32_t NuFileSeek(NUFILE file, int64_t offset, NUFILESEEK seekMode) {
         return ((NuFileAndroidAPK *)file)->SeekFile(offset, whence);
     }
 }
+
+int32_t NuFileLoadBufferVP(char *filepath, VARIPTR *buf, VARIPTR *buf_end) {
+    int32_t len;
+
+    len = NuFileLoadBuffer(filepath, buf, buf_end->char_ptr - buf->char_ptr);
+
+    buf->char_ptr = buf->char_ptr + len;
+
+    return len;
+}
