@@ -4,8 +4,8 @@
 #include "game/cheat.h"
 #include "game/level.h"
 #include "globals.h"
-#include "nu2api.saga/nucore/nufpar.h"
 #include "nu2api.saga/nucore/nustring.h"
+#include "nu2api.saga/nufile/nufpar.h"
 
 AREADATA *ADataList = NULL;
 AREADATA *HUB_ADATA = NULL;

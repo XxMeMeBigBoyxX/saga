@@ -1,8 +1,7 @@
 #include "game/character.h"
 
-#include "globals.h"
-#include "nu2api.saga/nucore/nufpar.h"
 #include "nu2api.saga/nucore/nustring.h"
+#include "nu2api.saga/nufile/nufpar.h"
 
 #include <string.h>
 

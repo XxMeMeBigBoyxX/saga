@@ -3,8 +3,8 @@
 #include "game/area.h"
 #include "game/character.h"
 #include "game/store.h"
-#include "nu2api.saga/nucore/nufpar.h"
 #include "nu2api.saga/nucore/nustring.h"
+#include "nu2api.saga/nufile/nufpar.h"
 
 static COLLECTID *TempCollectID = NULL;
 

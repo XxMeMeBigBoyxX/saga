@@ -1,6 +1,6 @@
-#include "nu2api.saga/nucore/nufpar.h"
 #include "nu2api.saga/nucore/nustring.h"
 #include "nu2api.saga/nufile/nufile.h"
+#include "nu2api.saga/nufile/nufpar.h"
 
 #include <string.h>
 

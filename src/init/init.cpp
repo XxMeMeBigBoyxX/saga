@@ -8,7 +8,6 @@
 #include "game/mission.h"
 #include "globals.h"
 #include "nu2api.saga/nu3d/nutex.h"
-#include "nu2api.saga/nucore/nufpar.h"
 #include "nu2api.saga/nucore/nustring.h"
 #include "nu2api.saga/nufile/nufile.h"
 #include "nu2api.saga/numemory/numemory.h"
