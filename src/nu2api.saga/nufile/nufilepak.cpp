@@ -1,4 +1,5 @@
 #include "nu2api.saga/nufile/nufilepak.h"
+#include "nu2api.saga/nucore/nustring.h"
 #include "nu2api.saga/nufile/nufile.h"
 
 static NUFILEPAK_ERROR fpk_err;
@@ -52,7 +53,7 @@ void *NuFilePakLoadKey(char *filepath, VARIPTR *buf, VARIPTR buf_end, int alignm
 
     fpk_err = NUFILEPAK_ERROR_NONE;
 
-    if (alignment >= 0x2001) {
+    if (alignment > 0x2000) {
         fpk_err = NUFILEPAK_ERROR_ALIGNMENT;
         return NULL;
     }
@@ -117,4 +118,69 @@ void *NuFilePakLoadKey(char *filepath, VARIPTR *buf, VARIPTR buf_end, int alignm
     }
 
     return (void *)hdr;
+}
+
+static NUFILEPAKITEM *GetItems(NUFILEPAKHDR *hdr) {
+    switch (hdr->type) {
+        case 0x12345678:
+            return (NUFILEPAKITEM *)((NUFILEPAKHDR_V0 *)hdr + 1);
+        default:
+            return (NUFILEPAKITEM *)((NUFILEPAKHDR_V1 *)hdr + 1);
+        case 0x1234567a:
+            return (NUFILEPAKITEM *)(hdr + 1);
+    }
+}
+
+int NuFilePakGetItem(void *hdr_ptr, char *item_name) {
+    int i;
+    NUFILEPAKITEM *items;
+    NUFILEPAKHDR_V0 *hdr_v0;
+    NUFILEPAKHDR *hdr;
+
+    fpk_err = NUFILEPAK_ERROR_NONE;
+
+    hdr_v0 = (NUFILEPAKHDR_V0 *)hdr_ptr;
+    hdr = (NUFILEPAKHDR *)hdr_ptr;
+    items = GetItems(hdr);
+
+    for (i = 0; hdr->item_count > i; i++) {
+        if (NuStrICmp((char *)hdr_v0 + items[i].name_offset, item_name) == 0) {
+            if (items[i].attr.removed) {
+                return 0;
+            }
+
+            return i + 1;
+        }
+    }
+
+    return 0;
+}
+
+int NuFilePakGetItemInfo(void *hdr_ptr, int item_handle, void **addr, int *size) {
+    NUFILEPAKHDR *hdr;
+    NUFILEPAKITEM *item;
+
+    fpk_err = NUFILEPAK_ERROR_NONE;
+
+    hdr = (NUFILEPAKHDR *)hdr_ptr;
+    item_handle -= 1;
+
+    if (item_handle > -1 && item_handle < hdr->item_count) {
+        item = GetItems(hdr);
+        item = &item[item_handle];
+
+        if (!item->attr.removed) {
+            if (addr != NULL) {
+                *addr = (void *)((char *)hdr_ptr + item->data_offset);
+            }
+
+            if (size != NULL) {
+                *size = item->size;
+            }
+
+            return 1;
+        }
+    }
+
+    return 0;
 }
