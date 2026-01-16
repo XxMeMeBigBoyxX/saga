@@ -187,3 +187,15 @@ int64_t NuMemFilePos(NUFILE file) {
 
     return (int64_t)(memfiles[file].ptr - memfiles[file].buffer);
 }
+
+int NuMemFileOpenSize(NUFILE file) {
+    file -= 0x400;
+
+    return memfiles[file].end - memfiles[file].buffer;
+}
+
+void *NuMemFileAddr(NUFILE file) {
+    file -= 0x400;
+
+    return (void *)memfiles[file].ptr;
+}

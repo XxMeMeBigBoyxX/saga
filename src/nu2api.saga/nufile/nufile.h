@@ -127,6 +127,7 @@ int NuMemFileRead(NUFILE file, void *buf, int size);
 int NuMemFileWrite(NUFILE file, void *data, int size);
 int64_t NuMemFileSeek(NUFILE file, int64_t offset, NUFILESEEK whence);
 int64_t NuMemFilePos(NUFILE file);
+void *NuMemFileAddr(NUFILE file);
 
 // Memory card functions
 int32_t NuMcClose(int32_t, int32_t);
@@ -150,6 +151,8 @@ int32_t NuDatFileLoadBuffer(NUDATHDR *dat, char *name, void *dest, int32_t maxSi
 void NuFileUpCase(void *param_1, char *path);
 
 C_API_END
+
+int NuMemFileOpenSize(NUFILE file);
 
 #ifdef __cplusplus
 
