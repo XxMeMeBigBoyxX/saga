@@ -7,6 +7,8 @@
 #include "nu2api.saga/nufile/nufile.h"
 #include "nu2api.saga/nuthread/nuthread.h"
 
+#include <string.h>
+
 namespace NuFile {
     namespace SeekOrigin {
         typedef int32_t T;
@@ -153,6 +155,8 @@ void NuFileClose(NUFILE file) {
 }
 
 NUFILE NuFileOpenDF(char *filepath, NUFILEMODE mode, NUDATHDR *header, int32_t _unused) {
+    LOG_DEBUG("filepath=%s, mode=%d", filepath, mode);
+
     char buf[256];
     int64_t len;
     NUFILE_DEVICE *device;

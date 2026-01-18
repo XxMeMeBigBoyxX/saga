@@ -43,9 +43,39 @@ int DEVHOST_Interrogate(NUFILE_DEVICE *device) {
 }
 
 int DEV_FormatName(NUFILE_DEVICE *device, char *formatted_name, char *path, int buf_size) {
-    int device_name_len;
+    int n;
+    int iVar1;
+    int len;
+    char *prefix;
+    char buf[512];
+    char sep;
 
-    device_name_len = NuStrLen(device->name);
+    prefix = device->name;
+    n = NuStrLen(prefix);
+    iVar1 = NuStrNICmp(path, prefix, n);
+    if (iVar1 == 0) {
+        iVar1 = NuStrLen(prefix);
+        sep = path[iVar1];
+        if ((sep == '/') || (sep == '\\')) {
+            NuStrCpy(buf, path);
+        } else {
+            NuStrCpy(buf, device->root);
+            NuStrCat(buf, device->cur_dir);
+            NuStrCat(buf, path + iVar1);
+        }
+    } else {
+        NuStrCpy(buf, device->root);
+        NuStrCat(buf, device->cur_dir);
+        NuStrCat(buf, path);
+    }
+    iVar1 = NuStrLen(device->root);
+    NuFileCorrectSlashes(device, buf + iVar1);
+    NuFileReldirFix(device, buf);
+    len = NuStrLen(buf);
+    if (len < buf_size) {
+        NuStrCpy(formatted_name, buf);
+    }
+    return (uint)(len < buf_size);
 }
 
 int8_t NuFileReadChar(NUFILE file) {

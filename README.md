@@ -1,6 +1,6 @@
 [![Target build](https://github.com/ttdecomp/saga/actions/workflows/build-target.yaml/badge.svg)](https://github.com/ttdecomp/saga/actions/workflows/build-target.yaml)
 [![Linux i686 build](https://github.com/ttdecomp/saga/actions/workflows/build-linux-i686.yaml/badge.svg)](https://github.com/ttdecomp/saga/actions/workflows/build-linux-i686.yaml)
-![Progress](https://img.shields.io/badge/matching-1.30%25-red)
+![Progress](https://img.shields.io/badge/matching-1.49%25-red)
 
 # Decompilation of "LEGO Star Wars: The Complete Saga" 
 
@@ -21,6 +21,8 @@ Android x86 build:
 `cmake -B build -DBUILD_FOR_HOST=OFF && cmake --build build`
 Host build:
 `cmake -B build -DBUILD_FOR_HOST=ON && cmake --build build`
+Tests:
+`cmake -B build -DBUILD_FOR_HOST=ON && cmake --build build && ctest --output-on-failure --test-dir build`
 
 ## Contributing
 

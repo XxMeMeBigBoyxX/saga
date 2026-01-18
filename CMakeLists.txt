@@ -128,24 +128,52 @@ set(SAGA_INCLUDE_DIRS
     ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 
-set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nufile/nupsfile.cpp PROPERTIES COMPILE_OPTIONS "-O2")
-set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nuandroid/nuios.cpp PROPERTIES COMPILE_OPTIONS "-O2")
-set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/game/world.cpp PROPERTIES COMPILE_OPTIONS "-O3")
-set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/game/level.cpp PROPERTIES COMPILE_OPTIONS "-O3")
-set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/game/area.cpp PROPERTIES COMPILE_OPTIONS "-O3")
-set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/game/timer.cpp PROPERTIES COMPILE_OPTIONS "-O3")
-set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/gamelib/nuwind.cpp PROPERTIES COMPILE_OPTIONS "-O3")
-set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/deflate/deflate.cpp PROPERTIES COMPILE_OPTIONS "-O3")
-
 add_executable(saga ${SAGA_SOURCE_FILES})
-
 set_target_properties(saga PROPERTIES ENABLE_EXPORTS TRUE)
-
 target_include_directories(saga PUBLIC ${SAGA_INCLUDE_DIRS})
 
+
 # set __FILENAME__ macro to relative path from src/
-foreach(f ${SAGA_SOURCE_FILES})
+function(set_filename_macro f)
     get_filename_component(FILENAME_ABS ${f} ABSOLUTE)
     file(RELATIVE_PATH FILENAME_REL ${CMAKE_CURRENT_SOURCE_DIR}/src ${FILENAME_ABS})
     set_source_files_properties(${f} PROPERTIES COMPILE_DEFINITIONS "__FILENAME__=\"src/${FILENAME_REL}\"")
+endfunction()
+
+if(BUILD_FOR_HOST)
+    add_library(saga_shared SHARED ${SAGA_SOURCE_FILES})
+    target_include_directories(saga_shared PUBLIC ${SAGA_INCLUDE_DIRS})
+
+    include(CTest)
+    enable_testing()
+    
+    function(add_saga_test file test_description)
+        get_filename_component(test_name ${file} NAME_WE)
+        add_executable(${test_name} ${file})
+        target_include_directories(${test_name} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
+        target_link_libraries(${test_name} saga_shared)
+        add_test(
+            NAME ${test_name}
+            COMMAND ${test_name}
+            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        )
+        set_target_properties(${test_name} PROPERTIES CXX_STANDARD 23)
+        set_tests_properties(${test_name} PROPERTIES LABELS "${test_description}")
+        set_filename_macro(${file})
+    endfunction()
+
+    add_saga_test(test/dat_file_read.cpp "Open DAT file and read badwords.txt")
+else()
+    set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nufile/nupsfile.cpp PROPERTIES COMPILE_OPTIONS "-O2")
+    set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nuandroid/nuios.cpp PROPERTIES COMPILE_OPTIONS "-O2")
+    set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/game/world.cpp PROPERTIES COMPILE_OPTIONS "-O3")
+    set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/game/level.cpp PROPERTIES COMPILE_OPTIONS "-O3")
+    set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/game/area.cpp PROPERTIES COMPILE_OPTIONS "-O3")
+    set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/game/timer.cpp PROPERTIES COMPILE_OPTIONS "-O3")
+    set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/gamelib/nuwind.cpp PROPERTIES COMPILE_OPTIONS "-O3")
+    set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/deflate/deflate.cpp PROPERTIES COMPILE_OPTIONS "-O3")
+endif()
+
+foreach(source_file IN LISTS SAGA_SOURCE_FILES)
+    set_filename_macro(${source_file})
 endforeach()
