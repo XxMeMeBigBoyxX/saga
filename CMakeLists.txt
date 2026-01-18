@@ -169,6 +169,7 @@ if(BUILD_FOR_HOST)
 
     add_saga_test(test/dat_file_read.cpp "Open DAT file and read badwords.txt")
 else()
+    set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nufile/nufile.c PROPERTIES COMPILE_OPTIONS "-O2")
     set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nufile/nupsfile.cpp PROPERTIES COMPILE_OPTIONS "-O2")
     set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nuandroid/nuios.cpp PROPERTIES COMPILE_OPTIONS "-O2")
     set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/game/world.cpp PROPERTIES COMPILE_OPTIONS "-O3")
