@@ -179,6 +179,7 @@ void NuFileClose(NUFILE file);
 int32_t NuFileStatus(NUFILE file);
 NUFILE NuFileOpenDF(char *filepath, NUFILEMODE mode, NUDATHDR *header, int32_t _unused);
 int NuFileRead(NUFILE file, void *buf, int size);
+int NuFileWrite(NUFILE file, void *data, int size);
 NUFILE_DEVICE *NuFileGetDeviceFromPath(char *path);
 int64_t NuFileOpenSize(NUFILE file);
 int64_t NuFileSeek(NUFILE file, int64_t offset, NUFILESEEK seekMode);
@@ -223,6 +224,7 @@ int32_t NuMcClose(int fd, int async);
 int NuMcSeek(int fd, int offset, NUFILESEEK mode, int async);
 int NuMcOpenSize(int fd);
 int NuMcRead(int fd, void *buf, int size, int async);
+int NuMcWrite(int fd, void *data, int size, int async);
 
 // NuDat functions
 NUDATHDR *NuDatOpen(char *filepath, VARIPTR *buf, int *_unused);

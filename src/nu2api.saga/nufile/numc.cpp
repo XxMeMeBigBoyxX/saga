@@ -20,6 +20,10 @@ int NuMcRead(int fd, void *buf, int size, int async) {
     return 0;
 }
 
+int NuMcWrite(int fd, void *data, int size, int async) {
+    return 0;
+}
+
 int NuMcFileOpenSize(NUFILE file) {
     file -= 0x1000;
 

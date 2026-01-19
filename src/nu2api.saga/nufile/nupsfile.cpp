@@ -25,7 +25,7 @@ NUPSFILE NuPSFileOpen(char *filepath, NUFILEMODE mode) {
     NUPSFILE ps_file;
     FILE *file;
 
-    LOG_DEBUG("name=%s, mode=%d", name, mode);
+    LOG_DEBUG("name=%s, mode=%d", filepath, mode);
 
     if (mode != 5) {
         memset(path, 0, sizeof(path));
@@ -57,7 +57,7 @@ NUPSFILE NuPSFileOpen(char *filepath, NUFILEMODE mode) {
         if (file != NULL) {
             g_fileHandles[ps_file] = file;
 
-            LOG_DEBUG("Opened file %s with index %d", path, i);
+            LOG_DEBUG("Opened file %s with index %d", path, ps_file);
             return ps_file;
         }
     }

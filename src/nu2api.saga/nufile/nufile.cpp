@@ -496,6 +496,20 @@ int NuFileRead(NUFILE file, void *buf, int size) {
     }
 }
 
+int NuFileWrite(NUFILE file, void *data, int size) {
+    if (file >= 0x1000) {
+        return NuMcWrite(file - 0x1000, data, size, 0);
+    }
+
+    if (file >= 0x400) {
+        return NuMemFileWrite(file, data, size);
+    }
+
+    file -= 1;
+
+    return NuPSFileWrite(file, data, size);
+}
+
 int8_t NuFileReadChar(NUFILE file) {
     int8_t value = 0;
     NuFileRead(file, &value, sizeof(int8_t));
