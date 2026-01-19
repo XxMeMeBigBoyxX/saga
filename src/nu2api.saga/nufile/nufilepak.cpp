@@ -49,7 +49,7 @@ void *NuFilePakLoadKey(char *filepath, VARIPTR *buf, VARIPTR buf_end, int alignm
                        unsigned int key_len) {
     NUFILEPAKHDR *hdr;
     int len;
-    int stored_sum;
+    unsigned int stored_sum;
 
     fpk_err = NUFILEPAK_ERROR_NONE;
 
@@ -132,7 +132,7 @@ static NUFILEPAKITEM *GetItems(NUFILEPAKHDR *hdr) {
 }
 
 int NuFilePakGetItem(void *hdr_ptr, char *item_name) {
-    int i;
+    unsigned int i;
     NUFILEPAKITEM *items;
     NUFILEPAKHDR_V0 *hdr_v0;
     NUFILEPAKHDR *hdr;

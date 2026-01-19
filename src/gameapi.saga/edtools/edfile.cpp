@@ -218,24 +218,25 @@ void EdFileWrite(void *data, int len) {
     int chunk_len;
 
     while (len > 0) {
-        do {
-            chunk_len = len <= 0x1000 - edfile_buffer_pointer ? len : 0x1000 - edfile_buffer_pointer;
+        while (true) {
+            chunk_len = MIN(0x1000 - edfile_buffer_pointer, len);
 
             memcpy(edfile_buffer + edfile_buffer_pointer, data, chunk_len);
 
             edfile_buffer_pointer += chunk_len;
             len -= chunk_len;
-            data = (void *)((char *)data + chunk_len);
+            data = (void *)((int)data + chunk_len);
 
             if (edfile_buffer_pointer != 0x1000) {
                 break;
             }
 
             EdFileFlushBuffer();
+
             if (len < 1) {
                 return;
             }
-        } while (true);
+        }
     }
 }
 

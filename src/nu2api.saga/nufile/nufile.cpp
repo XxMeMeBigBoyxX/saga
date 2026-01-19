@@ -351,7 +351,7 @@ int64_t NuFileSize(char *filepath) {
     if (curr_dat != NULL) {
         file = NuDatFileFindTree(curr_dat, filepath);
         if (file >= 0) {
-            return (uint64_t)curr_dat->file_info[file].file_len;
+            return (uint64_t)curr_dat->file_info[file].decompressed_len;
         }
     }
 
@@ -1316,7 +1316,7 @@ int NuMemFileRead(NUFILE file, void *buf, int size) {
 
     file -= 0x400;
 
-    size = memfiles[file].end - memfiles[file].ptr + 1 <= size ? memfiles[file].end - memfiles[file].ptr + 1 : size;
+    size = MIN(memfiles[file].end - memfiles[file].ptr + 1, size);
 
     if (size != 0) {
         memcpy(buf, memfiles[file].ptr, size);
@@ -1330,7 +1330,7 @@ int NuMemFileRead(NUFILE file, void *buf, int size) {
 int NuMemFileWrite(NUFILE file, void *data, int size) {
     file -= 0x400;
 
-    size = memfiles[file].end - memfiles[file].ptr + 1 <= size ? memfiles[file].end - memfiles[file].ptr + 1 : size;
+    size = MIN(memfiles[file].end - memfiles[file].ptr + 1, size);
 
     if (size != 0) {
         memcpy(memfiles[file].ptr, data, size);
