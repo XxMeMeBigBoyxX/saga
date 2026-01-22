@@ -5,18 +5,25 @@
 
 #include "decomp.h"
 
-static inline uint32_t ReverseBits(uint32_t i) {
-    i = (i & 0x5555) << 1 | (i & 0xaaaa) >> 1;
-    i = (i & 0x3333) << 2 | (i & 0xcccc) >> 2;
-    i = (i & 0xf0f) << 4 | (i & 0xf0f0) >> 4;
-    i = (i & 0xff) << 8 | i >> 8;
-    return i;
+static inline int32_t ReverseBits(int32_t in, uint8_t byteValue) {
+    int32_t out;
+
+    out = (in & 0xaaaa) >> 1 | (in & 0x5555) << 1;
+    out = (out & 0xcccc) >> 2 | (out & 0x3333) << 2;
+    out = (out & 0xf0f0) >> 4 | (out & 0xf0f) << 4;
+    out = (int32_t)(((uint32_t)out >> 8) | ((out & 0xff) << 8)) >> (0x10 - byteValue);
+
+    return out;
 }
 
 uint32_t BuildHuffmanTree(DEFHUFFMAN *tree, uint8_t *codeLengths, int32_t symbolCount) {
+    uint32_t nextCode[16];
+    uint32_t lengthCount[17];
+    uint32_t symbolTableIndex;
+    int32_t code;
+
     LOG_DEBUG("tree=%p, codeLengths=%p, symbolCount=%d", tree, codeLengths, symbolCount);
 
-    int32_t lengthCount[17];
     memset(lengthCount, 0, sizeof(lengthCount));
     memset(tree->fastLookup, -1, sizeof(tree->fastLookup));
 
@@ -24,40 +31,36 @@ uint32_t BuildHuffmanTree(DEFHUFFMAN *tree, uint8_t *codeLengths, int32_t symbol
         lengthCount[codeLengths[i]]++;
     }
 
-    uint32_t nextCode[16];
-    nextCode[0] = 0;
     lengthCount[0] = 0;
-    tree->baseCode[0] = lengthCount[1] << 15;
-    tree->numCodes[0] = lengthCount[1];
+    nextCode[1] = 0;
+    tree->numCodes[0] = 0;
 
-    for (int32_t i = 1; i <= 15; i++) {
-        nextCode[i] = (nextCode[i - 1] + lengthCount[i - 1]) * 2;
-        tree->firstCode[i] = (int16_t)nextCode[i];
-        tree->baseCode[i] = (nextCode[i] + lengthCount[i]) << (16 - i);
-        tree->numCodes[i] = tree->numCodes[i - 1] + (int16_t)lengthCount[i];
+    for (uint32_t len = 1; len < 16; len++) {
+        tree->numCodes[len] = tree->numCodes[len - 1] + lengthCount[len - 1];
+        tree->firstCode[len] = nextCode[len];
+        tree->baseCode[len - 1] = (nextCode[len] + lengthCount[len]) << (16 - len);
+
+        nextCode[len + 1] = (nextCode[len] + lengthCount[len]) << 1;
     }
 
+    tree->baseCode[15] = 0x10000;
+
     for (int32_t i = 0; i < symbolCount; i++) {
-        uint32_t value = codeLengths[i];
+        int32_t value = codeLengths[i];
 
         if (value != 0) {
-            int32_t code = nextCode[value];
-            int32_t symbolTableIndex =
-                (code - (uint16_t)tree->firstCode[value]) + (uint32_t)(uint16_t)tree->numCodes[value];
-
-            LOG_DEBUG("symbol %d: length=%d, code=%x, index=%d", i, value, code, symbolTableIndex);
+            code = nextCode[value];
+            symbolTableIndex = (code - tree->firstCode[value]) + tree->numCodes[value];
 
             tree->symbols[symbolTableIndex] = value;
             tree->symbolIndex[symbolTableIndex] = i;
 
             if (value < 10) {
-                int32_t j = ReverseBits(code) >> (16 - value & 0x1f);
+                int32_t j = ReverseBits(code, value);
 
                 do {
-                    LOG_DEBUG("  fastLookup[%d] = %d", j, symbolTableIndex);
-
-                    tree->fastLookup[j] = symbolTableIndex;
-                    j = j + (1 << (value & 0x1f));
+                    tree->fastLookup[j] = (int16_t)symbolTableIndex;
+                    j = j + (1 << value);
                 } while (j < 512);
             }
 
@@ -111,10 +114,6 @@ int32_t ExplodeCompressedSize(char *buffer) {
     return size;
 }
 
-#include "deflate/deflate.h"
-
-#include <string.h>
-
 int32_t Inflate(DEFLATECONTEXT *ctx, char *buffer, int32_t size) {
     ctx->startPos = buffer;
     ctx->currentPos = buffer;
@@ -147,7 +146,7 @@ void InitHuffmanDefaults() {
 bool DecompressHuffmanTrees(DEFLATECONTEXT *ctx) {
     LOG_DEBUG("ctx=%p", ctx);
 
-    int *piVar1;
+    unsigned int *piVar1;
     uint16_t uVar2;
     uint16_t uVar3;
     int symbolCount;
@@ -452,7 +451,7 @@ static uint8_t DistanceExtraBits[30] = {0, 0, 0, 0, 1, 1, 2, 2,  3,  3,  4,  4, 
                                         6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13};
 
 int32_t DecodeDeflatedBlock(DEFLATECONTEXT *ctx) {
-    int *piVar1;
+    unsigned int *piVar1;
     uint8_t uVar2;
     uint16_t uVar3;
     uint16_t uVar4;
@@ -725,6 +724,7 @@ int32_t DecodeDeflated(DEFLATECONTEXT *ctx) {
                 if (BuildHuffmanTree(&ctx->lengthTree, DefaultLengths, 0x120) == 0) {
                     return 0;
                 }
+
                 iVar2 = BuildHuffmanTree(&ctx->distanceTree, DefaultDistances, 0x20);
             } else {
                 LOG_DEBUG("dynamic huffman trees");
@@ -744,7 +744,7 @@ int32_t DecodeDeflated(DEFLATECONTEXT *ctx) {
             return 0;
         }
 
-        if (uVar3 & 1 != 0)
+        if ((uVar3 & 1) != 0)
             break;
 
         uVar5 = ctx->bitBuffer;

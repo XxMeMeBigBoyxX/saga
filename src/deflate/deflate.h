@@ -8,12 +8,12 @@ C_API_START
 
 struct DEFHUFFMAN {
     int16_t fastLookup[512];
-    int16_t firstCode[17];
+    uint16_t firstCode[17];
     int16_t field2_0x422;
-    int32_t baseCode[16];
-    int16_t numCodes[16];
+    uint32_t baseCode[16];
+    uint16_t numCodes[16];
     uint8_t symbols[288];
-    uint16_t symbolIndex[288];
+    int16_t symbolIndex[288];
 };
 typedef struct DEFHUFFMAN DEFHUFFMAN;
 
