@@ -20,13 +20,14 @@ typedef struct DEFHUFFMAN DEFHUFFMAN;
 struct DEFLATECONTEXT {
     char *readBuffer;
     char *readBufferEnd;
-    uint field2_0x8;
-    uint field3_0xc;
+    uint bitBuffer;
+    uint numBitsAvailable;
     void *currentPos;
     void *startPos;
     void *endPos;
     DEFHUFFMAN lengthTree;
     DEFHUFFMAN distanceTree;
+    DEFHUFFMAN tempCodeLength;
 };
 typedef struct DEFLATECONTEXT DEFLATECONTEXT;
 
