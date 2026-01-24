@@ -79,9 +79,39 @@ set(CMAKE_LINK_DEPENDS_NO_SHARED ON)
 
 set(SAGA_SOURCE_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/batman.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/globals.cpp
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/deflate/deflate.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/deflate/deflate_noopt.cpp
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/area.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/character.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/cheat.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/collection.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/episode.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/level.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/mission.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/store.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/timer.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/world.cpp
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/gamelib/nuwind/nuwind.cpp
+
     ${CMAKE_CURRENT_SOURCE_DIR}/src/gameapi.saga/edtools/edfile.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/numath/nuvec.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/numath/nufloat.c
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/init/init.cpp
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nu3d/nutex.cpp
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nuandroid/nuios.cpp
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nucore/nuapi.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nucore/nucore.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nucore/nupad.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nucore/nustring_c.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nucore/nutime.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nucore/nuvideo.cpp
+
     ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nufile/nufile.c
     ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nufile/nufile.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nufile/nufilepak.cpp
@@ -89,37 +119,21 @@ set(SAGA_SOURCE_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nufile/nupsfile.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nufile/numc.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nufile/nudatfile.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nuthread/nuthread.cpp
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/numath/nufloat.c
     ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/numath/numtx.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/numath/nutrig_gen.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nucore/nustring_c.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nucore/nutime.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nucore/nucore.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/numath/nutrig.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/numemory/numemory.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nuandroid/nuios.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/deflate/deflate.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/deflate/deflate_noopt.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/globals.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/world.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/level.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/episode.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/area.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/cheat.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/timer.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/character.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/collection.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/mission.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/store.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/saveload/saveload.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nucore/nuapi.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/gamelib/nuwind/nuwind.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/numath/nutrig_gen.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/numath/nuvec.c
     ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/numath/nuvec4.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nucore/nupad.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nucore/nuvideo.cpp
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/numemory/numemory.cpp
+
     ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nuplatform/nuplatform.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nu3d/nutex.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/init/init.cpp
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nuthread/nuthread.cpp
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/saveload/saveload.cpp
 )
 
 set(SAGA_INCLUDE_DIRS
