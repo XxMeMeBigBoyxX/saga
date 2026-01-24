@@ -1,0 +1,27 @@
+#pragma once
+
+#include "decomp.h"
+
+typedef struct nulistlnk_s {
+    struct nulistlnk_s *next;
+    struct nulistlnk_s *prev;
+} NULISTLNK;
+
+typedef struct nulisthdr_s {
+    NULISTLNK *head;
+    NULISTLNK *tail;
+} NULISTHDR;
+
+C_API_START
+
+void NuLinkedListAppend(NULISTHDR *list, NULISTLNK *node);
+void NuLinkedListInsert(NULISTHDR *list, NULISTLNK *node);
+void NuLinkedListRemove(NULISTHDR *list, NULISTLNK *node);
+
+NULISTLNK *NuLinkedListGetHead(NULISTHDR *list);
+NULISTLNK *NuLinkedListGetTail(NULISTHDR *list);
+
+NULISTLNK *NuLinkedListGetPrev(NULISTHDR *list, NULISTLNK *node);
+NULISTLNK *NuLinkedListGetNext(NULISTHDR *list, NULISTLNK *node);
+
+C_API_END
