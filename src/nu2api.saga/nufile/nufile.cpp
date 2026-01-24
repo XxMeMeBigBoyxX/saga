@@ -1124,8 +1124,8 @@ int NuDatFileRead(NUFILE file, void *buf, int size) {
                     ExplodeBufferNoHeader((uint8_t *)read_buffer, (uint8_t *)decode_buffer, read_buffer_size,
                                           read_buffer_decoded_size);
                 } else if (info->compression_mode == 3) {
-                    inflated_size = InflateBuffer((uint8_t *)decode_buffer, read_buffer_decoded_size,
-                                                  (uint8_t *)read_buffer, read_buffer_size);
+                    inflated_size = InflateBuffer(decode_buffer, read_buffer_decoded_size,
+                                                  read_buffer, read_buffer_size);
                 }
 
                 decode_buffer_pos = 0;
