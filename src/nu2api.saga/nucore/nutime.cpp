@@ -1,7 +1,7 @@
-#include "nu2api.saga/nucore/nutime.h"
-
 #include <sys/time.h>
 #include <time.h>
+
+#include "nu2api.saga/nucore/nutime.h"
 
 void NuTimeGetTicksPS(unsigned int *low, unsigned int *high) {
     struct timespec ts;
@@ -24,23 +24,21 @@ unsigned long long NuGetCurrentTimeMilisecondsPS(void) {
 }
 
 static unsigned long long g_startTime;
+
 void NuTimeInitPS(void) {
     g_startTime = NuGetCurrentTimeMilisecondsPS();
 }
 
 void NuTimeGet(NUTIME *t) {
-    NuTimeGetTicksPS(&t->low, &t->high);
+    NuTimeGetTicksPS(&t->low, (uint *)&t->high);
 }
 
 void NuTimeSub(NUTIME *t, NUTIME *a, NUTIME *b) {
     if (a->low >= b->low) {
         t->low = a->low - b->low;
         t->high = a->high - b->high;
-
     } else {
         t->low = a->low - b->low;
-        // this line below refuses to match for some reason
-        // there's something weird with the minus 1
         t->high = a->high - 1 - b->high;
     }
 }

@@ -3,7 +3,7 @@
 
 struct nutime_s {
     unsigned int low;
-    unsigned int high;
+    int high;
 };
 
 typedef struct nutime_s NUTIME;
