@@ -400,6 +400,7 @@ void NuMtxInv(NUMTX *m, NUMTX *m0) {
     float tx = -m0->_30;
     float ty = -m0->_31;
     float tz = -m0->_32;
+
     t = m0->_01;
     m->_01 = m0->_10;
     m->_10 = t;

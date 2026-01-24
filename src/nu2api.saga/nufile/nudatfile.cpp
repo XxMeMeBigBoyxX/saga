@@ -1,34 +1,33 @@
-#include "nu2api.saga/nufile/nufile.h"
-
-#include "nu2api.saga/nucore/nustring.h"
-
-#include "deflate/deflate.h"
-
-#include "decomp.h"
-
 #include <stdlib.h>
 #include <string.h>
 
-static int32_t NameToHash(char *name) {
-    int32_t hash = 0x811c9dc5;
-    int32_t prime = 0x199933;
+#include "decomp.h"
 
-    for (char *ptr = name; *ptr != '\0'; ptr++) {
-        hash = prime * (hash ^ (int32_t)*ptr);
+#include "nu2api.saga/nucore/nustring.h"
+#include "nu2api.saga/nufile/nufile.h"
+
+static uint32_t NameToHash(char *name) {
+    uint32_t constant = 0x811c9dc5;
+    uint32_t prime = 0x199933;
+
+    uint32_t hash = constant;
+    for (; *name != '\0'; name++) {
+        hash ^= *name;
+        hash *= prime;
     }
 
     return hash;
 }
 
-size_t BinarySearch(uint32_t element, uint32_t *array, size_t length) {
-    size_t start = 0;
-    size_t end = length - 1;
+ssize_t BinarySearch(uint32_t element, uint32_t *array, size_t length) {
+    ssize_t start = 0;
+    ssize_t end = length - 1;
 
-    while (end >= start) {
-        size_t index = (start + end) / 2;
+    while (start <= end) {
+        ssize_t index = (start + end) / 2;
         if (array[index] == element) {
             return index;
-        } else if (array[index] < element) {
+        } else if (element > array[index]) {
             start = index + 1;
         } else {
             end = index - 1;
@@ -41,90 +40,94 @@ size_t BinarySearch(uint32_t element, uint32_t *array, size_t length) {
 int32_t NuDatFileFindHash(nudathdr_s *header, char *name) {
     LOG_DEBUG("header=%p name=%s", header, name);
 
-    int32_t hash = NameToHash(name);
+    uint32_t hash = NameToHash(name);
 
     int32_t r = BinarySearch(hash, header->hash_idxs, header->file_count);
 
-    if (r == -1) {
-        if (header->hash_count != 0) {
-            char *ptr = header->hashes;
-            for (int32_t i = 0; i < header->hash_count; i = i + 1) {
-                r = NuStrCmp(ptr, name);
-                if (r == 0) {
-                    r = NuStrLen(ptr);
-                    ptr = ptr + r + 1;
-                    if (((uint)ptr & 1) != 0) {
-                        ptr = ptr + 1;
-                    }
-                    return (int)*(short *)ptr;
-                }
-
-                r = NuStrLen(ptr);
-                ptr = ptr + r + 3;
-
-                if (((uint)ptr & 1) != 0) {
-                    ptr = ptr + 1;
-                }
-            }
-        }
-
-        r = -1;
+    if (r != -1) {
+        return r;
     }
 
-    LOG_DEBUG("header=%p name=%s => %d", header, name, r);
+    if (header->hash_count != 0) {
+        VARIPTR ptr;
 
-    return r;
+        ptr.char_ptr = header->hashes;
+
+        for (int32_t i = 0; i < header->hash_count; i++) {
+            if (NuStrCmp(ptr.char_ptr, name) == 0) {
+                ptr.addr += NuStrLen(ptr.char_ptr) + 1;
+
+                if ((ptr.addr & 1) != 0) {
+                    ptr.addr++;
+                }
+
+                return (int)*ptr.short_ptr;
+            }
+
+            ptr.addr += NuStrLen(ptr.char_ptr) + 3;
+
+            if ((ptr.addr & 1) != 0) {
+                ptr.addr++;
+            }
+        }
+    }
+
+    return -1;
 }
 
 int32_t datsys_offset = 0;
 
 int32_t NuDatFileFindTree(nudathdr_s *header, char *name) {
-    LOG_DEBUG("header=%p name=%s", header, name);
-
-    int32_t index;
     char buf[256];
-    int32_t i;
     char *backslash;
+    int32_t node_idx;
+
+    LOG_DEBUG("header=%p name=%s", header, name);
 
     if (*name == '@') {
         name = name + 4;
     }
+
     NuStrCpy(buf, name);
     NuFileUpCase(0, buf);
+
     name = buf;
 
     if (header->file_tree == NULL) {
-        index = NuDatFileFindHash(header, name);
-    } else {
-        i = (int)header->file_tree->child_idx;
-        backslash = strchr(name, L'\\');
-        if (backslash != NULL) {
-            *backslash = '\0';
-        }
-        do {
-            index = NuStrICmp(header->file_tree[i].name, name);
-            if (index == 0) {
-                if (backslash == NULL) {
-                    if (header->file_tree[i].child_idx < 1) {
-                        return -(int)header->file_tree[i].child_idx;
-                    }
-                    return -1;
-                }
-                i = (int)header->file_tree[i].child_idx;
-                name = backslash + 1;
-                backslash = strchr(name, L'\\');
-                if (backslash != NULL) {
-                    *backslash = '\0';
-                }
-            } else {
-                i = (int)header->file_tree[i].child_idx;
-            }
-        } while (i != 0);
-
-        index = -1;
+        return NuDatFileFindHash(header, name);
     }
 
-    return index;
+    node_idx = header->file_tree->child_idx;
+
+    backslash = strchr(name, L'\\');
+    if (backslash != NULL) {
+        *backslash = '\0';
+    }
+
+    do {
+        if (NuStrICmp(header->file_tree[node_idx].name, name) == 0) {
+            if (backslash == NULL) {
+                if (header->file_tree[node_idx].child_idx < 1) {
+                    return -header->file_tree[node_idx].child_idx;
+                }
+
+                return -1;
+            }
+
+            node_idx = header->file_tree[node_idx].child_idx;
+
+            name = backslash + 1;
+
+            backslash = strchr(name, L'\\');
+            if (backslash != NULL) {
+                *backslash = '\0';
+            }
+        } else {
+            node_idx = header->file_tree[node_idx].sibling_idx;
+        }
+    } while (node_idx != 0);
+
+    return -1;
 }
 
 int64_t NuDatCalcPos(nudathdr_s *header, int32_t index) {
@@ -134,5 +137,7 @@ int64_t NuDatCalcPos(nudathdr_s *header, int32_t index) {
         pos <<= 8;
     }
 
-    return pos + datsys_offset;
+    pos += datsys_offset;
+
+    return pos;
 }

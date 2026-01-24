@@ -11,5 +11,6 @@
 typedef union variptr_u {
     void *void_ptr;
     char *char_ptr;
+    short *short_ptr;
     unsigned int addr;
 } VARIPTR;

@@ -1,8 +1,9 @@
-#include "nu2api.saga/nucore/nustring.h"
-#include "nu2api.saga/nufile/nufile.h"
+#include <string.h>
+
 #include "nu2api.saga/nufile/nufpar.h"
 
-#include <string.h>
+#include "nu2api.saga/nucore/nustring.h"
+#include "nu2api.saga/nufile/nufile.h"
 
 #define PARSER_COUNT 4
 #define PARSER_BUF_SIZE 0x1000
@@ -568,7 +569,7 @@ int NuFParInterpretWord(NUFPAR *parser) {
 
     if (parser->command_pos > -1) {
         for (i = 0; parser->command_stack.jump[parser->command_pos][i].fn_name != NULL; i++) {
-            if (!NuStrICmp(parser->command_stack.jump[parser->command_pos][i].fn_name, buf)) {
+            if (NuStrICmp(parser->command_stack.jump[parser->command_pos][i].fn_name, buf) == 0) {
                 parser->command_stack.jump[parser->command_pos][i].fn(parser);
 
                 return 1;
@@ -577,7 +578,7 @@ int NuFParInterpretWord(NUFPAR *parser) {
 
         if (parser->command_stack2.jump[parser->command_pos] != NULL) {
             for (i = 0; parser->command_stack2.jump[parser->command_pos][i].fn_name != NULL; i++) {
-                if (!NuStrICmp(parser->command_stack2.jump[parser->command_pos][i].fn_name, buf)) {
+                if (NuStrICmp(parser->command_stack2.jump[parser->command_pos][i].fn_name, buf) == 0) {
                     parser->command_stack2.jump[parser->command_pos][i].fn(parser);
 
                     return 1;
@@ -613,7 +614,7 @@ int NuFParInterpretWordCTX(NUFPAR *parser, void *ctx) {
 
     if (parser->command_pos > -1) {
         for (i = 0; parser->command_stack.jump_ctx[parser->command_pos][i].fn_name != NULL; i++) {
-            if (!NuStrICmp(parser->command_stack.jump_ctx[parser->command_pos][i].fn_name, buf)) {
+            if (NuStrICmp(parser->command_stack.jump_ctx[parser->command_pos][i].fn_name, buf) == 0) {
                 parser->command_stack.jump_ctx[parser->command_pos][i].fn(parser, ctx);
 
                 return 1;
@@ -622,7 +623,7 @@ int NuFParInterpretWordCTX(NUFPAR *parser, void *ctx) {
 
         if (parser->command_stack2.jump_ctx[parser->command_pos] != NULL) {
             for (i = 0; parser->command_stack2.jump_ctx[parser->command_pos][i].fn_name != NULL; i++) {
-                if (!NuStrICmp(parser->command_stack2.jump_ctx[parser->command_pos][i].fn_name, buf)) {
+                if (NuStrICmp(parser->command_stack2.jump_ctx[parser->command_pos][i].fn_name, buf) == 0) {
                     parser->command_stack2.jump_ctx[parser->command_pos][i].fn(parser, ctx);
 
                     return 1;

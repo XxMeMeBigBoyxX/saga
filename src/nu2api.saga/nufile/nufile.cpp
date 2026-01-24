@@ -32,7 +32,7 @@ class NuFileAndroidAPK {
         UNIMPLEMENTED("android specific");
     }
 
-    static SAGA_NOMATCH int32_t ReadFile(NUFILE file, void *buf, int size) {
+    static SAGA_NOMATCH int32_t ReadFile(NUFILE file, void *buf, unsigned int size) {
         UNIMPLEMENTED("android specific");
     }
 
@@ -147,6 +147,38 @@ NUFILE_DEVICE *NuFileGetDeviceFromPath(char *path) {
     }
 
     return device;
+}
+
+int32_t DontDoFileUpperCaseHack;
+
+void NuFileUpCase(NUFILE_DEVICE *device, char *filepath) {
+    char separator;
+
+    if (device != NULL) {
+        separator = device->dir_separator;
+    } else {
+        separator = '\\';
+    }
+
+    if (DontDoFileUpperCaseHack) {
+        for (; *filepath != '\0'; filepath++) {
+            if (*filepath == '\\' || *filepath == '/') {
+                *filepath = separator;
+            }
+        }
+    } else {
+        for (; *filepath != '\0'; filepath++) {
+            switch (*filepath) {
+                case 'a' ... 'z':
+                    *filepath -= 0x20;
+                    break;
+                case '/':
+                case '\\':
+                    *filepath = separator;
+                    break;
+            }
+        }
+    }
 }
 
 NUFILE NuFileOpen(char *filepath, NUFILEMODE mode) {
@@ -1124,8 +1156,8 @@ int NuDatFileRead(NUFILE file, void *buf, int size) {
                     ExplodeBufferNoHeader((uint8_t *)read_buffer, (uint8_t *)decode_buffer, read_buffer_size,
                                           read_buffer_decoded_size);
                 } else if (info->compression_mode == 3) {
-                    inflated_size = InflateBuffer(decode_buffer, read_buffer_decoded_size,
-                                                  read_buffer, read_buffer_size);
+                    inflated_size =
+                        InflateBuffer(decode_buffer, read_buffer_decoded_size, read_buffer, read_buffer_size);
                 }
 
                 decode_buffer_pos = 0;

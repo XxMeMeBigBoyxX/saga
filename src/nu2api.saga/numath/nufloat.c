@@ -29,11 +29,11 @@ float NuFsign(float f) {
 }
 
 float NuFsqrt(float f) {
-    if (1e-6f < f) {
-        return sqrtf(f);
+    if (f <= 1e-6f) {
+        return 0.0f;
     }
 
-    return 0.0f;
+    return sqrtf(f);
 }
 
 float NuFdiv(float a, float b) {

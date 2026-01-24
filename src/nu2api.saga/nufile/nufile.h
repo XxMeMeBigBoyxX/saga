@@ -188,7 +188,7 @@ int32_t NuFileLoadBufferVP(char *filepath, VARIPTR *buf, VARIPTR *buf_end);
 int32_t NuFileExists(char *name);
 int64_t NuFileSize(char *filepath);
 int64_t NuFilePos(NUFILE file);
-void NuFileUpCase(void *param_1, char *path);
+void NuFileUpCase(NUFILE_DEVICE *device, char *filepath);
 
 // read types
 int8_t NuFileReadChar(NUFILE file);

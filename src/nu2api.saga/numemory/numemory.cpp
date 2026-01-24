@@ -7,7 +7,7 @@
 
 static NuMemory *g_memory = NULL;
 
-static const char *g_categoryNames[51] = {
+const char *g_categoryNames[51] = {
     "NONE",          "INITIAL",      "HARDWAREINIT",  "NUFILE",      "NUFONT",         "NUSCENE",       "NURENDER",
     "NUSOUND",       "NUDEBUG",      "CHARS",         "CHARANIMS",   "SPLITSCREEN",    "DYNOTERRAIN",   "DYNODATA",
     "DYNOSYSTEM",    "AI",           "PARTICLE",      "VFX",         "TECH",           "SCRIPT",        "RESOURCE",
@@ -18,7 +18,7 @@ static const char *g_categoryNames[51] = {
     "RUNTIME",       "TTSHARED",
 };
 
-NuMemory::NuMemory(void *buffer) {
+NuMemory::NuMemory(void **buffer) {
 }
 
 int32_t NuMemoryManager::CalculateBlockSize(uint32_t size) {
@@ -38,7 +38,8 @@ int32_t NuMemoryManager::CalculateBlockSize(uint32_t size) {
     return blockSize;
 }
 
-void *NuMemoryManager::_BlockAlloc(uint32_t size, uint32_t param_2, uint32_t param_3, char *name, uint16_t param_5) {
+void *NuMemoryManager::_BlockAlloc(uint32_t size, uint32_t param_2, uint32_t param_3, const char *name,
+                                   uint16_t param_5) {
     void *ptr = this->_TryBlockAlloc(size, param_2, param_3, name, param_5);
 
     if (ptr == NULL) {
@@ -48,14 +49,15 @@ void *NuMemoryManager::_BlockAlloc(uint32_t size, uint32_t param_2, uint32_t par
     return ptr;
 }
 
-void *NuMemoryManager::_TryBlockAlloc(uint32_t size, uint32_t param_2, uint32_t param_3, char *name, uint16_t param_5) {
+void *NuMemoryManager::_TryBlockAlloc(uint32_t size, uint32_t param_2, uint32_t param_3, const char *name,
+                                      uint16_t param_5) {
     LOG_INFO("size=%x, param_2=%u, param_3=%u, name='%s', param_5=%u", size, param_2, param_3, name, param_5);
 
     // UNIMPLEMENTED();
     return malloc(size);
 }
 
-void NuMemoryManager::____WE_HAVE_RUN_OUT_OF_MEMORY_____(uint32_t size, char *name) {
+void NuMemoryManager::____WE_HAVE_RUN_OUT_OF_MEMORY_____(uint32_t size, const char *name) {
     UNIMPLEMENTED();
 }
 
@@ -81,18 +83,14 @@ NuMemoryManager *NuMemory::GetThreadMem() {
     return this->memoryManager;
 }
 
-static NuMemory g_memoryBuffer = {0};
+static char g_memoryBuffer[0x10000];
 
 NuMemory *NuMemoryGet() {
-    static char nuMemoryHugeArray[65000];
-
     if (g_memory != NULL) {
         return g_memory;
     }
 
-    new (&g_memoryBuffer) NuMemory{(void *)nuMemoryHugeArray};
-
-    g_memory = &g_memoryBuffer;
-
-    return &g_memoryBuffer;
+    new (&g_memoryBuffer) NuMemory{(void **)&g_memoryBuffer + sizeof(NuMemory)};
+    g_memory = (NuMemory *)&g_memoryBuffer;
+    return (NuMemory *)&g_memoryBuffer;
 }

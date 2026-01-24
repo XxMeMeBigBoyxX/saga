@@ -23,7 +23,7 @@ class NuThreadBase {
     NuMemoryManager *memoryManagers[32];
 
   public:
-    NuMemoryManager *GetLocalStorage(int32_t index);
+    NuMemoryManager *GetLocalStorage(uint32_t index) const;
 };
 
 class NuThreadManager {
