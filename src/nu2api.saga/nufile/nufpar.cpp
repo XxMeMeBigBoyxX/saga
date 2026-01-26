@@ -121,6 +121,28 @@ void NuFParDestroy(NUFPAR *parser) {
     NuFileClose(file_handle);
 }
 
+void NuFParSuspend(NUFPAR *parser) {
+    if (parser->file_handle >= 0x400 && parser->file_handle < 0x800) {
+        return;
+    }
+
+    NuFileClose(parser->file_handle);
+
+    parser->file_handle = 0;
+}
+
+void NuFParResume(NUFPAR *parser) {
+    if (parser->file_handle >= 0x400 && parser->file_handle < 0x800) {
+        return;
+    }
+
+    parser->file_handle = NuFileOpen(parser->file_name, NUFILE_READ);
+
+    NuFileSeek(parser->file_handle, parser->char_pos, NUFILE_SEEK_START);
+
+    parser->buf_end = parser->char_pos - 1;
+}
+
 static int old_line_pos;
 
 #define CLAMP_LINE(pos) pos &(parser->line_buf_size - 1)

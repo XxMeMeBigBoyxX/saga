@@ -67,6 +67,9 @@ void NuFParClose(NUFPAR *parser);
 NUFPAR *NuFParCreate(char *filename);
 void NuFParDestroy(NUFPAR *parser);
 
+void NuFParSuspend(NUFPAR *parser);
+void NuFParResume(NUFPAR *parser);
+
 int NuFParGetLine(NUFPAR *parser);
 int NuFParGetLineW(NUFPAR *parser);
 int NuFParGetWord(NUFPAR *parser);
