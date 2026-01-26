@@ -75,8 +75,8 @@ fn make_object<'a>(
             value: offset,
             size: symbol.size(),
             kind: symbol.kind(),
-            scope: object::SymbolScope::Dynamic,
-            weak: false,
+            scope: symbol.scope(),
+            weak: symbol.is_weak(),
             section: object::write::SymbolSection::Section(section_id),
             flags: object::SymbolFlags::None,
         });
