@@ -203,16 +203,22 @@ pub fn split() -> anyhow::Result<()> {
 
     let remaining = make_object(&original_lib, &remaining_symbols)?;
     let bytes = remaining.write()?;
+
     std::fs::write("build/split/remaining.c.o", bytes).context("Failed to write remaining.o")?;
+
     objdiff_units.push(ObjDiffUnit {
         name: "remaining".to_string(),
         target_path: "build/split/remaining.c.o".to_string(),
         base_path: String::from("remaining.c.o"),
     });
 
-    std::fs::write(
-        "objdiff.json",
-        serde_json::to_string(&ObjDiff {
+    let json = std::io::BufWriter::new(
+        std::fs::File::create("objdiff.json").context("Failed to open objdiff.json")?,
+    );
+
+    serde_json::to_writer(
+        json,
+        &ObjDiff {
             build_base: true,
             build_targets: false,
             units: objdiff_units,
@@ -221,7 +227,7 @@ pub fn split() -> anyhow::Result<()> {
                 "-c".to_owned(),
                 "cmake -B build && cmake --build build -- ".to_owned(),
             ],
-        })?,
+        },
     )
     .context("Failed to write objdiff.json")?;
 
