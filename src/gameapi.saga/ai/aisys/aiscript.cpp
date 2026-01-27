@@ -213,12 +213,12 @@ static void xActions(NUFPAR *parser) {
 
             def = AIActionFind(parser->word_buf);
             if (def != NULL) {
+                int param_count;
+
                 action = (AIACTION *)AIScriptBufferAlloc(load_buff, load_endbuff, sizeof(AIACTION));
                 if (action == NULL) {
                     continue;
                 }
-
-                int param_count;
 
                 action->list_node.next = NULL;
 
@@ -472,10 +472,13 @@ static void xConditions(NUFPAR *parser) {
 
 static void xRefScript(NUFPAR *parser) {
     AIREFSCRIPT *ref_script;
+    VARIPTR orig_buf;
 
     if (load_refscripthdr == NULL) {
         return;
     }
+
+    orig_buf = *load_buff;
 
     ref_script = (AIREFSCRIPT *)AIScriptBufferAlloc(load_buff, load_endbuff, sizeof(AIREFSCRIPT));
     if (ref_script == NULL) {
@@ -493,9 +496,10 @@ static void xRefScript(NUFPAR *parser) {
             }
 
             if ((cursor = NuStrIStr(parser->word_buf, "Script")) != NULL) {
-                ref_script->name = AIScriptCopyString(cursor + 7, load_buff, load_endbuff);
+                ref_script->name = AIScriptCopyString(cursor + strlen("Script") + 1, load_buff, load_endbuff);
             } else if ((cursor = NuStrIStr(parser->word_buf, "ReturnState")) != NULL) {
-                ref_script->return_state_name = AIScriptCopyString(cursor + 12, load_buff, load_endbuff);
+                ref_script->return_state_name =
+                    AIScriptCopyString(cursor + strlen("ReturnState") + 1, load_buff, load_endbuff);
             } else if (NuStrICmp(parser->word_buf, "CONDITIONS") == 0) {
                 load_conditionshdr = &ref_script->conditions;
                 condition_has_no_goto = 1;
@@ -504,10 +508,10 @@ static void xRefScript(NUFPAR *parser) {
 
                 load_conditionshdr = NULL;
                 condition_has_no_goto = 0;
-            } else if ((cursor = NuStrIStr(parser->word_buf, "Source")) != NULL) {
-                if ((cursor = NuStrIStr(parser->word_buf, "Global")) != NULL) {
+            } else if (NuStrIStr(parser->word_buf, "Source") != NULL) {
+                if (NuStrIStr(parser->word_buf, "Global") != NULL) {
                     ref_script->check_global_scripts = 1;
-                } else if ((cursor = NuStrIStr(parser->word_buf, "Local")) != NULL) {
+                } else if (NuStrIStr(parser->word_buf, "Local") != NULL) {
                     ref_script->check_local_scripts = 1;
                 }
             }
@@ -522,6 +526,8 @@ done:
         }
 
         NuLinkedListAppend(load_refscripthdr, &ref_script->list_node);
+    } else {
+        *load_buff = orig_buf;
     }
 }
 
@@ -680,10 +686,9 @@ static void xDeriveFromScript(NUFPAR *parser) {
             }
 
             if ((cursor = NuStrIStr(parser->word_buf, "Script")) != NULL) {
-                cursor += 7;
-
-                load_aiscript->derived_from = AIScriptCopyString(cursor, load_buff, load_endbuff);
-            } else if ((cursor = NuStrIStr(parser->word_buf, "Source")) != NULL) {
+                load_aiscript->derived_from =
+                    AIScriptCopyString(cursor + strlen("Script") + 1, load_buff, load_endbuff);
+            } else if (NuStrIStr(parser->word_buf, "Source") != NULL) {
                 if (NuStrIStr(parser->word_buf, "Global") != NULL) {
                     load_aiscript->is_derived_from_level_script = 0;
                 } else if (NuStrIStr(parser->word_buf, "Level") != NULL) {
