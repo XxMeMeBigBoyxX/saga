@@ -4,6 +4,78 @@
 #include "nu2api.saga/nu3d/nutex.h"
 
 #include "nu2api.saga/nucore/common.h"
+#include "nu2api.saga/nucore/nustring.h"
+
+void NuChecksumAsHex(unsigned char *checksum, char *out) {
+    char hex_digits[] = "0123456789abcdef";
+
+    for (int i = 0; i < 16; i++) {
+        unsigned char check_digit = checksum[i];
+        int least_sig_digit = (int)check_digit >> 4;
+
+        out[i * 2] = hex_digits[least_sig_digit];
+        out[i * 2 + 1] = hex_digits[(check_digit - (least_sig_digit << 4)) & 0xff];
+    }
+
+    out[32] = '\0';
+}
+
+void NuTexHiresFilename(int tex_id, char *filename) {
+    NUNATIVETEX *tex;
+    char checksum_hex[33];
+
+    tex = NuTexGetNative(tex_id);
+
+    NuStrCpy(filename, "c:\\temp\\stream\\textures\\");
+    NuChecksumAsHex(tex->checksum, checksum_hex);
+    NuStrCat(filename, checksum_hex);
+    NuStrCat(filename, ".tex");
+}
+
+int NuTexSwapHires(int tex_id_lo, int tex_id_hi) {
+    return 0;
+}
+
+void NuTexLoadHires(int tex_id) {
+    char hires_path[2048];
+    int tex_id_hi;
+
+    NuTexHiresFilename(tex_id, hires_path);
+    tex_id_hi = NuTexRead(hires_path, NULL, NULL);
+    NuTexSwapHires(tex_id, tex_id_hi);
+}
+
+void NuTexUnloadHires(int tex_id) {
+}
+
+void NuTexAddReference(int tex_id) {
+    NUNATIVETEX *tex;
+
+    tex = NuTexGetNative(tex_id);
+    if (tex != NULL) {
+        tex->ref_count++;
+    }
+}
+
+void NuTexRemoveReference(int tex_id) {
+    NUNATIVETEX *tex;
+
+    tex = NuTexGetNative(tex_id);
+    if (tex != NULL) {
+        tex->ref_count--;
+    }
+}
+
+int NuTexGetRefCount(int tex_id) {
+    NUNATIVETEX *tex;
+
+    tex = NuTexGetNative(tex_id);
+    if (tex != NULL) {
+        return tex->ref_count;
+    }
+
+    return 0;
+}
 
 int max_textures;
 static NUNATIVETEX **texture_list;
@@ -54,4 +126,12 @@ int NuTexCreateNative(NUNATIVETEX *tex, bool is_pvrtc) {
     NuTexCreatePS(tex, is_pvrtc);
 
     return i + 1;
+}
+
+NUNATIVETEX *NuTexGetNative(int tex_id) {
+    if (tex_id > 0) {
+        return texture_list[tex_id - 1];
+    }
+
+    return NULL;
 }

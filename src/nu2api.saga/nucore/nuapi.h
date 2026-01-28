@@ -1,5 +1,6 @@
-#ifndef NU2API_SAGA_NUCORE_NUAPI_H
-#define NU2API_SAGA_NUCORE_NUAPI_H
+#pragma once
+
+#include "decomp.h"
 
 #include "gamelib/nuwind/nuwind.h"
 #include "nu2api.saga/nucore/nutime.h"
@@ -87,15 +88,14 @@ extern NUAPI nuapi;
 
 #ifdef __cplusplus
 void NuAPIInit(void);
-
-extern "C" {
 #endif
 
-    void NuCommandLine(int argc, char **argv);
-    void NuDisableOSMenuFreeze(void);
+C_API_START
 
-#ifdef __cplusplus
-}
-#endif
+void NuCommandLine(int argc, char **argv);
+void NuDisableOSMenuFreeze(void);
 
-#endif // NU2API_SAGA_NUCORE_NUAPI_H
+void NudxFw_D3DBeginCriticalSection();
+void NudxFw_D3DEndCriticalSection();
+
+C_API_END

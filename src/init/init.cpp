@@ -624,7 +624,7 @@ void LoadPermData(BGPROCINFO *proc) {
     VARIPTR legalTex;
     legalTex.addr = superbuffer_end.addr + -0x400000;
 
-    int32_t legal_tid = NuTexRead("stuff\\legal\\LEGAL_ENGLISH", &legalTex);
+    int32_t legal_tid = NuTexRead("stuff\\legal\\LEGAL_ENGLISH", &legalTex, &superbuffer_end);
 
     MusicInfo = ConfigureMusic("audio\\music.txt", &permbuffer_ptr, &permbuffer_end);
 

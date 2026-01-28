@@ -16,6 +16,9 @@ jobs:
       - name: install gcc for i686
         run: sudo apt-get install gcc-multilib g++-multilib
 
+      - name: Install GLESv2 libs
+        run: sudo apt-get install libgles2:i386
+
       - name: gcc versions
         run: |
           gcc --version

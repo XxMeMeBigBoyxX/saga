@@ -2,9 +2,13 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "nu2api.saga/nu3d/nutex.h"
+#include <GLES2/gl2.h>
 
+#include "nu2api.saga/nu3d/nutex_android.h"
+
+#include "nu2api.saga/nu3d/nutex.h"
 #include "nu2api.saga/nucore/common.h"
+#include "nu2api.saga/nucore/nuapi.h"
 #include "nu2api.saga/nucore/nustring.h"
 #include "nu2api.saga/nufile/nufile.h"
 #include "nu2api.saga/nuplatform/nuplatform.h"
@@ -15,7 +19,7 @@ int NuTexCreate(NUTEX *tex) {
     return 0;
 }
 
-int NuTexRead(char *name, VARIPTR *buf) {
+int NuTexRead(char *name, VARIPTR *buf, VARIPTR *buf_end) {
     long file_size;
     char *ext;
     bool is_pvrtc_supported;
@@ -112,14 +116,37 @@ int NuTexRead(char *name, VARIPTR *buf) {
     return tex_id;
 }
 
-void NuTexCreatePS(NUNATIVETEX *nativeTex, bool is_pvrtc) {
-    if (nativeTex != NULL && nativeTex->image_data != NULL && nativeTex->size != 0) {
-        // nativeTex->glTex =
-        // NuIOS_CreateGLTexFromPlatformInMemory(nativeTex->imagedata, &nativeTex->ptr, &nativeTex->field1_0x4,
-        // isPvr);
-        UNIMPLEMENTED();
-        nativeTex->image_data = NULL;
-        nativeTex->size = 0;
+void NuTexCreatePS(NUNATIVETEX *tex, bool is_pvrtc) {
+    if (tex == NULL || tex->image_data == NULL || tex->size == 0) {
+        return;
     }
-    return;
+
+    tex->platform.gl_tex = NuIOS_CreateGLTexFromPlatformInMemory(tex->image_data, &tex->width, &tex->height, is_pvrtc);
+    tex->image_data = NULL;
+    tex->size = 0;
+}
+
+void NuTexDestroyPS(NUNATIVETEX *tex) {
+    if (tex != NULL && tex->platform.gl_tex != 0) {
+        NudxFw_D3DBeginCriticalSection();
+
+        glDeleteTextures(1, &tex->platform.gl_tex);
+        tex->platform.gl_tex = 0;
+
+        NudxFw_D3DEndCriticalSection();
+    }
+}
+
+void NuTexDisplayTexturePage(int page, float depth, int alpha) {
+}
+
+int NuTexGetReqSize(int tex_id, int level) {
+    return 0;
+}
+
+int NuTexReserve(int size) {
+    return -1;
+}
+
+void NuTexUnReserve() {
 }

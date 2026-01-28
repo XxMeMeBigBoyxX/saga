@@ -8,42 +8,30 @@
 
 #include "nu2api.saga/nucore/common.h"
 
+#if 1
+// Isolate platform-specific definitions to make it easier to add platform
+// support in future.
+#include "nu2api.saga/nu3d/nutex_android.h"
+#endif
+
 typedef enum nutextype_e {
     NUTEX_RTT24 = 15,
 } NUTEXTYPE;
 
-typedef struct nutext_s {
+typedef struct nutex_s {
     NUTEXTYPE type;
     int width;
     int height;
 } NUTEX;
 
 typedef struct nunativetex_s {
-    void *ptr;
-    int32_t field1_0x4;
-    uint8_t field2_0x8;
-    uint8_t field3_0x9;
-    uint8_t field4_0xa;
-    uint8_t field5_0xb;
-    uint8_t field6_0xc;
-    uint8_t field7_0xd;
-    uint8_t field8_0xe;
-    uint8_t field9_0xf;
-    uint8_t field10_0x10;
-    uint8_t field11_0x11;
-    uint8_t field12_0x12;
-    uint8_t field13_0x13;
-    uint8_t field14_0x14;
-    uint8_t field15_0x15;
-    uint8_t field16_0x16;
-    uint8_t field17_0x17;
-    uint8_t field18_0x18;
-    uint8_t field19_0x19;
-    uint8_t field20_0x1a;
-    uint8_t field21_0x1b;
+    int width;
+    int height;
+    unsigned char checksum[16];
+    int ref_count;
     void *image_data;
-    size_t size;
-    int32_t gl_tex;
+    unsigned int size;
+    NUNATIVETEX_PS platform;
 } NUNATIVETEX;
 
 C_API_START
@@ -53,11 +41,34 @@ extern int max_textures;
 
 void NuTexInitEx(VARIPTR *buf, int max_tex_count);
 
-int NuTexRead(char *name, VARIPTR *buf);
+int NuTexRead(char *name, VARIPTR *buf, VARIPTR *buf_end);
 
 int NuTexCreate(NUTEX *tex);
 int NuTexCreateNative(NUNATIVETEX *tex, bool is_pvrtc);
 
+void NuTexDestroy(int tex_id);
+
+NUNATIVETEX *NuTexGetNative(int tex_id);
+
+void NuTexAddReference(int tex_id);
+void NuTexRemoveReference(int tex_id);
+int NuTexGetRefCount(int tex_id);
+
+void NuTexDisplayTexturePage(int page, float depth, int alpha);
+
 C_API_END
 
 void NuTexCreatePS(NUNATIVETEX *tex, bool is_pvrtc);
+void NuTexDestroyPS(NUNATIVETEX *tex);
+
+void NuChecksumAsHex(unsigned char *checksum, char *out);
+void NuTexHiresFilename(int tex_id, char *filename);
+int NuTexSwapHires(int tex_id_lo, int tex_id_hi);
+
+void NuTexLoadHires(int tex_id);
+void NuTexUnloadHires(int tex_id);
+
+int NuTexGetReqSize(int tex_id, int level);
+
+int NuTexReserve(int size);
+void NuTexUnReserve();
