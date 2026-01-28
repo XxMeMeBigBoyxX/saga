@@ -36,7 +36,7 @@ void NuMtlInitEx(VARIPTR *buf, int32_t usually512) {
     LOG_INFO("%*s", size, buf->char_ptr);
 }
 
-int32_t NuInitHardwarePS(VARIPTR *bufferStart, VARIPTR *bufferEnd, int32_t zero) {
+int NuInitHardware(VARIPTR *buf, VARIPTR *buf_end, int heap_size, ...) {
     // NuIOSThreadInit();
     // NuIOS_IsLowEndDevice();
     // g_vaoLifetimeMutex = NuThreadCreateCriticalSection();
@@ -54,13 +54,9 @@ int32_t NuInitHardwarePS(VARIPTR *bufferStart, VARIPTR *bufferEnd, int32_t zero)
     // EndCriticalSectionGL("i:/SagaTouch-Android_9176564/nu2api.saga/nucore/android/nuapi_android.c", 0x108);
     // nurndr_pixel_width = g_backingWidth;
     // nurndr_pixel_height = g_backingHeight;
-    NuSound3InitV(bufferStart, *bufferEnd, 0, 0);
-    return 0;
-}
+    NuSound3InitV(buf, *buf_end, 0, 0);
 
-void NuInitHardware(VARIPTR *bufferStart, VARIPTR *bufferEnd, int32_t zero) {
-    NuMtlInitEx(bufferStart, 512);
-    NuInitHardwarePS(bufferStart, bufferEnd, zero);
+    return 0;
 }
 
 uint16_t MakeSaveHash(void) {
@@ -107,7 +103,7 @@ void InitOnce(int32_t argc, char **param_2) {
     InitGameBeforeConfig();
     //  Game_NuPad = Game_NuPad_Store;
 
-    NuInitHardware(&permbuffer_base, &superbuffer_end, 0);
+    NuInitHardware(&permbuffer_base, &superbuffer_end, 0, 0);
 }
 
 int32_t Episode_ContainsArea(int32_t areaId, int32_t *areaIndex) {
