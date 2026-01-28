@@ -1077,14 +1077,18 @@ void NuMtxInvRSSH(NUMTX *inv, NUMTX *T) {
 void NuMtxInvH(NUMTX *mi, NUMTX *m0) {
     // there's some weird stack alignment stuff going on here...
     // also not sure if this semantically matches the original implementation
-    int n = 4;
-    float a[4][4];
     int p[4];
-    float local_20;
-    float local_1c;
-    int i;
-    int k;
     int j;
+    int k;
+    int i;
+    float a[4][4];
+    int n;
+    float local_1c;
+    float local_20;
+    float local_28;
+    float local_30;
+
+    n = 4;
 
     a[0][0] = m0->_00;
     a[0][1] = m0->_01;
@@ -1106,32 +1110,41 @@ void NuMtxInvH(NUMTX *mi, NUMTX *m0) {
     for (i = 0; i < n; i++) {
         local_20 = 0.0f;
         p[i] = 0;
-        
+
         for (j = i; j < n; j++) {
             local_1c = 0.0f;
+
             for (k = i; k < n; k++) {
                 local_1c += NuFabs(a[j][k]);
-            };
-            local_1c = NuFdiv(NuFabs(a[j][i]), local_1c);
-            if (local_20 < local_1c) {
-                local_20 = local_1c;
+            }
+
+            local_28 = NuFdiv(NuFabs(a[j][i]), local_1c);
+
+            if (local_20 < local_28) {
+                local_20 = local_28;
                 p[i] = j;
             }
         }
+
         if (local_20 == 0.0f) {
             return;
         }
+
         if (p[i] != i) {
             for (k = 0; k < n; k++) {
-                local_1c = a[i][k];
+                float f;
+
+                f = a[i][k];
                 a[i][k] = a[p[i]][k];
-                a[p[i]][k] = local_1c;
+                a[p[i]][k] = f;
             }
         }
-        local_1c = a[i][i];
+
+        local_30 = a[i][i];
+
         for (k = 0; k < n; k++) {
             if (k != i) {
-                a[i][k] = -a[i][k] / local_1c;
+                a[i][k] = -a[i][k] / local_30;
                 for (j = 0; j < n; j++) {
                     if (j != i) {
                         a[j][k] += a[j][i] * a[i][k];
@@ -1139,22 +1152,26 @@ void NuMtxInvH(NUMTX *mi, NUMTX *m0) {
                 }
             }
         }
+
         for (j = 0; j < n; j++) {
-            a[j][i] = a[j][i] / local_1c;
+            a[j][i] = a[j][i] / local_30;
         }
-        a[i][i] = 1.0f / local_1c;
+
+        a[i][i] = 1.0f / local_30;
     }
 
     for (i = n - 1; i >= 0; i--) {
         if (p[i] != i) {
             for (j = 0; j < n; j++) {
-                local_1c = a[j][i];
+                float f;
+
+                f = a[j][i];
                 a[j][i] = a[j][p[i]];
-                a[j][p[i]] = local_1c;
+                a[j][p[i]] = f;
             }
         }
     }
-    
+
     mi->_00 = a[0][0];
     mi->_01 = a[0][1];
     mi->_02 = a[0][2];
