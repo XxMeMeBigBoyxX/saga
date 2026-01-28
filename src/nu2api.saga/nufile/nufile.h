@@ -167,6 +167,8 @@ enum NUFILE_OFFSETS {
 
 C_API_START
 
+extern char g_datfileMode;
+
 int DEV_FormatName(NUFILE_DEVICE *device, char *formatted_name, char *path, int buf_size);
 int DEVHOST_Interrogate(NUFILE_DEVICE *device);
 

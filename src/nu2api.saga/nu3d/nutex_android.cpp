@@ -1,0 +1,125 @@
+#include <ctype.h>
+#include <stdio.h>
+#include <string.h>
+
+#include "nu2api.saga/nu3d/nutex.h"
+
+#include "nu2api.saga/nucore/common.h"
+#include "nu2api.saga/nucore/nustring.h"
+#include "nu2api.saga/nufile/nufile.h"
+#include "nu2api.saga/nuplatform/nuplatform.h"
+
+#define TEX_PATH "mnt/sdcard/TTGames/com.wb.lego.tcs/files/androidTextures/"
+
+int NuTexCreate(NUTEX *tex) {
+    return 0;
+}
+
+int NuTexRead(char *name, VARIPTR *buf) {
+    long file_size;
+    char *ext;
+    bool is_pvrtc_supported;
+    char filename[1024];
+    char filepath[1024];
+    FILE *file;
+    NUFILE file_handle;
+    int extra_bytes;
+    NUNATIVETEX *tex;
+    char *tex_data_ptr;
+    char *data;
+    int bytes_read;
+    int tex_id;
+
+    bytes_read = 0;
+    file = NULL;
+
+    ext = NuPlatform::Get()->GetCurrentTextureExtension();
+
+    if (NuPlatform::Get()->GetCurrentPlatform() == IOS_PLATFORM ||
+        NuPlatform::Get()->GetCurrentPlatform() == ANDROID_PVRTC_PLATFORM) {
+        NuStrFixExtPlatform(filename, name, "tex", sizeof(filename), "ios");
+    } else {
+        NuStrFixExtPlatform(filename, name, ext, sizeof(filename), "MOB");
+    }
+
+    g_datfileMode = 1;
+
+    extra_bytes = 0;
+
+    if (g_datfileMode != 0) {
+        file_handle = NuFileOpen(filename, NUFILE_READ);
+        if (file_handle == 0) {
+            return 0;
+        }
+
+        file_size = NuFileOpenSize(file_handle);
+    } else {
+        int path_len;
+
+        memcpy(filepath, TEX_PATH, sizeof(filepath));
+
+        extra_bytes = 1;
+
+        path_len = strlen(filepath);
+        strcat(filepath, filename);
+
+        for (int i = path_len; i < strlen(filepath); i++) {
+            filepath[i] = toupper(filepath[i]);
+
+            if (filepath[i] == '\\') {
+                filepath[i] = '/';
+            }
+        }
+
+        file = fopen(filepath, "rb");
+        if (file != NULL) {
+            fseek(file, 0, SEEK_END);
+            file_size = ftell(file);
+            fseek(file, 0, SEEK_SET);
+        } else {
+            return 0;
+        }
+    }
+
+    tex = (NUNATIVETEX *)ALIGN(buf->addr, 0x4);
+    buf->addr = ALIGN(buf->addr, 0x4);
+    buf->addr += sizeof(NUNATIVETEX);
+
+    tex_data_ptr = buf->char_ptr;
+
+    data = (char *)ALIGN(buf->addr, 0x4);
+    buf->addr = ALIGN(buf->addr, 0x4);
+    buf->addr += file_size + extra_bytes;
+
+    tex->image_data = data;
+    tex->size = file_size;
+
+    if (g_datfileMode != 0) {
+        NuFileRead(file_handle, data, file_size);
+        NuFileClose(file_handle);
+    } else {
+        if (file_size > 0) {
+            bytes_read = fread(data, 1, file_size, file);
+            fclose(file);
+        }
+    }
+
+    tex_id = NuTexCreateNative(tex, false);
+
+    memset(tex_data_ptr, 0, data + file_size - tex_data_ptr);
+    buf->void_ptr = tex_data_ptr;
+
+    return tex_id;
+}
+
+void NuTexCreatePS(NUNATIVETEX *nativeTex, bool is_pvrtc) {
+    if (nativeTex != NULL && nativeTex->image_data != NULL && nativeTex->size != 0) {
+        // nativeTex->glTex =
+        // NuIOS_CreateGLTexFromPlatformInMemory(nativeTex->imagedata, &nativeTex->ptr, &nativeTex->field1_0x4,
+        // isPvr);
+        UNIMPLEMENTED();
+        nativeTex->image_data = NULL;
+        nativeTex->size = 0;
+    }
+    return;
+}

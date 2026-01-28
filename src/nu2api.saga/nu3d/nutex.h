@@ -1,14 +1,24 @@
 #pragma once
 
+#include <pthread.h>
 #include <stddef.h>
 #include <stdint.h>
 
 #include "decomp.h"
 
-struct nutex_s {};
-typedef struct nutex_s NUTEX;
+#include "nu2api.saga/nucore/common.h"
 
-struct nunativetex_s {
+typedef enum nutextype_e {
+    NUTEX_RTT24 = 15,
+} NUTEXTYPE;
+
+typedef struct nutext_s {
+    NUTEXTYPE type;
+    int width;
+    int height;
+} NUTEX;
+
+typedef struct nunativetex_s {
     void *ptr;
     int32_t field1_0x4;
     uint8_t field2_0x8;
@@ -31,15 +41,23 @@ struct nunativetex_s {
     uint8_t field19_0x19;
     uint8_t field20_0x1a;
     uint8_t field21_0x1b;
-    void *imagedata;
+    void *image_data;
     size_t size;
-    int32_t glTex;
-};
-typedef struct nunativetex_s NUNATIVETEX;
+    int32_t gl_tex;
+} NUNATIVETEX;
 
 C_API_START
 
-int32_t NuTexRead(char *name, void **buffer);
-int32_t NuTexCreateNative(nunativetex_s *tex, bool isPvr);
+extern pthread_mutex_t criticalSection;
+extern int max_textures;
+
+void NuTexInitEx(VARIPTR *buf, int max_tex_count);
+
+int NuTexRead(char *name, VARIPTR *buf);
+
+int NuTexCreate(NUTEX *tex);
+int NuTexCreateNative(NUNATIVETEX *tex, bool is_pvrtc);
 
 C_API_END
+
+void NuTexCreatePS(NUNATIVETEX *tex, bool is_pvrtc);

@@ -1,4 +1,4 @@
-#include "nu2api.saga/nuplatform/nuplatform.hpp"
+#include "nu2api.saga/nuplatform/nuplatform.h"
 
 #include <stdlib.h>
 

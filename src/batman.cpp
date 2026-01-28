@@ -4,7 +4,7 @@
 #include "globals.h"
 #include "init/init.hpp"
 #include "nu2api.saga/numusic/numusic.h"
-#include "nu2api.saga/nuplatform/nuplatform.hpp"
+#include "nu2api.saga/nuplatform/nuplatform.h"
 
 extern "C" int32_t NuMain(int32_t argc, char **argv) {
     InitOnce(argc, argv);

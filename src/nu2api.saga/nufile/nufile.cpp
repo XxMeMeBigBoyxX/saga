@@ -48,6 +48,8 @@ class NuFileDeviceAndroidAPK {};
 
 NuFileDeviceAndroidAPK *g_apkFileDevice;
 
+char g_datfileMode = 1;
+
 static NUDATHDR *curr_dat;
 int32_t nufile_try_packed = 0;
 static FILEINFO file_info[33];

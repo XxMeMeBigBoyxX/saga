@@ -625,7 +625,9 @@ void InitGameAfterConfig(void) {
 }
 
 void LoadPermData(BGPROCINFO *proc) {
-    void *legalTex = (void **)(superbuffer_end.addr + -0x400000);
+    VARIPTR legalTex;
+    legalTex.addr = superbuffer_end.addr + -0x400000;
+
     int32_t legal_tid = NuTexRead("stuff\\legal\\LEGAL_ENGLISH", &legalTex);
 
     MusicInfo = ConfigureMusic("audio\\music.txt", &permbuffer_ptr, &permbuffer_end);

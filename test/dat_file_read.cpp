@@ -3,7 +3,7 @@
 #include "globals.h"
 #include "nu2api.saga/nufile/nufile.h"
 #include "nu2api.saga/numemory/numemory.h"
-#include "nu2api.saga/nuplatform/nuplatform.hpp"
+#include "nu2api.saga/nuplatform/nuplatform.h"
 
 #include <iostream>
 #include <memory>
