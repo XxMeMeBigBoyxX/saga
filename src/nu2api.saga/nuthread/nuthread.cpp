@@ -76,8 +76,13 @@ void NuThreadBase::SetDebugName(const char *name) {
 void (*NuThreadBase::GetThreadFn() const)(void *) {
     return this->threadFn;
 }
+
 void *NuThreadBase::GetParam() const {
     return this->param;
+}
+
+NuThreadManager::NuThreadManager() {
+    this->bitflags = 0;
 }
 
 NuThread *NuThreadManager::CreateThread(void (*func)(void *), void *arg, int priority, char *name, int param_5,

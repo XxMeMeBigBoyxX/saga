@@ -57,8 +57,12 @@ class NuThread : NuThreadBase {
 };
 
 class NuThreadManager {
+  public:
+    NuThreadManager();
+
   private:
-    uint32_t bitflags = 0;
+    NuThread *thread;
+    uint32_t bitflags;
 
   public:
     int32_t AllocTLS();

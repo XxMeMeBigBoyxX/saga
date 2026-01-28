@@ -10,10 +10,11 @@ class NuApplicationState {
     NuApplicationState();
 };
 
-namespace NuCore {
+class NuCore {
+  public:
     static NuThreadManager *m_threadManager;
     static NuApplicationState *m_applicationState;
 
-    void Initialize();
-    NuApplicationState *GetApplicationState();
-}; // namespace NuCore
+    static void Initialize();
+    static NuApplicationState *GetApplicationState();
+};

@@ -1,9 +1,10 @@
+#include <new>
+#include <pthread.h>
+
 #include "nu2api.saga/numemory/numemory.h"
 
+#include "nu2api.saga/nucore/common.h"
 #include "nu2api.saga/nucore/nucore.h"
-
-#include <iostream>
-#include <pthread.h>
 
 static NuMemory *g_memory = NULL;
 
@@ -18,23 +19,42 @@ const char *g_categoryNames[51] = {
     "RUNTIME",       "TTSHARED",
 };
 
-NuMemory::NuMemory(void **buffer) {
+NuMemory::NuMemory(void **buf) {
+    VARIPTR buf_ptr;
+
+    buf_ptr.void_ptr = *buf;
+    this->tlsIndex = -1;
+
+    NuMemoryManager::SetFlags(0);
+
+    buf_ptr.addr = ALIGN(buf_ptr.addr, 0x8);
+
+    this->errorHandler = new (buf_ptr.void_ptr) MemErrorHandler();
 }
 
-int32_t NuMemoryManager::CalculateBlockSize(uint32_t size) {
+unsigned int NuMemoryManager::m_headerSize;
+
+void NuMemoryManager::SetFlags(unsigned int flags) {
+    if ((flags & 4) == 0) {
+        NuMemoryManager::m_headerSize = 4;
+    } else {
+        NuMemoryManager::m_headerSize = 12;
+    }
+}
+
+unsigned int NuMemoryManager::CalculateBlockSize(unsigned int size) {
     uint uVar1;
     int blockSize;
     uint uVar2;
 
-    uVar1 = size + 3 & 0xfffffffc;
-    uVar2 = 8;
-    if (7 < uVar1) {
-        uVar2 = uVar1;
+    uVar1 = ALIGN(size, 0x4);
+    uVar2 = uVar1 >= 8 ? uVar1 : 8;
+
+    blockSize = uVar2 + NuMemoryManager::m_headerSize + 4;
+    if (this->idx > 29) {
+        blockSize = uVar2 + NuMemoryManager::m_headerSize + 8;
     }
-    blockSize = uVar2 + m_headerSize + 4;
-    if (29 < this->field12_0xc) {
-        blockSize = uVar2 + m_headerSize + 8;
-    }
+
     return blockSize;
 }
 
@@ -59,6 +79,19 @@ void *NuMemoryManager::_TryBlockAlloc(uint32_t size, uint32_t param_2, uint32_t 
 
 void NuMemoryManager::____WE_HAVE_RUN_OUT_OF_MEMORY_____(uint32_t size, const char *name) {
     UNIMPLEMENTED();
+}
+
+void NuMemoryManager::IErrorHandler::HandleError(NuMemoryManager *manager, ErrorCode code, const char *msg) {
+}
+
+int NuMemoryManager::IErrorHandler::OpenDump(NuMemoryManager *manager, const char *filename, unsigned int &id) {
+    return 0;
+}
+
+void NuMemoryManager::IErrorHandler::CloseDump(NuMemoryManager *manager, unsigned int id) {
+}
+
+void NuMemoryManager::IErrorHandler::Dump(NuMemoryManager *manager, unsigned int id, const char *msg) {
 }
 
 void NuMemory::InitalizeThreadLocalStorage() {

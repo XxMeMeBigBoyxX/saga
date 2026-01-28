@@ -1,27 +1,32 @@
-#include "nucore.h"
-
 #include <new>
 
-namespace NuCore {
-    void Initialize() {
-        GetApplicationState();
+#include "nu2api.saga/nucore/nucore.h"
 
-        m_threadManager = new NuThreadManager();
+#include "nu2api.saga/nuthread/nuthread.h"
+
+NuApplicationState *NuCore::m_applicationState;
+NuThreadManager *NuCore::m_threadManager;
+
+void NuCore::Initialize() {
+    GetApplicationState();
+
+    m_threadManager = new NuThreadManager();
+}
+
+NuApplicationState *NuCore::GetApplicationState(void) {
+    if (m_applicationState != NULL) {
+        return m_applicationState;
     }
 
-    NuApplicationState *GetApplicationState(void) {
-        if (m_applicationState != NULL) {
-            return m_applicationState;
-        }
-
-        NuApplicationState *state = (NuApplicationState *)NuMemoryGet()->GetThreadMem()->_BlockAlloc(4, 4, 1, "", 0);
-        if (state != NULL) {
-            new (state) NuApplicationState();
-        }
-
-        m_applicationState = state;
+    NuApplicationState *state = (NuApplicationState *)NuMemoryGet()->GetThreadMem()->_BlockAlloc(sizeof(NuApplicationState), 4, 1, "", 0);
+    if (state != NULL) {
+        new (state) NuApplicationState();
     }
-} // namespace NuCore
+
+    m_applicationState = state;
+
+    return state;
+}
 
 NuApplicationState::NuApplicationState() {
     this->field0_0x0 = 0;
