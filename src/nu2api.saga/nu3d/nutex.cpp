@@ -27,7 +27,6 @@ void NuTexInitEx(VARIPTR *buf, int max_tex_count) {
 pthread_mutex_t criticalSection = PTHREAD_MUTEX_INITIALIZER;
 
 int NuTexCreateNative(NUNATIVETEX *tex, bool is_pvrtc) {
-    int tex_id;
     int i;
 
     if (tex == NULL) {
@@ -42,11 +41,8 @@ int NuTexCreateNative(NUNATIVETEX *tex, bool is_pvrtc) {
         return 0;
     }
 
-    tex_id = 1;
     i = 0;
-
     while (texture_list[i] != NULL) {
-        tex_id++;
         i++;
     }
 
@@ -57,5 +53,5 @@ int NuTexCreateNative(NUNATIVETEX *tex, bool is_pvrtc) {
 
     NuTexCreatePS(tex, is_pvrtc);
 
-    return tex_id;
+    return i + 1;
 }
