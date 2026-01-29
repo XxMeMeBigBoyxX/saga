@@ -3,6 +3,8 @@
 #include "nu2api.saga/nucore/nustring.h"
 #include "nu2api.saga/nuthread/nuthread.h"
 
+NuThreadBase *g_bgProcThread = NULL;
+
 static pthread_mutex_t NuThread_CriticalSections[16] = {PTHREAD_MUTEX_INITIALIZER};
 
 int32_t NuThreadCriticalSectionBegin(int32_t index) {
@@ -15,7 +17,7 @@ int32_t NuThreadCriticalSectionEnd(int32_t index) {
 
 static uint8_t NuThread_CriticalSectionsUsed[16] = {0};
 
-int32_t NuThreadCreateCriticalSection() {
+int32_t NuThreadCreateCriticalSection(void) {
     int32_t index = -1;
 
     for (int32_t i = 0; i < 16; i++) {
@@ -40,6 +42,11 @@ int32_t NuThreadCreateCriticalSection() {
     NuThread_CriticalSectionsUsed[index] = 1;
 
     return index;
+}
+
+int bgProcIsBgThread(void) {
+    NuThreadBase *current_thread = NuThreadManager::GetCurrentThread();
+    return current_thread == g_bgProcThread;
 }
 
 int32_t NuThreadManager::AllocTLS() {

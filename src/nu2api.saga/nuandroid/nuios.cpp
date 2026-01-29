@@ -1,4 +1,5 @@
 #include "nu2api.saga/nuandroid/nuios.h"
+#include "decomp.h"
 
 int32_t g_isLowEndDevice = 0;
 
@@ -8,4 +9,8 @@ int32_t NuIOS_IsLowEndDevice(void) {
 
 SAGA_NOMATCH char *NuIOS_GetDocumentsPath(void) {
     return "res/";
+}
+
+uint32_t NuIOS_YieldThread(void) {
+    UNIMPLEMENTED();
 }

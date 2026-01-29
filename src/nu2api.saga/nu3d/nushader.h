@@ -45,8 +45,8 @@ struct nushaderobject_s {
 typedef nushaderobject_s NUSHADEROBJECT;
 
 #ifdef __cplusplus
-bool NuShaderObjectBindAttributeLocationsGLSL(GLuint program);
-
+int NuShaderObjectBindAttributeLocationsGLSL(GLuint program);
+int NuShaderObjectCombineGLSLShadersIntoProgram(GLuint* program_dest, GLuint vertex_shader, GLuint fragment_shader);
 
 extern "C" {
 #endif

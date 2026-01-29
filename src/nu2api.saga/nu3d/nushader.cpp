@@ -1,4 +1,7 @@
 #include "nu2api.saga/nu3d/nushader.h"
+#include "nu2api.saga/nu3d/NuRenderDevice.h"
+#include "nu2api.saga/nuandroid/nuios.h"
+#include "nu2api.saga/nuthread/nuthread.h"
 
 static float water_theta_step = 0.26666668f;
 
@@ -62,7 +65,7 @@ void NuShaderObjectBaseSetWaterSpeed(float speed) {
     water_theta_step = speed * 0.1f;
 }
 
-bool NuShaderObjectBindAttributeLocationsGLSL(GLuint program) {
+int NuShaderObjectBindAttributeLocationsGLSL(GLuint program) {
     GLint params;
     static GLchar info_log[8192];
 
@@ -84,9 +87,36 @@ bool NuShaderObjectBindAttributeLocationsGLSL(GLuint program) {
 
     glGetProgramiv(program, GL_LINK_STATUS, &params);
     if (params) { // weird register swap issue with the matching here...
-        return true;
+        return 1;
     }
-    
+
     glGetProgramInfoLog(program, sizeof(info_log), NULL, info_log);
-    return false;
+    return 0;
+}
+
+int NuShaderObjectCombineGLSLShadersIntoProgram(GLuint *program_dest, GLuint vertex_shader, GLuint fragment_shader) {
+
+
+    BeginCriticalSectionGL("i:/SagaTouch-Android_9176564/nu2api.saga/shaderbuilder/android/nushaderobject.cpp", 228);
+    GLuint program = glCreateProgram();
+    *program_dest = program;
+    EndCriticalSectionGL("i:/SagaTouch-Android_9176564/nu2api.saga/shaderbuilder/android/nushaderobject.cpp", 230);
+    if (bgProcIsBgThread()) {
+        NuIOS_YieldThread();
+    }
+    BeginCriticalSectionGL("i:/SagaTouch-Android_9176564/nu2api.saga/shaderbuilder/android/nushaderobject.cpp", 232);
+    glAttachShader(*program_dest, vertex_shader);
+    glAttachShader(*program_dest, fragment_shader);
+    EndCriticalSectionGL("i:/SagaTouch-Android_9176564/nu2api.saga/shaderbuilder/android/nushaderobject.cpp", 235);
+    if (bgProcIsBgThread()) {
+        NuIOS_YieldThread();
+    }
+    BeginCriticalSectionGL("i:/SagaTouch-Android_9176564/nu2api.saga/shaderbuilder/android/nushaderobject.cpp", 237);
+    int bind_result = NuShaderObjectBindAttributeLocationsGLSL(*program_dest);
+    EndCriticalSectionGL("i:/SagaTouch-Android_9176564/nu2api.saga/shaderbuilder/android/nushaderobject.cpp", 239);
+    if (bgProcIsBgThread()) {
+        NuIOS_YieldThread();
+    }
+
+    return bind_result;
 }

@@ -12,7 +12,7 @@ int32_t NuThreadCriticalSectionBegin(int32_t index);
 
 int32_t NuThreadCriticalSectionEnd(int32_t index);
 
-int32_t NuThreadCreateCriticalSection();
+int32_t NuThreadCreateCriticalSection(void);
 
 C_API_END
 
@@ -45,6 +45,10 @@ class NuThreadBase {
     void (*GetThreadFn() const)(void *);
     void *GetParam() const;
 };
+
+extern NuThreadBase *g_bgProcThread;
+
+int bgProcIsBgThread(void);
 
 class NuThread : NuThreadBase {
   private:

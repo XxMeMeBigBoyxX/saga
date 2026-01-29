@@ -12,4 +12,6 @@ int32_t NuIOS_IsLowEndDevice(void);
 
 char *NuIOS_GetDocumentsPath(void);
 
+uint32_t NuIOS_YieldThread(void);
+
 C_API_END
