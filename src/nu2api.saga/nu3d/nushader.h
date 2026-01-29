@@ -30,16 +30,20 @@ struct nushaderobjectglsl_s {
 
 typedef struct nushaderobjectglsl_s NUSHADEROBJECTGLSL;
 
-#define NUSHADEROBJECT_UNKS_COUNT 91
+struct glslparamter_s {
+    short unk1;
+    short unk2;
+    char unk3;
+    char unk4[3];
+};
+
+typedef struct glslparamter_s GLSLParameter;
+
+#define NUSHADEROBJECT_PARAMETERS_COUNT 91
 struct nushaderobject_s {
     NUSHADEROBJECTGLSL glsl;
     char unk[0x10];
-    struct {
-        short unk1;
-        short unk2;
-        char unk3;
-        char unk4[3];
-    } unks[NUSHADEROBJECT_UNKS_COUNT]; // maybe these are uniforms?
+    GLSLParameter parameters[NUSHADEROBJECT_PARAMETERS_COUNT];
 };
 
 typedef nushaderobject_s NUSHADEROBJECT;
@@ -47,6 +51,7 @@ typedef nushaderobject_s NUSHADEROBJECT;
 #ifdef __cplusplus
 int NuShaderObjectBindAttributeLocationsGLSL(GLuint program);
 int NuShaderObjectCombineGLSLShadersIntoProgram(GLuint* program_dest, GLuint vertex_shader, GLuint fragment_shader);
+int NuShaderObjectGenerateGLSLShader(GLuint* shader_dest, GLenum shader_type, const GLchar* shader_source, GLint shader_source_length);
 
 extern "C" {
 #endif

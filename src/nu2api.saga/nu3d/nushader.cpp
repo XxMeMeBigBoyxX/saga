@@ -19,9 +19,9 @@ void NuShaderObjectGLSLCreate(NUSHADEROBJECTGLSL *shader) {
 void NuShaderObjectCreate(NUSHADEROBJECT *shader) {
     NuShaderObjectGLSLCreate(&shader->glsl);
 
-    for (int i = 0; i < NUSHADEROBJECT_UNKS_COUNT; ++i) {
-        shader->unks[i].unk3 = i;
-        shader->unks[i].unk1 = 0xffff;
+    for (int i = 0; i < NUSHADEROBJECT_PARAMETERS_COUNT; ++i) {
+        shader->parameters[i].unk3 = i;
+        shader->parameters[i].unk1 = 0xffff;
     }
 }
 
@@ -95,8 +95,7 @@ int NuShaderObjectBindAttributeLocationsGLSL(GLuint program) {
 }
 
 int NuShaderObjectCombineGLSLShadersIntoProgram(GLuint *program_dest, GLuint vertex_shader, GLuint fragment_shader) {
-
-
+    // these were most definitely macros
     BeginCriticalSectionGL("i:/SagaTouch-Android_9176564/nu2api.saga/shaderbuilder/android/nushaderobject.cpp", 228);
     GLuint program = glCreateProgram();
     *program_dest = program;
@@ -104,6 +103,7 @@ int NuShaderObjectCombineGLSLShadersIntoProgram(GLuint *program_dest, GLuint ver
     if (bgProcIsBgThread()) {
         NuIOS_YieldThread();
     }
+
     BeginCriticalSectionGL("i:/SagaTouch-Android_9176564/nu2api.saga/shaderbuilder/android/nushaderobject.cpp", 232);
     glAttachShader(*program_dest, vertex_shader);
     glAttachShader(*program_dest, fragment_shader);
@@ -111,6 +111,7 @@ int NuShaderObjectCombineGLSLShadersIntoProgram(GLuint *program_dest, GLuint ver
     if (bgProcIsBgThread()) {
         NuIOS_YieldThread();
     }
+
     BeginCriticalSectionGL("i:/SagaTouch-Android_9176564/nu2api.saga/shaderbuilder/android/nushaderobject.cpp", 237);
     int bind_result = NuShaderObjectBindAttributeLocationsGLSL(*program_dest);
     EndCriticalSectionGL("i:/SagaTouch-Android_9176564/nu2api.saga/shaderbuilder/android/nushaderobject.cpp", 239);
@@ -119,4 +120,27 @@ int NuShaderObjectCombineGLSLShadersIntoProgram(GLuint *program_dest, GLuint ver
     }
 
     return bind_result;
+}
+
+int NuShaderObjectGenerateGLSLShader(GLuint *shader_dest, GLenum shader_type, const GLchar *shader_source,
+                                     GLint shader_source_length) {
+    BeginCriticalSectionGL("i:/SagaTouch-Android_9176564/nu2api.saga/shaderbuilder/android/nushaderobject.cpp", 197);
+    GLuint shader = glCreateShader(shader_type);
+    *shader_dest = shader;
+    EndCriticalSectionGL("i:/SagaTouch-Android_9176564/nu2api.saga/shaderbuilder/android/nushaderobject.cpp", 200);
+    if (bgProcIsBgThread()) {
+        NuIOS_YieldThread();
+    }
+
+    GLint params = 0;
+    BeginCriticalSectionGL("i:/SagaTouch-Android_9176564/nu2api.saga/shaderbuilder/android/nushaderobject.cpp", 204);
+    glShaderSource(shader, 1, &shader_source, &shader_source_length);
+    glCompileShader(shader);
+    glGetShaderiv(shader, GL_COMPILE_STATUS, &params);
+    EndCriticalSectionGL("i:/SagaTouch-Android_9176564/nu2api.saga/shaderbuilder/android/nushaderobject.cpp", 208);
+    if (bgProcIsBgThread()) {
+        NuIOS_YieldThread();
+    }
+
+    return 1;
 }
