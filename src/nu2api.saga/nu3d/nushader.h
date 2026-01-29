@@ -3,10 +3,18 @@
 
 #include <GLES2/gl2.h>
 
+struct nushaderobjectkey_s {
+
+};
+
+typedef struct nushaderobjectkey_s NUSHADEROBJECTKEY;
+
 struct nushaderobjectbase_s {
     int field0;
     int field1;
-    int field2;
+    // this is a NUSHADEROBJECTKEY*, but for some reason they store it as an int
+    // if it isn't an int then SSE instructions aren't generated and it doesn't match
+    int key;
     int field3;
 };
 
@@ -37,6 +45,9 @@ struct nushaderobject_s {
 typedef nushaderobject_s NUSHADEROBJECT;
 
 #ifdef __cplusplus
+bool NuShaderObjectBindAttributeLocationsGLSL(GLuint program);
+
+
 extern "C" {
 #endif
 
@@ -46,6 +57,10 @@ void NuShaderObjectCreate(NUSHADEROBJECT* shader);
 void NuShaderObjectBaseDestroy(NUSHADEROBJECTBASE* shader);
 void NuShaderObjectGLSLDestroy(NUSHADEROBJECTGLSL* shader);
 void NuShaderObjectDestroy(NUSHADEROBJECT* shader);
+void NuShaderObjectBaseInit(NUSHADEROBJECTBASE* shader, NUSHADEROBJECTKEY* key, int unk);
+void NuShaderObjectUnInit(NUSHADEROBJECT* shader);
+void NuShaderObjectBaseUnInit(NUSHADEROBJECTBASE* shader);
+void NuShaderObjectBaseSetWaterSpeed(float speed);
 
 #ifdef __cplusplus
 }
