@@ -1,4 +1,5 @@
 #include <new>
+#include <stddef.h>
 
 #include "nu2api.saga/nucore/nucore.h"
 
