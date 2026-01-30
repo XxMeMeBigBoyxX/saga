@@ -28,7 +28,7 @@ license.
 This requires a copy of the .apk for the Android version of _The Complete Saga_.
 The following version is known to work for this project:
 
-|                                             |                                                                  |
+| Filename                                    | sha256sum                                                        |
 | ------------------------------------------- | ---------------------------------------------------------------- |
 | LEGO.SAGA.Android.ver.1.8.60.build.1060.apk | df69d191fdc5b4337dab7d1872cd9b7a6122df6d3b153e5df602aa3ff9fac7fb |
 

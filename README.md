@@ -20,7 +20,7 @@ any game assets, media, original source code, or any other copyrighted material.
 
 ## Build Instructions
 
-|                   |                                           |                                                                               |
+| Build             | Initial setup                             | Build (and run)                                                               |
 | ----------------- | ----------------------------------------- | ----------------------------------------------------------------------------- |
 | Android x86 build | `cmake -B build -DBUILD_FOR_HOST=OFF`     | `cmake --build build`                                                         |
 | Host build        | `cmake -B build-host -DBUILD_FOR_HOST=ON` | `cmake --build build-host && ./build-host/saga`                               |
