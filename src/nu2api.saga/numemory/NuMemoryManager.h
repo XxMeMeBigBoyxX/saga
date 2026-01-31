@@ -43,13 +43,13 @@ class NuMemoryManager {
     };
 
     struct FreeHeader {
-        Header header;
+        Header block_header;
         FreeHeader *next;
         FreeHeader *prev;
     };
 
     struct DebugHeader {
-        Header header;
+        Header block_header;
         char *name;
         unsigned short category;
         unsigned short flags;
@@ -65,16 +65,16 @@ class NuMemoryManager {
     // prevent access to the extended debug info field without an explicit cast.
     struct ExtendedDebugHeader {
         DebugHeader header;
-        ExtendedDebugInfo extendedInfo;
+        ExtendedDebugInfo extended_info;
     };
 
-    struct PageEntry {
+    struct Page {
         void *start;
         unsigned int size;
-        void *firstHeader;
+        void *first_header;
         void *end;
-        PageEntry *next;
-        PageEntry *prev;
+        Page *next;
+        Page *prev;
         bool _unknown;
         unsigned int _unknown2;
     };
@@ -92,20 +92,18 @@ class NuMemoryManager {
     struct Stats {
         int _unknown_00;
 
-        unsigned int _unknown_04;
+        unsigned int frag_bytes;
+
         unsigned int _unknown_08;
 
-        unsigned int freeFragCount;
-
-        // Type uncertain.
-        int _unknown_10;
-
-        unsigned int usedBlockCount;
+        unsigned int frag_count;
+        unsigned int max_frag_count;
+        unsigned int used_block_count;
 
         // Type uncertain.
         int _unknown_18;
 
-        unsigned int bytesAllocatedByCategory[100];
+        unsigned int bytes_alloc_by_category[100];
     };
 
     enum PopDebugMode {
@@ -119,24 +117,23 @@ class NuMemoryManager {
     static unsigned int m_headerSize;
     static NuMemoryManager *m_memoryManagers[0x100];
 
-    const char **categoryNames;
-    unsigned int categoryCount;
-    bool isZombie;
+    const char **category_names;
+    unsigned int category_count;
+    bool is_zombie;
     uint32_t idx;
     char name[0x80];
-    IEventHandler *eventHandler;
-    IErrorHandler *errorHandler;
-    PageEntry *pages;
+    IEventHandler *event_handler;
+    IErrorHandler *error_handler;
+    Page *pages;
 
-    // Type uncertain.
-    int smallBinAllocMap[32];
+    unsigned int small_bin_has_free_map[32];
 
-    FreeHeader smallBins[256];
+    FreeHeader small_bins[256];
 
-    unsigned int _unknown_0d1c;
-    unsigned int _unknown_0d20;
+    unsigned int large_bin_has_free_map;
+    unsigned int large_bin_dirty_map;
 
-    FreeHeader largeBins[22];
+    FreeHeader large_bins[22];
 
     // Types uncertain.
     int _unknown_0e2c;
@@ -145,14 +142,14 @@ class NuMemoryManager {
     Stats stats;
 
     pthread_mutex_t mutex;
-    pthread_mutex_t errorMutex;
+    pthread_mutex_t error_mutex;
 
-    Context initialStateCtx;
-    Context strandedCtx;
+    Context initial_state_ctx;
+    Context stranded_ctx;
 
-    Context *curCtx;
+    Context *cur_ctx;
 
-    char errorMsg[0x800];
+    char error_msg[0x800];
 
     // Types uncertain.
     int _unknown_180c;
@@ -160,12 +157,12 @@ class NuMemoryManager {
     int _unknown_1814;
     int _unknown_1818;
 
-    unsigned short overrideCategory;
-    unsigned short overrideCategoryBGThread;
+    unsigned short override_category;
+    unsigned short override_category_bg_thread;
 
   public:
-    NuMemoryManager(IEventHandler *eventHandler, IErrorHandler *errorHandler, const char *name,
-                    const char **categoryNames, unsigned int categoryCount);
+    NuMemoryManager(IEventHandler *event_handler, IErrorHandler *error_handler, const char *name,
+                    const char **category_names, unsigned int category_count);
     ~NuMemoryManager();
 
     static void SetFlags(unsigned int flags);
@@ -176,26 +173,28 @@ class NuMemoryManager {
     void AddPage(void *ptr, unsigned int size, bool _unknown);
 
   private:
+    static unsigned int GetLargeBinIndex(unsigned int size);
+    static unsigned int GetSmallBinIndex(unsigned int size);
+
     void *_TryBlockAlloc(uint32_t size, uint32_t alignment, uint32_t param_3, const char *name, uint16_t param_5);
     void ____WE_HAVE_RUN_OUT_OF_MEMORY_____(uint32_t size, const char *name);
 
     void ReleaseUnreferencedPages();
 
     unsigned int CalculateBlockSize(unsigned int size);
-    static unsigned int GetLargeBinIndex(unsigned int size);
-    static unsigned int GetSmallBinIndex(unsigned int size);
 
-    void BinLink(FreeHeader *hdr, bool _unknown);
-    void BinUnlink(FreeHeader *hdr);
-    void BinLinkAfterNode(FreeHeader *afterNode, FreeHeader *hdr);
+    void BinLink(FreeHeader *header, bool keep_sorted);
+    void BinUnlink(FreeHeader *header);
+    void BinLinkAfterNode(FreeHeader *after, FreeHeader *header);
 
-    bool PopContext(PopDebugMode debugMode);
+    bool PopContext(PopDebugMode debug_mode);
 
     void ValidateAddress(void *ptr, const char *caller);
     void ValidateAllocAlignment(unsigned int alignment);
     void ValidateAllocSize(unsigned int size);
 
-    void StatsAddFragment(FreeHeader *hdr);
+    void StatsAddFragment(FreeHeader *header);
+    void StatsRemoveFragment(FreeHeader *header);
 };
 
 #endif

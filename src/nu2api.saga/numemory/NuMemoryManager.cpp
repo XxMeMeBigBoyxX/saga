@@ -8,7 +8,7 @@
 #include "nu2api.saga/nucore/common.h"
 
 #define ALLOC_FLAGS 0x78000000
-#define BLOCK_SIZE(header) ((header)->header & ~ALLOC_FLAGS) * 4
+#define BLOCK_SIZE(header) ((header)->block_header.value & ~ALLOC_FLAGS) * 4
 
 unsigned int NuMemoryManager::m_flags;
 pthread_mutex_t *NuMemoryManager::m_globalCriticalSection;
@@ -42,12 +42,12 @@ static unsigned int CountLeadingZeros(unsigned int value) {
 
 NuMemoryManager *NuMemoryManager::m_memoryManagers[0x100];
 
-NuMemoryManager::NuMemoryManager(IEventHandler *eventHandler, IErrorHandler *errorHandler, const char *name,
-                                 const char **categoryNames, unsigned int categoryCount) {
+NuMemoryManager::NuMemoryManager(IEventHandler *event_handler, IErrorHandler *error_handler, const char *name,
+                                 const char **category_names, unsigned int category_count) {
     pthread_mutexattr_t attrs;
 
-    this->eventHandler = eventHandler;
-    this->errorHandler = errorHandler;
+    this->event_handler = event_handler;
+    this->error_handler = error_handler;
 
     pthread_mutexattr_init(&attrs);
     pthread_mutexattr_settype(&attrs, PTHREAD_MUTEX_RECURSIVE);
@@ -56,19 +56,29 @@ NuMemoryManager::NuMemoryManager(IEventHandler *eventHandler, IErrorHandler *err
 
     pthread_mutexattr_init(&attrs);
     pthread_mutexattr_settype(&attrs, PTHREAD_MUTEX_RECURSIVE);
-    pthread_mutex_init(&this->errorMutex, &attrs);
+    pthread_mutex_init(&this->error_mutex, &attrs);
     pthread_mutexattr_destroy(&attrs);
 
-    this->categoryNames = categoryNames;
-    this->categoryCount = categoryCount;
+    this->category_names = category_names;
+    this->category_count = category_count;
 
-    memset(&this->initialStateCtx, 0, sizeof(Context));
-    memset(&this->strandedCtx, 0, sizeof(Context));
+    // The default initializers almost get these right, but they're out of order
+    // and compile fails when trying to specify designated initializers out of
+    // order.
+    this->initial_state_ctx._unknown = 0;
+    this->initial_state_ctx.id = 0;
+    this->initial_state_ctx.next = 0;
+    this->initial_state_ctx.name = 0;
+
+    this->stranded_ctx._unknown = 0;
+    this->stranded_ctx.id = 0;
+    this->stranded_ctx.next = 0;
+    this->stranded_ctx.name = 0;
 
     this->_unknown_1814 = 0x4000;
     this->_unknown_1818 = 0;
 
-    this->isZombie = false;
+    this->is_zombie = false;
 
     strcpy(this->name, name);
 
@@ -77,30 +87,30 @@ NuMemoryManager::NuMemoryManager(IEventHandler *eventHandler, IErrorHandler *err
     this->_unknown_180c = 0;
     this->_unknown_1810 = 0;
 
-    memset(this->smallBins, 0, sizeof(this->smallBins));
-    memset(this->largeBins, 0, sizeof(this->largeBins));
+    memset(this->small_bins, 0, sizeof(this->small_bins));
+    memset(this->large_bins, 0, sizeof(this->large_bins));
 
-    memset(this->smallBinAllocMap, 0, sizeof(this->smallBinAllocMap));
+    memset(this->small_bin_has_free_map, 0, sizeof(this->small_bin_has_free_map));
 
     this->_unknown_0e2c = 0;
     this->_unknown_0e30 = 0;
 
-    this->_unknown_0d1c = 0;
-    this->_unknown_0d20 = 0;
+    this->large_bin_has_free_map = 0;
+    this->large_bin_dirty_map = 0;
 
     memset(&this->stats, 0, sizeof(Stats));
 
-    this->stats._unknown_08 = this->stats._unknown_04;
+    this->stats._unknown_08 = this->stats.frag_bytes;
 
-    initialStateCtx.name = "Initial State";
-    this->curCtx = &initialStateCtx;
+    this->initial_state_ctx.name = "Initial State";
+    this->cur_ctx = &this->initial_state_ctx;
 
-    strandedCtx.name = "Stranded";
+    this->stranded_ctx.name = "Stranded";
 
-    this->overrideCategory = 1;
-    this->overrideCategoryBGThread = 1;
+    this->override_category = 1;
+    this->override_category_bg_thread = 1;
 
-    strandedCtx.id = 31;
+    this->stranded_ctx.id = 31;
 
     if (m_globalCriticalSection == NULL) {
         pthread_mutexattr_init(&attrs);
@@ -135,7 +145,7 @@ NuMemoryManager::~NuMemoryManager() {
 
     pthread_mutex_unlock(m_globalCriticalSection);
 
-    pthread_mutex_destroy(&this->errorMutex);
+    pthread_mutex_destroy(&this->error_mutex);
     pthread_mutex_destroy(&this->mutex);
 }
 
@@ -182,7 +192,7 @@ void NuMemoryManager::AddPage(void *ptr, unsigned int size, bool _unknown) {
 }
 
 void NuMemoryManager::ReleaseUnreferencedPages() {
-    PageEntry *entry;
+    Page *entry;
 
     pthread_mutex_lock(&this->mutex);
 
@@ -194,18 +204,18 @@ void NuMemoryManager::ReleaseUnreferencedPages() {
 
 unsigned int NuMemoryManager::CalculateBlockSize(unsigned int size) {
     unsigned int aligned;
-    int blockSize;
-    unsigned int memSize;
+    int block_size;
+    unsigned int mem_size;
 
     aligned = ALIGN(size, 0x4);
-    memSize = MAX(aligned, 8);
+    mem_size = MAX(aligned, 8);
 
-    blockSize = memSize + m_headerSize + 4;
+    block_size = mem_size + m_headerSize + 4;
     if (this->idx > 29) {
-        blockSize = memSize + m_headerSize + 8;
+        block_size = mem_size + m_headerSize + 8;
     }
 
-    return blockSize;
+    return block_size;
 }
 
 unsigned int NuMemoryManager::GetLargeBinIndex(unsigned int size) {
@@ -218,27 +228,97 @@ unsigned int NuMemoryManager::GetSmallBinIndex(unsigned int size) {
     return size >> 2;
 }
 
-void NuMemoryManager::BinLink(NuMemoryManager::FreeHeader *hdr, bool _unknown) {
-}
+void NuMemoryManager::BinLink(NuMemoryManager::FreeHeader *header, bool keep_sorted) {
+    unsigned int size;
+    unsigned int bin_idx;
 
-void NuMemoryManager::BinUnlink(NuMemoryManager::FreeHeader *hdr) {
-}
+    size = BLOCK_SIZE(header);
 
-void NuMemoryManager::BinLinkAfterNode(NuMemoryManager::FreeHeader *afterNode, NuMemoryManager::FreeHeader *hdr) {
-    FreeHeader *next;
+    if (size < 0x400) {
+        bin_idx = GetSmallBinIndex(size);
+        BinLinkAfterNode(&this->small_bins[bin_idx], header);
+        this->small_bin_has_free_map[bin_idx >> 5] |= bin_idx;
+    } else {
+        bin_idx = GetLargeBinIndex(size);
 
-    next = afterNode->next;
-    hdr->prev = afterNode;
-    hdr->next = next;
+        if (keep_sorted) {
+            FreeHeader *after;
+            FreeHeader *next;
 
-    if (afterNode->next != NULL) {
-        afterNode->next->prev = hdr;
+            next = &this->large_bins[bin_idx];
+
+            do {
+                after = next;
+                next = next->next;
+            } while (next != NULL && BLOCK_SIZE(next) <= size);
+
+            BinLinkAfterNode(after, header);
+        } else {
+            BinLinkAfterNode(&this->large_bins[bin_idx], header);
+            this->large_bin_dirty_map |= 1 << bin_idx;
+        }
+
+        this->large_bin_has_free_map |= 1 << (0x1f - bin_idx);
     }
 
-    afterNode->next = hdr;
+    StatsAddFragment(header);
 }
 
-bool NuMemoryManager::PopContext(NuMemoryManager::PopDebugMode debugMode) {
+void NuMemoryManager::BinUnlink(NuMemoryManager::FreeHeader *header) {
+    FreeHeader *next;
+    unsigned int size;
+    unsigned int bin_idx;
+
+    // Remove the header from the linked list.
+    next = header->next;
+    if (next != NULL) {
+        next->prev = header->prev;
+    }
+
+    if (header->prev != NULL) {
+        header->prev->next = next;
+    }
+
+    header->next = NULL;
+    header->prev = NULL;
+
+    // Update maps of bins with free blocks.
+    size = BLOCK_SIZE(header);
+
+    if (size < 0x400) {
+        bin_idx = GetSmallBinIndex(size);
+
+        if (this->small_bins[bin_idx].next == NULL) {
+            this->small_bin_has_free_map[bin_idx >> 5] &= ~(bin_idx & 0x1f);
+        }
+    } else {
+        bin_idx = GetLargeBinIndex(size);
+
+        if (this->large_bins[bin_idx].next == NULL) {
+            // Rotate left.
+            unsigned int shift = 0x1f - bin_idx;
+            this->large_bin_has_free_map &= ((unsigned int)-2 << shift) | ((unsigned int)-2 >> (0x20 - shift));
+        }
+    }
+
+    StatsRemoveFragment(header);
+}
+
+void NuMemoryManager::BinLinkAfterNode(NuMemoryManager::FreeHeader *after, NuMemoryManager::FreeHeader *header) {
+    FreeHeader *next;
+
+    next = after->next;
+    header->prev = after;
+    header->next = next;
+
+    if (after->next != NULL) {
+        after->next->prev = header;
+    }
+
+    after->next = header;
+}
+
+bool NuMemoryManager::PopContext(NuMemoryManager::PopDebugMode debug_mode) {
 }
 
 void NuMemoryManager::ValidateAllocAlignment(unsigned int alignment) {
@@ -247,7 +327,15 @@ void NuMemoryManager::ValidateAllocAlignment(unsigned int alignment) {
 void NuMemoryManager::ValidateAllocSize(unsigned int size) {
 }
 
-void NuMemoryManager::StatsAddFragment(NuMemoryManager::FreeHeader *hdr) {
+void NuMemoryManager::StatsAddFragment(NuMemoryManager::FreeHeader *header) {
+    this->stats.frag_bytes += BLOCK_SIZE(header);
+    this->stats.frag_count++;
+    this->stats.max_frag_count = MAX(this->stats.max_frag_count, this->stats.frag_count);
+}
+
+void NuMemoryManager::StatsRemoveFragment(NuMemoryManager::FreeHeader *header) {
+    this->stats.frag_bytes -= BLOCK_SIZE(header);
+    this->stats.frag_count--;
 }
 
 void NuMemoryManager::IErrorHandler::HandleError(NuMemoryManager *manager, ErrorCode code, const char *msg) {

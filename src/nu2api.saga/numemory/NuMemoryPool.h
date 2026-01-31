@@ -1,3 +1,5 @@
+#include <pthread.h>
+
 class NuMemoryPool {
   public:
     class IEventHandler {
@@ -10,4 +12,20 @@ class NuMemoryPool {
                                          const char *_unknown3) = 0;
         virtual void FreeLargeBlock(NuMemoryPool *pool, void *ptr) = 0;
     };
+
+  private:
+    struct FreeBlock {};
+
+  private:
+    static NuMemoryPool *m_firstPool;
+    static pthread_mutex_t m_globalCriticalSection;
+
+    NuMemoryPool *next;
+    const char *name;
+
+    static void InterlockedAdd(volatile unsigned int *augend, unsigned int addend);
+    static void InterlockedSub(volatile unsigned int *minuend, unsigned int subtrahend);
+
+    static void InterlockedPush(volatile FreeBlock **block, void *ptr);
+    static void InterlockedPop(volatile FreeBlock **block);
 };
