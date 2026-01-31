@@ -62,9 +62,8 @@ of the engine, and newer code written in object-oriented C++. Evidence from
 debug symbols suggests that conventions were applied inconsistently even within
 these sections
 
-As a compromise between being true to the original source code, common
-conventions for the languages we're writing in, and our own personal tastes in
-readability, the following guidelines apply:
+As a compromise between being true to the original source code and our own
+personal tastes in readability, the following guidelines apply:
 
 - In order to match the original binary, it's necessary to use original names
   for many functions and types. Whenever mangled symbols are present, these are
@@ -76,27 +75,20 @@ readability, the following guidelines apply:
 - When function names are not known, they should be named in `PascalCase` and
   follow existing patterns to the extent possible.
 
+- Struct and class members, function parameters, and local variables are to be
+  given descriptive names in `snake_case`, without regard to original naming.
+  Even when original names are known from debug symbols, these are generally
+  considered to be insufficiently descriptive or too inconsistently named to be
+  appropriate, and there is no need for matching.
+
+- Enum members are named in `UPPER_SNAKE_CASE`.
+
 - Macros are named in `UPPER_SNAKE_CASE`.
 
 - In C-style code:
-
   - Types are most commonly named in `lowercase` and followed by a tag, `_s` for
     structs and `_e` for enums, accompanied by a typedef of the same name in
     `UPPERCASE` without the trailing tag.
 
-  - Enum members are named in `UPPER_SNAKE_CASE`.
-
-  - Struct members, function parameters, and local variables are to be given
-    descriptive names in `snake_case`. We _do not_ use original names, even
-    where these are known from debug symbols, as these are generally
-    insufficiently descriptive, and there is no need for matching.
-
 - In C++-style code:
-
   - Classes and their constituent types are named in `PascalCase`.
-
-  - Enum members are named in `UPPER_SNAKE_CASE`.
-
-  - Class and struct members, function parameters, and local variables are to be
-    given descriptive names in `camelCase`. We _do not_ use original names, in
-    part because we know very few of these, and there is no need for matching.
