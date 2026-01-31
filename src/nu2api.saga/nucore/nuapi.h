@@ -1,7 +1,5 @@
 #pragma once
 
-#include "decomp.h"
-
 #include "gamelib/nuwind/nuwind.h"
 #include "nu2api.saga/nucore/nutime.h"
 #include "nu2api.saga/nucore/nuvideo.h"
@@ -90,12 +88,16 @@ extern NUAPI nuapi;
 void NuAPIInit(void);
 #endif
 
-C_API_START
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-void NuCommandLine(int argc, char **argv);
-void NuDisableOSMenuFreeze(void);
+    void NuCommandLine(int argc, char **argv);
+    void NuDisableOSMenuFreeze(void);
 
-void NudxFw_D3DBeginCriticalSection();
-void NudxFw_D3DEndCriticalSection();
+    void NudxFw_D3DBeginCriticalSection();
+    void NudxFw_D3DEndCriticalSection();
 
-C_API_END
+#ifdef __cplusplus
+}
+#endif

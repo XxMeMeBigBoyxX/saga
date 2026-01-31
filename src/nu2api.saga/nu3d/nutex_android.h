@@ -2,18 +2,20 @@
 
 #include <GLES2/gl2.h>
 
-#include "decomp.h"
-
 typedef struct nunativetexps_s {
     GLuint gl_tex;
 } NUNATIVETEXPS;
 
-C_API_START
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-extern int g_textureLoadBufferCriticalSection;
+    extern int g_textureLoadBufferCriticalSection;
 
-extern GLuint g_LegoEnvTexture;
-extern GLuint g_PhongEnvTexture;
-extern GLuint g_whiteTexture;
+    extern GLuint g_LegoEnvTexture;
+    extern GLuint g_PhongEnvTexture;
+    extern GLuint g_whiteTexture;
 
-C_API_END
+#ifdef __cplusplus
+}
+#endif

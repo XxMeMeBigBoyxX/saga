@@ -1,3 +1,5 @@
+#include "decomp.h"
+
 #include "nu2api.saga/nucore/nustring.h"
 
 void NuStrCat(char *str, const char *ext) {
@@ -56,7 +58,7 @@ char *NuStrChr(char *src, char c) {
     return NULL;
 }
 
-ssize_t NuStrCpy(char *dst, const char *src) {
+int NuStrCpy(char *dst, const char *src) {
     char *dst_start = dst;
 
     if (src != NULL) {
@@ -182,8 +184,8 @@ char *NuStrIStr(char *str, char *sub) {
     return NULL;
 }
 
-ssize_t NuStrLen(const char *str) {
-    ssize_t count = 0;
+int NuStrLen(const char *str) {
+    int count = 0;
 
     while (*str != '\0') {
         count++;
@@ -193,8 +195,8 @@ ssize_t NuStrLen(const char *str) {
     return count;
 }
 
-ssize_t NuStrLenW(const NUWCHAR *str) {
-    ssize_t count = 0;
+int NuStrLenW(const NUWCHAR *str) {
+    int count = 0;
 
     while (*str != 0) {
         count++;
@@ -204,7 +206,7 @@ ssize_t NuStrLenW(const NUWCHAR *str) {
     return count;
 }
 
-int NuStrNCmp(const char *a, const char *b, ssize_t n) {
+int NuStrNCmp(const char *a, const char *b, int n) {
     char a_cursor;
     char b_cursor;
 
@@ -246,7 +248,7 @@ int NuStrNCmp(const char *a, const char *b, ssize_t n) {
     return 0;
 }
 
-int NuStrNICmp(const char *a, const char *b, ssize_t n) {
+int NuStrNICmp(const char *a, const char *b, int n) {
     char a_cursor;
     char b_cursor;
 
@@ -288,8 +290,8 @@ int NuStrNICmp(const char *a, const char *b, ssize_t n) {
     return 0;
 }
 
-ssize_t NuStrNCpy(char *dst, const char *src, ssize_t n) {
-    ssize_t count = 0;
+int NuStrNCpy(char *dst, const char *src, int n) {
+    int count = 0;
 
     if (src == NULL) {
         *dst = '\0';

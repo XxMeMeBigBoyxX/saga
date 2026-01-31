@@ -1,4 +1,4 @@
-#include "numusic.h"
+#include "nu2api.saga/numusic/numusic.h"
 
 #include "nu2api.saga/nufile/nufpar.h"
 

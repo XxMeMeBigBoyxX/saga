@@ -1,3 +1,5 @@
+#include "decomp.h"
+
 #include "deflate/deflate.h"
 
 int32_t ExplodeBufferNoHeader(uint8_t *param_1, uint8_t *param_2, int32_t param_3, int32_t param_4) {

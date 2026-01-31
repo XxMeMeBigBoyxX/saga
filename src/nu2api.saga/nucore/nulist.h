@@ -1,7 +1,5 @@
 #pragma once
 
-#include "decomp.h"
-
 typedef struct nulistlnk_s {
     struct nulistlnk_s *next;
     struct nulistlnk_s *prev;
@@ -12,16 +10,20 @@ typedef struct nulisthdr_s {
     NULISTLNK *tail;
 } NULISTHDR;
 
-C_API_START
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-void NuLinkedListAppend(NULISTHDR *list, NULISTLNK *node);
-void NuLinkedListInsert(NULISTHDR *list, NULISTLNK *node);
-void NuLinkedListRemove(NULISTHDR *list, NULISTLNK *node);
+    void NuLinkedListAppend(NULISTHDR *list, NULISTLNK *node);
+    void NuLinkedListInsert(NULISTHDR *list, NULISTLNK *node);
+    void NuLinkedListRemove(NULISTHDR *list, NULISTLNK *node);
 
-NULISTLNK *NuLinkedListGetHead(NULISTHDR *list);
-NULISTLNK *NuLinkedListGetTail(NULISTHDR *list);
+    NULISTLNK *NuLinkedListGetHead(NULISTHDR *list);
+    NULISTLNK *NuLinkedListGetTail(NULISTHDR *list);
 
-NULISTLNK *NuLinkedListGetPrev(NULISTHDR *list, NULISTLNK *node);
-NULISTLNK *NuLinkedListGetNext(NULISTHDR *list, NULISTLNK *node);
+    NULISTLNK *NuLinkedListGetPrev(NULISTHDR *list, NULISTLNK *node);
+    NULISTLNK *NuLinkedListGetNext(NULISTHDR *list, NULISTLNK *node);
 
-C_API_END
+#ifdef __cplusplus
+}
+#endif

@@ -136,15 +136,20 @@ struct leveldata_s { /* PlaceHolder Structure */
     undefined4 field97_0x128;
     int musicTracks[6];
 };
+
 typedef struct leveldata_s LEVELDATA;
 
-C_API_START
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-extern LEVELDATA *LDataList;
-extern LEVELDATA *NEWGAME_LDATA;
-extern LEVELDATA *LOADGAME_LDATA;
+    extern LEVELDATA *LDataList;
+    extern LEVELDATA *NEWGAME_LDATA;
+    extern LEVELDATA *LOADGAME_LDATA;
 
-C_API_END
+#ifdef __cplusplus
+}
+#endif
 
 #ifdef __cplusplus
 

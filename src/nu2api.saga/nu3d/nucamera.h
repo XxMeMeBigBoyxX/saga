@@ -1,7 +1,5 @@
 #pragma once
 
-#include "decomp.h"
-
 #include "nu2api.saga/numath/numtx.h"
 #include "nu2api.saga/numath/nuvec4.h"
 
@@ -18,8 +16,12 @@ struct nucamera_s {
 
 typedef struct nucamera_s NUCAMERA;
 
-C_API_START
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-NUCAMERA *NuCameraCreate(void);
+    NUCAMERA *NuCameraCreate(void);
 
-C_API_END
+#ifdef __cplusplus
+}
+#endif

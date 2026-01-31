@@ -4,8 +4,6 @@
 
 #include "nu2api.saga/numemory/NuMemoryManager.h"
 
-#include "decomp.h"
-
 typedef enum NUTHREADCAFECORE {
     NUTHREADCAFECORE_UNKNOWN_1 = 1,
     NUTHREADCAFECORE_UNKNOWN_2 = 2,
@@ -16,15 +14,19 @@ typedef enum NUTHREADXBOX360CORE {
     NUTHREADXBOX360CORE_UNKNOWN_2 = 2,
 } NUTHREADXBOX360CORE;
 
-C_API_START
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-int32_t NuThreadCriticalSectionBegin(int32_t index);
+    int32_t NuThreadCriticalSectionBegin(int32_t index);
 
-int32_t NuThreadCriticalSectionEnd(int32_t index);
+    int32_t NuThreadCriticalSectionEnd(int32_t index);
 
-int32_t NuThreadCreateCriticalSection(void);
+    int32_t NuThreadCreateCriticalSection(void);
 
-C_API_END
+#ifdef __cplusplus
+}
+#endif
 
 #ifdef __cplusplus
 

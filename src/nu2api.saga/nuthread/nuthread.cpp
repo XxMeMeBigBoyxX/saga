@@ -2,6 +2,8 @@
 #include <sched.h>
 #include <string.h>
 
+#include "decomp.h"
+
 #include "nu2api.saga/nuthread/nuthread.h"
 
 #include "nu2api.saga/nucore/nucore.h"

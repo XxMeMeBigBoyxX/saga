@@ -4,8 +4,6 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "decomp.h"
-
 #include "nu2api.saga/nucore/common.h"
 
 #if 1
@@ -34,29 +32,33 @@ typedef struct nunativetex_s {
     NUNATIVETEXPS platform;
 } NUNATIVETEX;
 
-C_API_START
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-extern pthread_mutex_t criticalSection;
-extern int max_textures;
+    extern pthread_mutex_t criticalSection;
+    extern int max_textures;
 
-void NuTexInitEx(VARIPTR *buf, int max_tex_count);
+    void NuTexInitEx(VARIPTR *buf, int max_tex_count);
 
-int NuTexRead(char *name, VARIPTR *buf, VARIPTR *buf_end);
+    int NuTexRead(char *name, VARIPTR *buf, VARIPTR *buf_end);
 
-int NuTexCreate(NUTEX *tex);
-int NuTexCreateNative(NUNATIVETEX *tex, bool is_pvrtc);
+    int NuTexCreate(NUTEX *tex);
+    int NuTexCreateNative(NUNATIVETEX *tex, bool is_pvrtc);
 
-void NuTexDestroy(int tex_id);
+    void NuTexDestroy(int tex_id);
 
-NUNATIVETEX *NuTexGetNative(int tex_id);
+    NUNATIVETEX *NuTexGetNative(int tex_id);
 
-void NuTexAddReference(int tex_id);
-void NuTexRemoveReference(int tex_id);
-int NuTexGetRefCount(int tex_id);
+    void NuTexAddReference(int tex_id);
+    void NuTexRemoveReference(int tex_id);
+    int NuTexGetRefCount(int tex_id);
 
-void NuTexDisplayTexturePage(int page, float depth, int alpha);
+    void NuTexDisplayTexturePage(int page, float depth, int alpha);
 
-C_API_END
+#ifdef __cplusplus
+}
+#endif
 
 void NuTexInitExPS(VARIPTR *buf);
 

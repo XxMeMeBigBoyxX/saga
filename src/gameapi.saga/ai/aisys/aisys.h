@@ -1,4 +1,3 @@
-#include "decomp.h"
 #include "nu2api.saga/nucore/common.h"
 #include "nu2api.saga/nucore/nulist.h"
 
@@ -109,14 +108,18 @@ typedef struct AIREFSCRIPT_s {
     NULISTHDR conditions;
 } AIREFSCRIPT;
 
-C_API_START
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-extern int AiParseExpressionFailed;
-extern AICONDITIONDEF api_aiconditiondefs[];
-extern AIACTIONDEF api_aiactiondefs[];
-extern AIACTIONDEF *game_aiactiondefs;
+    extern int AiParseExpressionFailed;
+    extern AICONDITIONDEF api_aiconditiondefs[];
+    extern AIACTIONDEF api_aiactiondefs[];
+    extern AIACTIONDEF *game_aiactiondefs;
 
-C_API_END
+#ifdef __cplusplus
+}
+#endif
 
 float AiParseExpression(char *expr);
 

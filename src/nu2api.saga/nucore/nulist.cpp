@@ -1,3 +1,5 @@
+#include <stddef.h>
+
 #include "nu2api.saga/nucore/nulist.h"
 
 void NuLinkedListAppend(NULISTHDR *list, NULISTLNK *node) {

@@ -2,7 +2,6 @@
 
 #include <stdint.h>
 
-#include "decomp.h"
 #include "nu2api.saga/nucore/common.h"
 
 struct episodedata_s {
@@ -16,11 +15,15 @@ struct episodedata_s {
 };
 typedef struct episodedata_s EPISODEDATA;
 
-C_API_START
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-extern EPISODEDATA *EDataList;
+    extern EPISODEDATA *EDataList;
 
-C_API_END
+#ifdef __cplusplus
+}
+#endif
 
 #ifdef __cplusplus
 

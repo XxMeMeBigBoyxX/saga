@@ -1,7 +1,5 @@
 #pragma once
 
-#include "decomp.h"
-
 #include "nu2api.saga/nucore/common.h"
 
 typedef struct nufilepakhdrv0_s {
@@ -57,13 +55,17 @@ typedef enum {
     NUFILEPAK_ERROR_CNT,
 } NUFILEPAK_ERROR;
 
-C_API_START
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-void *NuFilePakLoad(char *filepath, VARIPTR *buf, VARIPTR buf_end, int alignment);
-void *NuFilePakLoadKey(char *filepath, VARIPTR *buf, VARIPTR buf_end, int alignment, unsigned char *key,
-                       unsigned int key_len);
+    void *NuFilePakLoad(char *filepath, VARIPTR *buf, VARIPTR buf_end, int alignment);
+    void *NuFilePakLoadKey(char *filepath, VARIPTR *buf, VARIPTR buf_end, int alignment, unsigned char *key,
+                           unsigned int key_len);
 
-int NuFilePakGetItem(void *hdr, char *item_name);
-int NuFilePakGetItemInfo(void *hdr, int item_handle, void **addr, int *size);
+    int NuFilePakGetItem(void *hdr, char *item_name);
+    int NuFilePakGetItemInfo(void *hdr, int item_handle, void **addr, int *size);
 
-C_API_END
+#ifdef __cplusplus
+}
+#endif

@@ -1,3 +1,9 @@
+#include <stdio.h>
+#include <string.h>
+#include <sys/stat.h>
+
+#include "decomp.h"
+
 #include "saveload/saveload.h"
 
 #include "nu2api.saga/nuandroid/nuios.h"
@@ -5,10 +11,6 @@
 #include "nu2api.saga/nucore/nutime.h"
 #include "nu2api.saga/numemory/numemory.h"
 #include "nu2api.saga/nuthread/nuthread.h"
-
-#include <stdio.h>
-#include <string.h>
-#include <sys/stat.h>
 
 #include "export.h"
 

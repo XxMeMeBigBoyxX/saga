@@ -3,8 +3,6 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "decomp.h"
-
 enum platforms_supported_e {
     DEFAULT_PLATFORM = 0,
     XBOX_PLATFORM = 1,
@@ -23,12 +21,16 @@ enum platforms_supported_e {
 };
 typedef enum platforms_supported_e PLATFORMS_SUPPORTED;
 
-C_API_START
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-extern char *g_fontExtension;
-extern char *g_platformName;
+    extern char *g_fontExtension;
+    extern char *g_platformName;
 
-C_API_END
+#ifdef __cplusplus
+}
+#endif
 
 #ifdef __cplusplus
 

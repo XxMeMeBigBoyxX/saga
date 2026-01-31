@@ -2,16 +2,18 @@
 
 #include <stdint.h>
 
-#include "decomp.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-C_API_START
+    extern int32_t g_isLowEndDevice;
 
-extern int32_t g_isLowEndDevice;
+    int32_t NuIOS_IsLowEndDevice(void);
 
-int32_t NuIOS_IsLowEndDevice(void);
+    char *NuIOS_GetDocumentsPath(void);
 
-char *NuIOS_GetDocumentsPath(void);
+    uint32_t NuIOS_YieldThread(void);
 
-uint32_t NuIOS_YieldThread(void);
-
-C_API_END
+#ifdef __cplusplus
+}
+#endif

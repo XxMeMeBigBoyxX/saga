@@ -1,6 +1,5 @@
 #pragma once
 
-#include "decomp.h"
 #include "globals.h"
 
 #include "nu2api.saga/nufile/nufile.h"
@@ -93,8 +92,12 @@ nusound_filename_info_s *ConfigureMusic(char *file, VARIPTR *bufferStart, VARIPT
 
 #endif
 
-C_API_START
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-int32_t NuSound3InitV(VARIPTR *bufferStart, VARIPTR bufferEnd, int32_t zero1, int32_t zero2);
+    int32_t NuSound3InitV(VARIPTR *bufferStart, VARIPTR bufferEnd, int32_t zero1, int32_t zero2);
 
-C_API_END
+#ifdef __cplusplus
+}
+#endif

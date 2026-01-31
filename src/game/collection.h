@@ -2,13 +2,16 @@
 
 #include <stdint.h>
 
-#include "decomp.h"
 #include "nu2api.saga/nucore/common.h"
 
-C_API_START
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-extern int32_t COLLECTION_COMPLETIONCOUNT;
+    extern int32_t COLLECTION_COMPLETIONCOUNT;
 
-C_API_END
+#ifdef __cplusplus
+}
+#endif
 
 void Collection_Configure(char *file, VARIPTR *buf, VARIPTR *buf_end);

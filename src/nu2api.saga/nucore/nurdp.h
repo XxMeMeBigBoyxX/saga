@@ -1,15 +1,17 @@
 #pragma once
 
-#include "decomp.h"
-
 typedef int nurdpgetvarfn(char *, float *, int *);
 
-C_API_START
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-float NuRDPF(char *input);
-float NuRDPFVar(char *input, nurdpgetvarfn *get_var_fn);
+    float NuRDPF(char *input);
+    float NuRDPFVar(char *input, nurdpgetvarfn *get_var_fn);
 
-int NuRDPI(char *input);
-int NuRDPIVar(char *input, nurdpgetvarfn *get_var_fn);
+    int NuRDPI(char *input);
+    int NuRDPIVar(char *input, nurdpgetvarfn *get_var_fn);
 
-C_API_END
+#ifdef __cplusplus
+}
+#endif

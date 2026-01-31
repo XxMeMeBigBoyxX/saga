@@ -1,3 +1,5 @@
+#include <stddef.h>
+
 #include "globals.h"
 #include "nu2api.saga/nucore/common.h"
 
