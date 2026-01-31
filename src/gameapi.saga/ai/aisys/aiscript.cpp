@@ -11,6 +11,9 @@
 #include "nu2api.saga/nufile/nufilepak.h"
 #include "nu2api.saga/nufile/nufpar.h"
 
+#include <stdio.h>
+#include <string.h>
+
 static void *load_pakfile;
 static char *load_path;
 

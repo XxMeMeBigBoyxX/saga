@@ -2,6 +2,7 @@
 
 #include "game/collection.h"
 
+#include "decomp.h"
 #include "game/area.h"
 #include "game/character.h"
 #include "game/store.h"

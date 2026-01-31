@@ -3,7 +3,7 @@
 #include "decomp.h"
 
 #include "nu2api.saga/numusic/numusic.h"
-
+#include "decomp.h"
 #include "nu2api.saga/nufile/nufpar.h"
 
 static NuMusic *the_music_player = NULL;
@@ -14,17 +14,17 @@ extern "C" {
 
 int32_t NuMusic::ClassToIX(unsigned int i) {
     switch (i) {
-        case CATEGORY_QUIET:
+        case TRACK_CLASS_QUIET:
             return 0;
-        case CATEGORY_ACTION:
+        case TRACK_CLASS_ACTION:
             return 1;
-        case CATEGORY_4:
+        case TRACK_CLASS_4:
             return 2;
-        case CATEGORY_8:
+        case TRACK_CLASS_8:
             return 3;
-        case CATEGORY_CUTSCENE:
+        case TRACK_CLASS_CUTSCENE:
             return 4;
-        case CATEGORY_NOMUSIC:
+        case TRACK_CLASS_NOMUSIC:
             return 5;
         default:
             return -1;
@@ -40,28 +40,34 @@ Track *NuMusic::Album::GetTrack(unsigned int class_) {
     }
 }
 
-int32_t NuMusic::Initialise(const char *file, char *null, VARIPTR *bufferStart, VARIPTR bufferEnd) {
+int32_t NuMusic::Initialise(const char *file, char *null, VARIPTR *buffer_start, VARIPTR buffer_end) {
     the_music_player = this;
-
     this->language = null;
     // this->field6_0x18 = 0x1000;
-    // this->field15_0x24 = 0;
-    this->strictMode = false;
-
-    // InitVoiceManager(this);
-    InitData(file, bufferStart, bufferEnd);
-
-    // this->field336_0x1a4 = 0;
-    // this->field339_0x1b0 = 0.5;
-    // this->field333_0x198 = 1.0;
+    this->currentPath[0] = '\0';
+    this->strictMode = 0;
+    InitVoiceManager();
+    InitData(file, buffer_start, buffer_end);
+    // this->field111_0x1a4 = 0;
+    // this->field114_0x1b0 = 0.5;
+    // this->field108_0x198 = 1.0;
     this->album = this->albums;
-    // this->field334_0x19c = 1.0;
-    // this->field335_0x1a0 = 1.0;
-    // this->field337_0x1a8 = 1.0;
-    // this->field338_0x1ac = 1.0;
-    // this->field341_0x1cc = 1.0;
-
+    // this->field109_0x19c = 1.0;
+    // this->field110_0x1a0 = 1.0;
+    // this->field112_0x1a8 = 1.0;
+    // this->field113_0x1ac = 1.0;
+    // this->field139_0x1cc = 1.0;
     return 1;
+}
+
+void NuMusic::InitVoiceManager() {
+    memset(&this->voices[0], 0, sizeof(Voice));
+    this->voices[0].streamIndex = 0;
+    this->voices[0].status = VOICE_STATUS_1;
+
+    memset(&this->voices[1], 0, sizeof(Voice));
+    this->voices[1].streamIndex = 1;
+    this->voices[1].status = VOICE_STATUS_1;
 }
 
 void NuMusic::GetSoundFiles(nusound_filename_info_s **finfo, int *null) {
@@ -82,17 +88,20 @@ void NuMusic::GetSoundFiles(nusound_filename_info_s **finfo, int *null) {
     }
 }
 
-void NuMusic::InitData(const char *file, VARIPTR *bufferStart, VARIPTR bufferEnd) {
-    this->stringPoolStart = BUFFER_ALLOC_ARRAY(&bufferStart->void_ptr, 0x10000, char, 0x1);
+void NuMusic::InitData(const char *file, VARIPTR *buffer_start, VARIPTR buffer_end) {
+    VARIPTR buffer_original = *buffer_start;
+
+    this->stringPoolStart = BUFFER_ALLOC_ARRAY_ALIGNED(&buffer_start->void_ptr, 0x10000, char);
     this->stringPoolEnd = this->stringPoolStart;
 
-    this->albums = BUFFER_ALLOC_ARRAY(&bufferStart->void_ptr, 512, Album, 0x4);
-    this->tracks = BUFFER_ALLOC_ARRAY(&bufferStart->void_ptr, 2048, Track, 0x4);
-    this->indexes = BUFFER_ALLOC_ARRAY(&bufferStart->void_ptr, 2048, float, 0x4);
+    this->albums = BUFFER_ALLOC_ARRAY_ALIGNED(&buffer_start->void_ptr, 512, Album);
+    this->tracks = BUFFER_ALLOC_ARRAY_ALIGNED(&buffer_start->void_ptr, 2048, Track);
+    this->indexes = BUFFER_ALLOC_ARRAY_ALIGNED(&buffer_start->void_ptr, 2048, float);
+
+    LOG_DEBUG("albums=%p, tracks=%p, indexes=%p", this->albums, this->tracks, this->indexes);
 
     NuFParSetInterpreterErrorHandler(0);
     nufpar_s *fpar = NuFParCreate(const_cast<char *>(file));
-
     if (fpar != NULL) {
         NuFParPushComCTX(fpar, top_jmp_tab);
 
@@ -103,16 +112,243 @@ void NuMusic::InitData(const char *file, VARIPTR *bufferStart, VARIPTR bufferEnd
 
         NuFParDestroy(fpar);
     }
-
     NuFParSetInterpreterErrorHandler(0);
+    LOG_DEBUG("Loaded %d albums, %d tracks, %d indexes", this->albumCount, this->trackCount, this->indexCount);
+
+    int32_t count = this->albumCount;
+    if (count == 0 || (trackCount = this->trackCount, trackCount == 0)) {
+        *buffer_start = buffer_original;
+        this->albums = NULL;
+        this->albumCount = 0;
+        this->tracks = NULL;
+        this->trackCount = 0;
+        return;
+    }
+
+    Track *tracksPtr;
+    Track *alloced;
+    Track *pTVar3;
+    Album *pAVar3;
+
+    Album *albumPtr = this->albums;
+    album = (Album *)((int)this->stringPoolEnd + 3U & 0xfffffffc);
+    if (albumPtr == album) {
+        tracksPtr = this->tracks;
+        alloced = (Track *)((uint)((int)&albumPtr[count].name + 3U) & 0xfffffffc);
+        pTVar3 = tracksPtr;
+        if (tracksPtr == alloced)
+            goto LAB_003203e6;
+    LAB_003204e0:
+        memmove(alloced, pTVar3, trackCount * 0x3c);
+        trackCount = this->trackCount;
+        count = this->albumCount;
+        tracksPtr = alloced;
+    } else {
+        memmove(album, albumPtr, count * 0x24);
+        count = this->albumCount;
+        this->albums = album;
+        trackCount = this->trackCount;
+        tracksPtr = (Track *)(album + count);
+        pTVar3 = this->tracks;
+        if (pTVar3 == tracksPtr)
+            goto LAB_003203e6;
+        alloced = tracksPtr;
+        if (trackCount != 0)
+            goto LAB_003204e0;
+    }
+    this->tracks = tracksPtr;
+    if (0 < count) {
+        pAVar3 = this->albums;
+        albumPtr = pAVar3 + count;
+        do {
+            if (pAVar3->tracks_source != (Track *)0x0) {
+                pAVar3->tracks_source = (Track *)((int)pAVar3->tracks_source + ((int)tracksPtr - (int)pTVar3));
+            }
+            pAVar3 = pAVar3 + 1;
+        } while (pAVar3 != albumPtr);
+        tracksPtr = this->tracks;
+    }
+
+LAB_003203e6:
+    float *pfVar2 = this->indexes;
+    float *__dest = (float *)((uint)((int)&tracksPtr[trackCount].path + 3U) & 0xfffffffc);
+    int32_t local_20;
+    if (pfVar2 == __dest) {
+        local_20 = this->indexCount;
+    } else {
+        local_20 = 0;
+
+        if (this->indexCount != 0) {
+            memmove(__dest, pfVar2, this->indexCount << 2);
+            trackCount = this->trackCount;
+            local_20 = this->indexCount;
+        }
+        this->indexes = __dest;
+
+        if (0 < trackCount) {
+            tracksPtr = this->tracks;
+            pTVar3 = tracksPtr + trackCount;
+            do {
+                // if (tracksPtr->field8_0x18 != (void *)0x0) {
+                // tracksPtr->field8_0x18 = (void *)((int)tracksPtr->field8_0x18 + ((int)__dest - (int)pfVar2));
+                //}
+                tracksPtr = tracksPtr + 1;
+            } while (tracksPtr != pTVar3);
+            __dest = this->indexes;
+        }
+    }
+
+    buffer_start->void_ptr = __dest + local_20;
+    for (int32_t i = 0; i < trackCount; i++) {
+        this->albums[i].Initialise();
+    }
+
+    // BuildSoundTable(this, buffer_start, buffer_end);
 }
 
-void NuMusic::PlayTrack(unsigned int track) {
-    PlayTrackI(track);
+void NuMusic::Album::Initialise() {
+    int i;
+    int j;
+    TRACK_CLASS class_;
+    Track *track;
+    int count;
+
+    i = 0;
+    count = this->tracks_count;
+    do {
+        while (this->tracks[i] = NULL, count < 1) {
+        LAB_0031f139:
+            i = i + 1;
+            if (i == 6) {
+                return;
+            }
+        }
+        j = 0;
+        LOG_DEBUG("this=%p", this);
+        class_ = this->tracks_source->class_;
+        track = this->tracks_source;
+        while ((int32_t)class_ != 1 << ((byte)i & 0x1f)) {
+            j = j + 1;
+            if (j == count)
+                goto LAB_0031f139;
+            class_ = track[1].class_;
+            track = track + 1;
+        }
+        this->tracks[i] = track;
+        i = i + 1;
+        if (i == 6) {
+            return;
+        }
+    } while (true);
 }
 
-int32_t NuMusic::PlayTrackI(unsigned int class_) {
+int32_t NuMusic::PlayTrack(TRACK_CLASS track) {
+    return PlayTrackI(track);
+}
 
+NuMusic::Voice *NuMusic::FindVoiceByClassAndStatus(TRACK_CLASS class_, VOICE_STATUS status) {
+    Track *track = this->voices[0].tracks[this->voices[0].trackIndex];
+
+    if (track == NULL || track->class_ != class_ || this->voices[0].status != status) {
+        track = this->voices[1].tracks[this->voices[1].trackIndex];
+        if (track == NULL || track->class_ != class_ || this->voices[1].status != status) {
+            return NULL;
+        }
+        return &this->voices[1];
+    } else {
+        return &this->voices[0];
+    }
+}
+
+NuMusic::Voice *NuMusic::FindVoiceByTrack(Track *track) {
+    if (track == NULL) {
+        return NULL;
+    }
+
+    int32_t index = 0;
+    if (this->voices[0].tracks[this->voices[0].trackIndex] != track) {
+        if (this->voices[1].tracks[this->voices[1].trackIndex] != track) {
+            return NULL;
+        }
+        index = 1;
+    }
+
+    return &this->voices[index];
+}
+
+NuMusic::Voice *NuMusic::FindVoiceByClass(TRACK_CLASS class_) {
+    int32_t index;
+    Track *track;
+
+    track = this->voices[0].tracks[this->voices[0].trackIndex];
+    if (track == NULL || track->class_ != class_) {
+        track = this->voices[1].tracks[this->voices[1].trackIndex];
+        if (track == NULL || track->class_ != class_) {
+            return NULL;
+        }
+        index = 1;
+    } else {
+        index = 0;
+    }
+
+    return &this->voices[index];
+}
+
+void NuMusic::Voice::SetStatusFn(VOICE_STATUS status) {
+    if (this->status != status) {
+        this->field16_0x2c = NULL;
+        this->status = status;
+    }
+}
+
+extern "C" void NuSound3StopStereoStream(int streamIndex) {
+    UNIMPLEMENTED();
+}
+
+bool NuMusic::Voice::Load(Track *track, int trackIndex) {
+    bool bVar1;
+    int index;
+
+    bVar1 = this->tracks[this->trackIndex] != track;
+    if (bVar1) {
+        this->trackIndex = (uint)(track->class_ == TRACK_CLASS_8);
+        NuSound3StopStereoStream(this->streamIndex);
+        index = this->trackIndex;
+        this->tracks[index] = track;
+        this->tracks[index + 2] = (Track *)trackIndex;
+        this->flags &= 0xfd;
+        SetStatusFn(VOICE_STATUS_1);
+    }
+
+    return bVar1;
+}
+
+NuMusic::Voice *NuMusic::FindIdleVoice() {
+    int32_t i = this->voices[0].status;
+    if (i != 1) {
+        if (this->voices[1].status == 1) {
+            return &this->voices[1];
+        }
+        if (i != 3) {
+            if (this->voices[1].status != 3) {
+                return NULL;
+            }
+            return &this->voices[1];
+        }
+    }
+
+    return &this->voices[0];
+}
+
+int32_t NuMusic::StopAll(int32_t toggle) {
+    UNIMPLEMENTED();
+}
+
+int32_t NuMusic::Voice::Play() {
+    UNIMPLEMENTED();
+}
+
+int32_t NuMusic::PlayTrackI(TRACK_CLASS class_) {
     if (this == NULL || the_music_player == NULL) {
         return -1;
     }
@@ -123,58 +359,48 @@ int32_t NuMusic::PlayTrackI(unsigned int class_) {
 
     Track *track = this->album->GetTrack(class_);
 
-    // if (track == NULL || track->field6_0xc[(int)this->track] == -1) {
-    //     return -3;
-    // }
-
-    if (track->category != CATEGORY_CUTSCENE) {
-        // if (FindVoiceByClassAndStatus(this, Track::Class::CATEGORY_CUTSCENE, 6) != 0) {
-        //     return -5;
-        // }
-        // if (FindVoiceByClassAndStatus(this, Track::Class::CATEGORY_CUTSCENE, 7) != 0) {
-        //     return -5;
-        // }
+    if (track == NULL || track->field6_0xc[this->trackIndex] == -1) {
+        return -3;
     }
 
-    /*
-    struct Voice;
-    int iVar1;
-    Voice *voice;
+    if (track->class_ != TRACK_CLASS_CUTSCENE) {
+        if (FindVoiceByClassAndStatus(TRACK_CLASS_CUTSCENE, VOICE_STATUS_6) != 0) {
+            return -5;
+        }
+        if (FindVoiceByClassAndStatus(TRACK_CLASS_CUTSCENE, VOICE_STATUS_7) != 0) {
+            return -5;
+        }
+    }
+
+    Voice *voice = FindVoiceByTrack(track);
+    if (voice != NULL) {
+        return voice->Play();
+    }
+
     Voice *vooice;
-
-    voice = (Voice *)FindVoiceByTrack(this, track);
-    if (voice != (Voice *)0x0) {
-        iVar1 = Voice::Play(voice);
-        return iVar1;
-    }
-    iVar1 = track->category;
-    if (iVar1 == 8) {
-        vooice = FindVoiceByClass(this, 8);
-        if (vooice != (Voice *)0x0) {
-            if ((vooice->field9_0x18 & 0xfffffffdU) != 1) {
+    if (track->class_ == TRACK_CLASS_8) {
+        if (vooice != NULL) {
+            vooice = FindVoiceByClass(TRACK_CLASS_8);
+            if ((vooice->status & 0xfffffffdU) != 1) {
                 return -5;
             }
-            goto LAB_003242a3;
         }
-        iVar1 = track->category;
-    }
-    if (iVar1 == 0x10) {
-        StopAll(this, 2);
-    }
-    vooice = (Voice *)FindIdleVoice(this);
-    if (vooice == (Voice *)0x0) {
-        return -5;
-    }
-LAB_003242a3:
-    iVar1 = Voice::Load(vooice, track, this->track);
-    if (iVar1 == 0) {
-        return -5;
-    }
-    iVar1 = Voice::Play(vooice);
-    return iVar1;
-    */
+    } else {
+        if (track->class_ == TRACK_CLASS_CUTSCENE) {
+            StopAll(2);
+        }
 
-    UNIMPLEMENTED();
+        vooice = FindIdleVoice();
+        if (vooice == NULL) {
+            return -5;
+        }
+    }
+
+    if (vooice->Load(track, this->trackIndex) == 0) {
+        return -5;
+    }
+
+    return vooice->Play();
 }
 
 void NuMusic::ParseTrack(unsigned int category, nufpar_s *fpar) {
@@ -183,7 +409,7 @@ void NuMusic::ParseTrack(unsigned int category, nufpar_s *fpar) {
 
     this->currentTrack = track;
 
-    track->category = (Class)category;
+    track->class_ = category;
     track->field23_0x2c = 1.0;
     track->field24_0x30 = 1.0;
     track->field25_0x34 = 1.0;
@@ -323,20 +549,20 @@ void NuMusic::xsStrict(nufpar_s *fpar, void *thisptr) {
 }
 
 void NuMusic::xAlbum(nufpar_s *fpar) {
-    Album *album = &this->albums[this->albumCount++];
-    this->currentAlbum = album;
-
-    // album->field1_0x4 = this->field2_0x8[this->field3_0xc];
-    // album->field2_0x8 = 0;
+    this->currentAlbum = &this->albums[this->albumCount++];
+    this->currentAlbum->tracks_source = &this->tracks[this->trackCount];
+    this->currentAlbum->tracks_count = 0;
 
     NuFParGetWord(fpar);
     this->currentAlbum->name = AllocString(fpar->word_buf);
+    LOG_DEBUG("Parsing album: '%s' at %p, tracks_source=%p", this->currentAlbum->name, this->currentAlbum,
+              this->currentAlbum->tracks_source);
 }
 void NuMusic::xAction(nufpar_s *fpar) {
-    ParseTrack(CATEGORY_ACTION, fpar);
+    ParseTrack(TRACK_CLASS_ACTION, fpar);
 }
 void NuMusic::xQuiet(nufpar_s *fpar) {
-    ParseTrack(CATEGORY_QUIET, fpar);
+    ParseTrack(TRACK_CLASS_QUIET, fpar);
 }
 void NuMusic::xOverlay(nufpar_s *fpar) {
     UNIMPLEMENTED();
@@ -345,10 +571,10 @@ void NuMusic::xSignature(nufpar_s *fpar) {
     UNIMPLEMENTED();
 }
 void NuMusic::xCutscene(nufpar_s *fpar) {
-    ParseTrack(CATEGORY_CUTSCENE, fpar);
+    ParseTrack(TRACK_CLASS_CUTSCENE, fpar);
 }
 void NuMusic::xNoMusicC(nufpar_s *fpar) {
-    ParseTrack(CATEGORY_NOMUSIC, fpar);
+    ParseTrack(TRACK_CLASS_NOMUSIC, fpar);
 }
 void NuMusic::xGlobalAttenuation(nufpar_s *fpar) {
     UNIMPLEMENTED();
@@ -420,6 +646,6 @@ void NuMusic::GlobalParseErrorFn(nufpar_s *param_1) {
 void NuMusic::TrackParseErrorFn(nufpar_s *param_1) {
 }
 
-void GamePlayMusic(LEVELDATA *level, int32_t zero, OPTIONSSAVE *options) {
-    music_man.PlayTrack(CATEGORY_ACTION);
+int32_t GamePlayMusic(LEVELDATA *level, int32_t zero, OPTIONSSAVE *options) {
+    return music_man.PlayTrack(TRACK_CLASS_QUIET);
 }

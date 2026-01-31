@@ -8,16 +8,25 @@
 
 #ifdef __cplusplus
 
-enum Flags : uint32_t {};
+struct Track;
 
-enum Class : uint32_t {
-    CATEGORY_QUIET = 0x1,
-    CATEGORY_ACTION = 0x2,
-    CATEGORY_4 = 0x4,
-    CATEGORY_8 = 0x8,
-    CATEGORY_CUTSCENE = 0x10,
-    CATEGORY_NOMUSIC = 0x20,
+enum voice_status_e : uint32_t {
+    VOICE_STATUS_1 = 1,
+    VOICE_STATUS_6 = 6,
+    VOICE_STATUS_7 = 7,
 };
+typedef enum voice_status_e VOICE_STATUS;
+
+enum : uint32_t {
+    TRACK_CLASS_QUIET = 0x1,
+    TRACK_CLASS_ACTION = 0x2,
+    TRACK_CLASS_4 = 0x4,
+    TRACK_CLASS_8 = 0x8,
+    TRACK_CLASS_CUTSCENE = 0x10,
+    TRACK_CLASS_NOMUSIC = 0x20,
+};
+typedef uint32_t TRACK_CLASS;
+typedef uint32_t TRACK_FLAGS;
 
 class Track {
   public:
@@ -27,12 +36,12 @@ class Track {
     uint8_t field3_0x6;
     uint8_t field4_0x7;
     char *ident;
-    int field6_0xc[1];
+    int field6_0xc[2];
     uint8_t field7_0x10;
     uint8_t field8_0x11;
     uint8_t field9_0x12;
     uint8_t field10_0x13;
-    Class category;
+    TRACK_CLASS class_;
     void *field12_0x18;
     int32_t indexCount;
     uint8_t field17_0x20;
@@ -44,18 +53,32 @@ class Track {
     float field23_0x2c;
     float field24_0x30;
     float field25_0x34;
-    Flags flags;
+    TRACK_FLAGS flags;
 };
 
 class NuMusic {
+    struct Voice {
+        int32_t streamIndex;
+        Track *tracks[2];
+        int32_t trackIndex;
+        VOICE_STATUS status;
+        uint32_t flags;
+        void *field16_0x2c;
+
+        bool Load(Track *track, int trackIndex);
+        void SetStatusFn(VOICE_STATUS status);
+        int32_t Play();
+    };
+
     class Album {
       public:
         char *name;
-        char *_1;
-        int32_t _2;
+        Track *tracks_source;
+        int32_t tracks_count;
         Track *tracks[6];
 
-        Track *GetTrack(unsigned int class_);
+        Track *GetTrack(TRACK_CLASS class_);
+        void Initialise();
     };
 
   private:
@@ -75,20 +98,28 @@ class NuMusic {
     Track *tracks;
     int32_t trackCount;
     Track *currentTrack;
+    Voice voices[2];
     char *language;
 
     Album *album;
+    int32_t trackIndex;
 
   public:
     int32_t Initialise(const char *file, char *null, VARIPTR *bufferStart, VARIPTR bufferEnd);
     void GetSoundFiles(nusound_filename_info_s **finfo, int32_t *null);
 
-    void PlayTrack(unsigned int track);
+    int32_t PlayTrack(TRACK_CLASS track);
 
   private:
     void InitData(const char *file, VARIPTR *bufferStart, VARIPTR bufferEnd);
+    void InitVoiceManager();
 
-    int32_t PlayTrackI(unsigned int track);
+    Voice *FindVoiceByClassAndStatus(TRACK_CLASS class_, VOICE_STATUS status);
+    Voice *FindVoiceByTrack(Track *track);
+    Voice *FindVoiceByClass(TRACK_CLASS class_);
+    int32_t StopAll(int32_t toggle);
+    Voice *FindIdleVoice();
+    int32_t PlayTrackI(TRACK_CLASS track);
 
     static int32_t ClassToIX(unsigned int i);
 
@@ -178,6 +209,6 @@ extern "C" {
     extern NuMusic music_man;
 };
 
-void GamePlayMusic(LEVELDATA *level, int32_t zero, OPTIONSSAVE *options);
+int32_t GamePlayMusic(LEVELDATA *level, int32_t zero, OPTIONSSAVE *options);
 
 #endif

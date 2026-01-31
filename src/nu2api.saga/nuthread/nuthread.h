@@ -34,6 +34,7 @@ struct NuThreadCreateParameters {
     NUTHREADCAFECORE nuthreadCafeCore;
     NUTHREADXBOX360CORE nuthreadXbox360Core;
     bool useCurrent;
+    bool startSignal;
 };
 
 class NuThreadBase {

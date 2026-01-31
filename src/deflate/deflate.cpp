@@ -19,8 +19,6 @@ uint32_t BuildHuffmanTree(DEFHUFFMAN *tree, uint8_t *codeLengths, int32_t symbol
     uint32_t symbolTableIndex;
     int32_t code;
 
-    LOG_DEBUG("tree=%p, codeLengths=%p, symbolCount=%d", tree, codeLengths, symbolCount);
-
     memset(lengthCount, 0, sizeof(lengthCount));
     memset(tree->fastLookup, -1, sizeof(tree->fastLookup));
 
@@ -75,9 +73,6 @@ uint32_t BuildHuffmanTree(DEFHUFFMAN *tree, uint8_t *codeLengths, int32_t symbol
 int32_t InflateBuffer(char *buffer, int decodedSize, char *readBuffer, int32_t readBufferSize) {
     DEFLATECONTEXT ctx;
 
-    LOG_DEBUG("buffer=%p, decodedSize=%d, readBuffer=%p, readBufferSize=%d", buffer, decodedSize, readBuffer,
-              readBufferSize);
-
     ctx.readBuffer = (uint8_t *)readBuffer;
     ctx.readBufferEnd = (uint8_t *)readBuffer + readBufferSize;
 
@@ -116,8 +111,6 @@ int32_t ExplodeCompressedSize(uint8_t *buffer) {
 }
 
 int32_t Inflate(DEFLATECONTEXT *ctx, char *buffer, int32_t size) {
-    LOG_DEBUG("ctx=%p, buffer=%p, size=%d", ctx, buffer, size);
-
     ctx->startPos = buffer;
     ctx->currentPos = buffer;
     ctx->endPos = buffer + size;
@@ -249,7 +242,6 @@ int DecodeDeflatedBlock(DEFLATECONTEXT *ctx) {
             }
         } else {
             // End of block
-            LOG_DEBUG("end of deflated block");
             return true;
         }
     }
@@ -263,16 +255,12 @@ int DecodeDeflated(DEFLATECONTEXT *ctx) {
     uint32_t final;
     int32_t btype;
 
-    LOG_DEBUG("ctx=%p", ctx);
-
     ctx->numBitsAvailable = 0;
     ctx->bitBuffer = 0;
 
     do {
         final = READBITS(ctx, 1);
         btype = READBITS(ctx, 2);
-
-        LOG_DEBUG("block type: %u, final: %u", btype, final);
 
         if (btype == 2) {
             LOG_DEBUG("uncompressed block");
@@ -282,8 +270,6 @@ int DecodeDeflated(DEFLATECONTEXT *ctx) {
             }
         } else {
             if (btype == 1) {
-                LOG_DEBUG("static huffman trees");
-
                 if (DefaultDistances[0x1f] == '\0') {
                     InitHuffmanDefaults();
                 }
@@ -296,8 +282,6 @@ int DecodeDeflated(DEFLATECONTEXT *ctx) {
                     return false;
                 }
             } else {
-                LOG_DEBUG("dynamic huffman trees");
-
                 if (!DecompressHuffmanTrees(ctx)) {
                     return false;
                 }
@@ -320,8 +304,6 @@ bool DecompressHuffmanTrees(DEFLATECONTEXT *ctx) {
     int32_t hlit = READBITS(ctx, 5) + 257;
     int32_t hdist = READBITS(ctx, 5) + 1;
     int32_t hclen = READBITS(ctx, 4) + 4;
-
-    LOG_DEBUG("hlit=%d, hdist=%d, hclen=%d", hlit, hdist, hclen);
 
     uint8_t codeLengths[19];
     memset(codeLengths, 0, sizeof(codeLengths));

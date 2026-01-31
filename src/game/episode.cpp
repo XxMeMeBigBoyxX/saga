@@ -71,91 +71,88 @@ EPISODEDATA *Episodes_ConfigureList(char *file, VARIPTR *bufferStart, VARIPTR *b
                             if (i == 0)
                                 goto LAB_0048910d;
                             if (areaIndex == episode->areaIds[0])
-                                goto LAB_004890ae;
-                            uVar5 = 0;
-                            goto LAB_00489248;
-                        }
-                    } else {
-                        iVar4 = NuStrICmp(fp->word_buf, "name_id");
-                        if (iVar4 == 0) {
-                            iVar4 = NuFParGetInt(fp);
-                            episode->nameId = (short)iVar4;
-                            bVar3 = true;
-                        } else {
-                            iVar4 = NuStrICmp(fp->word_buf, "text_id");
-                            bVar3 = true;
+                                uVar5 = 0;
+                            iVar4 = NuStrICmp(fp->word_buf, "name_id");
                             if (iVar4 == 0) {
                                 iVar4 = NuFParGetInt(fp);
-                                episode->textId = (short)iVar4;
+                                episode->nameId = (short)iVar4;
+                                bVar3 = true;
+                            } else {
+                                iVar4 = NuStrICmp(fp->word_buf, "text_id");
+                                bVar3 = true;
+                                if (iVar4 == 0) {
+                                    iVar4 = NuFParGetInt(fp);
+                                    episode->textId = (short)iVar4;
+                                }
                             }
                         }
+                        break;
                     }
-                    break;
-                }
 
-                bVar3 = false;
-                if (episode->areaCount == 0)
-                    break;
-                count = count + 1;
-                iVar4 = NuFParGetLine(fp);
-                episode = episode + 1;
-                if (iVar4 == 0) {
-                    goto end;
+                    bVar3 = false;
+                    if (episode->areaCount == 0)
+                        break;
+                    count = count + 1;
+                    iVar4 = NuFParGetLine(fp);
+                    episode = episode + 1;
+                    if (iVar4 == 0) {
+                        goto end;
+                    }
                 }
+                goto LAB_00488f90;
             }
-            goto LAB_00488f90;
-        }
 
-    end:
-        NuFParDestroy(fp);
-        if (count != 0) {
-            bufferStart->void_ptr = episode;
-            if (countDest == (int *)0x0) {
+        end:
+            NuFParDestroy(fp);
+            if (count != 0) {
+                bufferStart->void_ptr = episode;
+                if (countDest == (int *)0x0) {
+                    return episodePtr;
+                }
+                *countDest = count;
                 return episodePtr;
             }
-            *countDest = count;
-            return episodePtr;
         }
-    }
-    return NULL;
+        return NULL;
 
-    while (iVar4 = uVar5 + 1, uVar5 = uVar6, areaIndex != episode->areaIds[iVar4]) {
-    LAB_00489248:
-        uVar6 = uVar5 + 1;
-        if (uVar5 == bVar2 - 1)
-            break;
-    }
-
-    if (uVar6 == i) {
-    LAB_0048910d:
-        j = 0;
-        episodePtr2 = episodePtr;
-        if (0 < count) {
-            do {
-                iVar4 = 0;
-                while (iVar4 != (unsigned int)episodePtr2->areaCount * 2) {
-                    psVar1 = (short *)((int)episodePtr2->areaIds + iVar4);
-                    iVar4 = iVar4 + 2;
-                    if (areaIndex == *psVar1)
-                        goto LAB_004890ae;
-                }
-                j = j + 1;
-                episodePtr2 = episodePtr2 + 1;
-            } while (j != count);
+        while (iVar4 = uVar5 + 1, uVar5 = uVar6, areaIndex != episode->areaIds[iVar4]) {
+        LAB_00489248:
+            uVar6 = uVar5 + 1;
+            if (uVar5 == bVar2 - 1)
+                break;
         }
-        areaId = (short)areaIndex;
-        episode->areaIds[i] = areaId;
+
+        if (uVar6 == i) {
+        LAB_0048910d:
+            j = 0;
+            episodePtr2 = episodePtr;
+            if (0 < count) {
+                do {
+                    iVar4 = 0;
+                    while (iVar4 != (unsigned int)episodePtr2->areaCount * 2) {
+                        psVar1 = (short *)((int)episodePtr2->areaIds + iVar4);
+                        iVar4 = iVar4 + 2;
+                        if (areaIndex == *psVar1)
+                            goto LAB_004890ae;
+                    }
+                    j = j + 1;
+                    episodePtr2 = episodePtr2 + 1;
+                } while (j != count);
+            }
+            areaId = (short)areaIndex;
+            episode->areaIds[i] = areaId;
+            bVar3 = true;
+            episode->areaCount = bVar2 + 1;
+            if ((area->flags & 6) == 0) {
+                episode->regularAreas += 1;
+            }
+        } else {
+            bVar3 = true;
+        }
+
+        goto LAB_00488f90;
+    LAB_004890ae:
         bVar3 = true;
-        episode->areaCount = bVar2 + 1;
-        if ((area->flags & 6) == 0) {
-            episode->regularAreas += 1;
-        }
-    } else {
-        bVar3 = true;
+        goto LAB_00488f90;
     }
-
-    goto LAB_00488f90;
-LAB_004890ae:
-    bVar3 = true;
-    goto LAB_00488f90;
 }

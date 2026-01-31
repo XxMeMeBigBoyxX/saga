@@ -109,18 +109,18 @@ NuThread *NuThreadManager::CreateThread(void (*threadFn)(void *), void *fnArg, i
                                         NUTHREADXBOX360CORE nuthreadXbox360Core) {
     static int ThreadPriorityMap[] = {0, 1, 2, 3, 4};
 
-    NuThreadCreateParameters params;
-    NuThread *thread;
-
-    params = {.threadFn = threadFn,
-              .fnArg = fnArg,
-              .priority = ThreadPriorityMap[priority + 2],
-              .name = name,
-              .stackSize = stackSize == 0 ? 0x8000 : stackSize,
-              .isSuspended = false,
-              .nuthreadCafeCore = nuthreadCafeCore,
-              .nuthreadXbox360Core = nuthreadXbox360Core,
-              .useCurrent = false};
+    NuThreadCreateParameters params{
+        .threadFn = threadFn,
+        .fnArg = fnArg,
+        .priority = ThreadPriorityMap[priority + 2],
+        .name = name,
+        .stackSize = stackSize == 0 ? 0x8000 : stackSize,
+        .isSuspended = false,
+        .nuthreadCafeCore = nuthreadCafeCore,
+        .nuthreadXbox360Core = nuthreadXbox360Core,
+        .useCurrent = false,
+        .startSignal = false,
+    };
 
     return new NuThread(params);
 }
@@ -156,6 +156,7 @@ NuThread::NuThread(const NuThreadCreateParameters &params) : NuThreadBase(params
     }
 
     this->isSuspended = params.isSuspended;
+    this->startSignal = params.startSignal;
 
     pthread_attr_init(&attrs);
     pthread_attr_setschedparam(&attrs, &scheduling);

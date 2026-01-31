@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stddef.h>
+
 #define MAX(a, b) (a) > (b) ? (a) : (b)
 #define MIN(a, b) (a) < (b) ? (a) : (b)
 
@@ -12,7 +14,7 @@ typedef union variptr_u {
     void *void_ptr;
     char *char_ptr;
     short *short_ptr;
-    unsigned int addr;
+    size_t addr;
 } VARIPTR;
 
 #define ALIGN(value, alignment) (((value) + alignment - 1) & -alignment)
