@@ -1,10 +1,8 @@
-#include "nu2api.saga/numath/nutrig.h"
-
 #include <limits.h>
 
+#include "nu2api.saga/numath/nutrig.h"
+
 #include "nu2api.saga/numath/nuang.h"
-
-
 
 #define ANG_COUNT 513
 static unsigned short ang[ANG_COUNT] = {
@@ -48,7 +46,7 @@ static unsigned short ang[ANG_COUNT] = {
 
 #define NU_ATAN2_LUT(y, x) ang[(y << 9) / x]
 #define NU_ATAN2F_LUT(y, x) ang[(int)((y * 512.0f) / x)]
-    
+
 static unsigned short xy(unsigned int dx, unsigned int dy) {
     if (dx > dy) {
         return NUANG_90DEG - NU_ATAN2_LUT(dy, dx);

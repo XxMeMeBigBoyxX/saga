@@ -13,7 +13,6 @@ typedef struct nulisthdr_s {
 #ifdef __cplusplus
 extern "C" {
 #endif
-
     void NuLinkedListAppend(NULISTHDR *list, NULISTLNK *node);
     void NuLinkedListInsert(NULISTHDR *list, NULISTLNK *node);
     void NuLinkedListRemove(NULISTHDR *list, NULISTLNK *node);
@@ -23,7 +22,6 @@ extern "C" {
 
     NULISTLNK *NuLinkedListGetPrev(NULISTHDR *list, NULISTLNK *node);
     NULISTLNK *NuLinkedListGetNext(NULISTHDR *list, NULISTLNK *node);
-
 #ifdef __cplusplus
 }
 #endif

@@ -1,5 +1,4 @@
-#ifndef NU2API_SAGA_NUMATH_NUANG_H
-#define NU2API_SAGA_NUMATH_NUANG_H
+#pragma once
 
 typedef int NUANG;
 
@@ -15,5 +14,3 @@ struct nuangvec_s {
 };
 
 typedef struct nuangvec_s NUANGVEC;
-
-#endif // NU2API_SAGA_NUMATH_NUANG_H

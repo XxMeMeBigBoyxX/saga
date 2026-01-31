@@ -1,11 +1,13 @@
-#include "nusound.h"
-#include "globals.h"
+#include <pthread.h>
 
+#include "decomp.h"
+
+#include "nu2api.saga/nusound/nusound.h"
+
+#include "globals.h"
 #include "nu2api.saga/nucore/nucore.h"
 #include "nu2api.saga/numusic/numusic.h"
 #include "nu2api.saga/nuthread/nuthread.h"
-
-#include <pthread.h>
 
 extern "C" {
     const char *audio_ps2_music_ext;

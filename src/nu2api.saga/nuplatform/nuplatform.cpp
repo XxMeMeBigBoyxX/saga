@@ -1,6 +1,6 @@
-#include "nu2api.saga/nuplatform/nuplatform.h"
-
 #include <stdlib.h>
+
+#include "nu2api.saga/nuplatform/nuplatform.h"
 
 NuPlatform *NuPlatform::ms_instance = NULL;
 

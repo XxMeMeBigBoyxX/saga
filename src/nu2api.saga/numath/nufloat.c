@@ -1,6 +1,6 @@
-#include "nu2api.saga/numath/nufloat.h"
-
 #include <math.h>
+
+#include "nu2api.saga/numath/nufloat.h"
 
 float NuFabs(float f) {
     return fabsf(f);

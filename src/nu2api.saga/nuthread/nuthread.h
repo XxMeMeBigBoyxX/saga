@@ -17,18 +17,12 @@ typedef enum NUTHREADXBOX360CORE {
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-    int32_t NuThreadCriticalSectionBegin(int32_t index);
-
-    int32_t NuThreadCriticalSectionEnd(int32_t index);
-
     int32_t NuThreadCreateCriticalSection(void);
 
+    int32_t NuThreadCriticalSectionBegin(int32_t index);
+    int32_t NuThreadCriticalSectionEnd(int32_t index);
 #ifdef __cplusplus
 }
-#endif
-
-#ifdef __cplusplus
 
 struct NuThreadCreateParameters {
     void (*threadFn)(void *);

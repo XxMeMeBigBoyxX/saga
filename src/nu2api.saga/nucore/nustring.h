@@ -6,7 +6,6 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-
     typedef uint16_t NUWCHAR;
     typedef uint16_t NUWCHAR16;
 
@@ -35,7 +34,6 @@ extern "C" {
     void NuUnicodeToAscii(char *dst, NUWCHAR16 *src);
 
     int NuIsAlNum(char c);
-
 #ifdef __cplusplus
 }
 #endif

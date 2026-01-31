@@ -1,6 +1,7 @@
 #include <stddef.h>
 
 #include "globals.h"
+#include "nu2api.saga/nu3d/nucamera.h"
 #include "nu2api.saga/nucore/common.h"
 
 int32_t PAL = 0;
@@ -52,4 +53,4 @@ int32_t CompletionPointInfo[7] = {0};
 
 nusound_filename_info_s *MusicInfo = NULL;
 
-nucamera_s *pNuCam = NULL;
+NUCAMERA *pNuCam = NULL;

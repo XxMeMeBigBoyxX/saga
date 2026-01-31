@@ -9,13 +9,11 @@ typedef struct nunativetexps_s {
 #ifdef __cplusplus
 extern "C" {
 #endif
-
     extern int g_textureLoadBufferCriticalSection;
 
     extern GLuint g_LegoEnvTexture;
     extern GLuint g_PhongEnvTexture;
     extern GLuint g_whiteTexture;
-
 #ifdef __cplusplus
 }
 #endif

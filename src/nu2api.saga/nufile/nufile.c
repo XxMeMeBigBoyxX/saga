@@ -1,4 +1,7 @@
+#include "decomp.h"
+
 #include "nu2api.saga/nufile/nufile.h"
+
 #include "nu2api.saga/nucore/nustring.h"
 
 int DEVHOST_Interrogate(NUFILE_DEVICE *device) {
@@ -57,5 +60,6 @@ int32_t NuFileReadDir(NUFILE file) {
 
 int32_t NuFileExists(char *name) {
     LOG_DEBUG("name=%s", name);
+
     return NuFileSize(name) > 0;
 }

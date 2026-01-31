@@ -58,14 +58,12 @@ typedef enum {
 #ifdef __cplusplus
 extern "C" {
 #endif
-
     void *NuFilePakLoad(char *filepath, VARIPTR *buf, VARIPTR buf_end, int alignment);
     void *NuFilePakLoadKey(char *filepath, VARIPTR *buf, VARIPTR buf_end, int alignment, unsigned char *key,
                            unsigned int key_len);
 
     int NuFilePakGetItem(void *hdr, char *item_name);
     int NuFilePakGetItemInfo(void *hdr, int item_handle, void **addr, int *size);
-
 #ifdef __cplusplus
 }
 #endif

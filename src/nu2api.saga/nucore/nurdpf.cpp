@@ -1,6 +1,7 @@
 #include <stddef.h>
 
 #include "nu2api.saga/nucore/nurdp.h"
+
 #include "nu2api.saga/nucore/nustring.h"
 
 typedef struct rdpfctxt_s {

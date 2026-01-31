@@ -3,12 +3,12 @@
 #include <stdint.h>
 
 #include "game/mission.h"
+#include "nu2api.saga/nu3d/nucamera.h"
 #include "nu2api.saga/nucore/common.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-
     typedef unsigned char undefined;
     typedef unsigned char undefined1;
     typedef unsigned char byte;
@@ -256,9 +256,7 @@ extern "C" {
     struct nusound_filename_info_s;
     extern nusound_filename_info_s *MusicInfo;
 
-    struct nucamera_s;
-    extern nucamera_s *pNuCam;
-
+    extern NUCAMERA *pNuCam;
 #ifdef __cplusplus
 }
 #endif

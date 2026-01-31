@@ -1,5 +1,4 @@
-#ifndef NU2API_SAGA_NUCORE_NUVIDEO_H
-#define NU2API_SAGA_NUCORE_NUVIDEO_H
+#pragma once
 
 enum NUVIDEO_SWAPMODE {
     NUVIDEO_SWAPMODE_INVALID = 0,
@@ -31,7 +30,6 @@ void NuVideoSetSwapModePS(NUVIDEO_SWAPMODE video_swap_mode);
 
 extern "C" {
 #endif
-
     int NuVideoGetMode(void);
     void NuVideoSetMode(int mode);
     int NuVideoGetAspect(void);
@@ -40,9 +38,6 @@ extern "C" {
     void NuVideoSetBrightness(float brightness);
     void NuVideoSetResolution(int width, int height);
     NUVIDEO_SWAPMODE NuVideoSetSwapMode(NUVIDEO_SWAPMODE video_swap_mode);
-
 #ifdef __cplusplus
 }
 #endif
-
-#endif // NU2API_SAGA_NUCORE_NUPAD_H

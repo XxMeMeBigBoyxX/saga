@@ -1,8 +1,10 @@
+#include <string.h>
+
+#include "decomp.h"
+
 #include "nu2api.saga/numusic/numusic.h"
 
 #include "nu2api.saga/nufile/nufpar.h"
-
-#include <string.h>
 
 static NuMusic *the_music_player = NULL;
 

@@ -1,14 +1,14 @@
-#include "nu2api.saga/numath/nuvec.h"
-
 #include <stddef.h>
+
+#include "nu2api.saga/numath/nuvec.h"
 
 #include "nu2api.saga/numath/nufloat.h"
 
-NUVEC v000 = { 0 };
-NUVEC v100 = { 1.0f, 0.0f, 0.0f };
-NUVEC v010 = { 0.0f, 1.0f, 0.0f };
-NUVEC v001 = { 0.0f, 0.0f, 1.0f };
-NUVEC v111 = { 1.0f, 1.0f, 1.0f };
+NUVEC v000 = {0};
+NUVEC v100 = {1.0f, 0.0f, 0.0f};
+NUVEC v010 = {0.0f, 1.0f, 0.0f};
+NUVEC v001 = {0.0f, 0.0f, 1.0f};
+NUVEC v111 = {1.0f, 1.0f, 1.0f};
 
 void NuVecNeg(NUVEC *v, NUVEC *v0) {
     v->x = -v0->x;
@@ -234,7 +234,3 @@ int NuVecCompareTolerance(NUVEC *a, NUVEC *b, float tolerance) {
         return 1;
     }
 }
-
-// int NuLineLineIntersect(NUVEC *p0, NUVEC *v0, NUVEC *p1, NUVEC *v1, float *s, float *t) {
-
-// }

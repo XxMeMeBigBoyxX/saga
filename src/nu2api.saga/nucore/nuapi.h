@@ -86,18 +86,14 @@ extern NUAPI nuapi;
 
 #ifdef __cplusplus
 void NuAPIInit(void);
-#endif
 
-#ifdef __cplusplus
 extern "C" {
 #endif
-
     void NuCommandLine(int argc, char **argv);
     void NuDisableOSMenuFreeze(void);
 
     void NudxFw_D3DBeginCriticalSection();
     void NudxFw_D3DEndCriticalSection();
-
 #ifdef __cplusplus
 }
 #endif

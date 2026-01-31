@@ -35,7 +35,6 @@ typedef struct nunativetex_s {
 #ifdef __cplusplus
 extern "C" {
 #endif
-
     extern pthread_mutex_t criticalSection;
     extern int max_textures;
 
@@ -55,7 +54,6 @@ extern "C" {
     int NuTexGetRefCount(int tex_id);
 
     void NuTexDisplayTexturePage(int page, float depth, int alpha);
-
 #ifdef __cplusplus
 }
 #endif

@@ -1,7 +1,5 @@
 #include "nu2api.saga/nucore/nuvideo.h"
 
-#include <assert.h>
-
 #include "nu2api.saga/nucore/nuapi.h"
 
 int NuVideoGetMode(void) {

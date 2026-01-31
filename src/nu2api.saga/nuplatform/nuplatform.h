@@ -24,15 +24,10 @@ typedef enum platforms_supported_e PLATFORMS_SUPPORTED;
 #ifdef __cplusplus
 extern "C" {
 #endif
-
     extern char *g_fontExtension;
     extern char *g_platformName;
-
 #ifdef __cplusplus
 }
-#endif
-
-#ifdef __cplusplus
 
 class NuPlatform {
     char *name;

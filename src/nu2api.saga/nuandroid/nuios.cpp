@@ -1,5 +1,6 @@
-#include "nu2api.saga/nuandroid/nuios.h"
 #include "decomp.h"
+
+#include "nu2api.saga/nuandroid/nuios.h"
 
 int32_t g_isLowEndDevice = 0;
 

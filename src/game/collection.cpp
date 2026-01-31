@@ -1,4 +1,6 @@
-#include "collection.h"
+#include "decomp.h"
+
+#include "game/collection.h"
 
 #include "game/area.h"
 #include "game/character.h"

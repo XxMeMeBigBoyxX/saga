@@ -1,11 +1,8 @@
-#ifndef NU2API_SAGA_NU3D_NUSHADER_H
-#define NU2API_SAGA_NU3D_NUSHADER_H
+#pragma once
 
 #include <GLES2/gl2.h>
 
-struct nushaderobjectkey_s {
-
-};
+struct nushaderobjectkey_s {};
 
 typedef struct nushaderobjectkey_s NUSHADEROBJECTKEY;
 
@@ -20,7 +17,6 @@ struct nushaderobjectbase_s {
 
 typedef struct nushaderobjectbase_s NUSHADEROBJECTBASE;
 
-typedef struct nushaderobjectbase_s NUSHADEROBJECTBASE;
 struct nushaderobjectglsl_s {
     NUSHADEROBJECTBASE base;
     GLuint program;
@@ -40,6 +36,7 @@ struct glslparamter_s {
 typedef struct glslparamter_s GLSLParameter;
 
 #define NUSHADEROBJECT_PARAMETERS_COUNT 91
+
 struct nushaderobject_s {
     NUSHADEROBJECTGLSL glsl;
     char unk[0x10];
@@ -50,25 +47,22 @@ typedef nushaderobject_s NUSHADEROBJECT;
 
 #ifdef __cplusplus
 int NuShaderObjectBindAttributeLocationsGLSL(GLuint program);
-int NuShaderObjectCombineGLSLShadersIntoProgram(GLuint* program_dest, GLuint vertex_shader, GLuint fragment_shader);
-int NuShaderObjectGenerateGLSLShader(GLuint* shader_dest, GLenum shader_type, const GLchar* shader_source, GLint shader_source_length);
+int NuShaderObjectCombineGLSLShadersIntoProgram(GLuint *program_dest, GLuint vertex_shader, GLuint fragment_shader);
+int NuShaderObjectGenerateGLSLShader(GLuint *shader_dest, GLenum shader_type, const GLchar *shader_source,
+                                     GLint shader_source_length);
 
 extern "C" {
 #endif
-
-void NuShaderObjectBaseCreate(NUSHADEROBJECTBASE* shader);
-void NuShaderObjectGLSLCreate(NUSHADEROBJECTGLSL* shader);
-void NuShaderObjectCreate(NUSHADEROBJECT* shader);
-void NuShaderObjectBaseDestroy(NUSHADEROBJECTBASE* shader);
-void NuShaderObjectGLSLDestroy(NUSHADEROBJECTGLSL* shader);
-void NuShaderObjectDestroy(NUSHADEROBJECT* shader);
-void NuShaderObjectBaseInit(NUSHADEROBJECTBASE* shader, NUSHADEROBJECTKEY* key, int unk);
-void NuShaderObjectUnInit(NUSHADEROBJECT* shader);
-void NuShaderObjectBaseUnInit(NUSHADEROBJECTBASE* shader);
-void NuShaderObjectBaseSetWaterSpeed(float speed);
-
+    void NuShaderObjectBaseCreate(NUSHADEROBJECTBASE *shader);
+    void NuShaderObjectGLSLCreate(NUSHADEROBJECTGLSL *shader);
+    void NuShaderObjectCreate(NUSHADEROBJECT *shader);
+    void NuShaderObjectBaseDestroy(NUSHADEROBJECTBASE *shader);
+    void NuShaderObjectGLSLDestroy(NUSHADEROBJECTGLSL *shader);
+    void NuShaderObjectDestroy(NUSHADEROBJECT *shader);
+    void NuShaderObjectBaseInit(NUSHADEROBJECTBASE *shader, NUSHADEROBJECTKEY *key, int unk);
+    void NuShaderObjectUnInit(NUSHADEROBJECT *shader);
+    void NuShaderObjectBaseUnInit(NUSHADEROBJECTBASE *shader);
+    void NuShaderObjectBaseSetWaterSpeed(float speed);
 #ifdef __cplusplus
 }
 #endif
-
-#endif // NU2API_SAGA_NU3D_NUSHADER_H

@@ -1,3 +1,6 @@
+#include <stdio.h>
+#include <string.h>
+
 #include "gameapi.saga/ai/aisys/aisys.h"
 
 #include "nu2api.saga/nucore/common.h"
@@ -7,8 +10,6 @@
 #include "nu2api.saga/nufile/nufile.h"
 #include "nu2api.saga/nufile/nufilepak.h"
 #include "nu2api.saga/nufile/nufpar.h"
-
-#include <string.h>
 
 static void *load_pakfile;
 static char *load_path;

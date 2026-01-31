@@ -1,6 +1,6 @@
-#include "nu2api.saga/numath/numtx.h"
-
 #include <limits.h>
+
+#include "nu2api.saga/numath/numtx.h"
 
 #include "nu2api.saga/numath/nufloat.h"
 #include "nu2api.saga/numath/nutrig.h"

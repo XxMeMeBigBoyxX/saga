@@ -1,6 +1,6 @@
-#include "nu2api.saga/nu3d/NuRenderDevice.h"
-
 #include "decomp.h"
+
+#include "nu2api.saga/nu3d/NuRenderDevice.h"
 
 NuRenderDevice g_renderDevice;
 

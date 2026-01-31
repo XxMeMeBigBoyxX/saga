@@ -8,7 +8,6 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-
     extern int32_t saveload_status;
     extern int32_t saveload_autosave;
     extern int32_t saveload_savepresent;
@@ -31,7 +30,6 @@ extern "C" {
     void saveloadASSave(int32_t slot, void *buffer, int32_t size, uint32_t hash);
     void saveloadASLoad(int32_t slot, void *buffer, int32_t size);
     void saveloadASDelete(int32_t slot);
-
 #ifdef __cplusplus
 }
 #endif

@@ -1,5 +1,4 @@
-#ifndef NU2API_SAGA_NUMATH_NUTRIG_H
-#define NU2API_SAGA_NUMATH_NUTRIG_H
+#pragma once
 
 #include <math.h>
 
@@ -18,17 +17,13 @@ extern float NuTrigTable[NUTRIGTABLE_COUNT];
 #ifdef __cplusplus
 extern "C" {
 #endif
+    /// @brief Initializes the sine lookup table
+    /// @details Initializes the sine lookup table with the values of the sine function for the angles 0 to 2π.
+    /// @return void
+    void NuTrigInit(void);
 
-/// @brief Initializes the sine lookup table
-/// @details Initializes the sine lookup table with the values of the sine function for the angles 0 to 2π.
-/// @return void
-void NuTrigInit(void);
-
-int NuAtan2D(float dx, float dy);
-float NuAtan2(float dx, float dy);
-
+    int NuAtan2D(float dx, float dy);
+    float NuAtan2(float dx, float dy);
 #ifdef __cplusplus
 }
 #endif
-
-#endif // NU2API_SAGA_NUMATH_NUTRIG_H

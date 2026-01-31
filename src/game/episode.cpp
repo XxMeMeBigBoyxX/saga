@@ -14,11 +14,11 @@ EPISODEDATA *Episodes_ConfigureList(char *file, VARIPTR *bufferStart, VARIPTR *b
     bool bVar3;
     nufpar_s *fp;
     int iVar4;
-    uint uVar5;
+    unsigned int uVar5;
     EPISODEDATA *episodePtr;
-    uint i;
+    unsigned int i;
     EPISODEDATA *episodePtr2;
-    uint uVar6;
+    unsigned int uVar6;
     EPISODEDATA *episode;
     int j;
     short areaId;
@@ -67,7 +67,7 @@ EPISODEDATA *Episodes_ConfigureList(char *file, VARIPTR *bufferStart, VARIPTR *b
                         bVar3 = true;
                         if (areaIndex != -1) {
                             bVar2 = episode->areaCount;
-                            i = (uint)bVar2;
+                            i = (unsigned int)bVar2;
                             if (i == 0)
                                 goto LAB_0048910d;
                             if (areaIndex == episode->areaIds[0])
@@ -133,7 +133,7 @@ EPISODEDATA *Episodes_ConfigureList(char *file, VARIPTR *bufferStart, VARIPTR *b
         if (0 < count) {
             do {
                 iVar4 = 0;
-                while (iVar4 != (uint)episodePtr2->areaCount * 2) {
+                while (iVar4 != (unsigned int)episodePtr2->areaCount * 2) {
                     psVar1 = (short *)((int)episodePtr2->areaIds + iVar4);
                     iVar4 = iVar4 + 2;
                     if (areaIndex == *psVar1)

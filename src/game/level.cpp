@@ -2,7 +2,6 @@
 
 #include "globals.h"
 #include "nu2api.saga/nucore/nustring.h"
-#include "nu2api.saga/nufile/export.h"
 #include "nu2api.saga/nufile/nufpar.h"
 
 LEVELDATA *LDataList = NULL;
@@ -11,8 +10,8 @@ LEVELDATA *LOADGAME_LDATA = NULL;
 
 int32_t MAXLDATA = 64;
 
-LEVELDATA *Levels_ConfigureList(char *file, VARIPTR *param_2, VARIPTR *param_3, int32_t maxLevelCount, int32_t *levelcount,
-                                void *levelSetDefaults) {
+LEVELDATA *Levels_ConfigureList(char *file, VARIPTR *param_2, VARIPTR *param_3, int32_t maxLevelCount,
+                                int32_t *levelcount, void *levelSetDefaults) {
 
     nufpar_s *fp = NuFParCreate(file);
     int i = 0;
@@ -69,7 +68,7 @@ LAB_00484810:
                     level->drawFn = (void *)0x0;
                     level->drawStatusFn = (void *)0x0;
                     (level->field12_0x84).field10_0x14 = 20000;
-                    *(undefined8 *)&level->field12_0x84 = 0x3e19999a3dcccccd;
+                    *(int64_t *)&level->field12_0x84 = 0x3e19999a3dcccccd;
                     (level->field12_0x84).field8_0x8 = 0x469d0800469c4000;
                     // if (iVar3 == 0) {
                     float fVar5 = 1.0;

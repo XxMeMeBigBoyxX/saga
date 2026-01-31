@@ -57,7 +57,6 @@ typedef struct nufpar_s {
 #ifdef __cplusplus
 extern "C" {
 #endif
-
     void NuFParInit(int max_count, int buf_size);
 
     NUFPAR *NuFParOpen(NUFILE file_handle);
@@ -91,7 +90,6 @@ extern "C" {
     int NuFParInterpretWordCTX(NUFPAR *parser, void *ctx);
 
     NUWCHAR NuGetWChar(NUFPAR *parser);
-
 #ifdef __cplusplus
 }
 #endif

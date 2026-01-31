@@ -1,7 +1,6 @@
 #pragma once
 
 #include "globals.h"
-
 #include "nu2api.saga/nufile/nufile.h"
 
 class NuSoundLoader;
@@ -91,14 +90,9 @@ struct nusound_filename_info_s {
 
 nusound_filename_info_s *ConfigureMusic(char *file, VARIPTR *bufferStart, VARIPTR *bufferEnd);
 
-#endif
-
-#ifdef __cplusplus
 extern "C" {
 #endif
-
     int32_t NuSound3InitV(VARIPTR *bufferStart, VARIPTR bufferEnd, int32_t zero1, int32_t zero2);
-
 #ifdef __cplusplus
 }
 #endif

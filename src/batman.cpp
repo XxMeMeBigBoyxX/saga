@@ -1,5 +1,7 @@
 #include <stdint.h>
 
+#include "decomp.h"
+
 #include "game/level.h"
 #include "globals.h"
 #include "init/init.hpp"

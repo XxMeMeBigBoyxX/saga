@@ -2,8 +2,6 @@
 
 #include <stdint.h>
 
-#include "decomp.h"
-
 #include "nu2api.saga/nucore/common.h"
 
 typedef int32_t NUFILE;
@@ -148,27 +146,9 @@ enum NUFILE_OFFSETS {
     NUFILE_OFFSET_NATIVE = 0x2000,
 };
 
-#define NUFILE_PS(index) (NUFILE)(index + NUFILE_OFFSET_PS)
-#define NUFILE_MEM(index) (NUFILE)(index + NUFILE_OFFSET_MEM)
-#define NUFILE_DAT(index) (NUFILE)(index + NUFILE_OFFSET_DAT)
-#define NUFILE_MC(index) (NUFILE)(index + NUFILE_OFFSET_MC)
-#define NUFILE_NATIVE(index) (NUFILE)(index + NUFILE_OFFSET_NATIVE)
-#define NUFILE_IS_PS(handle) ((handle) < NUFILE_OFFSET_MEM)
-#define NUFILE_IS_MEM(handle) (((handle) >= NUFILE_OFFSET_MEM) && ((handle) < NUFILE_OFFSET_DAT))
-#define NUFILE_IS_DAT(handle) (((handle) >= NUFILE_OFFSET_DAT) && ((handle) < NUFILE_OFFSET_MC))
-#define NUFILE_IS_MC(handle) (((handle) >= NUFILE_OFFSET_MC) && ((handle) < NUFILE_OFFSET_NATIVE))
-#define NUFILE_IS_NATIVE(handle) ((handle) >= NUFILE_OFFSET_NATIVE)
-#define NUFILE_INDEX_PS(handle) ((handle) - NUFILE_OFFSET_PS)
-#define NUFILE_INDEX_MEM(handle) ((handle) - NUFILE_OFFSET_MEM)
-#define NUFILE_INDEX_DAT(handle) ((handle) - NUFILE_OFFSET_DAT)
-#define NUFILE_INDEX_MC(handle) ((handle) - NUFILE_OFFSET_MC)
-#define NUFILE_INDEX_NATIVE(handle) ((handle) - NUFILE_OFFSET_NATIVE)
-#define NUFILE_INVALID ((NUFILE)(-1))
-
 #ifdef __cplusplus
 extern "C" {
 #endif
-
     extern char g_datfileMode;
 
     int DEV_FormatName(NUFILE_DEVICE *device, char *formatted_name, char *path, int buf_size);
@@ -246,7 +226,6 @@ extern "C" {
     int32_t NuDatFileLoadBuffer(NUDATHDR *dat, char *name, void *dest, int32_t maxSize);
 
     int NuPPLoadBuffer(NUFILE file, void *buf, int buf_size);
-
 #ifdef __cplusplus
 }
 #endif

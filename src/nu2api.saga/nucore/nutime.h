@@ -1,5 +1,4 @@
-#ifndef NU2API_SAGA_NUCORE_NUTIME_H
-#define NU2API_SAGA_NUCORE_NUTIME_H
+#pragma once
 
 struct nutime_s {
     unsigned int low;
@@ -14,13 +13,9 @@ unsigned long long NuGetCurrentTimeMilisecondsPS(void);
 
 extern "C" {
 #endif
-
-void NuTimeInitPS(void);
-void NuTimeGet(NUTIME *t);
-void NuTimeSub(NUTIME *t, NUTIME *a, NUTIME *b);
-
+    void NuTimeInitPS(void);
+    void NuTimeGet(NUTIME *t);
+    void NuTimeSub(NUTIME *t, NUTIME *a, NUTIME *b);
 #ifdef __cplusplus
 }
 #endif
-
-#endif // NU2API_SAGA_NUCORE_NUTIME_H
