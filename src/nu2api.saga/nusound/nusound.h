@@ -10,7 +10,8 @@ namespace NuSoundSystem {
     struct ChannelConfig {
         uint32_t channels;
     };
-    enum class FileType : uint32_t { WAV = 0, OGG = 5 };
+
+    enum FileType : uint32_t { WAV = 0, OGG = 5 };
 
     NuSoundLoader *CreateFileLoader(FileType type);
 

@@ -45,9 +45,9 @@ NuSoundLoader::~NuSoundLoader() {
 
 NuSoundLoader *NuSoundSystem::CreateFileLoader(FileType type) {
     switch (type) {
-        case FileType::WAV:
+        case WAV:
             UNIMPLEMENTED("WAV loader");
-        case FileType::OGG:
+        case OGG:
             UNIMPLEMENTED("OGG loader");
         default:
             return NULL;

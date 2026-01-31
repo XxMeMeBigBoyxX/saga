@@ -8,18 +8,19 @@
 
 #ifdef __cplusplus
 
-struct Track {
-    enum class Flags : uint32_t {};
+enum Flags : uint32_t {};
 
-    enum class Class : uint32_t {
-        CATEGORY_QUIET = 0x1,
-        CATEGORY_ACTION = 0x2,
-        CATEGORY_4 = 0x4,
-        CATEGORY_8 = 0x8,
-        CATEGORY_CUTSCENE = 0x10,
-        CATEGORY_NOMUSIC = 0x20,
-    };
+enum Class : uint32_t {
+    CATEGORY_QUIET = 0x1,
+    CATEGORY_ACTION = 0x2,
+    CATEGORY_4 = 0x4,
+    CATEGORY_8 = 0x8,
+    CATEGORY_CUTSCENE = 0x10,
+    CATEGORY_NOMUSIC = 0x20,
+};
 
+class Track {
+  public:
     char *path;
     uint8_t field1_0x4;
     uint8_t field2_0x5;
@@ -54,7 +55,7 @@ class NuMusic {
         int32_t _2;
         Track *tracks[6];
 
-        Track *GetTrack(Track::Class class_);
+        Track *GetTrack(unsigned int class_);
     };
 
   private:
@@ -82,16 +83,16 @@ class NuMusic {
     int32_t Initialise(const char *file, char *null, VARIPTR *bufferStart, VARIPTR bufferEnd);
     void GetSoundFiles(nusound_filename_info_s **finfo, int32_t *null);
 
-    void PlayTrack(Track::Class track);
+    void PlayTrack(unsigned int track);
 
   private:
     void InitData(const char *file, VARIPTR *bufferStart, VARIPTR bufferEnd);
 
-    int32_t PlayTrackI(Track::Class track);
+    int32_t PlayTrackI(unsigned int track);
 
-    static int32_t ClassToIX(Track::Class i);
+    static int32_t ClassToIX(unsigned int i);
 
-    void ParseTrack(Track::Class category, nufpar_s *fpar);
+    void ParseTrack(unsigned int category, nufpar_s *fpar);
 
     char *RemovePath(char *str);
     void SubstituteString(char *dst, char *src, char *find, char *subst);

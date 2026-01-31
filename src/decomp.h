@@ -1,6 +1,5 @@
 #pragma once
 
-#include <stdalign.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -63,8 +62,8 @@ static void _saga_log(enum log_level level, const char *file, int line, const ch
 
 #endif
 
-#define BUFFER_ALLOC(buffer, T) (T *)buffer_alloc_aligned((buffer), sizeof(T), alignof(T))
-#define BUFFER_ALLOC_ARRAY(buffer, count, T) (T *)buffer_alloc_aligned((buffer), sizeof(T) * (count), alignof(T))
+#define BUFFER_ALLOC(buffer, T, align) (T *)buffer_alloc_aligned((buffer), sizeof(T), (align))
+#define BUFFER_ALLOC_ARRAY(buffer, count, T, align) (T *)buffer_alloc_aligned((buffer), sizeof(T) * (count), (align))
 
 static inline void *buffer_alloc_aligned(void **buffer, size_t size, size_t align) {
     size_t current = (size_t)(*buffer);
