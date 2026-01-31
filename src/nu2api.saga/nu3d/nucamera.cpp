@@ -4,6 +4,8 @@
 #include "nu2api.saga/numath/nuvec4.h"
 #include "nu2api.saga/numemory/numemory.h"
 
+#include <string.h>
+
 NUMTX clip_planes = {
     1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f,
 };
@@ -100,26 +102,26 @@ int NuCameraClipTestSphere(NUVEC *pnt, float radius, NUMTX *wm) {
     if (-radius > g_dot.w) {
         return 1;
     }
-    
+
     return 0;
 }
 
-void NuCameraGetPosition(NUVEC* v) {
-    memcpy(v, &global_camera.mtx._30, sizeof(NUVEC));
+void NuCameraGetPosition(NUVEC *v) {
+    memcpy(v, &global_camera.mtx.m30, sizeof(NUVEC));
 }
 
-void NuCameraGetTrans(NUVEC* v) {
-    memcpy(v, &global_camera.mtx._30, sizeof(NUVEC));
+void NuCameraGetTrans(NUVEC *v) {
+    memcpy(v, &global_camera.mtx.m30, sizeof(NUVEC));
 }
 
-NUMTX* NuCameraGetProjectionMtx(void) {
+NUMTX *NuCameraGetProjectionMtx(void) {
     return &pmtx;
 }
 
-NUMTX* NuCameraGetScalingMtx(void) {
+NUMTX *NuCameraGetScalingMtx(void) {
     return &smtx;
 }
 
-NUMTX* NuCameraGetMtx(void) {
+NUMTX *NuCameraGetMtx(void) {
     return &global_camera.mtx;
 }

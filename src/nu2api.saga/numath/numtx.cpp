@@ -26,54 +26,54 @@ void NuMtxSetIdentity(NUMTX *m) {
 }
 
 void NuMtxSetTranslation(NUMTX *m, NUVEC *t) {
-    m->_30 = t->x;
-    m->_31 = t->y;
-    m->_32 = t->z;
-    m->_01 = m->_02 = m->_03 = m->_10 = m->_12 = m->_13 = m->_20 = m->_21 = m->_23 = 0.0f;
-    m->_00 = m->_11 = m->_22 = m->_33 = 1.0f;
+    m->m30 = t->x;
+    m->m31 = t->y;
+    m->m32 = t->z;
+    m->m01 = m->m02 = m->m03 = m->m10 = m->m12 = m->m13 = m->m20 = m->m21 = m->m23 = 0.0f;
+    m->m00 = m->m11 = m->m22 = m->m33 = 1.0f;
 }
 
 void NuMtxSetTranslationNeg(NUMTX *m, NUVEC *t) {
-    m->_30 = -t->x;
-    m->_31 = -t->y;
-    m->_32 = -t->z;
-    m->_01 = m->_02 = m->_03 = m->_10 = m->_12 = m->_13 = m->_20 = m->_21 = m->_23 = 0.0f;
-    m->_00 = m->_11 = m->_22 = m->_33 = 1.0f;
+    m->m30 = -t->x;
+    m->m31 = -t->y;
+    m->m32 = -t->z;
+    m->m01 = m->m02 = m->m03 = m->m10 = m->m12 = m->m13 = m->m20 = m->m21 = m->m23 = 0.0f;
+    m->m00 = m->m11 = m->m22 = m->m33 = 1.0f;
 }
 
 void NuMtxSetScale(NUMTX *m, NUVEC *s) {
-    m->_00 = s->x;
-    m->_11 = s->y;
-    m->_22 = s->z;
-    m->_01 = m->_02 = m->_03 = m->_10 = m->_12 = m->_13 = m->_20 = m->_21 = m->_23 = m->_30 = m->_31 = m->_32 = 0.0f;
-    m->_33 = 1.0f;
+    m->m00 = s->x;
+    m->m11 = s->y;
+    m->m22 = s->z;
+    m->m01 = m->m02 = m->m03 = m->m10 = m->m12 = m->m13 = m->m20 = m->m21 = m->m23 = m->m30 = m->m31 = m->m32 = 0.0f;
+    m->m33 = 1.0f;
 }
 
 void NuMtxSetRotationX(NUMTX *m, NUANG a) {
-    m->_11 = m->_22 = NU_COS_LUT(a);
-    m->_12 = NU_SIN_LUT(a);
-    m->_21 = -m->_12;
-    m->_00 = 1.0f;
-    m->_01 = m->_02 = m->_03 = m->_23 = m->_10 = m->_20 = m->_13 = m->_30 = m->_31 = m->_32 = 0.0f;
-    m->_33 = 1.0f;
+    m->m11 = m->m22 = NU_COS_LUT(a);
+    m->m12 = NU_SIN_LUT(a);
+    m->m21 = -m->m12;
+    m->m00 = 1.0f;
+    m->m01 = m->m02 = m->m03 = m->m23 = m->m10 = m->m20 = m->m13 = m->m30 = m->m31 = m->m32 = 0.0f;
+    m->m33 = 1.0f;
 }
 
 void NuMtxSetRotationY(NUMTX *m, NUANG a) {
-    m->_00 = m->_22 = NU_COS_LUT(a);
-    m->_20 = NU_SIN_LUT(a);
-    m->_02 = -m->_20;
-    m->_11 = 1.0f;
-    m->_01 = m->_10 = m->_03 = m->_23 = m->_12 = m->_21 = m->_13 = m->_30 = m->_31 = m->_32 = 0.0f;
-    m->_33 = 1.0f;
+    m->m00 = m->m22 = NU_COS_LUT(a);
+    m->m20 = NU_SIN_LUT(a);
+    m->m02 = -m->m20;
+    m->m11 = 1.0f;
+    m->m01 = m->m10 = m->m03 = m->m23 = m->m12 = m->m21 = m->m13 = m->m30 = m->m31 = m->m32 = 0.0f;
+    m->m33 = 1.0f;
 }
 
 void NuMtxSetRotationZ(NUMTX *m, NUANG a) {
-    m->_00 = m->_11 = NU_COS_LUT(a);
-    m->_01 = NU_SIN_LUT(a);
-    m->_10 = -m->_01;
-    m->_22 = 1.0;
-    m->_02 = m->_12 = m->_03 = m->_23 = m->_20 = m->_21 = m->_13 = m->_30 = m->_31 = m->_32 = 0.0f;
-    m->_33 = 1.0;
+    m->m00 = m->m11 = NU_COS_LUT(a);
+    m->m01 = NU_SIN_LUT(a);
+    m->m10 = -m->m01;
+    m->m22 = 1.0;
+    m->m02 = m->m12 = m->m03 = m->m23 = m->m20 = m->m21 = m->m13 = m->m30 = m->m31 = m->m32 = 0.0f;
+    m->m33 = 1.0;
 }
 
 void NuMtxSetRotationAxis(NUMTX *m, NUANG ang, NUVEC *ax) {
@@ -98,365 +98,365 @@ void NuMtxSetRotationAxis(NUMTX *m, NUANG ang, NUVEC *ax) {
     float _2bc = b * _2c;
     float _2cc = c * _2c;
 
-    m->_00 = 1.0f - (_2bb + _2cc);
-    m->_11 = 1.0f - (_2aa + _2cc);
-    m->_22 = 1.0f - (_2aa + _2bb);
-    m->_33 = 1.0f;
-    m->_01 = _2ab + _2sc;
-    m->_02 = _2ac - _2sb;
-    m->_03 = 0.0f;
-    m->_10 = _2ab - _2sc;
-    m->_12 = _2bc + _2sa;
-    m->_13 = 0.0f;
-    m->_20 = _2ac + _2sb;
-    m->_21 = _2bc - _2sa;
-    m->_23 = 0.0f;
-    m->_30 = m->_31 = m->_32 = 0.0f;
+    m->m00 = 1.0f - (_2bb + _2cc);
+    m->m11 = 1.0f - (_2aa + _2cc);
+    m->m22 = 1.0f - (_2aa + _2bb);
+    m->m33 = 1.0f;
+    m->m01 = _2ab + _2sc;
+    m->m02 = _2ac - _2sb;
+    m->m03 = 0.0f;
+    m->m10 = _2ab - _2sc;
+    m->m12 = _2bc + _2sa;
+    m->m13 = 0.0f;
+    m->m20 = _2ac + _2sb;
+    m->m21 = _2bc - _2sa;
+    m->m23 = 0.0f;
+    m->m30 = m->m31 = m->m32 = 0.0f;
 }
 
 void NuMtxTranslate(NUMTX *m, NUVEC *t) {
-    m->_30 += t->x;
-    m->_31 += t->y;
-    m->_32 += t->z;
+    m->m30 += t->x;
+    m->m31 += t->y;
+    m->m32 += t->z;
 }
 
 void NuMtxTranslateNeg(NUMTX *m, NUVEC *t) {
-    m->_30 -= t->x;
-    m->_31 -= t->y;
-    m->_32 -= t->z;
+    m->m30 -= t->x;
+    m->m31 -= t->y;
+    m->m32 -= t->z;
 }
 
 void NuMtxPreTranslate(NUMTX *m, NUVEC *t) {
-    m->_30 += t->x * m->_00 + t->y * m->_10 + t->z * m->_20;
-    m->_31 += t->x * m->_01 + t->y * m->_11 + t->z * m->_21;
-    m->_32 += t->x * m->_02 + t->y * m->_12 + t->z * m->_22;
+    m->m30 += t->x * m->m00 + t->y * m->m10 + t->z * m->m20;
+    m->m31 += t->x * m->m01 + t->y * m->m11 + t->z * m->m21;
+    m->m32 += t->x * m->m02 + t->y * m->m12 + t->z * m->m22;
 }
 
 void NuMtxPreTranslateX(NUMTX *m, float tx) {
-    m->_30 = m->_30 + m->_00 * tx;
-    m->_31 = m->_31 + m->_01 * tx;
-    m->_32 = m->_32 + m->_02 * tx;
+    m->m30 = m->m30 + m->m00 * tx;
+    m->m31 = m->m31 + m->m01 * tx;
+    m->m32 = m->m32 + m->m02 * tx;
 }
 
 void NuMtxPreTranslateNeg(NUMTX *m, NUVEC *t) {
-    m->_30 -= t->x * m->_00 + t->y * m->_10 + t->z * m->_20;
-    m->_31 -= t->x * m->_01 + t->y * m->_11 + t->z * m->_21;
-    m->_32 -= t->x * m->_02 + t->y * m->_12 + t->z * m->_22;
+    m->m30 -= t->x * m->m00 + t->y * m->m10 + t->z * m->m20;
+    m->m31 -= t->x * m->m01 + t->y * m->m11 + t->z * m->m21;
+    m->m32 -= t->x * m->m02 + t->y * m->m12 + t->z * m->m22;
 }
 
 void NuMtxScale(NUMTX *m, NUVEC *s) {
-    m->_00 *= s->x;
-    m->_01 *= s->y;
-    m->_02 *= s->z;
-    m->_10 *= s->x;
-    m->_11 *= s->y;
-    m->_12 *= s->z;
-    m->_20 *= s->x;
-    m->_21 *= s->y;
-    m->_22 *= s->z;
-    m->_30 *= s->x;
-    m->_31 *= s->y;
-    m->_32 *= s->z;
+    m->m00 *= s->x;
+    m->m01 *= s->y;
+    m->m02 *= s->z;
+    m->m10 *= s->x;
+    m->m11 *= s->y;
+    m->m12 *= s->z;
+    m->m20 *= s->x;
+    m->m21 *= s->y;
+    m->m22 *= s->z;
+    m->m30 *= s->x;
+    m->m31 *= s->y;
+    m->m32 *= s->z;
 }
 
 void NuMtxScaleU(NUMTX *m, float s) {
-    m->_00 *= s;
-    m->_01 *= s;
-    m->_02 *= s;
-    m->_10 *= s;
-    m->_11 *= s;
-    m->_12 *= s;
-    m->_20 *= s;
-    m->_21 *= s;
-    m->_22 *= s;
-    m->_30 *= s;
-    m->_31 *= s;
-    m->_32 *= s;
+    m->m00 *= s;
+    m->m01 *= s;
+    m->m02 *= s;
+    m->m10 *= s;
+    m->m11 *= s;
+    m->m12 *= s;
+    m->m20 *= s;
+    m->m21 *= s;
+    m->m22 *= s;
+    m->m30 *= s;
+    m->m31 *= s;
+    m->m32 *= s;
 }
 
 void NuMtxPreScaleU(NUMTX *m, float s) {
-    m->_00 *= s;
-    m->_01 *= s;
-    m->_02 *= s;
-    m->_10 *= s;
-    m->_11 *= s;
-    m->_12 *= s;
-    m->_20 *= s;
-    m->_21 *= s;
-    m->_22 *= s;
+    m->m00 *= s;
+    m->m01 *= s;
+    m->m02 *= s;
+    m->m10 *= s;
+    m->m11 *= s;
+    m->m12 *= s;
+    m->m20 *= s;
+    m->m21 *= s;
+    m->m22 *= s;
 }
 
 NUVEC NuMtxGetScale(NUMTX *m) {
     NUVEC scale;
 
-    scale.x = NuFsqrt(m->_00 * m->_00 + m->_01 * m->_01 + m->_02 * m->_02);
-    scale.y = NuFsqrt(m->_10 * m->_10 + m->_11 * m->_11 + m->_12 * m->_12);
-    scale.z = NuFsqrt(m->_20 * m->_20 + m->_21 * m->_21 + m->_22 * m->_22);
+    scale.x = NuFsqrt(m->m00 * m->m00 + m->m01 * m->m01 + m->m02 * m->m02);
+    scale.y = NuFsqrt(m->m10 * m->m10 + m->m11 * m->m11 + m->m12 * m->m12);
+    scale.z = NuFsqrt(m->m20 * m->m20 + m->m21 * m->m21 + m->m22 * m->m22);
 
     return scale;
 }
 
 void NuMtxPreScale(NUMTX *m, NUVEC *s) {
-    m->_00 *= s->x;
-    m->_01 *= s->x;
-    m->_02 *= s->x;
-    m->_10 *= s->y;
-    m->_11 *= s->y;
-    m->_12 *= s->y;
-    m->_20 *= s->z;
-    m->_21 *= s->z;
-    m->_22 *= s->z;
+    m->m00 *= s->x;
+    m->m01 *= s->x;
+    m->m02 *= s->x;
+    m->m10 *= s->y;
+    m->m11 *= s->y;
+    m->m12 *= s->y;
+    m->m20 *= s->z;
+    m->m21 *= s->z;
+    m->m22 *= s->z;
 }
 
 void NuMtxPreScaleX(NUMTX *m, float ScaleX) {
-    m->_00 = m->_00 * ScaleX;
-    m->_01 = m->_01 * ScaleX;
-    m->_02 = m->_02 * ScaleX;
+    m->m00 = m->m00 * ScaleX;
+    m->m01 = m->m01 * ScaleX;
+    m->m02 = m->m02 * ScaleX;
 }
 
 void NuMtxRotateX(NUMTX *m, NUANG a) {
     float cosx = NU_COS_LUT(a);
     float sinx = NU_SIN_LUT(a);
-    float _01 = m->_01;
-    float _11 = m->_11;
-    float _21 = m->_21;
-    float _31 = m->_31;
+    float m01 = m->m01;
+    float m11 = m->m11;
+    float m21 = m->m21;
+    float m31 = m->m31;
 
-    m->_01 = _01 * cosx - m->_02 * sinx;
-    m->_02 = _01 * sinx + m->_02 * cosx;
-    m->_11 = _11 * cosx - m->_12 * sinx;
-    m->_12 = _11 * sinx + m->_12 * cosx;
-    m->_21 = _21 * cosx - m->_22 * sinx;
-    m->_22 = _21 * sinx + m->_22 * cosx;
-    m->_31 = _31 * cosx - m->_32 * sinx;
-    m->_32 = _31 * sinx + m->_32 * cosx;
+    m->m01 = m01 * cosx - m->m02 * sinx;
+    m->m02 = m01 * sinx + m->m02 * cosx;
+    m->m11 = m11 * cosx - m->m12 * sinx;
+    m->m12 = m11 * sinx + m->m12 * cosx;
+    m->m21 = m21 * cosx - m->m22 * sinx;
+    m->m22 = m21 * sinx + m->m22 * cosx;
+    m->m31 = m31 * cosx - m->m32 * sinx;
+    m->m32 = m31 * sinx + m->m32 * cosx;
 }
 
 void NuMtxPreRotateX(NUMTX *m, NUANG a) {
     float cosx = NU_COS_LUT(a);
     float sinx = NU_SIN_LUT(a);
-    float _10 = m->_10;
-    float _11 = m->_11;
-    float _12 = m->_12;
+    float m10 = m->m10;
+    float m11 = m->m11;
+    float m12 = m->m12;
 
-    m->_10 = cosx * _10 + m->_20 * sinx;
-    m->_11 = cosx * _11 + m->_21 * sinx;
-    m->_12 = cosx * _12 + m->_22 * sinx;
-    m->_20 = m->_20 * cosx - sinx * _10;
-    m->_21 = m->_21 * cosx - sinx * _11;
-    m->_22 = m->_22 * cosx - sinx * _12;
+    m->m10 = cosx * m10 + m->m20 * sinx;
+    m->m11 = cosx * m11 + m->m21 * sinx;
+    m->m12 = cosx * m12 + m->m22 * sinx;
+    m->m20 = m->m20 * cosx - sinx * m10;
+    m->m21 = m->m21 * cosx - sinx * m11;
+    m->m22 = m->m22 * cosx - sinx * m12;
 }
 
 void NuMtxRotateY(NUMTX *m, NUANG a) {
     float cosx = NU_COS_LUT(a);
     float sinx = NU_SIN_LUT(a);
-    float _00 = m->_00;
-    float _10 = m->_10;
-    float _20 = m->_20;
-    float _30 = m->_30;
+    float m00 = m->m00;
+    float m10 = m->m10;
+    float m20 = m->m20;
+    float m30 = m->m30;
 
-    m->_00 = _00 * cosx + m->_02 * sinx;
-    m->_02 = m->_02 * cosx - _00 * sinx;
-    m->_10 = _10 * cosx + m->_12 * sinx;
-    m->_12 = m->_12 * cosx - _10 * sinx;
-    m->_20 = _20 * cosx + m->_22 * sinx;
-    m->_22 = m->_22 * cosx - _20 * sinx;
-    m->_30 = _30 * cosx + m->_32 * sinx;
-    m->_32 = m->_32 * cosx - _30 * sinx;
+    m->m00 = m00 * cosx + m->m02 * sinx;
+    m->m02 = m->m02 * cosx - m00 * sinx;
+    m->m10 = m10 * cosx + m->m12 * sinx;
+    m->m12 = m->m12 * cosx - m10 * sinx;
+    m->m20 = m20 * cosx + m->m22 * sinx;
+    m->m22 = m->m22 * cosx - m20 * sinx;
+    m->m30 = m30 * cosx + m->m32 * sinx;
+    m->m32 = m->m32 * cosx - m30 * sinx;
 }
 
 void NuMtxPreRotateY(NUMTX *m, NUANG a) {
     float cosx = NU_COS_LUT(a);
     float sinx = NU_SIN_LUT(a);
-    float _00 = m->_00;
-    float _01 = m->_01;
-    float _02 = m->_02;
+    float m00 = m->m00;
+    float m01 = m->m01;
+    float m02 = m->m02;
 
-    m->_00 = cosx * _00 - m->_20 * sinx;
-    m->_01 = cosx * _01 - m->_21 * sinx;
-    m->_02 = cosx * _02 - m->_22 * sinx;
-    m->_20 = sinx * _00 + m->_20 * cosx;
-    m->_21 = sinx * _01 + m->_21 * cosx;
-    m->_22 = sinx * _02 + m->_22 * cosx;
+    m->m00 = cosx * m00 - m->m20 * sinx;
+    m->m01 = cosx * m01 - m->m21 * sinx;
+    m->m02 = cosx * m02 - m->m22 * sinx;
+    m->m20 = sinx * m00 + m->m20 * cosx;
+    m->m21 = sinx * m01 + m->m21 * cosx;
+    m->m22 = sinx * m02 + m->m22 * cosx;
 }
 
 void NuMtxRotateZ(NUMTX *m, NUANG a) {
     float cosx = NU_COS_LUT(a);
     float sinx = NU_SIN_LUT(a);
-    float _00 = m->_00;
-    float _10 = m->_10;
-    float _20 = m->_20;
-    float _30 = m->_30;
+    float m00 = m->m00;
+    float m10 = m->m10;
+    float m20 = m->m20;
+    float m30 = m->m30;
 
-    m->_00 = _00 * cosx - m->_01 * sinx;
-    m->_01 = _00 * sinx + m->_01 * cosx;
-    m->_10 = _10 * cosx - m->_11 * sinx;
-    m->_11 = _10 * sinx + m->_11 * cosx;
-    m->_20 = _20 * cosx - m->_21 * sinx;
-    m->_21 = _20 * sinx + m->_21 * cosx;
-    m->_30 = _30 * cosx - m->_31 * sinx;
-    m->_31 = _30 * sinx + m->_31 * cosx;
+    m->m00 = m00 * cosx - m->m01 * sinx;
+    m->m01 = m00 * sinx + m->m01 * cosx;
+    m->m10 = m10 * cosx - m->m11 * sinx;
+    m->m11 = m10 * sinx + m->m11 * cosx;
+    m->m20 = m20 * cosx - m->m21 * sinx;
+    m->m21 = m20 * sinx + m->m21 * cosx;
+    m->m30 = m30 * cosx - m->m31 * sinx;
+    m->m31 = m30 * sinx + m->m31 * cosx;
 }
 
 void NuMtxPreRotateZ(NUMTX *m, NUANG a) {
     float cosx = NU_COS_LUT(a);
     float sinx = NU_SIN_LUT(a);
-    float _00 = m->_00;
-    float _01 = m->_01;
-    float _02 = m->_02;
+    float m00 = m->m00;
+    float m01 = m->m01;
+    float m02 = m->m02;
 
-    m->_00 = cosx * _00 + m->_10 * sinx;
-    m->_01 = cosx * _01 + m->_11 * sinx;
-    m->_02 = cosx * _02 + m->_12 * sinx;
-    m->_10 = m->_10 * cosx - sinx * _00;
-    m->_11 = m->_11 * cosx - sinx * _01;
-    m->_12 = m->_12 * cosx - sinx * _02;
+    m->m00 = cosx * m00 + m->m10 * sinx;
+    m->m01 = cosx * m01 + m->m11 * sinx;
+    m->m02 = cosx * m02 + m->m12 * sinx;
+    m->m10 = m->m10 * cosx - sinx * m00;
+    m->m11 = m->m11 * cosx - sinx * m01;
+    m->m12 = m->m12 * cosx - sinx * m02;
 }
 
 void NuMtxPreRotateY180(NUMTX *m) {
-    m->_00 = -m->_00;
-    m->_01 = -m->_01;
-    m->_02 = -m->_02;
-    m->_20 = -m->_20;
-    m->_21 = -m->_21;
-    m->_22 = -m->_22;
+    m->m00 = -m->m00;
+    m->m01 = -m->m01;
+    m->m02 = -m->m02;
+    m->m20 = -m->m20;
+    m->m21 = -m->m21;
+    m->m22 = -m->m22;
 }
 
 void NuMtxPreRotateY180X(NUMTX *m, NUANG a) {
     float cosx = NU_COS_LUT(a);
     float sinx = NU_SIN_LUT(a);
-    float _10 = m->_10;
-    float _11 = m->_11;
-    float _12 = m->_12;
+    float m10 = m->m10;
+    float m11 = m->m11;
+    float m12 = m->m12;
 
-    m->_00 = -m->_00;
-    m->_01 = -m->_01;
-    m->_02 = -m->_02;
-    m->_10 = cosx * _10 - m->_20 * sinx;
-    m->_11 = cosx * _11 - m->_21 * sinx;
-    m->_12 = cosx * _12 - m->_22 * sinx;
-    m->_20 = -(m->_20 * cosx) - sinx * _10;
-    m->_21 = -(m->_21 * cosx) - sinx * _11;
-    m->_22 = -(m->_22 * cosx) - sinx * _12;
+    m->m00 = -m->m00;
+    m->m01 = -m->m01;
+    m->m02 = -m->m02;
+    m->m10 = cosx * m10 - m->m20 * sinx;
+    m->m11 = cosx * m11 - m->m21 * sinx;
+    m->m12 = cosx * m12 - m->m22 * sinx;
+    m->m20 = -(m->m20 * cosx) - sinx * m10;
+    m->m21 = -(m->m21 * cosx) - sinx * m11;
+    m->m22 = -(m->m22 * cosx) - sinx * m12;
 }
 
 void NuMtxPreSkewYX(NUMTX *Mtx, float SkewVal) {
-    Mtx->_00 = Mtx->_00 + Mtx->_10 * SkewVal;
-    Mtx->_01 = Mtx->_01 + Mtx->_11 * SkewVal;
-    Mtx->_02 = Mtx->_02 + Mtx->_12 * SkewVal;
+    Mtx->m00 = Mtx->m00 + Mtx->m10 * SkewVal;
+    Mtx->m01 = Mtx->m01 + Mtx->m11 * SkewVal;
+    Mtx->m02 = Mtx->m02 + Mtx->m12 * SkewVal;
 }
 
 void NuMtxTransposeR(NUMTX *m, NUMTX *m0) {
     float t;
 
-    t = m0->_01;
-    m->_01 = m0->_10;
-    m->_10 = t;
-    t = m0->_02;
-    m->_02 = m0->_20;
-    m->_20 = t;
-    t = m0->_12;
-    m->_12 = m0->_21;
-    m->_21 = t;
-    m->_00 = m0->_00;
-    m->_11 = m0->_11;
-    m->_22 = m0->_22;
-    m->_30 = m0->_30;
-    m->_31 = m0->_31;
-    m->_32 = m0->_32;
-    m->_33 = m0->_33;
+    t = m0->m01;
+    m->m01 = m0->m10;
+    m->m10 = t;
+    t = m0->m02;
+    m->m02 = m0->m20;
+    m->m20 = t;
+    t = m0->m12;
+    m->m12 = m0->m21;
+    m->m21 = t;
+    m->m00 = m0->m00;
+    m->m11 = m0->m11;
+    m->m22 = m0->m22;
+    m->m30 = m0->m30;
+    m->m31 = m0->m31;
+    m->m32 = m0->m32;
+    m->m33 = m0->m33;
 }
 
 void NuMtxTranspose(NUMTX *m, NUMTX *m0) {
     float t;
 
-    t = m0->_01;
-    m->_01 = m0->_10;
-    m->_10 = t;
-    t = m0->_02;
-    m->_02 = m0->_20;
-    m->_20 = t;
-    t = m0->_03;
-    m->_03 = m0->_30;
-    m->_30 = t;
-    t = m0->_12;
-    m->_12 = m0->_21;
-    m->_21 = t;
-    t = m0->_13;
-    m->_13 = m0->_31;
-    m->_31 = t;
-    t = m0->_23;
-    m->_23 = m0->_32;
-    m->_32 = t;
-    m->_00 = m0->_00;
-    m->_11 = m0->_11;
-    m->_22 = m0->_22;
-    m->_33 = m0->_33;
+    t = m0->m01;
+    m->m01 = m0->m10;
+    m->m10 = t;
+    t = m0->m02;
+    m->m02 = m0->m20;
+    m->m20 = t;
+    t = m0->m03;
+    m->m03 = m0->m30;
+    m->m30 = t;
+    t = m0->m12;
+    m->m12 = m0->m21;
+    m->m21 = t;
+    t = m0->m13;
+    m->m13 = m0->m31;
+    m->m31 = t;
+    t = m0->m23;
+    m->m23 = m0->m32;
+    m->m32 = t;
+    m->m00 = m0->m00;
+    m->m11 = m0->m11;
+    m->m22 = m0->m22;
+    m->m33 = m0->m33;
 }
 
 void NuMtxInv(NUMTX *m, NUMTX *m0) {
     float t;
 
-    float tx = -m0->_30;
-    float ty = -m0->_31;
-    float tz = -m0->_32;
+    float tx = -m0->m30;
+    float ty = -m0->m31;
+    float tz = -m0->m32;
 
-    t = m0->_01;
-    m->_01 = m0->_10;
-    m->_10 = t;
-    t = m0->_02;
-    m->_02 = m0->_20;
-    m->_20 = t;
-    t = m0->_12;
-    m->_12 = m0->_21;
-    m->_21 = t;
-    m->_00 = m0->_00;
-    m->_11 = m0->_11;
-    m->_22 = m0->_22;
-    m->_30 = m->_00 * tx + m->_10 * ty + m->_20 * tz;
-    m->_31 = m->_01 * tx + m->_11 * ty + m->_21 * tz;
-    m->_32 = m->_02 * tx + m->_12 * ty + m->_22 * tz;
-    m->_23 = 0.0f;
-    m->_13 = m->_23;
-    m->_03 = m->_13;
-    m->_33 = 1.0f;
+    t = m0->m01;
+    m->m01 = m0->m10;
+    m->m10 = t;
+    t = m0->m02;
+    m->m02 = m0->m20;
+    m->m20 = t;
+    t = m0->m12;
+    m->m12 = m0->m21;
+    m->m21 = t;
+    m->m00 = m0->m00;
+    m->m11 = m0->m11;
+    m->m22 = m0->m22;
+    m->m30 = m->m00 * tx + m->m10 * ty + m->m20 * tz;
+    m->m31 = m->m01 * tx + m->m11 * ty + m->m21 * tz;
+    m->m32 = m->m02 * tx + m->m12 * ty + m->m22 * tz;
+    m->m23 = 0.0f;
+    m->m13 = m->m23;
+    m->m03 = m->m13;
+    m->m33 = 1.0f;
 }
 
 void NuMtxInvR(NUMTX *m, NUMTX *m0) {
     float t;
 
-    t = m0->_01;
-    m->_01 = m0->_10;
-    m->_10 = t;
-    t = m0->_02;
-    m->_02 = m0->_20;
-    m->_20 = t;
-    t = m0->_12;
-    m->_12 = m0->_21;
-    m->_21 = t;
-    m->_00 = m0->_00;
-    m->_11 = m0->_11;
-    m->_22 = m0->_22;
-    m->_23 = 0.0f;
-    m->_13 = m->_23;
-    m->_03 = m->_13;
-    m->_32 = 0.0f;
-    m->_31 = m->_32;
-    m->_30 = m->_31;
-    m->_33 = 1.0f;
+    t = m0->m01;
+    m->m01 = m0->m10;
+    m->m10 = t;
+    t = m0->m02;
+    m->m02 = m0->m20;
+    m->m20 = t;
+    t = m0->m12;
+    m->m12 = m0->m21;
+    m->m21 = t;
+    m->m00 = m0->m00;
+    m->m11 = m0->m11;
+    m->m22 = m0->m22;
+    m->m23 = 0.0f;
+    m->m13 = m->m23;
+    m->m03 = m->m13;
+    m->m32 = 0.0f;
+    m->m31 = m->m32;
+    m->m30 = m->m31;
+    m->m33 = 1.0f;
 }
 
 float NuMtxDet3(NUMTX *m) {
-    return m->_00 * (m->_11 * m->_22 - m->_12 * m->_21) - m->_01 * (m->_10 * m->_22 - m->_12 * m->_20) +
-           m->_02 * (m->_10 * m->_21 - m->_11 * m->_20);
+    return m->m00 * (m->m11 * m->m22 - m->m12 * m->m21) - m->m01 * (m->m10 * m->m22 - m->m12 * m->m20) +
+           m->m02 * (m->m10 * m->m21 - m->m11 * m->m20);
 }
 
 void NuMtxLookAtX(NUMTX *m, NUVEC *pnt) {
     NUVEC v;
 
-    v.x = pnt->x - m->_30;
-    v.y = pnt->y - m->_31;
-    v.z = pnt->z - m->_32;
+    v.x = pnt->x - m->m30;
+    v.y = pnt->y - m->m31;
+    v.z = pnt->z - m->m32;
 
     NuVecNorm(&v, &v);
     NuMtxAlignX(m, &v);
@@ -465,9 +465,9 @@ void NuMtxLookAtX(NUMTX *m, NUVEC *pnt) {
 void NuMtxLookAtY(NUMTX *m, NUVEC *pnt) {
     NUVEC v;
 
-    v.x = pnt->x - m->_30;
-    v.y = pnt->y - m->_31;
-    v.z = pnt->z - m->_32;
+    v.x = pnt->x - m->m30;
+    v.y = pnt->y - m->m31;
+    v.z = pnt->z - m->m32;
 
     NuVecNorm(&v, &v);
     NuMtxAlignY(m, &v);
@@ -476,9 +476,9 @@ void NuMtxLookAtY(NUMTX *m, NUVEC *pnt) {
 void NuMtxLookAtZ(NUMTX *m, NUVEC *pnt) {
     NUVEC v;
 
-    v.x = pnt->x - m->_30;
-    v.y = pnt->y - m->_31;
-    v.z = pnt->z - m->_32;
+    v.x = pnt->x - m->m30;
+    v.y = pnt->y - m->m31;
+    v.z = pnt->z - m->m32;
 
     NuVecNorm(&v, &v);
     NuMtxAlignZ(m, &v);
@@ -487,9 +487,9 @@ void NuMtxLookAtZ(NUMTX *m, NUVEC *pnt) {
 void NuMtxInvLookAtX(NUMTX *m, NUVEC *pnt) {
     NUVEC v;
 
-    v.x = m->_30 - pnt->x;
-    v.y = m->_31 - pnt->y;
-    v.z = m->_32 - pnt->z;
+    v.x = m->m30 - pnt->x;
+    v.y = m->m31 - pnt->y;
+    v.z = m->m32 - pnt->z;
 
     NuVecNorm(&v, &v);
     NuMtxAlignX(m, &v);
@@ -498,9 +498,9 @@ void NuMtxInvLookAtX(NUMTX *m, NUVEC *pnt) {
 void NuMtxInvLookAtY(NUMTX *m, NUVEC *pnt) {
     NUVEC v;
 
-    v.x = m->_30 - pnt->x;
-    v.y = m->_31 - pnt->y;
-    v.z = m->_32 - pnt->z;
+    v.x = m->m30 - pnt->x;
+    v.y = m->m31 - pnt->y;
+    v.z = m->m32 - pnt->z;
 
     NuVecNorm(&v, &v);
     NuMtxAlignY(m, &v);
@@ -509,98 +509,98 @@ void NuMtxInvLookAtY(NUMTX *m, NUVEC *pnt) {
 void NuMtxInvLookAtZ(NUMTX *m, NUVEC *pnt) {
     NUVEC v;
 
-    v.x = m->_30 - pnt->x;
-    v.y = m->_31 - pnt->y;
-    v.z = m->_32 - pnt->z;
+    v.x = m->m30 - pnt->x;
+    v.y = m->m31 - pnt->y;
+    v.z = m->m32 - pnt->z;
 
     NuVecNorm(&v, &v);
     NuMtxAlignZ(m, &v);
 }
 
 void NuMtxAddR(NUMTX *m, NUMTX *m0, NUMTX *m1) {
-    m->_00 = m0->_00 + m1->_00;
-    m->_01 = m0->_01 + m1->_01;
-    m->_02 = m0->_02 + m1->_02;
-    m->_03 = 0.0f;
-    m->_10 = m0->_10 + m1->_10;
-    m->_11 = m0->_11 + m1->_11;
-    m->_12 = m0->_12 + m1->_12;
-    m->_13 = 0.0f;
-    m->_20 = m0->_20 + m1->_20;
-    m->_21 = m0->_21 + m1->_21;
-    m->_22 = m0->_22 + m1->_22;
-    m->_23 = 0.0f;
-    m->_30 = 0.0f;
-    m->_31 = 0.0f;
-    m->_32 = 0.0f;
-    m->_33 = 1.0f;
+    m->m00 = m0->m00 + m1->m00;
+    m->m01 = m0->m01 + m1->m01;
+    m->m02 = m0->m02 + m1->m02;
+    m->m03 = 0.0f;
+    m->m10 = m0->m10 + m1->m10;
+    m->m11 = m0->m11 + m1->m11;
+    m->m12 = m0->m12 + m1->m12;
+    m->m13 = 0.0f;
+    m->m20 = m0->m20 + m1->m20;
+    m->m21 = m0->m21 + m1->m21;
+    m->m22 = m0->m22 + m1->m22;
+    m->m23 = 0.0f;
+    m->m30 = 0.0f;
+    m->m31 = 0.0f;
+    m->m32 = 0.0f;
+    m->m33 = 1.0f;
 }
 
 void NuMtxSubR(NUMTX *m, NUMTX *m0, NUMTX *m1) {
-    m->_00 = m0->_00 - m1->_00;
-    m->_01 = m0->_01 - m1->_01;
-    m->_02 = m0->_02 - m1->_02;
-    m->_03 = 0.0f;
-    m->_10 = m0->_10 - m1->_10;
-    m->_11 = m0->_11 - m1->_11;
-    m->_12 = m0->_12 - m1->_12;
-    m->_13 = 0.0f;
-    m->_20 = m0->_20 - m1->_20;
-    m->_21 = m0->_21 - m1->_21;
-    m->_22 = m0->_22 - m1->_22;
-    m->_23 = 0.0f;
-    m->_30 = 0.0f;
-    m->_31 = 0.0f;
-    m->_32 = 0.0f;
-    m->_33 = 1.0f;
+    m->m00 = m0->m00 - m1->m00;
+    m->m01 = m0->m01 - m1->m01;
+    m->m02 = m0->m02 - m1->m02;
+    m->m03 = 0.0f;
+    m->m10 = m0->m10 - m1->m10;
+    m->m11 = m0->m11 - m1->m11;
+    m->m12 = m0->m12 - m1->m12;
+    m->m13 = 0.0f;
+    m->m20 = m0->m20 - m1->m20;
+    m->m21 = m0->m21 - m1->m21;
+    m->m22 = m0->m22 - m1->m22;
+    m->m23 = 0.0f;
+    m->m30 = 0.0f;
+    m->m31 = 0.0f;
+    m->m32 = 0.0f;
+    m->m33 = 1.0f;
 }
 
 void NuMtxSkewSymmetric(NUMTX *m, NUVEC *v) {
-    m->_00 = 0.0;
-    m->_01 = -v->z;
-    m->_02 = v->y;
-    m->_03 = 0.0;
-    m->_10 = v->z;
-    m->_11 = 0.0;
-    m->_12 = -v->x;
-    m->_13 = 0.0;
-    m->_20 = -v->y;
-    m->_21 = v->x;
-    m->_22 = 0.0;
-    m->_23 = 0.0;
-    m->_30 = 0.0;
-    m->_31 = 0.0;
-    m->_32 = 0.0;
-    m->_33 = 1.0;
+    m->m00 = 0.0;
+    m->m01 = -v->z;
+    m->m02 = v->y;
+    m->m03 = 0.0;
+    m->m10 = v->z;
+    m->m11 = 0.0;
+    m->m12 = -v->x;
+    m->m13 = 0.0;
+    m->m20 = -v->y;
+    m->m21 = v->x;
+    m->m22 = 0.0;
+    m->m23 = 0.0;
+    m->m30 = 0.0;
+    m->m31 = 0.0;
+    m->m32 = 0.0;
+    m->m33 = 1.0;
 }
 
 void NuMtxGetXAxis(NUMTX *m, NUVEC *x) {
-    x->x = m->_00;
-    x->y = m->_01;
-    x->z = m->_02;
+    x->x = m->m00;
+    x->y = m->m01;
+    x->z = m->m02;
 }
 
 void NuMtxGetYAxis(NUMTX *m, NUVEC *y) {
-    y->x = m->_10;
-    y->y = m->_11;
-    y->z = m->_12;
+    y->x = m->m10;
+    y->y = m->m11;
+    y->z = m->m12;
 }
 
 void NuMtxGetZAxis(NUMTX *m, NUVEC *z) {
-    z->x = m->_20;
-    z->y = m->_21;
-    z->z = m->_22;
+    z->x = m->m20;
+    z->y = m->m21;
+    z->z = m->m22;
 }
 
 void NuMtxGetTranslation(NUMTX *m, NUVEC *t) {
-    t->x = m->_30;
-    t->y = m->_31;
-    t->z = m->_32;
+    t->x = m->m30;
+    t->y = m->m31;
+    t->z = m->m32;
 }
 
 int NuMtxCompare(NUMTX *a, NUMTX *b) {
-    float *aa = &a->_00;
-    float *bb = &b->_00;
+    float *aa = &a->m00;
+    float *bb = &b->m00;
 
     for (int i = 0; i < 16; i++) {
         if (*aa < *bb) {
@@ -672,178 +672,178 @@ void NuMtxLookAtD3D(NUMTX *mtx, NUVEC *eye, NUVEC *center, NUVEC *up) {
     NuVecCross(&ay, &az, &ax);
     NuVecNorm(&ay, &ay);
 
-    mtx->_00 = ax.x;
-    mtx->_01 = ay.x;
-    mtx->_02 = az.x;
-    mtx->_03 = 0.0f;
-    mtx->_10 = ax.y;
-    mtx->_11 = ay.y;
-    mtx->_12 = az.y;
-    mtx->_13 = 0.0f;
-    mtx->_20 = ax.z;
-    mtx->_21 = ay.z;
-    mtx->_22 = az.z;
-    mtx->_23 = 0.0f;
-    mtx->_30 = (-eye->x * ax.x - eye->y * ax.y) - eye->z * ax.z;
-    mtx->_31 = (-eye->x * ay.x - eye->y * ay.y) - eye->z * ay.z;
-    mtx->_32 = (-eye->x * az.x - eye->y * az.y) - eye->z * az.z;
-    mtx->_33 = 1.0f;
+    mtx->m00 = ax.x;
+    mtx->m01 = ay.x;
+    mtx->m02 = az.x;
+    mtx->m03 = 0.0f;
+    mtx->m10 = ax.y;
+    mtx->m11 = ay.y;
+    mtx->m12 = az.y;
+    mtx->m13 = 0.0f;
+    mtx->m20 = ax.z;
+    mtx->m21 = ay.z;
+    mtx->m22 = az.z;
+    mtx->m23 = 0.0f;
+    mtx->m30 = (-eye->x * ax.x - eye->y * ax.y) - eye->z * ax.z;
+    mtx->m31 = (-eye->x * ay.x - eye->y * ay.y) - eye->z * ay.z;
+    mtx->m32 = (-eye->x * az.x - eye->y * az.y) - eye->z * az.z;
+    mtx->m33 = 1.0f;
 }
 
 void NuMtxSetPerspectiveD3D(NUMTX *mtx, float fovy, float aspect, float zNear, float zFar) {
     float tanFovy2 =
         NU_SIN_LUT((int)((fovy / 2.0f) * (USHRT_MAX / 360.0f))) /
         NU_COS_LUT((int)((fovy / 2.0f) * (USHRT_MAX / 360.0f))); // USHRT_MAX / 360.0f is indices per degree
-    mtx->_00 = 1.0 / (aspect * tanFovy2);
-    mtx->_01 = 0.0;
-    mtx->_02 = 0.0;
-    mtx->_03 = 0.0;
-    mtx->_10 = 0.0;
-    mtx->_11 = 1.0 / tanFovy2;
-    mtx->_12 = 0.0;
-    mtx->_13 = 0.0;
-    mtx->_20 = 0.0;
-    mtx->_21 = 0.0;
-    mtx->_22 = zFar / (zFar - zNear);
-    mtx->_23 = 1.0;
-    mtx->_30 = 0.0;
-    mtx->_31 = 0.0;
-    mtx->_32 = (-zFar * zNear) / (zFar - zNear);
-    mtx->_33 = 0.0;
+    mtx->m00 = 1.0 / (aspect * tanFovy2);
+    mtx->m01 = 0.0;
+    mtx->m02 = 0.0;
+    mtx->m03 = 0.0;
+    mtx->m10 = 0.0;
+    mtx->m11 = 1.0 / tanFovy2;
+    mtx->m12 = 0.0;
+    mtx->m13 = 0.0;
+    mtx->m20 = 0.0;
+    mtx->m21 = 0.0;
+    mtx->m22 = zFar / (zFar - zNear);
+    mtx->m23 = 1.0;
+    mtx->m30 = 0.0;
+    mtx->m31 = 0.0;
+    mtx->m32 = (-zFar * zNear) / (zFar - zNear);
+    mtx->m33 = 0.0;
 }
 
 void NuMtxSetPerspectiveBlend(NUMTX *mtx, float fovy, float aspect, float zNear, float zFar) {
     float tanFovy2 =
         NU_SIN_LUT((int)((fovy / 2.0f) * (USHRT_MAX / 360.0f))) /
         NU_COS_LUT((int)((fovy / 2.0f) * (USHRT_MAX / 360.0f))); // USHRT_MAX / 360.0f is indices per degree
-    mtx->_00 = 1.0f / (aspect * tanFovy2);
-    mtx->_01 = 0.0f;
-    mtx->_02 = 0.0f;
-    mtx->_03 = 0.0f;
-    mtx->_10 = 0.0f;
-    mtx->_11 = 1.0f / tanFovy2;
-    mtx->_12 = 0.0f;
-    mtx->_13 = 0.0f;
-    mtx->_20 = 0.0f;
-    mtx->_21 = 0.0f;
-    mtx->_22 = (zFar + zNear) / (zFar - zNear);
-    mtx->_23 = 1.0f;
-    mtx->_30 = 0.0f;
-    mtx->_31 = 0.0f;
-    mtx->_32 = (zFar * -2.0f * zNear) / (zFar - zNear);
-    mtx->_33 = 0.0f;
+    mtx->m00 = 1.0f / (aspect * tanFovy2);
+    mtx->m01 = 0.0f;
+    mtx->m02 = 0.0f;
+    mtx->m03 = 0.0f;
+    mtx->m10 = 0.0f;
+    mtx->m11 = 1.0f / tanFovy2;
+    mtx->m12 = 0.0f;
+    mtx->m13 = 0.0f;
+    mtx->m20 = 0.0f;
+    mtx->m21 = 0.0f;
+    mtx->m22 = (zFar + zNear) / (zFar - zNear);
+    mtx->m23 = 1.0f;
+    mtx->m30 = 0.0f;
+    mtx->m31 = 0.0f;
+    mtx->m32 = (zFar * -2.0f * zNear) / (zFar - zNear);
+    mtx->m33 = 0.0f;
 }
 
 void NuMtxSetFrustumD3D(NUMTX *mtx, float l, float r, float b, float t, float n, float f) {
-    mtx->_00 = (n + n) / (r - l);
-    mtx->_01 = 0.0f;
-    mtx->_02 = 0.0f;
-    mtx->_03 = 0.0f;
-    mtx->_10 = 0.0f;
-    mtx->_11 = (n + n) / (t - b);
-    mtx->_12 = 0.0f;
-    mtx->_13 = 0.0f;
-    mtx->_20 = (r + l) / (l - r);
-    mtx->_21 = (t + b) / (b - t);
-    mtx->_22 = f / (f - n);
-    mtx->_23 = 1.0f;
-    mtx->_30 = 0.0f;
-    mtx->_31 = 0.0f;
-    mtx->_32 = (-f * n) / (f - n);
-    mtx->_33 = 0.0f;
+    mtx->m00 = (n + n) / (r - l);
+    mtx->m01 = 0.0f;
+    mtx->m02 = 0.0f;
+    mtx->m03 = 0.0f;
+    mtx->m10 = 0.0f;
+    mtx->m11 = (n + n) / (t - b);
+    mtx->m12 = 0.0f;
+    mtx->m13 = 0.0f;
+    mtx->m20 = (r + l) / (l - r);
+    mtx->m21 = (t + b) / (b - t);
+    mtx->m22 = f / (f - n);
+    mtx->m23 = 1.0f;
+    mtx->m30 = 0.0f;
+    mtx->m31 = 0.0f;
+    mtx->m32 = (-f * n) / (f - n);
+    mtx->m33 = 0.0f;
 }
 
 void NuMtxSetFrustumBlend(NUMTX *mtx, float l, float r, float b, float t, float n, float f) {
-    mtx->_00 = (n + n) / (r - l);
-    mtx->_01 = 0.0f;
-    mtx->_02 = 0.0f;
-    mtx->_03 = 0.0f;
-    mtx->_10 = 0.0f;
-    mtx->_11 = (n + n) / (t - b);
-    mtx->_12 = 0.0f;
-    mtx->_13 = 0.0f;
-    mtx->_20 = (r + l) / (l - r);
-    mtx->_21 = (t + b) / (b - t);
-    mtx->_22 = (f + n) / (f - n);
-    mtx->_23 = 1.0f;
-    mtx->_30 = 0.0f;
-    mtx->_31 = 0.0f;
-    mtx->_32 = (f * -2.0f * n) / (f - n);
-    mtx->_33 = 0.0f;
+    mtx->m00 = (n + n) / (r - l);
+    mtx->m01 = 0.0f;
+    mtx->m02 = 0.0f;
+    mtx->m03 = 0.0f;
+    mtx->m10 = 0.0f;
+    mtx->m11 = (n + n) / (t - b);
+    mtx->m12 = 0.0f;
+    mtx->m13 = 0.0f;
+    mtx->m20 = (r + l) / (l - r);
+    mtx->m21 = (t + b) / (b - t);
+    mtx->m22 = (f + n) / (f - n);
+    mtx->m23 = 1.0f;
+    mtx->m30 = 0.0f;
+    mtx->m31 = 0.0f;
+    mtx->m32 = (f * -2.0f * n) / (f - n);
+    mtx->m33 = 0.0f;
 }
 
 void NuMtxSetOrthoD3D(NUMTX *mtx, float l, float r, float b, float t, float n, float f) {
-    mtx->_00 = 2.0f / (r - l);
-    mtx->_01 = 0.0f;
-    mtx->_02 = 0.0f;
-    mtx->_03 = 0.0f;
-    mtx->_10 = 0.0f;
-    mtx->_11 = 2.0f / (t - b);
-    mtx->_12 = 0.0f;
-    mtx->_13 = 0.0f;
-    mtx->_20 = 0.0f;
-    mtx->_21 = 0.0f;
-    mtx->_22 = 1.0f / (f - n);
-    mtx->_23 = 0.0f;
-    mtx->_30 = (r + l) / (l - r);
-    mtx->_31 = (t + b) / (b - t);
-    mtx->_32 = (f + n) / (n - f);
-    mtx->_33 = 1.0f;
+    mtx->m00 = 2.0f / (r - l);
+    mtx->m01 = 0.0f;
+    mtx->m02 = 0.0f;
+    mtx->m03 = 0.0f;
+    mtx->m10 = 0.0f;
+    mtx->m11 = 2.0f / (t - b);
+    mtx->m12 = 0.0f;
+    mtx->m13 = 0.0f;
+    mtx->m20 = 0.0f;
+    mtx->m21 = 0.0f;
+    mtx->m22 = 1.0f / (f - n);
+    mtx->m23 = 0.0f;
+    mtx->m30 = (r + l) / (l - r);
+    mtx->m31 = (t + b) / (b - t);
+    mtx->m32 = (f + n) / (n - f);
+    mtx->m33 = 1.0f;
 }
 
 void NuMtxSetOrthoBlend(NUMTX *mtx, float l, float r, float b, float t, float n, float f) {
-    mtx->_00 = 2.0f / (r - l);
-    mtx->_01 = 0.0f;
-    mtx->_02 = 0.0f;
-    mtx->_03 = 0.0f;
-    mtx->_10 = 0.0f;
-    mtx->_11 = 2.0f / (t - b);
-    mtx->_12 = 0.0f;
-    mtx->_13 = 0.0f;
-    mtx->_20 = 0.0f;
-    mtx->_21 = 0.0f;
-    mtx->_22 = 2.0f / (f - n);
-    mtx->_23 = 0.0f;
-    mtx->_30 = (r + l) / (l - r);
-    mtx->_31 = (t + b) / (b - t);
-    mtx->_32 = (f + n) / (n - f);
-    mtx->_33 = 1.0f;
+    mtx->m00 = 2.0f / (r - l);
+    mtx->m01 = 0.0f;
+    mtx->m02 = 0.0f;
+    mtx->m03 = 0.0f;
+    mtx->m10 = 0.0f;
+    mtx->m11 = 2.0f / (t - b);
+    mtx->m12 = 0.0f;
+    mtx->m13 = 0.0f;
+    mtx->m20 = 0.0f;
+    mtx->m21 = 0.0f;
+    mtx->m22 = 2.0f / (f - n);
+    mtx->m23 = 0.0f;
+    mtx->m30 = (r + l) / (l - r);
+    mtx->m31 = (t + b) / (b - t);
+    mtx->m32 = (f + n) / (n - f);
+    mtx->m33 = 1.0f;
 }
 
 void NuMtxGetPerspectiveD3D(NUMTX *mtx, float *fovy, float *aspect, float *zNear, float *zFar) {
-    float Q = mtx->_22;
-    *zNear = -mtx->_32 / Q;
+    float Q = mtx->m22;
+    *zNear = -mtx->m32 / Q;
     *zFar = (*zNear * Q) / (Q - 1.0f);
-    *aspect = mtx->_11 / mtx->_00;
-    *fovy = NuAtan2(1.0f / mtx->_11, 1.0f) * 360.0f / (float)M_PI;
+    *aspect = mtx->m11 / mtx->m00;
+    *fovy = NuAtan2(1.0f / mtx->m11, 1.0f) * 360.0f / (float)M_PI;
 }
 
 void NuMtxGetPerspectiveBlend(NUMTX *mtx, float *fovy, float *aspect, float *zNear, float *zFar) {
-    float Q = (mtx->_22 + 1.0f) * 0.5f;
-    *zNear = -(mtx->_32 * 0.5f) / Q;
+    float Q = (mtx->m22 + 1.0f) * 0.5f;
+    *zNear = -(mtx->m32 * 0.5f) / Q;
     *zFar = (*zNear * Q) / (Q - 1.0f);
-    *aspect = mtx->_11 / mtx->_00;
-    *fovy = NuAtan2(1.0f / mtx->_11, 1.0f) * 360.0f / (float)M_PI;
+    *aspect = mtx->m11 / mtx->m00;
+    *fovy = NuAtan2(1.0f / mtx->m11, 1.0f) * 360.0f / (float)M_PI;
 }
 
 void NuMtxGetFrustumD3D(NUMTX *mtx, float *l, float *r, float *b, float *t, float *n, float *f) {
-    float Q = mtx->_22;
-    float zNear = -mtx->_32 / Q;
+    float Q = mtx->m22;
+    float zNear = -mtx->m32 / Q;
 
     if (f != NULL) {
         *f = (Q * zNear) / (Q - 1.0f);
     }
     if (l != NULL) {
-        *l = ((-1.0f - mtx->_20) * zNear) / mtx->_00;
+        *l = ((-1.0f - mtx->m20) * zNear) / mtx->m00;
     }
     if (r != NULL) {
-        *r = ((1.0f - mtx->_20) * zNear) / mtx->_00;
+        *r = ((1.0f - mtx->m20) * zNear) / mtx->m00;
     }
     if (b != NULL) {
-        *b = ((-1.0f - mtx->_21) * zNear) / mtx->_11;
+        *b = ((-1.0f - mtx->m21) * zNear) / mtx->m11;
     }
     if (t != NULL) {
-        *t = ((1.0f - mtx->_21) * zNear) / mtx->_11;
+        *t = ((1.0f - mtx->m21) * zNear) / mtx->m11;
     }
     if (n != NULL) {
         *n = zNear;
@@ -851,23 +851,23 @@ void NuMtxGetFrustumD3D(NUMTX *mtx, float *l, float *r, float *b, float *t, floa
 }
 
 void NuMtxGetFrustumBlend(NUMTX *mtx, float *l, float *r, float *b, float *t, float *n, float *f) {
-    float Q = (mtx->_22 + 1.0f) * 0.5f;
-    float zNear = -(mtx->_32 * 0.5f) / Q;
+    float Q = (mtx->m22 + 1.0f) * 0.5f;
+    float zNear = -(mtx->m32 * 0.5f) / Q;
 
     if (f != NULL) {
         *f = (Q * zNear) / (Q - 1.0f);
     }
     if (l != NULL) {
-        *l = ((0.5f - mtx->_20) * zNear) / mtx->_00;
+        *l = ((0.5f - mtx->m20) * zNear) / mtx->m00;
     }
     if (r != NULL) {
-        *r = ((-1.0f - mtx->_20) * zNear) / mtx->_00;
+        *r = ((-1.0f - mtx->m20) * zNear) / mtx->m00;
     }
     if (b != NULL) {
-        *b = ((0.5f - mtx->_21) * zNear) / mtx->_11;
+        *b = ((0.5f - mtx->m21) * zNear) / mtx->m11;
     }
     if (t != NULL) {
-        *t = ((-1.0f - mtx->_21) * zNear) / mtx->_11;
+        *t = ((-1.0f - mtx->m21) * zNear) / mtx->m11;
     }
     if (n != NULL) {
         *n = zNear;
@@ -882,62 +882,62 @@ void NuMtxSetRotateXYZ(NUMTX *m, NUANGVEC *a) {
     float cosz = NU_COS_LUT(a->z);
     float sinz = NU_SIN_LUT(a->z);
 
-    m->_00 = cosy * cosz;
-    m->_01 = cosy * sinz;
-    m->_02 = -siny;
-    m->_03 = 0.0f;
-    m->_10 = sinx * siny * cosz - cosx * sinz;
-    m->_11 = sinx * siny * sinz + cosx * cosz;
-    m->_12 = sinx * cosy;
-    m->_13 = 0.0f;
-    m->_20 = cosx * siny * cosz + sinx * sinz;
-    m->_21 = cosx * siny * sinz - sinx * cosz;
-    m->_22 = cosx * cosy;
-    m->_23 = 0.0f;
-    m->_30 = 0.0f;
-    m->_31 = 0.0f;
-    m->_32 = 0.0f;
-    m->_33 = 1.0f;
+    m->m00 = cosy * cosz;
+    m->m01 = cosy * sinz;
+    m->m02 = -siny;
+    m->m03 = 0.0f;
+    m->m10 = sinx * siny * cosz - cosx * sinz;
+    m->m11 = sinx * siny * sinz + cosx * cosz;
+    m->m12 = sinx * cosy;
+    m->m13 = 0.0f;
+    m->m20 = cosx * siny * cosz + sinx * sinz;
+    m->m21 = cosx * siny * sinz - sinx * cosz;
+    m->m22 = cosx * cosy;
+    m->m23 = 0.0f;
+    m->m30 = 0.0f;
+    m->m31 = 0.0f;
+    m->m32 = 0.0f;
+    m->m33 = 1.0f;
 }
 
 void NuMtxMul(NUMTX *m, NUMTX *m0, NUMTX *m1) {
     NUMTX gm;
 
     if ((m == m0) || (m == m1)) {
-        gm._00 = m0->_00 * m1->_00 + m0->_01 * m1->_10 + m0->_02 * m1->_20;
-        gm._01 = m0->_00 * m1->_01 + m0->_01 * m1->_11 + m0->_02 * m1->_21;
-        gm._02 = m0->_00 * m1->_02 + m0->_01 * m1->_12 + m0->_02 * m1->_22;
-        gm._03 = 0.0f;
-        gm._10 = m0->_10 * m1->_00 + m0->_11 * m1->_10 + m0->_12 * m1->_20;
-        gm._11 = m0->_10 * m1->_01 + m0->_11 * m1->_11 + m0->_12 * m1->_21;
-        gm._12 = m0->_10 * m1->_02 + m0->_11 * m1->_12 + m0->_12 * m1->_22;
-        gm._13 = 0.0f;
-        gm._20 = m0->_20 * m1->_00 + m0->_21 * m1->_10 + m0->_22 * m1->_20;
-        gm._21 = m0->_20 * m1->_01 + m0->_21 * m1->_11 + m0->_22 * m1->_21;
-        gm._22 = m0->_20 * m1->_02 + m0->_21 * m1->_12 + m0->_22 * m1->_22;
-        gm._23 = 0.0f;
-        gm._30 = m0->_30 * m1->_00 + m0->_31 * m1->_10 + m0->_32 * m1->_20 + m1->_30;
-        gm._31 = m0->_30 * m1->_01 + m0->_31 * m1->_11 + m0->_32 * m1->_21 + m1->_31;
-        gm._32 = m0->_30 * m1->_02 + m0->_31 * m1->_12 + m0->_32 * m1->_22 + m1->_32;
-        gm._33 = 1.0f;
+        gm.m00 = m0->m00 * m1->m00 + m0->m01 * m1->m10 + m0->m02 * m1->m20;
+        gm.m01 = m0->m00 * m1->m01 + m0->m01 * m1->m11 + m0->m02 * m1->m21;
+        gm.m02 = m0->m00 * m1->m02 + m0->m01 * m1->m12 + m0->m02 * m1->m22;
+        gm.m03 = 0.0f;
+        gm.m10 = m0->m10 * m1->m00 + m0->m11 * m1->m10 + m0->m12 * m1->m20;
+        gm.m11 = m0->m10 * m1->m01 + m0->m11 * m1->m11 + m0->m12 * m1->m21;
+        gm.m12 = m0->m10 * m1->m02 + m0->m11 * m1->m12 + m0->m12 * m1->m22;
+        gm.m13 = 0.0f;
+        gm.m20 = m0->m20 * m1->m00 + m0->m21 * m1->m10 + m0->m22 * m1->m20;
+        gm.m21 = m0->m20 * m1->m01 + m0->m21 * m1->m11 + m0->m22 * m1->m21;
+        gm.m22 = m0->m20 * m1->m02 + m0->m21 * m1->m12 + m0->m22 * m1->m22;
+        gm.m23 = 0.0f;
+        gm.m30 = m0->m30 * m1->m00 + m0->m31 * m1->m10 + m0->m32 * m1->m20 + m1->m30;
+        gm.m31 = m0->m30 * m1->m01 + m0->m31 * m1->m11 + m0->m32 * m1->m21 + m1->m31;
+        gm.m32 = m0->m30 * m1->m02 + m0->m31 * m1->m12 + m0->m32 * m1->m22 + m1->m32;
+        gm.m33 = 1.0f;
         *m = gm;
     } else {
-        m->_00 = m0->_00 * m1->_00 + m0->_01 * m1->_10 + m0->_02 * m1->_20;
-        m->_01 = m0->_00 * m1->_01 + m0->_01 * m1->_11 + m0->_02 * m1->_21;
-        m->_02 = m0->_00 * m1->_02 + m0->_01 * m1->_12 + m0->_02 * m1->_22;
-        m->_03 = 0.0f;
-        m->_10 = m0->_10 * m1->_00 + m0->_11 * m1->_10 + m0->_12 * m1->_20;
-        m->_11 = m0->_10 * m1->_01 + m0->_11 * m1->_11 + m0->_12 * m1->_21;
-        m->_12 = m0->_10 * m1->_02 + m0->_11 * m1->_12 + m0->_12 * m1->_22;
-        m->_13 = 0.0f;
-        m->_20 = m0->_20 * m1->_00 + m0->_21 * m1->_10 + m0->_22 * m1->_20;
-        m->_21 = m0->_20 * m1->_01 + m0->_21 * m1->_11 + m0->_22 * m1->_21;
-        m->_22 = m0->_20 * m1->_02 + m0->_21 * m1->_12 + m0->_22 * m1->_22;
-        m->_23 = 0.0f;
-        m->_30 = m0->_30 * m1->_00 + m0->_31 * m1->_10 + m0->_32 * m1->_20 + m1->_30;
-        m->_31 = m0->_30 * m1->_01 + m0->_31 * m1->_11 + m0->_32 * m1->_21 + m1->_31;
-        m->_32 = m0->_30 * m1->_02 + m0->_31 * m1->_12 + m0->_32 * m1->_22 + m1->_32;
-        m->_33 = 1.0f;
+        m->m00 = m0->m00 * m1->m00 + m0->m01 * m1->m10 + m0->m02 * m1->m20;
+        m->m01 = m0->m00 * m1->m01 + m0->m01 * m1->m11 + m0->m02 * m1->m21;
+        m->m02 = m0->m00 * m1->m02 + m0->m01 * m1->m12 + m0->m02 * m1->m22;
+        m->m03 = 0.0f;
+        m->m10 = m0->m10 * m1->m00 + m0->m11 * m1->m10 + m0->m12 * m1->m20;
+        m->m11 = m0->m10 * m1->m01 + m0->m11 * m1->m11 + m0->m12 * m1->m21;
+        m->m12 = m0->m10 * m1->m02 + m0->m11 * m1->m12 + m0->m12 * m1->m22;
+        m->m13 = 0.0f;
+        m->m20 = m0->m20 * m1->m00 + m0->m21 * m1->m10 + m0->m22 * m1->m20;
+        m->m21 = m0->m20 * m1->m01 + m0->m21 * m1->m11 + m0->m22 * m1->m21;
+        m->m22 = m0->m20 * m1->m02 + m0->m21 * m1->m12 + m0->m22 * m1->m22;
+        m->m23 = 0.0f;
+        m->m30 = m0->m30 * m1->m00 + m0->m31 * m1->m10 + m0->m32 * m1->m20 + m1->m30;
+        m->m31 = m0->m30 * m1->m01 + m0->m31 * m1->m11 + m0->m32 * m1->m21 + m1->m31;
+        m->m32 = m0->m30 * m1->m02 + m0->m31 * m1->m12 + m0->m32 * m1->m22 + m1->m32;
+        m->m33 = 1.0f;
     }
 }
 
@@ -945,40 +945,40 @@ void NuMtxMulH(NUMTX *m, NUMTX *m0, NUMTX *m1) {
     NUMTX gm;
 
     if ((m == m0) || (m == m1)) {
-        gm._00 = m0->_00 * m1->_00 + m0->_01 * m1->_10 + m0->_02 * m1->_20 + m0->_03 * m1->_30;
-        gm._01 = m0->_00 * m1->_01 + m0->_01 * m1->_11 + m0->_02 * m1->_21 + m0->_03 * m1->_31;
-        gm._02 = m0->_00 * m1->_02 + m0->_01 * m1->_12 + m0->_02 * m1->_22 + m0->_03 * m1->_32;
-        gm._03 = m0->_00 * m1->_03 + m0->_01 * m1->_13 + m0->_02 * m1->_23 + m0->_03 * m1->_33;
-        gm._10 = m0->_10 * m1->_00 + m0->_11 * m1->_10 + m0->_12 * m1->_20 + m0->_13 * m1->_30;
-        gm._11 = m0->_10 * m1->_01 + m0->_11 * m1->_11 + m0->_12 * m1->_21 + m0->_13 * m1->_31;
-        gm._12 = m0->_10 * m1->_02 + m0->_11 * m1->_12 + m0->_12 * m1->_22 + m0->_13 * m1->_32;
-        gm._13 = m0->_10 * m1->_03 + m0->_11 * m1->_13 + m0->_12 * m1->_23 + m0->_13 * m1->_33;
-        gm._20 = m0->_20 * m1->_00 + m0->_21 * m1->_10 + m0->_22 * m1->_20 + m0->_23 * m1->_30;
-        gm._21 = m0->_20 * m1->_01 + m0->_21 * m1->_11 + m0->_22 * m1->_21 + m0->_23 * m1->_31;
-        gm._22 = m0->_20 * m1->_02 + m0->_21 * m1->_12 + m0->_22 * m1->_22 + m0->_23 * m1->_32;
-        gm._23 = m0->_20 * m1->_03 + m0->_21 * m1->_13 + m0->_22 * m1->_23 + m0->_23 * m1->_33;
-        gm._30 = m0->_30 * m1->_00 + m0->_31 * m1->_10 + m0->_32 * m1->_20 + m0->_33 * m1->_30;
-        gm._31 = m0->_30 * m1->_01 + m0->_31 * m1->_11 + m0->_32 * m1->_21 + m0->_33 * m1->_31;
-        gm._32 = m0->_30 * m1->_02 + m0->_31 * m1->_12 + m0->_32 * m1->_22 + m0->_33 * m1->_32;
-        gm._33 = m0->_30 * m1->_03 + m0->_31 * m1->_13 + m0->_32 * m1->_23 + m0->_33 * m1->_33;
+        gm.m00 = m0->m00 * m1->m00 + m0->m01 * m1->m10 + m0->m02 * m1->m20 + m0->m03 * m1->m30;
+        gm.m01 = m0->m00 * m1->m01 + m0->m01 * m1->m11 + m0->m02 * m1->m21 + m0->m03 * m1->m31;
+        gm.m02 = m0->m00 * m1->m02 + m0->m01 * m1->m12 + m0->m02 * m1->m22 + m0->m03 * m1->m32;
+        gm.m03 = m0->m00 * m1->m03 + m0->m01 * m1->m13 + m0->m02 * m1->m23 + m0->m03 * m1->m33;
+        gm.m10 = m0->m10 * m1->m00 + m0->m11 * m1->m10 + m0->m12 * m1->m20 + m0->m13 * m1->m30;
+        gm.m11 = m0->m10 * m1->m01 + m0->m11 * m1->m11 + m0->m12 * m1->m21 + m0->m13 * m1->m31;
+        gm.m12 = m0->m10 * m1->m02 + m0->m11 * m1->m12 + m0->m12 * m1->m22 + m0->m13 * m1->m32;
+        gm.m13 = m0->m10 * m1->m03 + m0->m11 * m1->m13 + m0->m12 * m1->m23 + m0->m13 * m1->m33;
+        gm.m20 = m0->m20 * m1->m00 + m0->m21 * m1->m10 + m0->m22 * m1->m20 + m0->m23 * m1->m30;
+        gm.m21 = m0->m20 * m1->m01 + m0->m21 * m1->m11 + m0->m22 * m1->m21 + m0->m23 * m1->m31;
+        gm.m22 = m0->m20 * m1->m02 + m0->m21 * m1->m12 + m0->m22 * m1->m22 + m0->m23 * m1->m32;
+        gm.m23 = m0->m20 * m1->m03 + m0->m21 * m1->m13 + m0->m22 * m1->m23 + m0->m23 * m1->m33;
+        gm.m30 = m0->m30 * m1->m00 + m0->m31 * m1->m10 + m0->m32 * m1->m20 + m0->m33 * m1->m30;
+        gm.m31 = m0->m30 * m1->m01 + m0->m31 * m1->m11 + m0->m32 * m1->m21 + m0->m33 * m1->m31;
+        gm.m32 = m0->m30 * m1->m02 + m0->m31 * m1->m12 + m0->m32 * m1->m22 + m0->m33 * m1->m32;
+        gm.m33 = m0->m30 * m1->m03 + m0->m31 * m1->m13 + m0->m32 * m1->m23 + m0->m33 * m1->m33;
         *m = gm;
     } else {
-        m->_00 = m0->_00 * m1->_00 + m0->_01 * m1->_10 + m0->_02 * m1->_20 + m0->_03 * m1->_30;
-        m->_01 = m0->_00 * m1->_01 + m0->_01 * m1->_11 + m0->_02 * m1->_21 + m0->_03 * m1->_31;
-        m->_02 = m0->_00 * m1->_02 + m0->_01 * m1->_12 + m0->_02 * m1->_22 + m0->_03 * m1->_32;
-        m->_03 = m0->_00 * m1->_03 + m0->_01 * m1->_13 + m0->_02 * m1->_23 + m0->_03 * m1->_33;
-        m->_10 = m0->_10 * m1->_00 + m0->_11 * m1->_10 + m0->_12 * m1->_20 + m0->_13 * m1->_30;
-        m->_11 = m0->_10 * m1->_01 + m0->_11 * m1->_11 + m0->_12 * m1->_21 + m0->_13 * m1->_31;
-        m->_12 = m0->_10 * m1->_02 + m0->_11 * m1->_12 + m0->_12 * m1->_22 + m0->_13 * m1->_32;
-        m->_13 = m0->_10 * m1->_03 + m0->_11 * m1->_13 + m0->_12 * m1->_23 + m0->_13 * m1->_33;
-        m->_20 = m0->_20 * m1->_00 + m0->_21 * m1->_10 + m0->_22 * m1->_20 + m0->_23 * m1->_30;
-        m->_21 = m0->_20 * m1->_01 + m0->_21 * m1->_11 + m0->_22 * m1->_21 + m0->_23 * m1->_31;
-        m->_22 = m0->_20 * m1->_02 + m0->_21 * m1->_12 + m0->_22 * m1->_22 + m0->_23 * m1->_32;
-        m->_23 = m0->_20 * m1->_03 + m0->_21 * m1->_13 + m0->_22 * m1->_23 + m0->_23 * m1->_33;
-        m->_30 = m0->_30 * m1->_00 + m0->_31 * m1->_10 + m0->_32 * m1->_20 + m0->_33 * m1->_30;
-        m->_31 = m0->_30 * m1->_01 + m0->_31 * m1->_11 + m0->_32 * m1->_21 + m0->_33 * m1->_31;
-        m->_32 = m0->_30 * m1->_02 + m0->_31 * m1->_12 + m0->_32 * m1->_22 + m0->_33 * m1->_32;
-        m->_33 = m0->_30 * m1->_03 + m0->_31 * m1->_13 + m0->_32 * m1->_23 + m0->_33 * m1->_33;
+        m->m00 = m0->m00 * m1->m00 + m0->m01 * m1->m10 + m0->m02 * m1->m20 + m0->m03 * m1->m30;
+        m->m01 = m0->m00 * m1->m01 + m0->m01 * m1->m11 + m0->m02 * m1->m21 + m0->m03 * m1->m31;
+        m->m02 = m0->m00 * m1->m02 + m0->m01 * m1->m12 + m0->m02 * m1->m22 + m0->m03 * m1->m32;
+        m->m03 = m0->m00 * m1->m03 + m0->m01 * m1->m13 + m0->m02 * m1->m23 + m0->m03 * m1->m33;
+        m->m10 = m0->m10 * m1->m00 + m0->m11 * m1->m10 + m0->m12 * m1->m20 + m0->m13 * m1->m30;
+        m->m11 = m0->m10 * m1->m01 + m0->m11 * m1->m11 + m0->m12 * m1->m21 + m0->m13 * m1->m31;
+        m->m12 = m0->m10 * m1->m02 + m0->m11 * m1->m12 + m0->m12 * m1->m22 + m0->m13 * m1->m32;
+        m->m13 = m0->m10 * m1->m03 + m0->m11 * m1->m13 + m0->m12 * m1->m23 + m0->m13 * m1->m33;
+        m->m20 = m0->m20 * m1->m00 + m0->m21 * m1->m10 + m0->m22 * m1->m20 + m0->m23 * m1->m30;
+        m->m21 = m0->m20 * m1->m01 + m0->m21 * m1->m11 + m0->m22 * m1->m21 + m0->m23 * m1->m31;
+        m->m22 = m0->m20 * m1->m02 + m0->m21 * m1->m12 + m0->m22 * m1->m22 + m0->m23 * m1->m32;
+        m->m23 = m0->m20 * m1->m03 + m0->m21 * m1->m13 + m0->m22 * m1->m23 + m0->m23 * m1->m33;
+        m->m30 = m0->m30 * m1->m00 + m0->m31 * m1->m10 + m0->m32 * m1->m20 + m0->m33 * m1->m30;
+        m->m31 = m0->m30 * m1->m01 + m0->m31 * m1->m11 + m0->m32 * m1->m21 + m0->m33 * m1->m31;
+        m->m32 = m0->m30 * m1->m02 + m0->m31 * m1->m12 + m0->m32 * m1->m22 + m0->m33 * m1->m32;
+        m->m33 = m0->m30 * m1->m03 + m0->m31 * m1->m13 + m0->m32 * m1->m23 + m0->m33 * m1->m33;
     }
 }
 
@@ -986,91 +986,91 @@ void NuMtxMulR(NUMTX *m, NUMTX *m0, NUMTX *m1) {
     NUMTX gm;
 
     if ((m == m0) || (m == m1)) {
-        gm._00 = m0->_00 * m1->_00 + m0->_01 * m1->_10 + m0->_02 * m1->_20;
-        gm._01 = m0->_00 * m1->_01 + m0->_01 * m1->_11 + m0->_02 * m1->_21;
-        gm._02 = m0->_00 * m1->_02 + m0->_01 * m1->_12 + m0->_02 * m1->_22;
-        gm._03 = 0.0;
-        gm._10 = m0->_10 * m1->_00 + m0->_11 * m1->_10 + m0->_12 * m1->_20;
-        gm._11 = m0->_10 * m1->_01 + m0->_11 * m1->_11 + m0->_12 * m1->_21;
-        gm._12 = m0->_10 * m1->_02 + m0->_11 * m1->_12 + m0->_12 * m1->_22;
-        gm._13 = 0.0;
-        gm._20 = m0->_20 * m1->_00 + m0->_21 * m1->_10 + m0->_22 * m1->_20;
-        gm._21 = m0->_20 * m1->_01 + m0->_21 * m1->_11 + m0->_22 * m1->_21;
-        gm._22 = m0->_20 * m1->_02 + m0->_21 * m1->_12 + m0->_22 * m1->_22;
-        gm._23 = 0.0;
-        gm._30 = gm._31 = gm._32 = 0.0f;
-        gm._33 = 1.0;
+        gm.m00 = m0->m00 * m1->m00 + m0->m01 * m1->m10 + m0->m02 * m1->m20;
+        gm.m01 = m0->m00 * m1->m01 + m0->m01 * m1->m11 + m0->m02 * m1->m21;
+        gm.m02 = m0->m00 * m1->m02 + m0->m01 * m1->m12 + m0->m02 * m1->m22;
+        gm.m03 = 0.0;
+        gm.m10 = m0->m10 * m1->m00 + m0->m11 * m1->m10 + m0->m12 * m1->m20;
+        gm.m11 = m0->m10 * m1->m01 + m0->m11 * m1->m11 + m0->m12 * m1->m21;
+        gm.m12 = m0->m10 * m1->m02 + m0->m11 * m1->m12 + m0->m12 * m1->m22;
+        gm.m13 = 0.0;
+        gm.m20 = m0->m20 * m1->m00 + m0->m21 * m1->m10 + m0->m22 * m1->m20;
+        gm.m21 = m0->m20 * m1->m01 + m0->m21 * m1->m11 + m0->m22 * m1->m21;
+        gm.m22 = m0->m20 * m1->m02 + m0->m21 * m1->m12 + m0->m22 * m1->m22;
+        gm.m23 = 0.0;
+        gm.m30 = gm.m31 = gm.m32 = 0.0f;
+        gm.m33 = 1.0;
         *m = gm;
     } else {
-        m->_00 = m0->_00 * m1->_00 + m0->_01 * m1->_10 + m0->_02 * m1->_20;
-        m->_01 = m0->_00 * m1->_01 + m0->_01 * m1->_11 + m0->_02 * m1->_21;
-        m->_02 = m0->_00 * m1->_02 + m0->_01 * m1->_12 + m0->_02 * m1->_22;
-        m->_03 = 0.0;
-        m->_10 = m0->_10 * m1->_00 + m0->_11 * m1->_10 + m0->_12 * m1->_20;
-        m->_11 = m0->_10 * m1->_01 + m0->_11 * m1->_11 + m0->_12 * m1->_21;
-        m->_12 = m0->_10 * m1->_02 + m0->_11 * m1->_12 + m0->_12 * m1->_22;
-        m->_13 = 0.0;
-        m->_20 = m0->_20 * m1->_00 + m0->_21 * m1->_10 + m0->_22 * m1->_20;
-        m->_21 = m0->_20 * m1->_01 + m0->_21 * m1->_11 + m0->_22 * m1->_21;
-        m->_22 = m0->_20 * m1->_02 + m0->_21 * m1->_12 + m0->_22 * m1->_22;
-        m->_23 = 0.0;
-        m->_30 = m->_31 = m->_32 = 0.0f;
-        m->_33 = 1.0;
+        m->m00 = m0->m00 * m1->m00 + m0->m01 * m1->m10 + m0->m02 * m1->m20;
+        m->m01 = m0->m00 * m1->m01 + m0->m01 * m1->m11 + m0->m02 * m1->m21;
+        m->m02 = m0->m00 * m1->m02 + m0->m01 * m1->m12 + m0->m02 * m1->m22;
+        m->m03 = 0.0;
+        m->m10 = m0->m10 * m1->m00 + m0->m11 * m1->m10 + m0->m12 * m1->m20;
+        m->m11 = m0->m10 * m1->m01 + m0->m11 * m1->m11 + m0->m12 * m1->m21;
+        m->m12 = m0->m10 * m1->m02 + m0->m11 * m1->m12 + m0->m12 * m1->m22;
+        m->m13 = 0.0;
+        m->m20 = m0->m20 * m1->m00 + m0->m21 * m1->m10 + m0->m22 * m1->m20;
+        m->m21 = m0->m20 * m1->m01 + m0->m21 * m1->m11 + m0->m22 * m1->m21;
+        m->m22 = m0->m20 * m1->m02 + m0->m21 * m1->m12 + m0->m22 * m1->m22;
+        m->m23 = 0.0;
+        m->m30 = m->m31 = m->m32 = 0.0f;
+        m->m33 = 1.0;
     }
 }
 
 void NuMtxInvRSS(NUMTX *inv, NUMTX *T) {
     NUMTX gm;
 
-    float det = T->_00 * (T->_11 * T->_22 - T->_12 * T->_21) - T->_01 * (T->_10 * T->_22 - T->_12 * T->_20) +
-                T->_02 * (T->_10 * T->_21 - T->_11 * T->_20);
+    float det = T->m00 * (T->m11 * T->m22 - T->m12 * T->m21) - T->m01 * (T->m10 * T->m22 - T->m12 * T->m20) +
+                T->m02 * (T->m10 * T->m21 - T->m11 * T->m20);
     float invdet = det == 0.0f ? 0.0f : 1.0f / det;
 
-    gm._00 = (T->_11 * T->_22 - T->_12 * T->_21) * invdet;
-    gm._10 = (T->_10 * T->_22 - T->_12 * T->_20) * -invdet;
-    gm._20 = (T->_10 * T->_21 - T->_11 * T->_20) * invdet;
-    gm._01 = (T->_01 * T->_22 - T->_02 * T->_21) * -invdet;
-    gm._11 = (T->_00 * T->_22 - T->_02 * T->_20) * invdet;
-    gm._21 = (T->_00 * T->_21 - T->_01 * T->_20) * -invdet;
-    gm._02 = (T->_01 * T->_12 - T->_02 * T->_11) * invdet;
-    gm._12 = (T->_00 * T->_12 - T->_02 * T->_10) * -invdet;
-    gm._22 = (T->_00 * T->_11 - T->_01 * T->_10) * invdet;
-    gm._03 = 0.0f;
-    gm._13 = 0.0f;
-    gm._23 = 0.0f;
-    gm._33 = 1.0f;
-    gm._30 = 0.0f;
-    gm._31 = 0.0f;
-    gm._32 = 0.0f;
+    gm.m00 = (T->m11 * T->m22 - T->m12 * T->m21) * invdet;
+    gm.m10 = (T->m10 * T->m22 - T->m12 * T->m20) * -invdet;
+    gm.m20 = (T->m10 * T->m21 - T->m11 * T->m20) * invdet;
+    gm.m01 = (T->m01 * T->m22 - T->m02 * T->m21) * -invdet;
+    gm.m11 = (T->m00 * T->m22 - T->m02 * T->m20) * invdet;
+    gm.m21 = (T->m00 * T->m21 - T->m01 * T->m20) * -invdet;
+    gm.m02 = (T->m01 * T->m12 - T->m02 * T->m11) * invdet;
+    gm.m12 = (T->m00 * T->m12 - T->m02 * T->m10) * -invdet;
+    gm.m22 = (T->m00 * T->m11 - T->m01 * T->m10) * invdet;
+    gm.m03 = 0.0f;
+    gm.m13 = 0.0f;
+    gm.m23 = 0.0f;
+    gm.m33 = 1.0f;
+    gm.m30 = 0.0f;
+    gm.m31 = 0.0f;
+    gm.m32 = 0.0f;
     *inv = gm;
 }
 
 void NuMtxInvRSSH(NUMTX *inv, NUMTX *T) {
     NUMTX gm;
 
-    float tx = -T->_30;
-    float ty = -T->_31;
-    float tz = -T->_32;
-    float det = T->_00 * (T->_11 * T->_22 - T->_12 * T->_21) - T->_01 * (T->_10 * T->_22 - T->_12 * T->_20) +
-                T->_02 * (T->_10 * T->_21 - T->_11 * T->_20);
+    float tx = -T->m30;
+    float ty = -T->m31;
+    float tz = -T->m32;
+    float det = T->m00 * (T->m11 * T->m22 - T->m12 * T->m21) - T->m01 * (T->m10 * T->m22 - T->m12 * T->m20) +
+                T->m02 * (T->m10 * T->m21 - T->m11 * T->m20);
     float invdet = 1.0f / det;
 
-    gm._00 = (T->_11 * T->_22 - T->_12 * T->_21) * invdet;
-    gm._10 = (T->_10 * T->_22 - T->_12 * T->_20) * -invdet;
-    gm._20 = (T->_10 * T->_21 - T->_11 * T->_20) * invdet;
-    gm._01 = (T->_01 * T->_22 - T->_02 * T->_21) * -invdet;
-    gm._11 = (T->_00 * T->_22 - T->_02 * T->_20) * invdet;
-    gm._21 = (T->_00 * T->_21 - T->_01 * T->_20) * -invdet;
-    gm._02 = (T->_01 * T->_12 - T->_02 * T->_11) * invdet;
-    gm._12 = (T->_00 * T->_12 - T->_02 * T->_10) * -invdet;
-    gm._22 = (T->_00 * T->_11 - T->_01 * T->_10) * invdet;
-    gm._30 = gm._00 * tx + gm._10 * ty + gm._20 * tz;
-    gm._31 = gm._01 * tx + gm._11 * ty + gm._21 * tz;
-    gm._32 = gm._02 * tx + gm._12 * ty + gm._22 * tz;
-    gm._03 = 0.0f;
-    gm._13 = 0.0f;
-    gm._23 = 0.0f;
-    gm._33 = 1.0f;
+    gm.m00 = (T->m11 * T->m22 - T->m12 * T->m21) * invdet;
+    gm.m10 = (T->m10 * T->m22 - T->m12 * T->m20) * -invdet;
+    gm.m20 = (T->m10 * T->m21 - T->m11 * T->m20) * invdet;
+    gm.m01 = (T->m01 * T->m22 - T->m02 * T->m21) * -invdet;
+    gm.m11 = (T->m00 * T->m22 - T->m02 * T->m20) * invdet;
+    gm.m21 = (T->m00 * T->m21 - T->m01 * T->m20) * -invdet;
+    gm.m02 = (T->m01 * T->m12 - T->m02 * T->m11) * invdet;
+    gm.m12 = (T->m00 * T->m12 - T->m02 * T->m10) * -invdet;
+    gm.m22 = (T->m00 * T->m11 - T->m01 * T->m10) * invdet;
+    gm.m30 = gm.m00 * tx + gm.m10 * ty + gm.m20 * tz;
+    gm.m31 = gm.m01 * tx + gm.m11 * ty + gm.m21 * tz;
+    gm.m32 = gm.m02 * tx + gm.m12 * ty + gm.m22 * tz;
+    gm.m03 = 0.0f;
+    gm.m13 = 0.0f;
+    gm.m23 = 0.0f;
+    gm.m33 = 1.0f;
     *inv = gm;
 }
 
@@ -1084,31 +1084,31 @@ void NuMtxInvH(NUMTX *mi, NUMTX *m0) {
     float a[4][4];
     int n;
     float local_1c;
-    float local_20;
-    float local_28;
-    float local_30;
+    float localm20;
+    float localm28;
+    float localm30;
 
     n = 4;
 
-    a[0][0] = m0->_00;
-    a[0][1] = m0->_01;
-    a[0][2] = m0->_02;
-    a[0][3] = m0->_03;
-    a[1][0] = m0->_10;
-    a[1][1] = m0->_11;
-    a[1][2] = m0->_12;
-    a[1][3] = m0->_13;
-    a[2][0] = m0->_20;
-    a[2][1] = m0->_21;
-    a[2][2] = m0->_22;
-    a[2][3] = m0->_23;
-    a[3][0] = m0->_30;
-    a[3][1] = m0->_31;
-    a[3][2] = m0->_32;
-    a[3][3] = m0->_33;
+    a[0][0] = m0->m00;
+    a[0][1] = m0->m01;
+    a[0][2] = m0->m02;
+    a[0][3] = m0->m03;
+    a[1][0] = m0->m10;
+    a[1][1] = m0->m11;
+    a[1][2] = m0->m12;
+    a[1][3] = m0->m13;
+    a[2][0] = m0->m20;
+    a[2][1] = m0->m21;
+    a[2][2] = m0->m22;
+    a[2][3] = m0->m23;
+    a[3][0] = m0->m30;
+    a[3][1] = m0->m31;
+    a[3][2] = m0->m32;
+    a[3][3] = m0->m33;
 
     for (i = 0; i < n; i++) {
-        local_20 = 0.0f;
+        localm20 = 0.0f;
         p[i] = 0;
 
         for (j = i; j < n; j++) {
@@ -1118,15 +1118,15 @@ void NuMtxInvH(NUMTX *mi, NUMTX *m0) {
                 local_1c += NuFabs(a[j][k]);
             }
 
-            local_28 = NuFdiv(NuFabs(a[j][i]), local_1c);
+            localm28 = NuFdiv(NuFabs(a[j][i]), local_1c);
 
-            if (local_20 < local_28) {
-                local_20 = local_28;
+            if (localm20 < localm28) {
+                localm20 = localm28;
                 p[i] = j;
             }
         }
 
-        if (local_20 == 0.0f) {
+        if (localm20 == 0.0f) {
             return;
         }
 
@@ -1140,11 +1140,11 @@ void NuMtxInvH(NUMTX *mi, NUMTX *m0) {
             }
         }
 
-        local_30 = a[i][i];
+        localm30 = a[i][i];
 
         for (k = 0; k < n; k++) {
             if (k != i) {
-                a[i][k] = -a[i][k] / local_30;
+                a[i][k] = -a[i][k] / localm30;
                 for (j = 0; j < n; j++) {
                     if (j != i) {
                         a[j][k] += a[j][i] * a[i][k];
@@ -1154,10 +1154,10 @@ void NuMtxInvH(NUMTX *mi, NUMTX *m0) {
         }
 
         for (j = 0; j < n; j++) {
-            a[j][i] = a[j][i] / local_30;
+            a[j][i] = a[j][i] / localm30;
         }
 
-        a[i][i] = 1.0f / local_30;
+        a[i][i] = 1.0f / localm30;
     }
 
     for (i = n - 1; i >= 0; i--) {
@@ -1172,115 +1172,115 @@ void NuMtxInvH(NUMTX *mi, NUMTX *m0) {
         }
     }
 
-    mi->_00 = a[0][0];
-    mi->_01 = a[0][1];
-    mi->_02 = a[0][2];
-    mi->_03 = a[0][3];
-    mi->_10 = a[1][0];
-    mi->_11 = a[1][1];
-    mi->_12 = a[1][2];
-    mi->_13 = a[1][3];
-    mi->_20 = a[2][0];
-    mi->_21 = a[2][1];
-    mi->_22 = a[2][2];
-    mi->_23 = a[2][3];
-    mi->_30 = a[3][0];
-    mi->_31 = a[3][1];
-    mi->_32 = a[3][2];
-    mi->_33 = a[3][3];
+    mi->m00 = a[0][0];
+    mi->m01 = a[0][1];
+    mi->m02 = a[0][2];
+    mi->m03 = a[0][3];
+    mi->m10 = a[1][0];
+    mi->m11 = a[1][1];
+    mi->m12 = a[1][2];
+    mi->m13 = a[1][3];
+    mi->m20 = a[2][0];
+    mi->m21 = a[2][1];
+    mi->m22 = a[2][2];
+    mi->m23 = a[2][3];
+    mi->m30 = a[3][0];
+    mi->m31 = a[3][1];
+    mi->m32 = a[3][2];
+    mi->m33 = a[3][3];
 }
 
 void NuMtxAlignX(NUMTX *m, NUVEC *v) {
-    m->_00 = v->x;
-    m->_01 = v->y;
-    m->_02 = v->z;
-    m->_20 = m->_01 * m->_12 - m->_02 * m->_11;
-    m->_21 = m->_02 * m->_10 - m->_00 * m->_12;
-    m->_22 = m->_00 * m->_11 - m->_01 * m->_10;
+    m->m00 = v->x;
+    m->m01 = v->y;
+    m->m02 = v->z;
+    m->m20 = m->m01 * m->m12 - m->m02 * m->m11;
+    m->m21 = m->m02 * m->m10 - m->m00 * m->m12;
+    m->m22 = m->m00 * m->m11 - m->m01 * m->m10;
 
-    float s = NuFsqrt(m->_20 * m->_20 + m->_21 * m->_21 + m->_22 * m->_22);
+    float s = NuFsqrt(m->m20 * m->m20 + m->m21 * m->m21 + m->m22 * m->m22);
     s = NuFdiv(1.0f, s);
 
-    m->_20 = m->_20 * s;
-    m->_21 = m->_21 * s;
-    m->_22 = m->_22 * s;
-    m->_10 = m->_21 * m->_02 - m->_22 * m->_01;
-    m->_11 = m->_22 * m->_00 - m->_20 * m->_02;
-    m->_12 = m->_20 * m->_01 - m->_21 * m->_00;
+    m->m20 = m->m20 * s;
+    m->m21 = m->m21 * s;
+    m->m22 = m->m22 * s;
+    m->m10 = m->m21 * m->m02 - m->m22 * m->m01;
+    m->m11 = m->m22 * m->m00 - m->m20 * m->m02;
+    m->m12 = m->m20 * m->m01 - m->m21 * m->m00;
 }
 
 void NuMtxAlignY(NUMTX *m, NUVEC *v) {
-    m->_10 = v->x;
-    m->_11 = v->y;
-    m->_12 = v->z;
-    m->_00 = m->_11 * m->_22 - m->_12 * m->_21;
-    m->_01 = m->_12 * m->_20 - m->_10 * m->_22;
-    m->_02 = m->_10 * m->_21 - m->_11 * m->_20;
+    m->m10 = v->x;
+    m->m11 = v->y;
+    m->m12 = v->z;
+    m->m00 = m->m11 * m->m22 - m->m12 * m->m21;
+    m->m01 = m->m12 * m->m20 - m->m10 * m->m22;
+    m->m02 = m->m10 * m->m21 - m->m11 * m->m20;
 
-    float s = NuFsqrt(m->_00 * m->_00 + m->_01 * m->_01 + m->_02 * m->_02);
+    float s = NuFsqrt(m->m00 * m->m00 + m->m01 * m->m01 + m->m02 * m->m02);
     s = NuFdiv(1.0f, s);
 
-    m->_00 = m->_00 * s;
-    m->_01 = m->_01 * s;
-    m->_02 = m->_02 * s;
-    m->_20 = m->_01 * m->_12 - m->_02 * m->_11;
-    m->_21 = m->_02 * m->_10 - m->_00 * m->_12;
-    m->_22 = m->_00 * m->_11 - m->_01 * m->_10;
+    m->m00 = m->m00 * s;
+    m->m01 = m->m01 * s;
+    m->m02 = m->m02 * s;
+    m->m20 = m->m01 * m->m12 - m->m02 * m->m11;
+    m->m21 = m->m02 * m->m10 - m->m00 * m->m12;
+    m->m22 = m->m00 * m->m11 - m->m01 * m->m10;
 }
 
 void NuMtxAlignZ(NUMTX *m, NUVEC *v) {
-    float xLenSq = m->_00 * m->_00 + m->_01 * m->_01 + m->_02 * m->_02;
-    float yLenSq = m->_10 * m->_10 + m->_11 * m->_11 + m->_12 * m->_12;
-    float zLenSq = m->_20 * m->_20 + m->_21 * m->_21 + m->_22 * m->_22;
+    float xLenSq = m->m00 * m->m00 + m->m01 * m->m01 + m->m02 * m->m02;
+    float yLenSq = m->m10 * m->m10 + m->m11 * m->m11 + m->m12 * m->m12;
+    float zLenSq = m->m20 * m->m20 + m->m21 * m->m21 + m->m22 * m->m22;
 
     float len = NuFsqrt(NuFdiv(zLenSq, v->x * v->x + v->y * v->y + v->z * v->z));
-    m->_20 = v->x * len;
-    m->_21 = v->y * len;
-    m->_22 = v->z * len;
+    m->m20 = v->x * len;
+    m->m21 = v->y * len;
+    m->m22 = v->z * len;
 
     if (NuFabs(NuVecDot(NUMTX_GET_ROW_VEC(m, 1), NUMTX_GET_ROW_VEC(m, 2))) > 0.86602540378f /* cos(30 deg) */) {
         NuVecCross(NUMTX_GET_ROW_VEC(m, 1), NUMTX_GET_ROW_VEC(m, 2), NUMTX_GET_ROW_VEC(m, 0));
-        len = NuFsqrt(NuFdiv(yLenSq, m->_10 * m->_10 + m->_11 * m->_11 + m->_12 * m->_12));
-        m->_10 = m->_10 * len;
-        m->_11 = m->_11 * len;
-        m->_12 = m->_12 * len;
+        len = NuFsqrt(NuFdiv(yLenSq, m->m10 * m->m10 + m->m11 * m->m11 + m->m12 * m->m12));
+        m->m10 = m->m10 * len;
+        m->m11 = m->m11 * len;
+        m->m12 = m->m12 * len;
         NuVecCross(NUMTX_GET_ROW_VEC(m, 0), NUMTX_GET_ROW_VEC(m, 1), NUMTX_GET_ROW_VEC(m, 2));
-        len = NuFsqrt(NuFdiv(xLenSq, m->_00 * m->_00 + m->_01 * m->_01 + m->_02 * m->_02));
-        m->_00 = m->_00 * len;
-        m->_01 = m->_01 * len;
-        m->_02 = m->_02 * len;
+        len = NuFsqrt(NuFdiv(xLenSq, m->m00 * m->m00 + m->m01 * m->m01 + m->m02 * m->m02));
+        m->m00 = m->m00 * len;
+        m->m01 = m->m01 * len;
+        m->m02 = m->m02 * len;
     } else {
         NuVecCross(NUMTX_GET_ROW_VEC(m, 0), NUMTX_GET_ROW_VEC(m, 1), NUMTX_GET_ROW_VEC(m, 2));
-        len = NuFsqrt(NuFdiv(xLenSq, m->_00 * m->_00 + m->_01 * m->_01 + m->_02 * m->_02));
-        m->_00 = m->_00 * len;
-        m->_01 = m->_01 * len;
-        m->_02 = m->_02 * len;
+        len = NuFsqrt(NuFdiv(xLenSq, m->m00 * m->m00 + m->m01 * m->m01 + m->m02 * m->m02));
+        m->m00 = m->m00 * len;
+        m->m01 = m->m01 * len;
+        m->m02 = m->m02 * len;
         NuVecCross(NUMTX_GET_ROW_VEC(m, 1), NUMTX_GET_ROW_VEC(m, 2), NUMTX_GET_ROW_VEC(m, 0));
-        len = NuFsqrt(NuFdiv(yLenSq, m->_10 * m->_10 + m->_11 * m->_11 + m->_12 * m->_12));
-        m->_10 = m->_10 * len;
-        m->_11 = m->_11 * len;
-        m->_12 = m->_12 * len;
+        len = NuFsqrt(NuFdiv(yLenSq, m->m10 * m->m10 + m->m11 * m->m11 + m->m12 * m->m12));
+        m->m10 = m->m10 * len;
+        m->m11 = m->m11 * len;
+        m->m12 = m->m12 * len;
     }
 }
 
 void NuMtxOrth(NUMTX *m) {
     float magnitude;
 
-    magnitude = 1.0f / NuFsqrt(m->_00 * m->_00 + m->_01 * m->_01 + m->_02 * m->_02);
-    m->_00 = m->_00 * magnitude;
-    m->_01 = m->_01 * magnitude;
-    m->_02 = m->_02 * magnitude;
+    magnitude = 1.0f / NuFsqrt(m->m00 * m->m00 + m->m01 * m->m01 + m->m02 * m->m02);
+    m->m00 = m->m00 * magnitude;
+    m->m01 = m->m01 * magnitude;
+    m->m02 = m->m02 * magnitude;
 
-    magnitude = 1.0f / NuFsqrt(m->_10 * m->_10 + m->_11 * m->_11 + m->_12 * m->_12);
-    m->_10 = m->_10 * magnitude;
-    m->_11 = m->_11 * magnitude;
-    m->_12 = m->_12 * magnitude;
-    m->_20 = m->_01 * m->_12 - m->_02 * m->_11;
-    m->_21 = m->_02 * m->_10 - m->_00 * m->_12;
-    m->_22 = m->_00 * m->_11 - m->_01 * m->_10;
-    m->_10 = m->_21 * m->_02 - m->_22 * m->_01;
-    m->_11 = m->_22 * m->_00 - m->_20 * m->_02;
-    m->_12 = m->_20 * m->_01 - m->_21 * m->_00;
+    magnitude = 1.0f / NuFsqrt(m->m10 * m->m10 + m->m11 * m->m11 + m->m12 * m->m12);
+    m->m10 = m->m10 * magnitude;
+    m->m11 = m->m11 * magnitude;
+    m->m12 = m->m12 * magnitude;
+    m->m20 = m->m01 * m->m12 - m->m02 * m->m11;
+    m->m21 = m->m02 * m->m10 - m->m00 * m->m12;
+    m->m22 = m->m00 * m->m11 - m->m01 * m->m10;
+    m->m10 = m->m21 * m->m02 - m->m22 * m->m01;
+    m->m11 = m->m22 * m->m00 - m->m20 * m->m02;
+    m->m12 = m->m20 * m->m01 - m->m21 * m->m00;
 }
 
 void NuMtxVecToEulerXYZ(NUVEC *XVec, NUVEC *ZVec, NUANG *x, NUANG *y, NUANG *z) {
@@ -1300,22 +1300,22 @@ void NuMtxVecToEulerXYZ(NUVEC *XVec, NUVEC *ZVec, NUANG *x, NUANG *y, NUANG *z) 
 float NuMtxSSE(NUMTX *a, NUMTX *b) {
     float sse;
 
-    sse = (a->_00 - b->_00) * (a->_00 - b->_00);
-    sse += (a->_01 - b->_01) * (a->_01 - b->_01);
-    sse += (a->_02 - b->_02) * (a->_02 - b->_02);
-    sse += (a->_03 - b->_03) * (a->_03 - b->_03);
-    sse += (a->_10 - b->_10) * (a->_10 - b->_10);
-    sse += (a->_11 - b->_11) * (a->_11 - b->_11);
-    sse += (a->_12 - b->_12) * (a->_12 - b->_12);
-    sse += (a->_13 - b->_13) * (a->_13 - b->_13);
-    sse += (a->_20 - b->_20) * (a->_20 - b->_20);
-    sse += (a->_21 - b->_21) * (a->_21 - b->_21);
-    sse += (a->_22 - b->_22) * (a->_22 - b->_22);
-    sse += (a->_23 - b->_23) * (a->_23 - b->_23);
-    sse += (a->_30 - b->_30) * (a->_30 - b->_30);
-    sse += (a->_31 - b->_31) * (a->_31 - b->_31);
-    sse += (a->_32 - b->_32) * (a->_32 - b->_32);
-    sse += (a->_33 - b->_33) * (a->_33 - b->_33);
+    sse = (a->m00 - b->m00) * (a->m00 - b->m00);
+    sse += (a->m01 - b->m01) * (a->m01 - b->m01);
+    sse += (a->m02 - b->m02) * (a->m02 - b->m02);
+    sse += (a->m03 - b->m03) * (a->m03 - b->m03);
+    sse += (a->m10 - b->m10) * (a->m10 - b->m10);
+    sse += (a->m11 - b->m11) * (a->m11 - b->m11);
+    sse += (a->m12 - b->m12) * (a->m12 - b->m12);
+    sse += (a->m13 - b->m13) * (a->m13 - b->m13);
+    sse += (a->m20 - b->m20) * (a->m20 - b->m20);
+    sse += (a->m21 - b->m21) * (a->m21 - b->m21);
+    sse += (a->m22 - b->m22) * (a->m22 - b->m22);
+    sse += (a->m23 - b->m23) * (a->m23 - b->m23);
+    sse += (a->m30 - b->m30) * (a->m30 - b->m30);
+    sse += (a->m31 - b->m31) * (a->m31 - b->m31);
+    sse += (a->m32 - b->m32) * (a->m32 - b->m32);
+    sse += (a->m33 - b->m33) * (a->m33 - b->m33);
 
     return sse;
 }

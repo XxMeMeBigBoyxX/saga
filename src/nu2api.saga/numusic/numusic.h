@@ -41,7 +41,7 @@ class Track {
     uint8_t field8_0x11;
     uint8_t field9_0x12;
     uint8_t field10_0x13;
-    TRACK_CLASS class_;
+    TRACK_CLASS clazz;
     void *field12_0x18;
     int32_t index_count;
     uint8_t field17_0x20;

@@ -4,22 +4,22 @@
 #include "nu2api.saga/numath/nuvec.h"
 
 struct numtx_s {
-    float _00;
-    float _01;
-    float _02;
-    float _03;
-    float _10;
-    float _11;
-    float _12;
-    float _13;
-    float _20;
-    float _21;
-    float _22;
-    float _23;
-    float _30;
-    float _31;
-    float _32;
-    float _33;
+    float m00;
+    float m01;
+    float m02;
+    float m03;
+    float m10;
+    float m11;
+    float m12;
+    float m13;
+    float m20;
+    float m21;
+    float m22;
+    float m23;
+    float m30;
+    float m31;
+    float m32;
+    float m33;
 };
 
 typedef struct numtx_s NUMTX;
@@ -27,7 +27,7 @@ typedef struct numtx_s NUMTX;
 extern NUMTX numtx_zero;
 extern NUMTX numtx_identity;
 
-#define NUMTX_GET_ROW_VEC(mtx, row) ((NUVEC *)&((mtx)[0]._##row##0))
+#define NUMTX_GET_ROW_VEC(mtx, row) ((NUVEC *)&((mtx)[0].m##row##0))
 
 #ifdef __cplusplus
 extern "C" {
