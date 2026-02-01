@@ -37,6 +37,8 @@ extern "C" {
 #ifdef __cplusplus
 }
 
+void NuStrFormatAddress(char *buf, unsigned int buf_len, void *ptr);
+void NuStrFormatSize(char *buf, unsigned int buf_len, unsigned int size, bool align_left);
 const char *NuStrStripPath(const char *string);
 
 #endif

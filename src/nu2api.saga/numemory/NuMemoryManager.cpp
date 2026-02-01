@@ -2,17 +2,17 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "decomp.h"
-
 #include "nu2api.saga/numemory/NuMemoryManager.h"
 
 #include "nu2api.saga/nucore/common.h"
 #include "nu2api.saga/nucore/nustring.h"
 
-#define HEADER_MGR_HI_IDX_MASK 0x80000000
-#define HEADER_MGR_MASK 0x78000000
-#define BLOCK_SIZE_MASK ~HEADER_MGR_MASK
-#define BLOCK_SIZE(header) ((header) & BLOCK_SIZE_MASK) * 4
+#define HEADER_MGR_HI_MASK 0xf8000000
+#define ALLOC_MASK 0x78000000
+#define BLOCK_SIZE_MASK ~ALLOC_MASK
+#define BLOCK_SIZE(header_val) ((header_val) & BLOCK_SIZE_MASK) * 4
+#define END_TAG(block, size) (unsigned int *)((int)block + size - 4)
+#define END_TAG_HI(block, size) (unsigned int *)((int)block + size - 8)
 
 #define STRANDED_DUMP_SUFFIX "_stranded.txt"
 
@@ -90,8 +90,8 @@ NuMemoryManager::NuMemoryManager(IEventHandler *event_handler, IErrorHandler *er
 
     this->pages = NULL;
 
-    this->unknown_180c = 0;
-    this->unknown_1810 = 0;
+    this->stranded_blocks = NULL;
+    this->stranded_block_count = 0;
 
     memset(this->small_bins, 0, sizeof(this->small_bins));
     memset(this->large_bins, 0, sizeof(this->large_bins));
@@ -185,13 +185,6 @@ void *NuMemoryManager::_TryBlockAlloc(unsigned int size, unsigned int alignment,
     return malloc(size);
 }
 
-void NuMemoryManager::____WE_HAVE_RUN_OUT_OF_MEMORY_____(unsigned int size, const char *name) {
-    UNIMPLEMENTED();
-}
-
-void NuMemoryManager::BlockFree(void *ptr, unsigned int flags) {
-}
-
 void NuMemoryManager::ConvertToUsedBlock(FreeHeader *header, unsigned int alignment, unsigned int flags,
                                          const char *name, unsigned short category) {
     unsigned int align_mask;
@@ -210,11 +203,11 @@ void NuMemoryManager::ConvertToUsedBlock(FreeHeader *header, unsigned int alignm
 
     // Set the end tag of the block. This is used for detecting corruption and
     // clearing the block.
-    end_tag = (unsigned int *)((int)header + header_value * 4 - 4);
-    if ((align_mask & HEADER_MGR_MASK) == 0) {
+    end_tag = END_TAG(header, header_value * 4);
+    if ((align_mask & ALLOC_MASK) == 0) {
         *end_tag = aligned & BLOCK_SIZE_MASK;
     } else if (manager_idx >= 0x1d) {
-        *end_tag = aligned | 0xf8000000;
+        *end_tag = aligned | HEADER_MGR_HI_MASK;
         *(unsigned int *)((int)header + BLOCK_SIZE(header->block_header.value) - 8) = manager_idx;
     } else {
         *end_tag = ((manager_idx + 1) << 0x1b) | aligned & BLOCK_SIZE_MASK;
@@ -255,7 +248,7 @@ void *NuMemoryManager::ClearUsedBlock(Header *header, unsigned int flags) {
     size = BLOCK_SIZE(header->value);
     size_minus_header = size - m_headerSize;
 
-    end_tag = (unsigned int *)((int)header + size - 4);
+    end_tag = END_TAG(header, size);
 
     tag_value = *end_tag >> 0x1b;
     if (tag_value != 0x1f) {
@@ -273,15 +266,177 @@ void *NuMemoryManager::ClearUsedBlock(Header *header, unsigned int flags) {
     return ptr;
 }
 
+void NuMemoryManager::____WE_HAVE_RUN_OUT_OF_MEMORY_____(unsigned int size, const char *name) {
+    unsigned int largest_fragment_size;
+    unsigned int free_bytes;
+    char requested_str[14];
+    char largest_fragment_size_str[14];
+    char free_bytes_str[14];
+
+    largest_fragment_size = CalculateLargestFragmentSize();
+    free_bytes = CalculateFreeBytes();
+
+    NuStrFormatSize(requested_str, sizeof(requested_str), size, true);
+    NuStrFormatSize(largest_fragment_size_str, sizeof(largest_fragment_size_str), largest_fragment_size, true);
+    NuStrFormatSize(free_bytes_str, sizeof(free_bytes_str), free_bytes, true);
+
+    pthread_mutex_lock(&this->error_mutex);
+
+    m_flags |= MEM_MANAGER_IN_ERROR_STATE;
+
+    snprintf(this->error_msg, sizeof(this->error_msg),
+             "** Out of memory **\nRequested = %s\nLargest Fragment = %s\nFree Bytes = %s\nFrom: %s\n", requested_str,
+             largest_fragment_size_str, free_bytes_str, name);
+
+    this->error_handler->HandleError(this, MEM_ERROR_OUT_OF_MEMORY, this->error_msg);
+
+    pthread_mutex_unlock(&this->error_mutex);
+
+    SetZombie();
+
+    Dump(0x11, "memdump_out_of_memory.txt");
+}
+
+void NuMemoryManager::SetZombie() {
+    this->is_zombie = true;
+}
+
+void NuMemoryManager::BlockFree(void *ptr, unsigned int flags) {
+    NuMemoryManager *manager;
+
+    if (ptr == NULL) {
+        return;
+    }
+
+    manager = this;
+
+    // Loop until the correct manager is located. Should be on the second pass
+    // at latest.
+    while (true) {
+        Header *header;
+        unsigned int *end_tag;
+        unsigned int tag_value;
+        unsigned int manager_idx;
+
+        manager->ValidateAddress(ptr, "BlockFree");
+
+        header = (Header *)((int)ptr - m_headerSize);
+
+        manager->ValidateBlockIsAllocated(header, "BlockFree");
+        manager->ValidateBlockFlags(header, flags, "BlockFree");
+        manager->ValidateBlockEndTags(header, "BlockFree");
+
+        end_tag = END_TAG(header, BLOCK_SIZE(header->value));
+
+        tag_value = *end_tag >> 0x1b;
+        if (tag_value != 0x1f) {
+            manager_idx = tag_value - 1;
+        } else {
+            manager_idx = end_tag[-1];
+        }
+
+        if (manager->idx == manager_idx) {
+            unsigned int header_value;
+            Header *right;
+            unsigned int left_end;
+            FreeHeader *final;
+
+            manager->ValidateBlockIsPaged(ptr, "BlockFree");
+
+            pthread_mutex_lock(&manager->mutex);
+
+            manager->stats.used_block_count--;
+
+            header_value = header->value & BLOCK_SIZE_MASK;
+
+            header->value = header_value;
+            *END_TAG(header, header_value * 4) = header_value;
+
+            if ((m_flags & MEM_MANAGER_DEBUG) != 0) {
+                manager->stats.bytes_alloc_by_category[((DebugHeader *)header)->category] -= BLOCK_SIZE(header->value);
+            }
+
+            // See if we can combine this block with the one to the right.
+            // It seems like a big assumption that there's a valid block to the
+            // right in memory, but that seems to be what they assume.
+            right = (Header *)((int)header + BLOCK_SIZE(header->value));
+            if ((right->value & ALLOC_MASK) == 0) {
+                manager->MergeBlocks(header, right, "BlockFree[R]");
+            }
+
+            final = (FreeHeader *)header;
+
+            // See if we can combine this block with the one to the left.
+            // Again, it seems like a big assumption, but the assumption is
+            // made.
+            left_end = *(unsigned int *)((int)header - 4);
+            if ((left_end & HEADER_MGR_HI_MASK) == 0) {
+                final = (FreeHeader *)((int)header - BLOCK_SIZE(left_end));
+                manager->MergeBlocks(&final->block_header, header, "BlockFree[L]");
+            }
+
+            manager->BinLink(final, false);
+
+            if (manager->stranded_blocks != NULL) {
+                for (int i = 0; i < manager->stranded_block_count; i++) {
+                    if (ptr == manager->stranded_blocks[i]) {
+                        manager->stranded_blocks[i] = NULL;
+                    }
+                }
+            }
+
+            pthread_mutex_unlock(&manager->mutex);
+        } else {
+            manager = m_memoryManagers[manager_idx];
+        }
+    }
+}
+
+inline void NuMemoryManager::MergeBlocks(Header *left, Header *right, const char *caller) {
+    unsigned int combined_values;
+    unsigned int alloc_value;
+    unsigned int new_value;
+    unsigned int combined_no_hi_bit;
+    unsigned int *end_tag;
+
+    ValidateBlockEndTags(right, "BlockFree[R]");
+
+    BinUnlink((FreeHeader *)right);
+
+    combined_values = (left->value & BLOCK_SIZE_MASK) + (right->value & BLOCK_SIZE_MASK);
+    alloc_value = left->value & ALLOC_MASK;
+    new_value = combined_values & 0x3fffffff;
+    combined_no_hi_bit = combined_values & 0x07ffffff;
+
+    left->value = new_value;
+
+    end_tag = END_TAG(left, combined_no_hi_bit * 4);
+    if ((combined_values & 0x38000000) == 0 && alloc_value == 0) {
+        *end_tag = combined_no_hi_bit;
+    } else if (this->idx < 0x1e) {
+        *end_tag = ((this->idx + 1) << 0x1b) | combined_no_hi_bit;
+    } else {
+        *end_tag = new_value | HEADER_MGR_HI_MASK;
+        *END_TAG_HI(left, BLOCK_SIZE(left->value)) = this->idx;
+    }
+}
+
 void NuMemoryManager::AddPage(void *ptr, unsigned int size, bool _unknown) {
+    Page *page;
+
+    page = (Page *)ALIGN((int)ptr, 0x4);
+
+    memset(page, 0, sizeof(Page));
+
+    page->end = 0;
 }
 
 void NuMemoryManager::ReleaseUnreferencedPages() {
-    Page *entry;
+    Page *page;
 
     pthread_mutex_lock(&this->mutex);
 
-    for (entry = this->pages; entry != NULL; entry = entry->next) {
+    for (page = this->pages; page != NULL; page = page->next) {
     }
 
     pthread_mutex_unlock(&this->mutex);
@@ -557,10 +712,42 @@ bool NuMemoryManager::PopContext(NuMemoryManager::PopDebugMode debug_mode) {
 void NuMemoryManager::Validate() {
 }
 
+void NuMemoryManager::ValidateAddress(void *ptr, const char *caller) {
+    // Addresses should always be aligned to at minimum 4 bytes.
+    if (((unsigned int)ptr & 3) != 0) {
+        char address[19];
+
+        NuStrFormatAddress(address, sizeof(address), ptr);
+
+        pthread_mutex_lock(&this->error_mutex);
+
+        m_flags |= MEM_MANAGER_IN_ERROR_STATE;
+
+        snprintf(this->error_msg, sizeof(this->error_msg), "Bad pointer detected in %s\nAddress: %s\n", caller,
+                 address);
+
+        this->error_handler->HandleError(this, MEM_ERROR_BAD_POINTER, this->error_msg);
+
+        pthread_mutex_unlock(&this->error_mutex);
+    }
+}
+
 void NuMemoryManager::ValidateAllocAlignment(unsigned int alignment) {
 }
 
 void NuMemoryManager::ValidateAllocSize(unsigned int size) {
+}
+
+void NuMemoryManager::ValidateBlockEndTags(Header *header, const char *caller) {
+}
+
+void NuMemoryManager::ValidateBlockFlags(Header *header, unsigned int flags, const char *caller) {
+}
+
+void NuMemoryManager::ValidateBlockIsAllocated(Header *header, const char *caller) {
+}
+
+void NuMemoryManager::ValidateBlockIsPaged(void *block, const char *caller) {
 }
 
 void NuMemoryManager::StatsAddFragment(NuMemoryManager::FreeHeader *header) {
@@ -572,6 +759,12 @@ void NuMemoryManager::StatsAddFragment(NuMemoryManager::FreeHeader *header) {
 void NuMemoryManager::StatsRemoveFragment(NuMemoryManager::FreeHeader *header) {
     this->stats.free_frag_bytes -= BLOCK_SIZE(header->block_header.value);
     this->stats.frag_count--;
+}
+
+unsigned int NuMemoryManager::CalculateLargestFragmentSize() {
+}
+
+unsigned int NuMemoryManager::CalculateFreeBytes() {
 }
 
 void NuMemoryManager::Dump(unsigned int _unknown, const char *filepath) {

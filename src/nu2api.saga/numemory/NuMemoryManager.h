@@ -77,14 +77,13 @@ class NuMemoryManager {
     };
 
     struct Page {
-        void *start;
+        void *original_ptr;
         unsigned int size;
         Header *first_header;
-        void *end;
+        unsigned int *end;
         Page *next;
         Page *prev;
-        bool unknown;
-        unsigned int unknown2;
+        bool is_external;
     };
 
     struct Context {
@@ -164,9 +163,10 @@ class NuMemoryManager {
 
     char error_msg[0x800];
 
+    void **stranded_blocks;
+    unsigned int stranded_block_count;
+
     // Types uncertain.
-    int unknown_180c;
-    int unknown_1810;
     int unknown_1814;
     int unknown_1818;
 
@@ -192,11 +192,15 @@ class NuMemoryManager {
 
     void *_TryBlockAlloc(unsigned int size, unsigned int alignment, unsigned int flags, const char *name,
                          unsigned short category);
-    void ____WE_HAVE_RUN_OUT_OF_MEMORY_____(unsigned int size, const char *name);
 
     void ConvertToUsedBlock(FreeHeader *header, unsigned int alignment, unsigned int flags, const char *name,
                             unsigned short category);
     void *ClearUsedBlock(Header *header, unsigned int flags);
+
+    void ____WE_HAVE_RUN_OUT_OF_MEMORY_____(unsigned int size, const char *name);
+    void SetZombie();
+
+    inline void MergeBlocks(Header *left, Header *right, const char *caller);
 
     void ReleaseUnreferencedPages();
 
@@ -212,9 +216,16 @@ class NuMemoryManager {
     void ValidateAddress(void *ptr, const char *caller);
     void ValidateAllocAlignment(unsigned int alignment);
     void ValidateAllocSize(unsigned int size);
+    void ValidateBlockEndTags(Header *header, const char *caller);
+    void ValidateBlockFlags(Header *header, unsigned int flags, const char *caller);
+    void ValidateBlockIsAllocated(Header *header, const char *caller);
+    void ValidateBlockIsPaged(void *block, const char *caller);
 
     void StatsAddFragment(FreeHeader *header);
     void StatsRemoveFragment(FreeHeader *header);
+
+    unsigned int CalculateLargestFragmentSize();
+    unsigned int CalculateFreeBytes();
 
     void Dump(unsigned int _unknown, const char *filepath);
 
