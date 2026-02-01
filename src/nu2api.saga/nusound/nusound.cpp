@@ -117,11 +117,11 @@ ErrorState NuSoundSample::GetLastErrorState() {
 }
 
 void NuSoundSample::Reference() {
-    __atomic_fetch_add(&ref_count, 1, __ATOMIC_SEQ_CST);
+    __sync_fetch_and_add(&ref_count, 1);
 }
 
 void NuSoundSample::Release() {
-    __atomic_fetch_sub(&ref_count, 1, __ATOMIC_RELAXED);
+    __sync_fetch_and_sub(&ref_count, 1);
 }
 
 ErrorState NuSoundSample::Load(void *param_1, int param_2, NuSoundOutOfMemCallback oomCallback) {
