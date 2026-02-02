@@ -11,8 +11,8 @@
 /// @details The sine lookup table is a table of the sine function for the angles 0 to 2π.
 extern float NuTrigTable[NUTRIGTABLE_COUNT];
 
-#define NU_SIN_LUT(ang) NuTrigTable[(ang) >> 1 & 0x7fff]
-#define NU_COS_LUT(ang) NuTrigTable[((ang) + NUANG_90DEG) >> 1 & 0x7fff]
+#define NU_SIN_LUT(ang) NuTrigTable[(int)(ang) >> 1 & 0x7fff]
+#define NU_COS_LUT(ang) NuTrigTable[((int)(ang) + NUANG_90DEG) >> 1 & 0x7fff]
 
 #ifdef __cplusplus
 extern "C" {

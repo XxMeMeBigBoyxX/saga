@@ -24,18 +24,19 @@ extern NUMTX smtx;
 extern "C" {
 #endif
     NUCAMERA *NuCameraCreate(void);
-    void NuCameraDestroy(NUCAMERA* cam);
-    float NuCameraDist(nuvec_s* v);
-    float NuCameraDistSqr(nuvec_s* v);
-    NUCAMERA* NuCameraGetCam(void);
-    NUMTX* NuCameraGetViewMtx(void);
-    NUMTX* NuCameraGetClipPlanes(void);
-    int NuCameraClipTestSphere(NUVEC* pnt, float radius, NUMTX* wm);
-    void NuCameraGetPosition(NUVEC* v);
-    void NuCameraGetTrans(NUVEC* v);
-    NUMTX* NuCameraGetProjectionMtx(void);
-    NUMTX* NuCameraGetScalingMtx(void);
-    NUMTX* NuCameraGetMtx(void);
+    void NuCameraDestroy(NUCAMERA *cam);
+    float NuCameraDist(nuvec_s *v);
+    float NuCameraDistSqr(nuvec_s *v);
+    NUCAMERA *NuCameraGetCam(void);
+    NUMTX *NuCameraGetViewMtx(void);
+    NUMTX *NuCameraGetClipPlanes(void);
+    int NuCameraClipTestSphere(NUVEC *pnt, float radius, NUMTX *wm);
+    void NuCameraGetPosition(NUVEC *v);
+    void NuCameraGetTrans(NUVEC *v);
+    NUMTX *NuCameraGetProjectionMtx(void);
+    NUMTX *NuCameraGetScalingMtx(void);
+    NUMTX *NuCameraGetMtx(void);
+    void NuCameraCalcRay(float screen_x, float screen_y, nuvec_s *ray_start, nuvec_s *ray_end, nucamera_s *cam);
 #ifdef __cplusplus
 }
 #endif

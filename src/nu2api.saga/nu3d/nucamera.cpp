@@ -1,6 +1,7 @@
 #include "nu2api.saga/nu3d/nucamera.h"
 
 #include "nu2api.saga/numath/numtx.h"
+#include "nu2api.saga/numath/nutrig.h"
 #include "nu2api.saga/numath/nuvec4.h"
 #include "nu2api.saga/numemory/numemory.h"
 
@@ -124,4 +125,27 @@ NUMTX *NuCameraGetScalingMtx(void) {
 
 NUMTX *NuCameraGetMtx(void) {
     return &global_camera.mtx;
+}
+
+void NuCameraCalcRay(float screen_x, float screen_y, NUVEC *ray_start, NUVEC *ray_end, NUCAMERA *cam) {
+    NUVEC near_point;
+    NUVEC far_point;
+
+    if (cam == NULL) {
+        cam = &global_camera;
+    }
+
+    float cos = NU_COS_LUT(cam->fov * 0.5f * 10430.378f);
+    float sin = NU_SIN_LUT(cam->fov * 0.5f * 10430.378f);
+    far_point.x = (((screen_x + screen_x) - 1.0f) * (sin / cos)) / cam->aspect;
+    far_point.y = (1.0f - (screen_y + screen_y)) * (sin / cos);
+    near_point.z = cam->nearclip;
+    near_point.x = near_point.z * far_point.x;
+    near_point.y = far_point.y * near_point.z;
+    far_point.z = cam->farclip;
+    far_point.x = far_point.x * far_point.z;
+    far_point.y = far_point.y * far_point.z;
+
+    NuVecMtxTransform(ray_start, &near_point, &cam->mtx);
+    NuVecMtxTransform(ray_end, &far_point, &cam->mtx);
 }
