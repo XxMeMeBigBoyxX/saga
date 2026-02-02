@@ -1,6 +1,6 @@
-#include "decomp.h"
-
 #include "nu2api.saga/nufile/nufile.h"
+
+#include "decomp.h"
 
 #include "nu2api.saga/nucore/nustring.h"
 

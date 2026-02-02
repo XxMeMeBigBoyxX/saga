@@ -146,6 +146,15 @@ enum NUFILE_OFFSETS {
     NUFILE_OFFSET_NATIVE = 0x2000,
 };
 
+typedef struct fileextinfo_s {
+    char extension[13];
+    char type;
+    char platform;
+    char len;
+} FILEEXTINFO;
+
+extern int read_critical_section;
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -226,6 +235,9 @@ extern "C" {
     int32_t NuDatFileLoadBuffer(NUDATHDR *dat, char *name, void *dest, int32_t maxSize);
 
     int NuPPLoadBuffer(NUFILE file, void *buf, int buf_size);
+
+    void NuPSFileInitDevices(int device_id, int reboot_iop, int eject);
+    int NuFileInitEx(int device_id, int reboot_iop, int eject);
 #ifdef __cplusplus
 }
 #endif

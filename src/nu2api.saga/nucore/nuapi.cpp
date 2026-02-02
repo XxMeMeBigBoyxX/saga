@@ -4,6 +4,9 @@
 
 NUAPI nuapi;
 
+int nuapi_use_target_manager;
+char* nuapi_target_manager_mac_address;
+
 float nuapi_forced_frame_time;
 float nuapi_max_fps;
 

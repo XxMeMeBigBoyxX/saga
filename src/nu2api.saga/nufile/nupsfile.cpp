@@ -1,9 +1,14 @@
-#include "nu2api.saga/nucore/nustring.h"
 #include "nu2api.saga/nufile/nufile.h"
 
-#include <string.h>
-
 #include "decomp.h"
+#include "lostandfound/tmclient.h"
+#include "nu2api.saga/nuandroid/nuios.h"
+#include "nu2api.saga/nucore/nuapi.h"
+#include "nu2api.saga/nucore/nustring.h"
+#include "nu2api.saga/nuthread/nuthread.h"
+
+#include <string.h>
+#include <unistd.h>
 
 static FILE *g_fileHandles[32] = {NULL};
 
@@ -105,4 +110,13 @@ int64_t NuPSFileLSeek(NUPSFILE index, int64_t offset, NUFILESEEK seekMode) {
     }
 
     return value;
+}
+
+void NuPSFileInitDevices(int device_id, int reboot_iop, int eject) {
+    if (nuapi_use_target_manager) {
+        the_tm_client = new TMClient(nuapi_use_target_manager, nuapi_target_manager_mac_address);
+    }
+
+    read_critical_section = NuThreadCreateCriticalSection();
+    chdir(NuIOS_GetAppBundlePath());
 }

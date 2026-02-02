@@ -12,6 +12,16 @@ SAGA_NOMATCH char *NuIOS_GetDocumentsPath(void) {
     return "res/";
 }
 
+char* NuIOS_GetAppBundlePath(void) {
+    static char storedAppBundlePath[4096];
+
+    if (storedAppBundlePath[0] == '\0') {
+        strcpy(storedAppBundlePath, "dummyPath");
+    }
+
+    return storedAppBundlePath;
+}
+
 uint32_t NuIOS_YieldThread(void) {
     UNIMPLEMENTED();
 }

@@ -4,6 +4,7 @@
 #include "nu2api.saga/numath/nutrig.h"
 #include "nu2api.saga/numath/nuvec4.h"
 #include "nu2api.saga/numemory/numemory.h"
+#include "decomp.h"
 
 #include <string.h>
 
@@ -135,17 +136,24 @@ void NuCameraCalcRay(float screen_x, float screen_y, NUVEC *ray_start, NUVEC *ra
         cam = &global_camera;
     }
 
-    float cos = NU_COS_LUT(cam->fov * 0.5f * 10430.378f);
-    float sin = NU_SIN_LUT(cam->fov * 0.5f * 10430.378f);
-    far_point.x = (((screen_x + screen_x) - 1.0f) * (sin / cos)) / cam->aspect;
-    far_point.y = (1.0f - (screen_y + screen_y)) * (sin / cos);
-    near_point.z = cam->nearclip;
-    near_point.x = near_point.z * far_point.x;
-    near_point.y = far_point.y * near_point.z;
-    far_point.z = cam->farclip;
-    far_point.x = far_point.x * far_point.z;
-    far_point.y = far_point.y * far_point.z;
+    float tan = NU_TAN_LUT(cam->fov * 0.5f * 10430.378f);
+    near_point = far_point = {
+        .x = (screen_x + screen_x - 1.0f) * tan / cam->aspect,
+        .y = (1.0f - (screen_y + screen_y)) * tan,
+        .z = 1.0f,
+    };
+
+    near_point.x *= cam->nearclip;
+    near_point.y *= cam->nearclip;
+    near_point.z *= cam->nearclip;
+    far_point.x *= cam->farclip;
+    far_point.y *= cam->farclip;
+    far_point.z *= cam->farclip;
 
     NuVecMtxTransform(ray_start, &near_point, &cam->mtx);
     NuVecMtxTransform(ray_end, &far_point, &cam->mtx);
+}
+
+void NuCameraBuildClipPlanes(void) {
+    UNIMPLEMENTED();
 }

@@ -13,6 +13,7 @@ extern float NuTrigTable[NUTRIGTABLE_COUNT];
 
 #define NU_SIN_LUT(ang) NuTrigTable[(int)(ang) >> 1 & 0x7fff]
 #define NU_COS_LUT(ang) NuTrigTable[((int)(ang) + NUANG_90DEG) >> 1 & 0x7fff]
+#define NU_TAN_LUT(ang) (NuTrigTable[(int)(ang) >> 1 & 0x7fff] / NuTrigTable[((int)(ang) + NUANG_90DEG) >> 1 & 0x7fff])
 
 #ifdef __cplusplus
 extern "C" {

@@ -10,6 +10,7 @@ extern "C" {
     int32_t NuIOS_IsLowEndDevice(void);
 
     char *NuIOS_GetDocumentsPath(void);
+    char* NuIOS_GetAppBundlePath(void);
 
     uint32_t NuIOS_YieldThread(void);
 #ifdef __cplusplus

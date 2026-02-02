@@ -3,7 +3,9 @@
 #include "decomp.h"
 
 #include "deflate/deflate.h"
+#include "lostandfound/tmclient.h"
 #include "nu2api.saga/nucore/common.h"
+#include "nu2api.saga/nucore/nuapi.h"
 #include "nu2api.saga/nucore/nustring.h"
 #include "nu2api.saga/nufile/nufile.h"
 #include "nu2api.saga/nuthread/nuthread.h"
@@ -49,6 +51,8 @@ class NuFileDeviceAndroidAPK {};
 NuFileDeviceAndroidAPK *g_apkFileDevice;
 
 char g_datfileMode = 1;
+
+int read_critical_section;
 
 static NUDATHDR *curr_dat;
 int32_t nufile_try_packed = 0;
@@ -742,6 +746,12 @@ static char read_buffer[0x40000];
 static int32_t read_buffer_size;
 static int32_t read_buffer_decoded_size;
 
+static void NuDatFileDecodeInit() {
+    unpack_file_info = NULL;
+    unpack_file_odi = NULL;
+    unpack_file_pos = -1;
+}
+
 static void NuDatFileDecodeNewFile(NUDATFILEINFO *file, NUDATOPENFILEINFO *open_file) {
     unpack_file_info = file;
     unpack_file_odi = open_file;
@@ -1422,4 +1432,120 @@ void *NuMemFileAddr(NUFILE file) {
 
 int NuPPLoadBuffer(NUFILE file, void *buf, int buf_size) {
     UNIMPLEMENTED("PP");
+}
+
+static FILEEXTINFO extensions[64];
+static int num_extensions;
+
+static void AddExtension(char *extension, int type, int platform) {
+    char *ext;
+    int len;
+    FILEEXTINFO *next;
+
+    next = extensions + num_extensions;
+    len = NuStrLen(extension);
+    next->len = (char)len;
+    ext = (char *)next;
+    while (len != 0) {
+        len = len - 1;
+        *ext = extension[len];
+        ext = ext + 1;
+    }
+    *ext = '\0';
+
+    next->type = (char)type;
+    next->platform = (char)platform;
+    num_extensions = num_extensions + 1;
+}
+
+static void NuFileExtInit(void) {
+    static int first_time = 1;
+
+    if (first_time) {
+        first_time = 0;
+
+        memset(extensions, 0, sizeof(extensions));
+        num_extensions = 0;
+
+        AddExtension(".ca3", 0, 6);
+        AddExtension(".cbs", 1, 6);
+        AddExtension("_360.ghg", 2, 6);
+        AddExtension("_360.gsc", 3, 6);
+        AddExtension("_360.tex", 4, 6);
+        AddExtension(".cc2", 5, 6);
+        AddExtension(".wavx", 6, 6);
+        AddExtension(".wavm", 7, 6);
+        AddExtension(".wmv", 8, 6);
+        AddExtension(".ca3", 0, 5);
+        AddExtension(".cbs", 1, 5);
+        AddExtension("_ps3.ghg", 2, 5);
+        AddExtension("_ps3.gsc", 3, 5);
+        AddExtension("_ps3.tex", 4, 5);
+        AddExtension(".cc2", 5, 5);
+        AddExtension(".msf", 6, 5);
+        AddExtension(".mib", 7, 5);
+        AddExtension(".pam", 8, 5);
+        AddExtension(".an3", 0, 4);
+        AddExtension(".bsa", 1, 4);
+        AddExtension("_pc.dds", 4, 4);
+        AddExtension(".cu2", 5, 4);
+        AddExtension(".wav", 6, 4);
+        AddExtension(".mib", 7, 4);
+        AddExtension(".bik", 8, 4);
+        AddExtension("_ios.gsc", 3, 4);
+        AddExtension("_lr_ios.ghg", 2, 4);
+        AddExtension(".an3", 0, 0);
+        AddExtension(".bsa", 1, 0);
+        AddExtension(".ghg", 2, 0);
+        AddExtension(".gsc", 3, 0);
+        AddExtension(".pnt", 4, 0);
+        AddExtension(".cu2", 5, 0);
+        AddExtension(".vag", 6, 0);
+        AddExtension(".mib", 7, 0);
+        AddExtension(".pss", 8, 0);
+        AddExtension(".ca3", 0, 2);
+        AddExtension(".cbs", 1, 2);
+        AddExtension(".chg", 2, 2);
+        AddExtension(".csc", 3, 2);
+        AddExtension(".ctx", 4, 2);
+        AddExtension(".cc2", 5, 2);
+        AddExtension(".dsp", 6, 2);
+        AddExtension(".gcm", 7, 2);
+        AddExtension(".h4m", 8, 2);
+        AddExtension(".an3", 0, 1);
+        AddExtension(".bsa", 1, 1);
+        AddExtension(".hx2", 2, 1);
+        AddExtension(".nx2", 3, 1);
+        AddExtension(".dds", 4, 1);
+        AddExtension(".cu2", 5, 1);
+        AddExtension(".wavx", 6, 1);
+        AddExtension(".wavm", 7, 1);
+        AddExtension(".wmv", 8, 1);
+        AddExtension(".an3", 0, 3);
+        AddExtension(".bsa", 1, 3);
+        AddExtension(".phg", 2, 3);
+        AddExtension(".psc", 3, 3);
+        AddExtension(".pnt", 4, 3);
+        AddExtension(".cu2", 5, 3);
+        AddExtension(".vag", 6, 3);
+        AddExtension(".at3", 7, 3);
+        AddExtension(".pss", 8, 3);
+        return;
+    }
+
+    return;
+}
+
+int NuFileInitEx(int device_id, int reboot_iop, int eject) {
+    NuPSFileInitDevices(device_id, reboot_iop, eject);
+
+    memset(memfiles, 0, sizeof(memfiles));
+    memset(dat_file_infos, 0, sizeof(dat_file_infos));
+
+    file_criticalsection = NuThreadCreateCriticalSection();
+
+    NuFileExtInit();
+    NuDatFileDecodeInit();
+
+    return device_id;
 }

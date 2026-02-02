@@ -21,6 +21,8 @@ extern NUMTX pmtx;
 extern NUMTX smtx;
 
 #ifdef __cplusplus
+void NuCameraBuildClipPlanes(void);
+
 extern "C" {
 #endif
     NUCAMERA *NuCameraCreate(void);

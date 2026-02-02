@@ -84,6 +84,9 @@ typedef struct nuapi_s NUAPI;
 
 extern NUAPI nuapi;
 
+extern int nuapi_use_target_manager;
+extern char* nuapi_target_manager_mac_address;
+
 #ifdef __cplusplus
 void NuAPIInit(void);
 
