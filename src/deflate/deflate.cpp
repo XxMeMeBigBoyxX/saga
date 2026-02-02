@@ -79,7 +79,7 @@ int32_t InflateBuffer(char *buffer, int decodedSize, char *readBuffer, int32_t r
     if (Inflate(&ctx, buffer, decodedSize) == 0) {
         return -1;
     } else {
-        return (size_t)ctx.current_pos - (size_t)ctx.start_pos;
+        return ctx.current_pos - ctx.start_pos;
     }
 }
 
@@ -87,8 +87,9 @@ int32_t ExplodeBufferSize(uint8_t *buf) {
     char magic[] = "LZ2K";
 
     for (int32_t i = 0; i < 4; i++) {
-        if (buf[i] != magic[i])
+        if (buf[i] != magic[i]) {
             return 0;
+        }
     }
 
     return ImplodeGetI(buf, 4);
@@ -98,8 +99,9 @@ int32_t ExplodeCompressedSize(uint8_t *buffer) {
     char magic[] = "LZ2K";
 
     for (int32_t i = 0; i < 4; i++) {
-        if (buffer[i] != magic[i])
+        if (buffer[i] != magic[i]) {
             return 0;
+        }
     }
 
     int32_t size = ImplodeGetI(buffer + 4, 4);
@@ -251,56 +253,62 @@ int DecodeUncompressedBlock(DEFLATECONTEXT *ctx) {
     UNIMPLEMENTED("DecodeUncompressedBlock");
 }
 
+enum {
+    BLOCK_COMPRESSED_TREE = 0,
+    BLOCK_DISTANCE_LEN = 1,
+    BLOCK_UNCOMPRESSED = 2,
+};
+
 int DecodeDeflated(DEFLATECONTEXT *ctx) {
-    uint32_t final;
-    int32_t btype;
+    uint32_t is_final_block;
+    int32_t type;
 
     ctx->num_bits_available = 0;
     ctx->bit_buffer = 0;
 
     do {
-        final = READBITS(ctx, 1);
-        btype = READBITS(ctx, 2);
+        is_final_block = READBITS(ctx, 1);
+        type = READBITS(ctx, 2);
 
-        if (btype == 2) {
+        if (type == BLOCK_UNCOMPRESSED) {
             LOG_DEBUG("uncompressed block");
 
             if (!DecodeUncompressedBlock(ctx)) {
-                return false;
+                return 0;
             }
         } else {
-            if (btype == 1) {
+            if (type == BLOCK_DISTANCE_LEN) {
                 if (DefaultDistances[0x1f] == '\0') {
                     InitHuffmanDefaults();
                 }
 
                 if (!BuildHuffmanTree(&ctx->length_tree, DefaultLengths, 0x120)) {
-                    return false;
+                    return 0;
                 }
 
                 if (!BuildHuffmanTree(&ctx->distance_tree, DefaultDistances, 0x20)) {
-                    return false;
+                    return 0;
                 }
             } else {
                 if (!DecompressHuffmanTrees(ctx)) {
-                    return false;
+                    return 0;
                 }
             }
 
             if (!DecodeDeflatedBlock(ctx)) {
                 LOG_WARN("failed to decode deflated block");
-                return false;
+                return 0;
             }
         }
-    } while (!final);
+    } while (!is_final_block);
 
-    return true;
+    return 1;
 }
 
 static uint8_t LengthDeZigZag[19] = {0x10, 0x11, 0x12, 0x00, 0x08, 0x07, 0x09, 0x06, 0x0a, 0x05,
                                      0x0b, 0x04, 0x0c, 0x03, 0x0d, 0x02, 0x0e, 0x01, 0x0f};
 
-bool DecompressHuffmanTrees(DEFLATECONTEXT *ctx) {
+int DecompressHuffmanTrees(DEFLATECONTEXT *ctx) {
     int32_t hlit = READBITS(ctx, 5) + 257;
     int32_t hdist = READBITS(ctx, 5) + 1;
     int32_t hclen = READBITS(ctx, 4) + 4;
@@ -319,17 +327,16 @@ bool DecompressHuffmanTrees(DEFLATECONTEXT *ctx) {
 
     uint8_t allCodeLengths[288 + 32];
 
-    int32_t j = 0;
-    while (j < hlit + hdist) {
+    unsigned int repeatCount;
+    for (int j = 0; j < hlit + hdist; j += repeatCount) {
         int32_t symbol = CtxReadHuffmanSymbol(ctx, &ctx->temp_code_length);
 
         // Process the decoded symbol
         if (symbol < 16) {
             // Literal code length
-            allCodeLengths[j++] = symbol;
+            allCodeLengths[j] = symbol;
+            repeatCount = 1;
         } else {
-            uint32_t repeatCount;
-
             if (symbol == 16) {
                 // Repeat previous code length 3-6 times
                 repeatCount = READBITS(ctx, 2) + 3;
@@ -346,8 +353,6 @@ bool DecompressHuffmanTrees(DEFLATECONTEXT *ctx) {
 
                 memset(allCodeLengths + j, 0, repeatCount);
             }
-
-            j += repeatCount;
         }
     }
 

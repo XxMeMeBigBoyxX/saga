@@ -49,6 +49,6 @@ void InitHuffmanDefaults(void);
 int DecodeDeflated(DEFLATECONTEXT *ctx);
 int32_t Inflate(DEFLATECONTEXT *ctx, char *buffer, int32_t size);
 uint32_t BuildHuffmanTree(DEFHUFFMAN *tree, uint8_t *codeLengths, int32_t symbolCount);
-bool DecompressHuffmanTrees(DEFLATECONTEXT *ctx);
+int DecompressHuffmanTrees(DEFLATECONTEXT *ctx);
 
 #endif
