@@ -18,13 +18,11 @@ typedef int64_t i64;
 // with mangled symbol names, signedness, and width in the NDK-based build. Why
 // not just use `size_t` and `ssize_t`? Because `ssize_t` is `long` and so
 // mangled symbol names come out wrong.
+typedef size_t usize;
 #ifdef HOST_BUILD
 #include <stdlib.h>
-
-typedef size_t usize;
 typedef ssize_t isize;
 #else
-typedef uint32_t usize;
 typedef int32_t isize;
 #endif
 

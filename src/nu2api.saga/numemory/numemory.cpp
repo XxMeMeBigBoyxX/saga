@@ -28,30 +28,30 @@ NuMemory::NuMemory(void **buf) {
 
     NuMemoryManager::SetFlags(0);
 
-    ptr = (void *)ALIGN((isize)ptr, 0x8);
+    ptr = (void *)ALIGN((usize)ptr, 0x8);
 
     this->error_handler = new (ptr) MemErrorHandler();
-    ptr = (void *)((isize)ptr + sizeof(MemErrorHandler) + 0x100);
+    ptr = (void *)((usize)ptr + sizeof(MemErrorHandler) + 0x100);
 
     this->mem1_event_handler = new (ptr) NuMemoryPS::Mem1EventHandler();
-    ptr = (void *)((isize)ptr + sizeof(NuMemoryPS::Mem1EventHandler));
+    ptr = (void *)((usize)ptr + sizeof(NuMemoryPS::Mem1EventHandler));
 
     this->mem1_manager = new (ptr) NuMemoryManager(this->mem1_event_handler, this->error_handler, "MEM1",
                                                    g_categoryNames, sizeof(g_categoryNames) / sizeof(char *));
-    ptr = (void *)((isize)ptr + sizeof(NuMemoryManager));
+    ptr = (void *)((usize)ptr + sizeof(NuMemoryManager));
 
     this->mem2_event_handler = new (ptr) NuMemoryPS::Mem2EventHandler();
-    ptr = (void *)((isize)ptr + sizeof(NuMemoryPS::Mem2EventHandler));
+    ptr = (void *)((usize)ptr + sizeof(NuMemoryPS::Mem2EventHandler));
 
     this->mem2_manager = new (ptr) NuMemoryManager(this->mem2_event_handler, this->error_handler, "MEM2",
                                                    g_categoryNames, sizeof(g_categoryNames) / sizeof(char *));
-    ptr = (void *)((isize)ptr + sizeof(NuMemoryManager));
+    ptr = (void *)((usize)ptr + sizeof(NuMemoryManager));
 
     this->fixed_pool_event_handler = new (ptr) FixedPoolEventHandler();
-    ptr = (void *)((isize)ptr + sizeof(FixedPoolEventHandler));
+    ptr = (void *)((usize)ptr + sizeof(FixedPoolEventHandler));
 
     this->dynamic_pool_event_handler = new (ptr) DynamicPoolEventHandler();
-    ptr = (void *)((isize)ptr + sizeof(DynamicPoolEventHandler));
+    ptr = (void *)((usize)ptr + sizeof(DynamicPoolEventHandler));
 
     this->unknown = 0;
 }
@@ -84,7 +84,7 @@ NuMemory *NuMemoryGet() {
         return g_memory;
     }
 
-    aligned = (char *)ALIGN((isize)g_memoryBuffer, 0x8);
+    aligned = (char *)ALIGN((usize)g_memoryBuffer, 0x8);
 
     mem = aligned + sizeof(NuMemory);
     g_memory = new (aligned) NuMemory(&mem);

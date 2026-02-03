@@ -173,7 +173,7 @@ i32 TriggerExtraDataLoad(void) {
     void *buffer = memcard_extra_savedatabuffer;
 
     if (saveloadLoadSlot(SAVESLOTS, buffer, memcard_extra_savedatasize + 4) != 0) {
-        i32 checksum = *(i32 *)((isize)buffer + memcard_extra_savedatasize);
+        i32 checksum = *(i32 *)((usize)buffer + memcard_extra_savedatasize);
         i32 correct = ChecksumSaveData(buffer, memcard_extra_savedatasize);
         LOG_DEBUG("checksum=%08X, correct=%08X", checksum, correct);
         if (correct == checksum) {

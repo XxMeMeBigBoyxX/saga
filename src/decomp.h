@@ -94,7 +94,7 @@ static void _saga_log(enum log_level level, const char *file, int line, const ch
 #define BUFFER_ALLOC_ARRAY_ALIGNED(buffer, count, T) BUFFER_ALLOC_ARRAY((buffer), (count), T, alignof(T))
 
 static inline void *buffer_alloc_aligned(void **buffer, usize size, usize align) {
-    usize current = (isize)(*buffer);
+    usize current = (usize)(*buffer);
     usize aligned = (current + (align - 1)) & ~(align - 1);
     *buffer = (void *)(aligned + size);
     return (void *)aligned;
