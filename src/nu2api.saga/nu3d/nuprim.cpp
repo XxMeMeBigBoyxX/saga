@@ -1,7 +1,7 @@
 #include "nu2api.saga/nu3d/nuprim.h"
 
 int NuPrimCSPos;
-NUPRIMSCALEMODE NuPrimCoordSystemStack[8];
+NUPRIMSCALEMODE NuPrimCoordSystemStack[16];
 float NuPrim_XScale = 1.0f;
 float NuPrim_YScale = 1.0f;
 float NuPrim_XBias;
