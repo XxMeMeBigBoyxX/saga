@@ -14,33 +14,33 @@
 
 #include "export.h"
 
-int32_t saveload_status = 0;
-int32_t saveload_autosave = 0;
-int32_t saveload_savepresent = 0;
+i32 saveload_status = 0;
+i32 saveload_autosave = 0;
+i32 saveload_savepresent = 0;
 
-int32_t saveload_slotused[6] = {0};
-int32_t saveload_slotcode[6] = {0};
+i32 saveload_slotused[6] = {0};
+i32 saveload_slotcode[6] = {0};
 
-char *slotname(int32_t index) {
+char *slotname(i32 index) {
     static char name[4096];
     sprintf(name, "SaveGame%d.%s_SavedGame", index, "LEGO Star Wars - The Complete Saga");
     return name;
 }
 
-char *slotfolder(int32_t index) {
+char *slotfolder(i32 index) {
     static char name[4096];
 
     char *path = NuIOS_GetDocumentsPath();
     NuStrCpy(name, path);
 
-    int32_t len = strlen(name);
+    i32 len = strlen(name);
 
     strcpy(&name[len], "SavedGames");
 
     return name;
 }
 
-char *fullslotname(int32_t index) {
+char *fullslotname(i32 index) {
     static char name[4096];
 
     char *folder = slotfolder(index);
@@ -51,11 +51,11 @@ char *fullslotname(int32_t index) {
     return name;
 }
 
-static int32_t saveload_getinfo(void) {
+static i32 saveload_getinfo(void) {
     saveload_savepresent = 0;
-    int32_t count = 0;
+    i32 count = 0;
 
-    for (int32_t i = 0; i < 6; i = i + 1) {
+    for (i32 i = 0; i < 6; i = i + 1) {
         saveload_slotused[i] = 0;
         saveload_slotcode[i] = 0;
 
@@ -78,13 +78,13 @@ static int32_t saveload_getinfo(void) {
     return count;
 }
 
-void saveloadInit(VARIPTR *buf, VARIPTR buf_end, int32_t, char *prodcode, char *iconname, char *unicodename, int32_t) {
+void saveloadInit(VARIPTR *buf, VARIPTR buf_end, i32, char *prodcode, char *iconname, char *unicodename, i32) {
     saveload_getinfo();
     saveload_status = 1;
     saveload_autosave = -1;
 }
 
-int32_t saveloadLoadSlot(int32_t slot, void *buffer, size_t size) {
+i32 saveloadLoadSlot(i32 slot, void *buffer, size_t size) {
     char *filename = fullslotname(slot);
     FILE *file = fopen(filename, "rb");
 
@@ -107,24 +107,24 @@ int32_t saveloadLoadSlot(int32_t slot, void *buffer, size_t size) {
     }
 }
 
-typedef short (*hashfn_t)(void);
+typedef i16 (*hashfn_t)(void);
 
-int32_t SAVESLOTS = 3;
+i32 SAVESLOTS = 3;
 
 void *memcard_savedata = NULL;
-int32_t memcard_savedatasize = 0;
+i32 memcard_savedatasize = 0;
 void *memcard_savedatabuffer = NULL;
 
 void *memcard_extra_savedata = NULL;
-int32_t memcard_extra_savedatasize = 0;
+i32 memcard_extra_savedatasize = 0;
 void *memcard_extra_savedatabuffer = NULL;
 
 hashfn_t memcard_hashfn = NULL;
 void *memcard_drawasiconfn = NULL;
-int32_t memcard_autosave = 0;
+i32 memcard_autosave = 0;
 
-void SaveSystemInitialise(int32_t slots, void *makeSaveHash, void *save, int32_t saveSize, int32_t saveCount,
-                          void *drawSaveIcon, void *extradata, int32_t extradataSize) {
+void SaveSystemInitialise(i32 slots, void *makeSaveHash, void *save, i32 saveSize, i32 saveCount, void *drawSaveIcon,
+                          void *extradata, i32 extradataSize) {
     if (extradata == NULL) {
         SAVESLOTS = 6;
         if (slots < 7) {
@@ -157,24 +157,24 @@ void SaveSystemInitialise(int32_t slots, void *makeSaveHash, void *save, int32_t
     memcard_drawasiconfn = drawSaveIcon;
 }
 
-int32_t ChecksumSaveData(void *buffer, int32_t size) {
-    int32_t n = size / 4;
+i32 ChecksumSaveData(void *buffer, i32 size) {
+    i32 n = size / 4;
 
-    int32_t sum = 0x5c0999;
+    i32 sum = 0x5c0999;
 
-    for (int32_t i = 0; i < n; i++) {
-        sum += ((int32_t *)buffer)[i];
+    for (i32 i = 0; i < n; i++) {
+        sum += ((i32 *)buffer)[i];
     }
 
     return sum;
 }
 
-int32_t TriggerExtraDataLoad(void) {
+i32 TriggerExtraDataLoad(void) {
     void *buffer = memcard_extra_savedatabuffer;
 
     if (saveloadLoadSlot(SAVESLOTS, buffer, memcard_extra_savedatasize + 4) != 0) {
-        int32_t checksum = *(int32_t *)((size_t)buffer + memcard_extra_savedatasize);
-        int32_t correct = ChecksumSaveData(buffer, memcard_extra_savedatasize);
+        i32 checksum = *(i32 *)((ssize_t)buffer + memcard_extra_savedatasize);
+        i32 correct = ChecksumSaveData(buffer, memcard_extra_savedatasize);
         LOG_DEBUG("checksum=%08X, correct=%08X", checksum, correct);
         if (correct == checksum) {
             memmove(memcard_extra_savedata, buffer, memcard_extra_savedatasize);
@@ -185,16 +185,16 @@ int32_t TriggerExtraDataLoad(void) {
     return 0;
 }
 
-void createslotfolder(int32_t slot) {
+void createslotfolder(i32 slot) {
     char *path = slotfolder(slot);
     mkdir(path, 0777);
 }
 
 extern "C" {
-    int32_t g_writingSaveCriticalSection = -1;
+    i32 g_writingSaveCriticalSection = -1;
 };
 
-int32_t PCSaveSlot(int32_t slot, void *extradata, int32_t extradataSize, uint32_t hash) {
+i32 PCSaveSlot(i32 slot, void *extradata, i32 extradataSize, u32 hash) {
     if (saveload_slotused[slot] == 0) {
         createslotfolder(slot);
     }
@@ -242,11 +242,11 @@ int32_t PCSaveSlot(int32_t slot, void *extradata, int32_t extradataSize, uint32_
     return file != NULL;
 }
 
-static int32_t statuswait = 0;
+static i32 statuswait = 0;
 static NUTIME savetimer;
-static int32_t saveload_slotid = -1;
+static i32 saveload_slotid = -1;
 
-void saveloadASSave(int32_t slot, void *buffer, int32_t size, uint32_t hash) {
+void saveloadASSave(i32 slot, void *buffer, i32 size, u32 hash) {
     statuswait = 1;
     NuTimeGet(&savetimer);
     saveload_status = 11;
@@ -255,7 +255,7 @@ void saveloadASSave(int32_t slot, void *buffer, int32_t size, uint32_t hash) {
     saveload_slotid = slot;
 }
 
-void saveloadASLoad(int32_t slot, void *buffer, int32_t size) {
+void saveloadASLoad(i32 slot, void *buffer, i32 size) {
     saveload_status = 7;
     saveloadLoadSlot(slot, buffer, size);
     statuswait = 1;
@@ -264,7 +264,7 @@ void saveloadASLoad(int32_t slot, void *buffer, int32_t size) {
     saveload_autosave = slot;
 }
 
-void saveloadASDelete(int32_t slot) {
+void saveloadASDelete(i32 slot) {
     char *path = slotname(slot);
     remove(path);
 

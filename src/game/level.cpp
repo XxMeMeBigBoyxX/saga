@@ -8,10 +8,10 @@ LEVELDATA *LDataList = NULL;
 LEVELDATA *NEWGAME_LDATA = NULL;
 LEVELDATA *LOADGAME_LDATA = NULL;
 
-int32_t MAXLDATA = 64;
+i32 MAXLDATA = 64;
 
-LEVELDATA *Levels_ConfigureList(char *file, VARIPTR *param_2, VARIPTR *param_3, int32_t maxLevelCount,
-                                int32_t *levelcount, void *levelSetDefaults) {
+LEVELDATA *Levels_ConfigureList(char *file, VARIPTR *param_2, VARIPTR *param_3, i32 maxLevelCount, i32 *levelcount,
+                                void *levelSetDefaults) {
 
     nufpar_s *fp = NuFParCreate(file);
     int i = 0;
@@ -19,7 +19,7 @@ LEVELDATA *Levels_ConfigureList(char *file, VARIPTR *param_2, VARIPTR *param_3, 
     MAXLDATA = maxLevelCount;
 
     bool bVar2 = false;
-    LEVELDATA *pLVar4 = (LEVELDATA *)((int)param_2->void_ptr + 3U & 0xfffffffc);
+    LEVELDATA *pLVar4 = (LEVELDATA *)((ssize_t)param_2->void_ptr + 3U & 0xfffffffc);
     param_2->void_ptr = pLVar4;
 
     LEVELDATA *level = pLVar4;
@@ -68,10 +68,10 @@ LAB_00484810:
                     level->draw_fn = (void *)0x0;
                     level->draw_status_fn = (void *)0x0;
                     (level->field12_0x84).field10_0x14 = 20000;
-                    *(int64_t *)&level->field12_0x84 = 0x3e19999a3dcccccd;
+                    *(i64 *)&level->field12_0x84 = 0x3e19999a3dcccccd;
                     (level->field12_0x84).field8_0x8 = 0x469d0800469c4000;
                     // if (iVar3 == 0) {
-                    float fVar5 = 1.0;
+                    f32 fVar5 = 1.0;
                     //} else {
                     // fVar5 = 4.0;
                     //}

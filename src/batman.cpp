@@ -1,4 +1,4 @@
-#include <stdint.h>
+
 
 #include "decomp.h"
 
@@ -8,7 +8,7 @@
 #include "nu2api.saga/numusic/numusic.h"
 #include "nu2api.saga/nuplatform/nuplatform.h"
 
-extern "C" int32_t NuMain(int32_t argc, char **argv) {
+extern "C" i32 NuMain(i32 argc, char **argv) {
     InitOnce(argc, argv);
     TriggerExtraDataLoad();
 
@@ -17,15 +17,15 @@ extern "C" int32_t NuMain(int32_t argc, char **argv) {
     EndPerm();
 
     LOG_INFO("COMPLETIONPOINTS=%d", COMPLETIONPOINTS);
-    for (int32_t i = 0; i < 3; i++) {
-        float completion = (float)saveload_slotcode[i] * 100.0f / COMPLETIONPOINTS;
+    for (i32 i = 0; i < 3; i++) {
+        f32 completion = (f32)saveload_slotcode[i] * 100.0f / COMPLETIONPOINTS;
         LOG_INFO("slot %d used=%d completion=%f%% (%.1f%%)", i, saveload_slotused[i], completion, completion);
     }
 
     LEVELDATA *level = Level_FindByName("titles", NULL);
     LOG_INFO("titles level: %p", level);
 
-    int32_t result = GamePlayMusic(level, 0, &Game.options_save);
+    i32 result = GamePlayMusic(level, 0, &Game.options_save);
     if (result != 0) {
         LOG_WARN("GamePlayMusic returned %d", result);
     }

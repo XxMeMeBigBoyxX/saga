@@ -2,7 +2,7 @@
 
 #include "nu2api.saga/nucore/nustring.h"
 
-void Cheat_SetArea(int32_t cheat, int32_t areaId) {
+void Cheat_SetArea(i32 cheat, i32 areaId) {
     if (cheat >= 0 && cheat < CheatSystem.cheats_count && areaId >= 0 && areaId < AREACOUNT) {
         CheatSystem.cheats[cheat].area = areaId;
     }

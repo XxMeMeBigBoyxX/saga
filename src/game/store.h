@@ -1,68 +1,69 @@
 #pragma once
 
 #include <stddef.h>
-#include <stdint.h>
+
+#include "decomp.h"
 
 struct storepack_s {
     char *name;
-    uint8_t field1_0x4;
-    uint8_t field2_0x5;
-    uint8_t field3_0x6;
-    uint8_t field4_0x7;
-    uint8_t field5_0x8;
-    uint8_t field6_0x9;
-    uint8_t field7_0xa;
-    uint8_t field8_0xb;
-    uint8_t field9_0xc;
-    uint8_t field10_0xd;
-    uint8_t field11_0xe;
-    uint8_t field12_0xf;
-    uint8_t field13_0x10;
-    uint8_t field14_0x11;
-    uint8_t field15_0x12;
-    uint8_t field16_0x13;
-    uint8_t field17_0x14;
-    uint8_t field18_0x15;
-    uint8_t field19_0x16;
-    uint8_t field20_0x17;
-    uint8_t field21_0x18;
-    uint8_t field22_0x19;
-    uint8_t field23_0x1a;
-    uint8_t field24_0x1b;
-    uint8_t field25_0x1c;
-    uint8_t field26_0x1d;
-    uint8_t field27_0x1e;
-    uint8_t field28_0x1f;
-    short *id;
-    uint8_t field30_0x24;
-    uint8_t field31_0x25;
-    uint8_t field32_0x26;
-    uint8_t field33_0x27;
-    uint8_t field34_0x28;
-    uint8_t field35_0x29;
-    uint8_t field36_0x2a;
-    uint8_t field37_0x2b;
-    uint8_t field38_0x2c;
-    uint8_t field39_0x2d;
-    uint8_t field40_0x2e;
-    uint8_t field41_0x2f;
-    uint8_t field42_0x30;
-    uint8_t field43_0x31;
-    uint8_t field44_0x32;
-    uint8_t field45_0x33;
+    u8 field1_0x4;
+    u8 field2_0x5;
+    u8 field3_0x6;
+    u8 field4_0x7;
+    u8 field5_0x8;
+    u8 field6_0x9;
+    u8 field7_0xa;
+    u8 field8_0xb;
+    u8 field9_0xc;
+    u8 field10_0xd;
+    u8 field11_0xe;
+    u8 field12_0xf;
+    u8 field13_0x10;
+    u8 field14_0x11;
+    u8 field15_0x12;
+    u8 field16_0x13;
+    u8 field17_0x14;
+    u8 field18_0x15;
+    u8 field19_0x16;
+    u8 field20_0x17;
+    u8 field21_0x18;
+    u8 field22_0x19;
+    u8 field23_0x1a;
+    u8 field24_0x1b;
+    u8 field25_0x1c;
+    u8 field26_0x1d;
+    u8 field27_0x1e;
+    u8 field28_0x1f;
+    i16 *id;
+    u8 field30_0x24;
+    u8 field31_0x25;
+    u8 field32_0x26;
+    u8 field33_0x27;
+    u8 field34_0x28;
+    u8 field35_0x29;
+    u8 field36_0x2a;
+    u8 field37_0x2b;
+    u8 field38_0x2c;
+    u8 field39_0x2d;
+    u8 field40_0x2e;
+    u8 field41_0x2f;
+    u8 field42_0x30;
+    u8 field43_0x31;
+    u8 field44_0x32;
+    u8 field45_0x33;
 };
 typedef struct storepack_s STOREPACK;
 
 struct collectid_s {
-    short id;
-    uint8_t type;
-    uint8_t field2_0x3;
+    i16 id;
+    u8 type;
+    u8 field2_0x3;
     int field3_0x4;
-    uint8_t can_buy;
-    uint8_t field5_0x9;
-    uint16_t field6_0xa;
+    u8 can_buy;
+    u8 field5_0x9;
+    u16 field6_0xa;
     char cheat_code[16];
 };
 typedef struct collectid_s COLLECTID;
 
-int32_t Store_FindPack(int32_t id, char *name);
+i32 Store_FindPack(i32 id, char *name);

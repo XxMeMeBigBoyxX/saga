@@ -12,11 +12,11 @@
 
 static FILE *g_fileHandles[32] = {NULL};
 
-int32_t NuPSFileRead(NUPSFILE index, void *dest, int32_t len) {
+i32 NuPSFileRead(NUPSFILE index, void *dest, i32 len) {
     return fread(dest, 1, len, g_fileHandles[index]);
 }
 
-int32_t NuPSFileWrite(NUPSFILE index, const void *src, int32_t len) {
+i32 NuPSFileWrite(NUPSFILE index, const void *src, i32 len) {
     LOG_DEBUG("index=%d, src=%p, len=%zu", index, src, len);
 
     FILE **files = g_fileHandles;
@@ -71,7 +71,7 @@ NUPSFILE NuPSFileOpen(char *filepath, NUFILEMODE mode) {
 }
 
 NUPSFILE NuGetFileHandlePS(void) {
-    for (int32_t i = 0; i < 32; i++) {
+    for (i32 i = 0; i < 32; i++) {
         if (g_fileHandles[i] == NULL) {
             return i;
         }
@@ -80,16 +80,16 @@ NUPSFILE NuGetFileHandlePS(void) {
     return -1;
 }
 
-int32_t NuPSFileClose(NUPSFILE index) {
+i32 NuPSFileClose(NUPSFILE index) {
     fclose(g_fileHandles[index]);
     g_fileHandles[index] = NULL;
     return 1;
 }
 
-int64_t NuPSFileLSeek(NUPSFILE index, int64_t offset, NUFILESEEK seekMode) {
+i64 NuPSFileLSeek(NUPSFILE index, i64 offset, NUFILESEEK seekMode) {
     LOG_DEBUG("file=%d, offset=0x%llx, seekMode=%d", index, offset, seekMode);
 
-    int32_t whence = 0;
+    i32 whence = 0;
 
     switch (seekMode) {
         case NUFILE_SEEK_START:
@@ -103,7 +103,7 @@ int64_t NuPSFileLSeek(NUPSFILE index, int64_t offset, NUFILESEEK seekMode) {
             break;
     }
 
-    int64_t value = 0;
+    i64 value = 0;
 
     if (fseek(g_fileHandles[index], offset, whence) == 0) {
         value = ftell(g_fileHandles[index]);

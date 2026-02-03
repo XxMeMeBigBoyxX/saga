@@ -22,7 +22,7 @@ int NuTexCreate(NUTEX *tex) {
 }
 
 int NuTexRead(char *name, VARIPTR *buf, VARIPTR *buf_end) {
-    long file_size;
+    i32 file_size;
     char *ext;
     bool is_pvrtc_supported;
     char filename[1024];
@@ -166,7 +166,7 @@ void NuTexInitExPS(VARIPTR *buf) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 }
 
-void NuTexDisplayTexturePage(int page, float depth, int alpha) {
+void NuTexDisplayTexturePage(int page, f32 depth, int alpha) {
 }
 
 int NuTexGetReqSize(int tex_id, int level) {

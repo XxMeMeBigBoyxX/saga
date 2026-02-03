@@ -10,11 +10,11 @@
 AREADATA *ADataList = NULL;
 AREADATA *HUB_ADATA = NULL;
 
-int32_t AREA_DEFAULTBONUSTIMETRIALTIME = 0x12C;
-int32_t AREA_DEFAULTCHALLENGETIME = 0x258;
+i32 AREA_DEFAULTBONUSTIMETRIALTIME = 0x12C;
+i32 AREA_DEFAULTCHALLENGETIME = 0x258;
 
-AREADATA *Area_FindByName(char *name, int32_t *indexDest) {
-    for (int32_t i = 0; i < AREACOUNT; i++) {
+AREADATA *Area_FindByName(char *name, i32 *indexDest) {
+    for (i32 i = 0; i < AREACOUNT; i++) {
         AREADATA *area = &ADataList[i];
 
         if (NuStrICmp(area->file, name) == 0) {
@@ -35,14 +35,14 @@ AREADATA *Area_FindByName(char *name, int32_t *indexDest) {
 AREADATA *Areas_ConfigureList(char *file, VARIPTR *bufferStart, VARIPTR *bufferEnd, int count, int *countDest) {
     byte bVar3;
     undefined2 uVar4;
-    short sVar5;
+    i16 sVar5;
     nufpar_s *fp;
     int iVar6;
     uint uVar7;
     undefined4 uVar8;
     uint uVar9;
     AREADATA *area2;
-    short index;
+    i16 index;
     AREADATA *area;
     int i;
     int j;
@@ -60,7 +60,7 @@ AREADATA *Areas_ConfigureList(char *file, VARIPTR *bufferStart, VARIPTR *bufferE
     } else {
         i = 0;
         bVar2 = false;
-        area2 = (AREADATA *)((int)bufferStart->void_ptr + 3U & 0xfffffffc);
+        area2 = (AREADATA *)((ssize_t)bufferStart->void_ptr + 3U & 0xfffffffc);
         bufferStart->void_ptr = area2;
         area = area2;
     LAB_00486340:
@@ -364,9 +364,9 @@ AREADATA *Areas_ConfigureList(char *file, VARIPTR *bufferStart, VARIPTR *bufferE
                     while (true) {
                         if (area2[j].challenge_trial_time == 0) {
                             if ((area2[j].flags & 0x104) == 4) {
-                                area2[j].challenge_trial_time = (short)AREA_DEFAULTBONUSTIMETRIALTIME;
+                                area2[j].challenge_trial_time = (i16)AREA_DEFAULTBONUSTIMETRIALTIME;
                             } else if ((area2[j].flags & 0x10) != 0) {
-                                area2[j].challenge_trial_time = (short)AREA_DEFAULTCHALLENGETIME;
+                                area2[j].challenge_trial_time = (i16)AREA_DEFAULTCHALLENGETIME;
                             }
                         }
                         if (area2[j].cheat != 0xff) {
@@ -396,7 +396,7 @@ AREADATA *Areas_ConfigureList(char *file, VARIPTR *bufferStart, VARIPTR *bufferE
     }
     if (uVar1 == uVar7) {
     LAB_004866e6:
-        index = (short)j;
+        index = (i16)j;
         area->field2_0x60[uVar7] = index;
         bVar2 = true;
         area->field28_0x7d = bVar3 + 1;

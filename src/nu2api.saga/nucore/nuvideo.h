@@ -1,5 +1,7 @@
 #pragma once
 
+#include "decomp.h"
+
 enum NUVIDEO_SWAPMODE {
     NUVIDEO_SWAPMODE_INVALID = 0,
     NUVIDEO_SWAPMODE_ASYNC = 1,
@@ -35,7 +37,7 @@ extern "C" {
     int NuVideoGetAspect(void);
     NUVIDEO_SWAPMODE NuVideoGetSwapMode(void);
     void NuVideoRollingFrameRateReset(void);
-    void NuVideoSetBrightness(float brightness);
+    void NuVideoSetBrightness(f32 brightness);
     void NuVideoSetResolution(int width, int height);
     NUVIDEO_SWAPMODE NuVideoSetSwapMode(NUVIDEO_SWAPMODE video_swap_mode);
 #ifdef __cplusplus

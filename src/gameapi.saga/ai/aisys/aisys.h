@@ -1,13 +1,15 @@
 #include "nu2api.saga/nucore/common.h"
 #include "nu2api.saga/nucore/nulist.h"
 
+#include "decomp.h"
+
 typedef struct AISYS_s AISYS;
 
 typedef struct AISCRIPTPROCESS_s AISCRIPTPROCESS;
 
 typedef struct AIPACKET_s AIPACKET;
 
-typedef int GAMEPARAMTOFLOAT(AIPACKET *, AISCRIPTPROCESS *, char *, float *);
+typedef int GAMEPARAMTOf32(AIPACKET *, AISCRIPTPROCESS *, char *, f32 *);
 
 typedef struct AISTATE_s {
     NULISTLNK list_node;
@@ -19,12 +21,12 @@ typedef struct AISTATE_s {
 
 typedef struct AICONSTPARAMS_s {
     char name[32];
-    float default_val;
+    f32 default_val;
 } AICONSTPARAMS;
 
 typedef struct AISCRIPTPARAMS_s {
     char *name;
-    float default_val;
+    f32 default_val;
 } AISCRIPTPARAMS;
 
 typedef struct AISCRIPT_s {
@@ -34,9 +36,9 @@ typedef struct AISCRIPT_s {
     NULISTHDR states;
     AISCRIPTPARAMS params[4];
     AISTATE *base_state;
-    unsigned int is_level_script : 1;
-    unsigned int is_derived : 1;
-    unsigned int is_derived_from_level_script : 1;
+    u32 is_level_script : 1;
+    u32 is_derived : 1;
+    u32 is_derived_from_level_script : 1;
     NULISTHDR ref_scripts;
     NULISTHDR condition_macros;
     NULISTHDR action_macros;
@@ -54,8 +56,8 @@ typedef struct AICONDITIONMACRO_s {
     NULISTHDR conditions;
 } AICONDITIONMACRO;
 
-typedef int AIACTIONFN(AISYS *, AISCRIPTPROCESS *, AIPACKET *, char **, int, int, float);
-typedef float AICONDITIONFN(AISYS *, AISCRIPTPROCESS *, AIPACKET *, char *, void *);
+typedef int AIACTIONFN(AISYS *, AISCRIPTPROCESS *, AIPACKET *, char **, int, int, f32);
+typedef f32 AICONDITIONFN(AISYS *, AISCRIPTPROCESS *, AIPACKET *, char *, void *);
 typedef void *AICONDITIONINITFN(AISYS *, char *, AISCRIPT *);
 
 typedef struct AISCRIPTACTIONDEF_s {
@@ -63,7 +65,7 @@ typedef struct AISCRIPTACTIONDEF_s {
     AIACTIONFN *eval_fn;
     char unknown;
     char unknown2;
-    short unknown3;
+    i16 unknown3;
 } AIACTIONDEF;
 
 typedef struct AISCRIPTCONDITIONDEF_s {
@@ -81,13 +83,13 @@ typedef struct AIACTION_s {
 
 typedef struct AICONDITION_s {
     NULISTLNK list_node;
-    float param_val;
+    f32 param_val;
     char type;
     unsigned char param_idx;
-    unsigned short bool_and : 1;
-    unsigned short keep_blocked : 1;
-    unsigned short is_param_idx_valid : 1;
-    unsigned short is_complex : 1;
+    u16 bool_and : 1;
+    u16 keep_blocked : 1;
+    u16 is_param_idx_valid : 1;
+    u16 is_complex : 1;
     char *complex_arg;
     char *arg;
     void *void_arg;
@@ -103,8 +105,8 @@ typedef struct AIREFSCRIPT_s {
     AISCRIPT *script;
     char *return_state_name;
     AISTATE *return_state;
-    unsigned int check_global_scripts : 1;
-    unsigned int check_local_scripts : 1;
+    u32 check_global_scripts : 1;
+    u32 check_local_scripts : 1;
     NULISTHDR conditions;
 } AIREFSCRIPT;
 
@@ -121,7 +123,7 @@ extern "C" {
 }
 #endif
 
-float AiParseExpression(char *expr);
+f32 AiParseExpression(char *expr);
 
 void AIScriptOpenPakFileParse(AISCRIPT_s **script_ref, void *pak, char *filename, char *path, VARIPTR *buf,
                               VARIPTR *buf_end);

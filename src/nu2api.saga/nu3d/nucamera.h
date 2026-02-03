@@ -5,10 +5,10 @@
 
 typedef struct nucamera_s {
     NUMTX mtx;
-    float fov;
-    float aspect;
-    float nearclip;
-    float farclip;
+    f32 fov;
+    f32 aspect;
+    f32 nearclip;
+    f32 farclip;
     NUVEC forward;
     NUVEC right;
     NUQUAT rotation;

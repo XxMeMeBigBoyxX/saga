@@ -155,7 +155,7 @@ void EdFileRead(void *buf, int len) {
 
         edfile_buffer_pointer += to_read;
         len -= to_read;
-        buf = (void *)((int)buf + to_read);
+        buf = (void *)((ssize_t)buf + to_read);
 
         if (edfile_buffer_pointer == 0x1000) {
             EdFileFillBuffer();
@@ -179,8 +179,8 @@ unsigned char EdFileReadUnsignedChar() {
     return data;
 }
 
-float EdFileReadFloat() {
-    float data;
+f32 EdFileReadf32() {
+    f32 data;
 
     EdFileRead(&data, 4);
 
@@ -203,8 +203,8 @@ int EdFileReadInt() {
     return data;
 }
 
-unsigned int EdFileReadUnsignedInt() {
-    unsigned int data;
+u32 EdFileReadUnsignedInt() {
+    u32 data;
 
     EdFileRead(&data, 4);
 
@@ -215,8 +215,8 @@ unsigned int EdFileReadUnsignedInt() {
     return data;
 }
 
-short EdFileReadShort() {
-    short data;
+i16 EdFileReadShort() {
+    i16 data;
 
     EdFileRead(&data, 2);
 
@@ -227,8 +227,8 @@ short EdFileReadShort() {
     return data;
 }
 
-unsigned short EdFileReadUnsignedShort() {
-    unsigned short data;
+u16 EdFileReadUnsignedShort() {
+    u16 data;
 
     EdFileRead(&data, 2);
 
@@ -240,9 +240,9 @@ unsigned short EdFileReadUnsignedShort() {
 }
 
 void EdFileReadNuVec(NUVEC *out) {
-    out->x = EdFileReadFloat();
-    out->y = EdFileReadFloat();
-    out->z = EdFileReadFloat();
+    out->x = EdFileReadf32();
+    out->y = EdFileReadf32();
+    out->z = EdFileReadf32();
 }
 
 void EdFileWrite(void *data, int len) {
@@ -255,7 +255,7 @@ void EdFileWrite(void *data, int len) {
 
         edfile_buffer_pointer += to_write;
         len -= to_write;
-        data = (void *)((int)data + to_write);
+        data = (void *)((ssize_t)data + to_write);
 
         if (edfile_buffer_pointer == 0x1000) {
             EdFileFlushBuffer();

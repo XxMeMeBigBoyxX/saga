@@ -12,7 +12,7 @@
 
 namespace NuFile {
     namespace SeekOrigin {
-        typedef int32_t T;
+        typedef i32 T;
     };
 
     namespace OpenMode {
@@ -26,22 +26,22 @@ class NuFileAndroidAPK {
         UNIMPLEMENTED("android specific");
     }
 
-    static SAGA_NOMATCH int32_t CloseFile(NUFILE file) {
+    static SAGA_NOMATCH i32 CloseFile(NUFILE file) {
         UNIMPLEMENTED("android specific");
     }
 
-    static SAGA_NOMATCH int64_t SeekFile(NUFILE file, int64_t offset, NuFile::SeekOrigin::T mode) {
+    static SAGA_NOMATCH i64 SeekFile(NUFILE file, i64 offset, NuFile::SeekOrigin::T mode) {
         UNIMPLEMENTED("android specific");
     }
 
-    static SAGA_NOMATCH int32_t ReadFile(NUFILE file, void *buf, unsigned int size) {
+    static SAGA_NOMATCH i32 ReadFile(NUFILE file, void *buf, u32 size) {
         UNIMPLEMENTED("android specific");
     }
 
-    static SAGA_NOMATCH int64_t GetFilePos(NUFILE file) {
+    static SAGA_NOMATCH i64 GetFilePos(NUFILE file) {
         UNIMPLEMENTED("android specific");
     }
-    static SAGA_NOMATCH int64_t GetFileSize(NUFILE file) {
+    static SAGA_NOMATCH i64 GetFileSize(NUFILE file) {
         UNIMPLEMENTED("android specific");
     }
 };
@@ -55,7 +55,7 @@ char g_datfileMode = 1;
 int read_critical_section;
 
 static NUDATHDR *curr_dat;
-int32_t nufile_try_packed = 0;
+i32 nufile_try_packed = 0;
 static FILEINFO file_info[33];
 int nufile_buffering_enabled;
 static int nufile_lasterror = 0;
@@ -124,11 +124,11 @@ static void AquireFileBuffer(FILEINFO *info) {
     }
 }
 
-int32_t numdevices = 0;
+i32 numdevices = 0;
 
 NUFILE_DEVICE devices[16] = {0};
 
-int32_t file_criticalsection;
+i32 file_criticalsection;
 
 NUFILE_DEVICE *NuFileGetDeviceFromPath(char *path) {
     NUFILE_DEVICE *device;
@@ -155,7 +155,7 @@ NUFILE_DEVICE *NuFileGetDeviceFromPath(char *path) {
     return device;
 }
 
-int32_t DontDoFileUpperCaseHack;
+i32 DontDoFileUpperCaseHack;
 
 void NuFileUpCase(NUFILE_DEVICE *device, char *filepath) {
     char separator;
@@ -222,11 +222,11 @@ void NuFileClose(NUFILE file) {
     memset(info, 0, sizeof(fileinfo_s));
 }
 
-NUFILE NuFileOpenDF(char *filepath, NUFILEMODE mode, NUDATHDR *header, int32_t _unused) {
+NUFILE NuFileOpenDF(char *filepath, NUFILEMODE mode, NUDATHDR *header, i32 _unused) {
     LOG_DEBUG("filepath=%s, mode=%d", filepath, mode);
 
     char buf[256];
-    int64_t len;
+    i64 len;
     NUFILE_DEVICE *device;
     int mc_slot;
     int mc_port;
@@ -324,10 +324,10 @@ NUFILE NuFileOpenDF(char *filepath, NUFILEMODE mode, NUDATHDR *header, int32_t _
     return ps_index + 1;
 }
 
-int64_t NuFileSeek(NUFILE file, int64_t offset, NUFILESEEK whence) {
+i64 NuFileSeek(NUFILE file, i64 offset, NUFILESEEK whence) {
     FILEINFO *info;
     int native_mode;
-    int64_t pos;
+    i64 pos;
 
     if (file >= 0x2000) {
         switch (whence) {
@@ -346,7 +346,7 @@ int64_t NuFileSeek(NUFILE file, int64_t offset, NUFILESEEK whence) {
     }
 
     if (file >= 0x1000) {
-        pos = (int64_t)NuMcSeek(file - 0x1000, offset, whence, 0);
+        pos = (i64)NuMcSeek(file - 0x1000, offset, whence, 0);
         return pos;
     }
 
@@ -378,9 +378,9 @@ int64_t NuFileSeek(NUFILE file, int64_t offset, NUFILESEEK whence) {
     return info->read_pos;
 }
 
-int64_t NuFileSize(char *filepath) {
+i64 NuFileSize(char *filepath) {
     int file;
-    int64_t pos;
+    i64 pos;
     int buffering;
 
     buffering = nufile_buffering_enabled;
@@ -389,7 +389,7 @@ int64_t NuFileSize(char *filepath) {
     if (curr_dat != NULL) {
         file = NuDatFileFindTree(curr_dat, filepath);
         if (file >= 0) {
-            return (uint64_t)curr_dat->file_info[file].decompressed_len;
+            return (u64)curr_dat->file_info[file].decompressed_len;
         }
     }
 
@@ -414,9 +414,9 @@ int64_t NuFileSize(char *filepath) {
     return pos;
 }
 
-int64_t NuFilePos(NUFILE file) {
+i64 NuFilePos(NUFILE file) {
     FILEINFO *info;
-    int64_t pos;
+    i64 pos;
 
     if (file >= 0x2000) {
         return NuFileAndroidAPK::GetFilePos(file);
@@ -445,7 +445,7 @@ int64_t NuFilePos(NUFILE file) {
     return pos;
 }
 
-int64_t NuFileOpenSize(NUFILE file) {
+i64 NuFileOpenSize(NUFILE file) {
     if (file >= 0x2000) {
         return NuFileAndroidAPK::GetFilePos(file);
     }
@@ -514,12 +514,12 @@ int NuFileRead(NUFILE file, void *buf, int size) {
 
             available = MIN(info->buf_len + (int)(info->buf_start - info->read_pos), size);
             if (available != 0) {
-                unsigned int to_read;
+                u32 to_read;
                 void *file_buf;
 
                 to_read = available;
                 file_buf = info->buf;
-                memcpy(char_buf, (void *)((int)file_buf + (info->read_pos - info->buf_start) + 8), to_read);
+                memcpy(char_buf, (void *)((ssize_t)file_buf + (info->read_pos - info->buf_start) + 8), to_read);
             }
 
             char_buf += available;
@@ -548,55 +548,55 @@ int NuFileWrite(NUFILE file, void *data, int size) {
     return NuPSFileWrite(file, data, size);
 }
 
-int8_t NuFileReadChar(NUFILE file) {
-    int8_t value = 0;
-    NuFileRead(file, &value, sizeof(int8_t));
+i8 NuFileReadChar(NUFILE file) {
+    i8 value = 0;
+    NuFileRead(file, &value, sizeof(i8));
     return value;
 }
 
-float NuFileReadFloat(NUFILE file) {
-    float value;
-    NuFileRead(file, &value, sizeof(float));
+f32 NuFileReadf32(NUFILE file) {
+    f32 value;
+    NuFileRead(file, &value, sizeof(f32));
     return value;
 }
 
-int32_t NuFileReadInt(NUFILE file) {
-    int32_t value;
-    NuFileRead(file, &value, sizeof(int32_t));
+i32 NuFileReadInt(NUFILE file) {
+    i32 value;
+    NuFileRead(file, &value, sizeof(i32));
     return value;
 }
 
-int16_t NuFileReadShort(NUFILE file) {
-    int16_t value;
-    NuFileRead(file, &value, sizeof(int16_t));
+i16 NuFileReadShort(NUFILE file) {
+    i16 value;
+    NuFileRead(file, &value, sizeof(i16));
     return value;
 }
 
-uint8_t NuFileReadUnsignedChar(NUFILE file) {
-    uint8_t value = 0;
-    NuFileRead(file, &value, sizeof(uint8_t));
+u8 NuFileReadUnsignedChar(NUFILE file) {
+    u8 value = 0;
+    NuFileRead(file, &value, sizeof(u8));
     return value;
 }
 
-uint32_t NuFileReadUnsignedInt(NUFILE file) {
-    uint32_t value;
-    NuFileRead(file, &value, sizeof(uint32_t));
+u32 NuFileReadUnsignedInt(NUFILE file) {
+    u32 value;
+    NuFileRead(file, &value, sizeof(u32));
     return value;
 }
 
-uint16_t NuFileReadUnsignedShort(NUFILE file) {
-    uint16_t value;
-    NuFileRead(file, &value, sizeof(uint16_t));
+u16 NuFileReadUnsignedShort(NUFILE file) {
+    u16 value;
+    NuFileRead(file, &value, sizeof(u16));
     return value;
 }
 
-uint16_t NuFileReadWChar(NUFILE file) {
-    int16_t value = 0;
-    NuFileRead(file, &value, sizeof(uint16_t));
+u16 NuFileReadWChar(NUFILE file) {
+    i16 value = 0;
+    NuFileRead(file, &value, sizeof(u16));
     return value;
 }
 
-int32_t NuFileLoadBuffer(char *filepath, void *buf, int buf_size) {
+i32 NuFileLoadBuffer(char *filepath, void *buf, int buf_size) {
     NUFILE file;
     int iVar2;
     int lVar1;
@@ -645,8 +645,8 @@ int32_t NuFileLoadBuffer(char *filepath, void *buf, int buf_size) {
     return loaded;
 }
 
-int32_t NuFileLoadBufferVP(char *filepath, VARIPTR *buf, VARIPTR *buf_end) {
-    int32_t len;
+i32 NuFileLoadBufferVP(char *filepath, VARIPTR *buf, VARIPTR *buf_end) {
+    i32 len;
 
     len = NuFileLoadBuffer(filepath, buf->void_ptr, buf_end->addr - buf->addr);
 
@@ -705,7 +705,7 @@ void NuFileReldirFix(NUFILE_DEVICE *device, char *path) {
     *inner = '\0';
 }
 
-int32_t NuFileStatus(NUFILE file) {
+i32 NuFileStatus(NUFILE file) {
     int _unused;
     int _unused2;
     NUDATFILEINFO *info;
@@ -738,13 +738,13 @@ int32_t NuFileStatus(NUFILE file) {
 
 static NUDATFILEINFO *unpack_file_info = NULL;
 static NUDATOPENFILEINFO *unpack_file_odi = 0;
-static int64_t unpack_file_pos;
-static int32_t decode_buffer_left;
+static i64 unpack_file_pos;
+static i32 decode_buffer_left;
 static char decode_buffer[0x40000];
-static int32_t decode_buffer_pos;
+static i32 decode_buffer_pos;
 static char read_buffer[0x40000];
-static int32_t read_buffer_size;
-static int32_t read_buffer_decoded_size;
+static i32 read_buffer_size;
+static i32 read_buffer_decoded_size;
 
 static void NuDatFileDecodeInit() {
     unpack_file_info = NULL;
@@ -797,13 +797,13 @@ NUDATHDR *NuDatOpen(char *filepath, VARIPTR *buf, int *_unused) {
     return NuDatOpenEx(filepath, buf, _unused, 0);
 }
 
-NUDATHDR *NuDatOpenEx(char *filepath, VARIPTR *buf, int *_unused, short mode) {
+NUDATHDR *NuDatOpenEx(char *filepath, VARIPTR *buf, int *_unused, i16 mode) {
     char _unused2[256];
     int path_len;
     int i;
     int j;
     NUFILE file;
-    int64_t seek_offset;
+    i64 seek_offset;
     int file_len;
     int bytes_read;
     int _unused4;
@@ -813,9 +813,9 @@ NUDATHDR *NuDatOpenEx(char *filepath, VARIPTR *buf, int *_unused, short mode) {
     NUDATHDR *hdr;
     NUDFNODE_V1 *old_ver;
     VARIPTR hash;
-    unsigned int hash_idx;
+    u32 hash_idx;
     int idx_to_swap;
-    unsigned int tmp_idx;
+    u32 tmp_idx;
     NUDATFINFO tmp;
     int dfnodev2_size;
     int dfnodev1_size;
@@ -835,7 +835,7 @@ NUDATHDR *NuDatOpenEx(char *filepath, VARIPTR *buf, int *_unused, short mode) {
         bytes_read = NuFileRead(file, read_buf, 8);
         APIEndianSwap(read_buf, 2, 4);
 
-        seek_offset = (int64_t)read_buf[0];
+        seek_offset = (i64)read_buf[0];
         if (seek_offset < 0) {
             seek_offset *= -0x100;
         }
@@ -922,7 +922,7 @@ NUDATHDR *NuDatOpenEx(char *filepath, VARIPTR *buf, int *_unused, short mode) {
 
         for (n = 0; n < hdr->tree_node_count; n++) {
             _unused4 = 0;
-            hdr->file_tree[n].name = (int)hdr->leaf_names + hdr->file_tree[n].name - _unused4;
+            hdr->file_tree[n].name = (ssize_t)hdr->leaf_names + hdr->file_tree[n].name - _unused4;
         }
 
         hdr->file_tree[0].name = NULL;
@@ -938,10 +938,10 @@ NUDATHDR *NuDatOpenEx(char *filepath, VARIPTR *buf, int *_unused, short mode) {
         hdr->hashes = NULL;
 
         if (hdr->version < -1) {
-            hdr->hash_idxs = (unsigned int *)ALIGN(buf->addr, 0x20);
+            hdr->hash_idxs = (u32 *)ALIGN(buf->addr, 0x20);
             buf->addr = ALIGN(buf->addr, 0x20);
-            buf->addr += hdr->file_count * sizeof(int32_t);
-            bytes_read = NuFileRead(file, hdr->hash_idxs, hdr->file_count * sizeof(int32_t));
+            buf->addr += hdr->file_count * sizeof(i32);
+            bytes_read = NuFileRead(file, hdr->hash_idxs, hdr->file_count * sizeof(i32));
             total_read += bytes_read;
 
             for (n = 0; n < hdr->file_count; n++) {
@@ -1041,8 +1041,8 @@ NUFILE NuDatFileOpen(NUDATHDR *hdr, char *filepath, NUFILEMODE mode) {
     int file_idx;
     NUDATOPENFILEINFO *open_info;
     NUDATFILEINFO *info;
-    int64_t start;
-    int64_t seek_pos;
+    i64 start;
+    i64 seek_pos;
 
     if (mode == NUFILE_READ) {
         node_idx = NuDatFileFindTree(hdr, filepath);
@@ -1106,11 +1106,11 @@ void NuDatFileClose(NUFILE file) {
     info->used = 0;
 }
 
-int64_t NuDatFileSeek(NUFILE file, int64_t offset, NUFILESEEK whence) {
+i64 NuDatFileSeek(NUFILE file, i64 offset, NUFILESEEK whence) {
     NUDATFILEINFO *info;
     NUDATHDR *hdr;
     NUDATOPENFILEINFO *open_info;
-    int64_t offset_in_dat;
+    i64 offset_in_dat;
 
     file -= 0x800;
     info = &dat_file_infos[file];
@@ -1134,7 +1134,7 @@ int64_t NuDatFileSeek(NUFILE file, int64_t offset, NUFILESEEK whence) {
     return info->pos;
 }
 
-int64_t NuDatFilePos(NUFILE file) {
+i64 NuDatFilePos(NUFILE file) {
     NUDATFILEINFO *info;
 
     file -= 0x800;
@@ -1165,8 +1165,7 @@ int NuDatFileRead(NUFILE file, void *buf, int size) {
                 if (read_buffer_size == read_buffer_decoded_size) {
                     memcpy(decode_buffer, read_buffer, read_buffer_size);
                 } else if (info->compression_mode == 2) {
-                    ExplodeBufferNoHeader(read_buffer, decode_buffer, read_buffer_size,
-                                          read_buffer_decoded_size);
+                    ExplodeBufferNoHeader(read_buffer, decode_buffer, read_buffer_size, read_buffer_decoded_size);
                 } else if (info->compression_mode == 3) {
                     inflated_size =
                         InflateBuffer(decode_buffer, read_buffer_decoded_size, read_buffer, read_buffer_size);
@@ -1208,9 +1207,9 @@ int NuDatFileRead(NUFILE file, void *buf, int size) {
     return 0;
 }
 
-int32_t NuDatFileGetFreeInfo(void) {
-    int32_t found;
-    int32_t i;
+i32 NuDatFileGetFreeInfo(void) {
+    i32 found;
+    i32 i;
 
     found = -1;
 
@@ -1229,8 +1228,8 @@ int32_t NuDatFileGetFreeInfo(void) {
     return found;
 }
 
-int32_t NuDatFileGetFreeHandleIX(NUDATHDR *hdr, int32_t info_idx) {
-    int32_t file_idx;
+i32 NuDatFileGetFreeHandleIX(NUDATHDR *hdr, i32 info_idx) {
+    i32 file_idx;
     int i;
 
     file_idx = -1;
@@ -1250,7 +1249,7 @@ int32_t NuDatFileGetFreeHandleIX(NUDATHDR *hdr, int32_t info_idx) {
     return file_idx;
 }
 
-int32_t NuDatFileOpenSize(NUFILE file) {
+i32 NuDatFileOpenSize(NUFILE file) {
     NUDATFILEINFO *info;
 
     file -= 0x800;
@@ -1264,7 +1263,7 @@ int32_t NuDatFileOpenSize(NUFILE file) {
     }
 }
 
-int32_t NuDatFileLoadBuffer(nudathdr_s *dat, char *name, void *dest, int32_t buf_size) {
+i32 NuDatFileLoadBuffer(nudathdr_s *dat, char *name, void *dest, i32 buf_size) {
     NUFILE file;
     char *buf;
 
@@ -1273,7 +1272,7 @@ int32_t NuDatFileLoadBuffer(nudathdr_s *dat, char *name, void *dest, int32_t buf
     file = NuDatFileOpen(dat, name, NUFILE_READ);
 
     if (file != 0) {
-        int32_t size;
+        i32 size;
 
         if (dat->mode == 3) {
             while (NuFileStatus(file) != 0) {
@@ -1386,7 +1385,7 @@ int NuMemFileWrite(NUFILE file, void *data, int size) {
     return size;
 }
 
-int64_t NuMemFileSeek(NUFILE file, int64_t offset, NUFILESEEK whence) {
+i64 NuMemFileSeek(NUFILE file, i64 offset, NUFILESEEK whence) {
     if (file >= 0x800) {
         return NuDatFileSeek(file, offset, whence);
     }
@@ -1405,17 +1404,17 @@ int64_t NuMemFileSeek(NUFILE file, int64_t offset, NUFILESEEK whence) {
             break;
     }
 
-    return (int64_t)(memfiles[file].ptr - memfiles[file].buffer);
+    return (i64)(memfiles[file].ptr - memfiles[file].buffer);
 }
 
-int64_t NuMemFilePos(NUFILE file) {
+i64 NuMemFilePos(NUFILE file) {
     if (file >= 0x800) {
         return NuDatFilePos(file);
     }
 
     file -= 0x400;
 
-    return (int64_t)(memfiles[file].ptr - memfiles[file].buffer);
+    return (i64)(memfiles[file].ptr - memfiles[file].buffer);
 }
 
 int NuMemFileOpenSize(NUFILE file) {

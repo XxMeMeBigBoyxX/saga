@@ -54,11 +54,11 @@ int DEV_FormatName(NUFILE_DEVICE *device, char *formatted_name, char *path, int 
     return 0;
 }
 
-int32_t NuFileReadDir(NUFILE file) {
+i32 NuFileReadDir(NUFILE file) {
     return 0;
 }
 
-int32_t NuFileExists(char *name) {
+i32 NuFileExists(char *name) {
     LOG_DEBUG("name=%s", name);
 
     return NuFileSize(name) > 0;

@@ -56,8 +56,8 @@ NuSoundLoader *NuSoundSystem::CreateFileLoader(FileType type) {
     }
 }
 
-int32_t NuSoundLoader::LoadFromFile(char *name, NuSoundStreamDesc *desc, NuSoundBuffer *buffer,
-                                    NuSoundOutOfMemCallback *oom) {
+i32 NuSoundLoader::LoadFromFile(char *name, NuSoundStreamDesc *desc, NuSoundBuffer *buffer,
+                                NuSoundOutOfMemCallback *oom) {
     this->oom = oom;
     this->path = name;
 
@@ -71,17 +71,17 @@ int32_t NuSoundLoader::LoadFromFile(char *name, NuSoundStreamDesc *desc, NuSound
     return Load(desc, buffer);
 }
 
-int32_t NuSoundLoader::Load(NuSoundStreamDesc *desc, NuSoundBuffer *buffer) {
+i32 NuSoundLoader::Load(NuSoundStreamDesc *desc, NuSoundBuffer *buffer) {
     UNIMPLEMENTED();
 }
 
-int32_t NuSoundLoader::OpenForStreaming(char const *) {
+i32 NuSoundLoader::OpenForStreaming(char const *) {
     UNIMPLEMENTED();
 }
 NuSoundBuffer *NuSoundLoader::FillStreamBuffer(NuSoundBuffer *, bool) {
     UNIMPLEMENTED();
 }
-bool NuSoundLoader::SeekRawData(uint64_t) {
+bool NuSoundLoader::SeekRawData(u64) {
     UNIMPLEMENTED();
 }
 bool NuSoundLoader::OpenFileForStreaming(char const *, bool) {
@@ -90,7 +90,7 @@ bool NuSoundLoader::OpenFileForStreaming(char const *, bool) {
 void NuSoundLoader::Close() {
     UNIMPLEMENTED();
 }
-uint64_t NuSoundLoader::ReadData(void *, uint64_t) {
+u64 NuSoundLoader::ReadData(void *, u64) {
     UNIMPLEMENTED();
 }
 
@@ -175,7 +175,7 @@ struct NuSoundLoadTrigger {
 static NuSoundLoadTrigger g_NuSoundLoadTrigger;
 static pthread_mutex_t g_NuSoundLoadCriticalSection = PTHREAD_MUTEX_INITIALIZER;
 
-static int32_t g_NuSoundLoadBits = 0;
+static i32 g_NuSoundLoadBits = 0;
 
 static NuSoundSample *g_NuSoundSamples[3];
 
@@ -201,7 +201,7 @@ void NuSound3SampleLoadThread(void *arg) {
 
 static NuThread *g_NuSoundLoadThread = NULL;
 
-void NuSound3Init(int32_t zero) {
+void NuSound3Init(i32 zero) {
     // int iVar1;
     // NuMemory *this;
     // NuMemoryManager *this_00;
@@ -241,7 +241,7 @@ void NuSound3Init(int32_t zero) {
     // NuSoundBuffer::Allocate(CONCAT44(uVar2 >> 1, 0x11ef4c0), 0);
 }
 
-int32_t NuSound3InitV(VARIPTR *bufferStart, VARIPTR bufferEnd, int32_t zero1, int32_t zero2) {
+i32 NuSound3InitV(VARIPTR *bufferStart, VARIPTR bufferEnd, i32 zero1, i32 zero2) {
     NuSound3Init(0);
     return 1;
 }

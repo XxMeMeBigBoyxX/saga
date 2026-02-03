@@ -1,10 +1,10 @@
 #pragma once
 
-#include <stdint.h>
-
 #include "nu2api.saga/numemory/NuMemoryManager.h"
 #include "nu2api.saga/numemory/NuMemoryPool.h"
 #include "nu2api.saga/numemory/numemory_android.h"
+
+#include "decomp.h"
 
 #ifdef __cplusplus
 
@@ -44,7 +44,7 @@ struct NuMemory {
     DynamicPoolEventHandler *dynamic_pool_event_handler;
     int unknown2;
 
-    int32_t tls_index;
+    i32 tls_index;
 
   public:
     NuMemory(void **buf);

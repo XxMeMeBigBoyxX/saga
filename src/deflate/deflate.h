@@ -1,24 +1,24 @@
 #pragma once
 
-#include <stdint.h>
+#include "decomp.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
     typedef struct DEFHUFFMAN {
-        uint16_t fast_lookup[512];
-        uint16_t first_code[17];
-        int32_t base_code[16];
-        uint16_t num_codes[16];
-        uint8_t symbols[288];
-        uint16_t symbol_index[288];
+        u16 fast_lookup[512];
+        u16 first_code[17];
+        i32 base_code[16];
+        u16 num_codes[16];
+        u8 symbols[288];
+        u16 symbol_index[288];
     } DEFHUFFMAN;
 
     typedef struct DEFLATECONTEXT {
-        uint8_t *read_buffer;
-        uint8_t *read_buffer_end;
-        int32_t num_bits_available;
-        uint32_t bit_buffer;
+        u8 *read_buffer;
+        u8 *read_buffer_end;
+        i32 num_bits_available;
+        u32 bit_buffer;
         char *current_pos;
         char *start_pos;
         char *end_pos;
@@ -27,14 +27,14 @@ extern "C" {
         DEFHUFFMAN temp_code_length;
     } DEFLATECONTEXT;
 
-    int32_t InflateBuffer(char *buffer, int decodedSize, char *readBuffer, int32_t readBufferSize);
+    i32 InflateBuffer(char *buffer, int decodedSize, char *readBuffer, i32 readBufferSize);
 #ifdef __cplusplus
 }
 
 void InitHuffmanDefaults();
 int DecodeDeflated(DEFLATECONTEXT *ctx);
-int32_t Inflate(DEFLATECONTEXT *ctx, char *buffer, int32_t size);
-uint32_t BuildHuffmanTree(DEFHUFFMAN *tree, uint8_t *codeLengths, int32_t symbolCount);
+i32 Inflate(DEFLATECONTEXT *ctx, char *buffer, i32 size);
+u32 BuildHuffmanTree(DEFHUFFMAN *tree, u8 *codeLengths, i32 symbolCount);
 int DecompressHuffmanTrees(DEFLATECONTEXT *ctx);
 
 #endif

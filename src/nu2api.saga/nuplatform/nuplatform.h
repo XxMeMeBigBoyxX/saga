@@ -1,7 +1,6 @@
 #pragma once
 
 #include <stddef.h>
-#include <stdint.h>
 
 enum platforms_supported_e {
     DEFAULT_PLATFORM = 0,

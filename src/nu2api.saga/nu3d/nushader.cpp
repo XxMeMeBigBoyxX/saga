@@ -4,7 +4,7 @@
 #include "nu2api.saga/nuandroid/nuios.h"
 #include "nu2api.saga/nuthread/nuthread.h"
 
-static float water_theta_step = 0.26666668f;
+static f32 water_theta_step = 0.26666668f;
 
 void NuShaderObjectBaseCreate(NUSHADEROBJECTBASE *shader) {
     shader->field0 = -1;
@@ -51,7 +51,7 @@ void NuShaderObjectDestroy(NUSHADEROBJECT *shader) {
 }
 
 void NuShaderObjectBaseInit(NUSHADEROBJECTBASE *shader, NUSHADEROBJECTKEY *key, int unk) {
-    shader->key = (int)*(NUSHADEROBJECTKEY **)key; // it only matches if you do this noop cast/dereference
+    shader->key = (ssize_t) * (NUSHADEROBJECTKEY **)key; // it only matches if you do this noop cast/dereference
     shader->field0 = unk;
 }
 
@@ -62,7 +62,7 @@ void NuShaderObjectBaseUnInit(NUSHADEROBJECTBASE *shader) {
     shader->field0 = -1;
 }
 
-void NuShaderObjectBaseSetWaterSpeed(float speed) {
+void NuShaderObjectBaseSetWaterSpeed(f32 speed) {
     water_theta_step = speed * 0.1f;
 }
 

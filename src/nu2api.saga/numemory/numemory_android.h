@@ -8,19 +8,19 @@ class NuMemoryPS {
       public:
         Mem1EventHandler();
 
-        virtual bool AllocatePage(NuMemoryManager *manager, unsigned int size, unsigned int _unknown) override;
-        virtual bool ReleasePage(NuMemoryManager *manager, void *ptr, unsigned int _unknown) override;
+        virtual bool AllocatePage(NuMemoryManager *manager, u32 size, u32 _unknown) override;
+        virtual bool ReleasePage(NuMemoryManager *manager, void *ptr, u32 _unknown) override;
 
       private:
-        unsigned int page_count;
+        u32 page_count;
     };
 
     class Mem2EventHandler : public NuMemoryManager::IEventHandler {
       public:
         Mem2EventHandler();
 
-        virtual bool AllocatePage(NuMemoryManager *manager, unsigned int size, unsigned int _unknown) override;
-        virtual bool ReleasePage(NuMemoryManager *manager, void *ptr, unsigned int _unknown) override;
+        virtual bool AllocatePage(NuMemoryManager *manager, u32 size, u32 _unknown) override;
+        virtual bool ReleasePage(NuMemoryManager *manager, void *ptr, u32 _unknown) override;
     };
 
     friend NuMemory;

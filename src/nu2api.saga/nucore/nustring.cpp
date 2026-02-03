@@ -3,7 +3,7 @@
 
 #include "nu2api.saga/nucore/nustring.h"
 
-void NuStrFormatAddress(char *buf, unsigned int buf_len, void *ptr) {
+void NuStrFormatAddress(char *buf, u32 buf_len, void *ptr) {
     char address[21];
 
     snprintf(address, sizeof(address), "0x%p", ptr);
@@ -16,12 +16,12 @@ void NuStrFormatAddress(char *buf, unsigned int buf_len, void *ptr) {
     strcpy(buf, address);
 }
 
-void NuStrFormatSize(char *buf, unsigned int buf_len, unsigned int size, bool align_left) {
-    unsigned int remainder;
-    unsigned int gb;
-    unsigned int mb;
-    unsigned int kb;
-    unsigned int b;
+void NuStrFormatSize(char *buf, u32 buf_len, u32 size, bool align_left) {
+    u32 remainder;
+    u32 gb;
+    u32 mb;
+    u32 kb;
+    u32 b;
     size_t len;
 
     gb = size / 1000000000;

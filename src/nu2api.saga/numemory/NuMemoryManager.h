@@ -1,7 +1,8 @@
 #pragma once
 
 #include <pthread.h>
-#include <stdint.h>
+
+#include <decomp.h>
 
 #ifdef __cplusplus
 
@@ -26,20 +27,20 @@ class NuMemoryManager {
     class IErrorHandler {
       public:
         virtual void HandleError(NuMemoryManager *manager, ErrorCode code, const char *msg);
-        virtual int OpenDump(NuMemoryManager *manager, const char *filename, unsigned int &id);
-        virtual void CloseDump(NuMemoryManager *manager, unsigned int id);
-        virtual void Dump(NuMemoryManager *manager, unsigned int id, const char *msg);
+        virtual int OpenDump(NuMemoryManager *manager, const char *filename, u32 &id);
+        virtual void CloseDump(NuMemoryManager *manager, u32 id);
+        virtual void Dump(NuMemoryManager *manager, u32 id, const char *msg);
     };
 
     class IEventHandler {
       public:
-        virtual bool AllocatePage(NuMemoryManager *manager, unsigned int size, unsigned int _unknown) = 0;
-        virtual bool ReleasePage(NuMemoryManager *manager, void *ptr, unsigned int _unknown) = 0;
+        virtual bool AllocatePage(NuMemoryManager *manager, u32 size, u32 _unknown) = 0;
+        virtual bool ReleasePage(NuMemoryManager *manager, void *ptr, u32 _unknown) = 0;
     };
 
   private:
     struct Header {
-        unsigned int value;
+        u32 value;
     };
 
     struct FreeHeader {
@@ -49,15 +50,15 @@ class NuMemoryManager {
     };
 
     struct DebugFlags {
-        unsigned short alloc_flags : 7;
-        unsigned short ctx_id : 5;
-        unsigned short unknown : 4;
+        u16 alloc_flags : 7;
+        u16 ctx_id : 5;
+        u16 unknown : 4;
     };
 
     struct DebugHeader {
         Header block_header;
         const char *name;
-        unsigned short category;
+        u16 category;
         DebugFlags flags;
     };
 
@@ -78,9 +79,9 @@ class NuMemoryManager {
 
     struct Page {
         void *original_ptr;
-        unsigned int size;
+        u32 size;
         Header *first_header;
-        unsigned int *end;
+        u32 *end;
         Page *next;
         Page *prev;
         bool is_external;
@@ -88,7 +89,7 @@ class NuMemoryManager {
 
     struct Context {
         const char *name;
-        unsigned int id;
+        u32 id;
 
         // Type uncertain.
         int used_block_count;
@@ -99,16 +100,16 @@ class NuMemoryManager {
     struct Stats {
         int unknown_00;
 
-        unsigned int free_frag_bytes;
-        unsigned int min_free_bytes;
-        unsigned int frag_count;
-        unsigned int max_frag_count;
-        unsigned int used_block_count;
+        u32 free_frag_bytes;
+        u32 min_free_bytes;
+        u32 frag_count;
+        u32 max_frag_count;
+        u32 used_block_count;
 
         // Type uncertain.
         int unknown_18;
 
-        unsigned int bytes_alloc_by_category[100];
+        u32 bytes_alloc_by_category[100];
     };
 
     enum PopDebugMode {
@@ -123,27 +124,27 @@ class NuMemoryManager {
     };
 
   private:
-    static unsigned int m_flags;
+    static u32 m_flags;
     static pthread_mutex_t *m_globalCriticalSection;
     static pthread_mutex_t m_globalCriticalSectionBuff;
-    static unsigned int m_headerSize;
+    static u32 m_headerSize;
     static NuMemoryManager *m_memoryManagers[0x100];
 
     const char **category_names;
-    unsigned int category_count;
+    u32 category_count;
     bool is_zombie;
-    unsigned int idx;
+    u32 idx;
     char name[0x80];
     IEventHandler *event_handler;
     IErrorHandler *error_handler;
     Page *pages;
 
-    unsigned int small_bin_has_free_map[32];
+    u32 small_bin_has_free_map[32];
 
     FreeHeader small_bins[256];
 
-    unsigned int large_bin_has_free_map;
-    unsigned int large_bin_dirty_map;
+    u32 large_bin_has_free_map;
+    u32 large_bin_dirty_map;
 
     FreeHeader large_bins[22];
 
@@ -164,47 +165,44 @@ class NuMemoryManager {
     char error_msg[0x800];
 
     void **stranded_blocks;
-    unsigned int stranded_block_count;
+    u32 stranded_block_count;
 
     // Types uncertain.
     int unknown_1814;
     int unknown_1818;
 
-    unsigned short override_category;
-    unsigned short override_category_bg_thread;
+    u16 override_category;
+    u16 override_category_bg_thread;
 
   public:
     NuMemoryManager(IEventHandler *event_handler, IErrorHandler *error_handler, const char *name,
-                    const char **category_names, unsigned int category_count);
+                    const char **category_names, u32 category_count);
     ~NuMemoryManager();
 
-    static void SetFlags(unsigned int flags);
+    static void SetFlags(u32 flags);
 
-    void *_BlockAlloc(unsigned int size, unsigned int alignment, unsigned int flags, const char *name,
-                      unsigned short category);
-    void BlockFree(void *ptr, unsigned int flags);
+    void *_BlockAlloc(u32 size, u32 alignment, u32 flags, const char *name, u16 category);
+    void BlockFree(void *ptr, u32 flags);
 
-    void AddPage(void *ptr, unsigned int size, bool _unknown);
+    void AddPage(void *ptr, u32 size, bool _unknown);
 
   private:
-    static unsigned int GetLargeBinIndex(unsigned int size);
-    static unsigned int GetSmallBinIndex(unsigned int size);
+    static u32 GetLargeBinIndex(u32 size);
+    static u32 GetSmallBinIndex(u32 size);
 
-    void *_TryBlockAlloc(unsigned int size, unsigned int alignment, unsigned int flags, const char *name,
-                         unsigned short category);
+    void *_TryBlockAlloc(u32 size, u32 alignment, u32 flags, const char *name, u16 category);
 
-    void ConvertToUsedBlock(FreeHeader *header, unsigned int alignment, unsigned int flags, const char *name,
-                            unsigned short category);
-    void *ClearUsedBlock(Header *header, unsigned int flags);
+    void ConvertToUsedBlock(FreeHeader *header, u32 alignment, u32 flags, const char *name, u16 category);
+    void *ClearUsedBlock(Header *header, u32 flags);
 
-    void ____WE_HAVE_RUN_OUT_OF_MEMORY_____(unsigned int size, const char *name);
+    void ____WE_HAVE_RUN_OUT_OF_MEMORY_____(u32 size, const char *name);
     void SetZombie();
 
     inline void MergeBlocks(Header *left, Header *right, const char *caller);
 
     void ReleaseUnreferencedPages();
 
-    unsigned int CalculateBlockSize(unsigned int size);
+    u32 CalculateBlockSize(u32 size);
 
     void BinLink(FreeHeader *header, bool keep_sorted);
     void BinUnlink(FreeHeader *header);
@@ -214,23 +212,23 @@ class NuMemoryManager {
 
     void Validate();
     void ValidateAddress(void *ptr, const char *caller);
-    void ValidateAllocAlignment(unsigned int alignment);
-    void ValidateAllocSize(unsigned int size);
+    void ValidateAllocAlignment(u32 alignment);
+    void ValidateAllocSize(u32 size);
     void ValidateBlockEndTags(Header *header, const char *caller);
-    void ValidateBlockFlags(Header *header, unsigned int flags, const char *caller);
+    void ValidateBlockFlags(Header *header, u32 flags, const char *caller);
     void ValidateBlockIsAllocated(Header *header, const char *caller);
     void ValidateBlockIsPaged(void *block, const char *caller);
 
     void StatsAddFragment(FreeHeader *header);
     void StatsRemoveFragment(FreeHeader *header);
 
-    unsigned int CalculateLargestFragmentSize();
-    unsigned int CalculateFreeBytes();
+    u32 CalculateLargestFragmentSize();
+    u32 CalculateFreeBytes();
 
-    void Dump(unsigned int _unknown, const char *filepath);
+    void Dump(u32 _unknown, const char *filepath);
 
-    void StrandBlocksForContext(Context *ctx, unsigned int &stranded_block_count, unsigned int &_unknown,
-                                Header *&largest_stranded, unsigned int &stranded_bytes_count);
+    void StrandBlocksForContext(Context *ctx, u32 &stranded_block_count, u32 &_unknown, Header *&largest_stranded,
+                                u32 &stranded_bytes_count);
     void FreeStrandedBlocks();
 };
 

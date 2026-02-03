@@ -3,10 +3,10 @@
 #include "nu2api.saga/numath/nuvec.h"
 
 struct nuvec4_s {
-    float x;
-    float y;
-    float z;
-    float w;
+    f32 x;
+    f32 y;
+    f32 z;
+    f32 w;
 };
 
 typedef struct nuvec4_s NUVEC4;

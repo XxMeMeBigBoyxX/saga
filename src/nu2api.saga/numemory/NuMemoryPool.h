@@ -1,15 +1,15 @@
 #include <pthread.h>
 
+#include "decomp.h"
+
 class NuMemoryPool {
   public:
     class IEventHandler {
       public:
-        virtual int AllocatePage(NuMemoryPool *pool, unsigned int _unknown, unsigned int _unknown2,
-                                 const char *_unknown3) = 0;
+        virtual int AllocatePage(NuMemoryPool *pool, u32 _unknown, u32 _unknown2, const char *_unknown3) = 0;
         virtual int ReleasePage(NuMemoryPool *pool, void *ptr) = 0;
         virtual void ForceReleasePage(NuMemoryPool *pool, void *ptr) = 0;
-        virtual void *AllocateLargeBlock(NuMemoryPool *pool, unsigned int size, unsigned int alignment,
-                                         const char *_unknown3) = 0;
+        virtual void *AllocateLargeBlock(NuMemoryPool *pool, u32 size, u32 alignment, const char *_unknown3) = 0;
         virtual void FreeLargeBlock(NuMemoryPool *pool, void *ptr) = 0;
     };
 
@@ -28,6 +28,6 @@ class NuMemoryPool {
     NuMemoryPool *next;
     const char *name;
 
-    static void InterlockedAdd(volatile unsigned int *augend, unsigned int addend);
-    static void InterlockedSub(volatile unsigned int *minuend, unsigned int subtrahend);
+    static void InterlockedAdd(volatile u32 *augend, u32 addend);
+    static void InterlockedSub(volatile u32 *minuend, u32 subtrahend);
 };

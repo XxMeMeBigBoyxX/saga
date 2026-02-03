@@ -20,18 +20,18 @@
 
 #include <stdarg.h>
 
-extern "C" void NuMtlInitEx(VARIPTR *buf, int32_t usually512) {
+extern "C" void NuMtlInitEx(VARIPTR *buf, i32 usually512) {
     // iVar2 = AndroidOBBUtils::LookupPackagePath(path, 1);
     char *path = "res/main.1060.com.wb.lego.tcs.obb";
 
     nudathdr_s *dat = NuDatOpen(path, buf, 0);
     NuDatSet(dat);
 
-    int32_t size = NuFileLoadBuffer("stuff\\text\\badwords.txt", buf->void_ptr, 0x100000);
+    i32 size = NuFileLoadBuffer("stuff\\text\\badwords.txt", buf->void_ptr, 0x100000);
     LOG_DEBUG("Loaded badwords.txt, size=%d", size);
 
     // replace \n with ,
-    for (int32_t i = 0; i < size; i++) {
+    for (i32 i = 0; i < size; i++) {
         if (buf->char_ptr[i] == '\r') {
             buf->char_ptr[i] = ',';
         } else if (buf->char_ptr[i] == '\n') {
@@ -41,7 +41,7 @@ extern "C" void NuMtlInitEx(VARIPTR *buf, int32_t usually512) {
     LOG_INFO("%*s", size, buf->char_ptr);
 }
 
-int32_t NuInitHardwarePS(VARIPTR *buffer_start, VARIPTR *buffer_end, int32_t zero) {
+i32 NuInitHardwarePS(VARIPTR *buffer_start, VARIPTR *buffer_end, i32 zero) {
     // NuIOSThreadInit();
     // NuIOS_IsLowEndDevice();
     // g_vaoLifetimeMutex = NuThreadCreateCriticalSection();
@@ -64,7 +64,7 @@ int32_t NuInitHardwarePS(VARIPTR *buffer_start, VARIPTR *buffer_end, int32_t zer
     return 0;
 }
 
-enum nuapi_setup_e : int32_t {
+enum nuapi_setup_e : i32 {
     NUAPI_SETUP_END = 0,
     NUAPI_SETUP_HOSTFS = 4,
     NUAPI_SETUP_CDDVDMODE = 5,
@@ -82,7 +82,7 @@ enum nuapi_setup_e : int32_t {
 };
 typedef enum nuapi_setup_e NUAPI_SETUP;
 
-int32_t NuInitHardwareParseArgsPS(int32_t setup, char **value) {
+i32 NuInitHardwareParseArgsPS(i32 setup, char **value) {
     return 0;
 }
 
@@ -95,33 +95,33 @@ extern "C" {
     nupad_s **Game_NuPad;
 };
 
-extern "C" int32_t NuInitHardware(VARIPTR *buf, VARIPTR *buf_end, int zero, ...) {
+extern "C" i32 NuInitHardware(VARIPTR *buf, VARIPTR *buf_end, int zero, ...) {
     // NuAPIInit();
     // ParseCommandLine();
 
-    int32_t hostfs = 0;
-    int32_t streamsize = 0x200000;
+    i32 hostfs = 0;
+    i32 streamsize = 0x200000;
     nupad_s *pad0 = NULL;
     nupad_s *pad1 = NULL;
-    int32_t videomode = 2;
-    int32_t resolution_x = 0;
-    int32_t resolution_y = 0;
+    i32 videomode = 2;
+    i32 resolution_x = 0;
+    i32 resolution_y = 0;
     NUVIDEO_SWAPMODE swapmode = NUVIDEO_SWAPMODE_FIELDSYNC;
-    int32_t flags = 0;
+    i32 flags = 0;
 
     va_list args;
     va_start(args, zero);
 
     NUAPI_SETUP setup;
     do {
-        setup = (NUAPI_SETUP)va_arg(args, int32_t);
+        setup = (NUAPI_SETUP)va_arg(args, i32);
         LOG_DEBUG("NuInitHardware setup=%d", setup);
         switch (setup) {
             case NUAPI_SETUP_HOSTFS:
-                hostfs = va_arg(args, int32_t);
+                hostfs = va_arg(args, i32);
                 break;
             case NUAPI_SETUP_STREAMSIZE:
-                streamsize = va_arg(args, int32_t);
+                streamsize = va_arg(args, i32);
                 break;
             case NUAPI_SETUP_PAD0:
                 pad0 = va_arg(args, nupad_s *);
@@ -130,32 +130,32 @@ extern "C" int32_t NuInitHardware(VARIPTR *buf, VARIPTR *buf_end, int zero, ...)
                 pad1 = va_arg(args, nupad_s *);
                 break;
             case NUAPI_SETUP_VIDEOMODE:
-                videomode = va_arg(args, int32_t);
+                videomode = va_arg(args, i32);
                 break;
             case NUAPI_SETUP_RESOLUTION:
-                resolution_x = va_arg(args, int32_t);
-                resolution_y = va_arg(args, int32_t);
+                resolution_x = va_arg(args, i32);
+                resolution_y = va_arg(args, i32);
                 break;
             case NUAPI_SETUP_SWAPMODE:
-                swapmode = (NUVIDEO_SWAPMODE)va_arg(args, int32_t);
+                swapmode = (NUVIDEO_SWAPMODE)va_arg(args, i32);
                 break;
             case NUAPI_SETUP_0x46:
-                if (va_arg(args, int32_t) != 0) {
+                if (va_arg(args, i32) != 0) {
                     flags |= 0x4;
                 }
                 break;
             case NUAPI_SETUP_0x47:
-                if (va_arg(args, int32_t) != 0) {
+                if (va_arg(args, i32) != 0) {
                     flags |= 0x8;
                 }
                 break;
             case NUAPI_SETUP_0x49:
-                if (va_arg(args, int32_t) != 0) {
+                if (va_arg(args, i32) != 0) {
                     flags |= 0x20;
                 }
                 break;
             case NUAPI_SETUP_0x4b:
-                if (va_arg(args, int32_t) != 0) {
+                if (va_arg(args, i32) != 0) {
                     flags |= 0x80;
                 }
                 break;
@@ -180,11 +180,11 @@ extern "C" int32_t NuInitHardware(VARIPTR *buf, VARIPTR *buf_end, int zero, ...)
     return 0;
 }
 
-uint16_t MakeSaveHash(void) {
+u16 MakeSaveHash(void) {
     return Game.completion;
 }
 
-int32_t drawautosaveicon = 0;
+i32 drawautosaveicon = 0;
 
 void DrawAutoSaveIcon(void) {
     drawautosaveicon = 1;
@@ -213,13 +213,13 @@ void InitGameBeforeConfig() {
                          sizeof(SuperOptions));
 }
 
-void NuPhoneOSRegisterEventCallback(int32_t param_1, void (*param_2)()) {
+void NuPhoneOSRegisterEventCallback(i32 param_1, void (*param_2)()) {
 }
 
 void DummyCallback() {
 }
 
-void InitOnce(int32_t argc, char **param_2) {
+void InitOnce(i32 argc, char **param_2) {
     NuPhoneOSRegisterEventCallback(1, /* TouchCallback */ DummyCallback);
     NuPhoneOSRegisterEventCallback(3, /* SystemPauseCallback */ DummyCallback);
     NuPhoneOSRegisterEventCallback(6, /* SystemDidBecomeActiveCallback */ DummyCallback);
@@ -228,10 +228,10 @@ void InitOnce(int32_t argc, char **param_2) {
         SUPERBUFFERSIZE -= 0x38370;
     }
 
-    int32_t size = SUPERBUFFERSIZE;
+    i32 size = SUPERBUFFERSIZE;
 
     permbuffer_base.void_ptr = NuMemoryGet()->GetThreadMem()->_BlockAlloc(size, 4, 1, "", 0);
-    superbuffer_end.void_ptr = (void *)(SUPERBUFFERSIZE + (size_t)permbuffer_base.void_ptr);
+    superbuffer_end.void_ptr = (void *)(SUPERBUFFERSIZE + (ssize_t)permbuffer_base.void_ptr);
     original_permbuffer_base.void_ptr = permbuffer_base.void_ptr;
     InitGameBeforeConfig();
 
@@ -268,12 +268,12 @@ void InitOnce(int32_t argc, char **param_2) {
     // app_tbdrawset = NuTimeBarCreateSet(0);
 }
 
-int32_t Episode_ContainsArea(int32_t areaId, int32_t *areaIndex) {
-    for (int32_t i = 0; i < EPISODECOUNT; i++) {
+i32 Episode_ContainsArea(i32 areaId, i32 *areaIndex) {
+    for (i32 i = 0; i < EPISODECOUNT; i++) {
         EPISODEDATA *episode = &EDataList[i];
 
-        for (int32_t j = 0; j < episode->area_count; j++) {
-            int16_t id = episode->area_ids[j];
+        for (i32 j = 0; j < episode->area_count; j++) {
+            i16 id = episode->area_ids[j];
             if (id == areaId) {
                 if (areaIndex != NULL) {
                     *areaIndex = j;
@@ -320,7 +320,7 @@ void InitGameAfterConfig(void) {
     GOLDBRICKFORCHALLENGE = 1;
 
     if (EPISODECOUNT > 0) {
-        int32_t p = (EPISODECOUNT - 1) * POINTS_PER_SUPERSTORY;
+        i32 p = (EPISODECOUNT - 1) * POINTS_PER_SUPERSTORY;
         CompletionPointInfo[0] = POINTS_PER_SUPERSTORY + CompletionPointInfo[0] + p;
         COMPLETIONPOINTS = p + POINTS_PER_SUPERSTORY + COMPLETIONPOINTS;
     }
@@ -328,12 +328,12 @@ void InitGameAfterConfig(void) {
     AREADATA *pAVar10 = ADataList;
 
     if (0 < AREACOUNT) {
-        int32_t areaIndex;
-        int32_t areaId = 0;
+        i32 areaIndex;
+        i32 areaId = 0;
         AREADATA *area = ADataList;
         AREAFLAGS areaFlags;
         do {
-            int32_t episode = Episode_ContainsArea(areaId, &areaIndex);
+            i32 episode = Episode_ContainsArea(areaId, &areaIndex);
             area->episode_index = episode;
             area->area_index = (byte)areaIndex;
             if ((area != HUB_ADATA) && (areaFlags = area->flags, (areaFlags & 0x2022) == 0)) {
@@ -356,9 +356,9 @@ void InitGameAfterConfig(void) {
                             GOLDBRICKPOINTS = GOLDBRICKPOINTS + 1;
                         }
                     } else {
-                        int32_t local_24 = COMPLETIONPOINTS + POINTS_PER_MINIKIT + POINTS_PER_TRUEJEDI;
-                        int32_t local_28 = POINTS_PER_MINIKIT + POINTS_PER_TRUEJEDI + CompletionPointInfo[1];
-                        int32_t iVar4 = GOLDBRICKPOINTS + 2;
+                        i32 local_24 = COMPLETIONPOINTS + POINTS_PER_MINIKIT + POINTS_PER_TRUEJEDI;
+                        i32 local_28 = POINTS_PER_MINIKIT + POINTS_PER_TRUEJEDI + CompletionPointInfo[1];
+                        i32 iVar4 = GOLDBRICKPOINTS + 2;
                         if (BOTHTRUEJEDIGOLDBRICKS != 0) {
                             local_24 = local_24 + POINTS_PER_TRUEJEDI;
                             local_28 = local_28 + POINTS_PER_TRUEJEDI;
@@ -398,21 +398,21 @@ void InitGameAfterConfig(void) {
     // int local_24;
     // int local_20[3];
 
-    // int16_t uVar4 = tUNKNOWN;
+    // i16 uVar4 = tUNKNOWN;
 
     AREADATA *pAVar2 = ADataList;
-    int32_t iVar3 = AREACOUNT;
-    int32_t areaId = LEVELCOUNT;
+    i32 iVar3 = AREACOUNT;
+    i32 areaId = LEVELCOUNT;
 
-    // int16_t tab = tUNKNOWN;
+    // i16 tab = tUNKNOWN;
     AREADATA *area;
-    uint8_t episode;
-    uint8_t bVar1;
+    u8 episode;
+    u8 bVar1;
 
-    int32_t areaIndex;
+    i32 areaIndex;
 
     if (0 < LEVELCOUNT) {
-        int32_t i = 0;
+        i32 i = 0;
         LEVELDATA *level = LDataList;
         do {
             if (799 < level->field2_0x60) {
@@ -427,7 +427,7 @@ void InitGameAfterConfig(void) {
                 area = pAVar2;
                 do {
                     if (area->field28_0x7d != 0) {
-                        int32_t iVar4 = 0;
+                        i32 iVar4 = 0;
                         do {
                             if (area->field2_0x60[iVar4] == i) {
                                 level->field22_0xaf = (byte)areaIndex;
@@ -475,10 +475,10 @@ void InitGameAfterConfig(void) {
 
     MissionSys = Missions_Configure("levels\\missions.txt", &permbuffer_ptr, &permbuffer_end, &Game.mission_save);
     if (MissionSys != NULL) {
-        areaId = (uint32_t)MissionSys->count * POINTS_PER_MISSION;
+        areaId = (u32)MissionSys->count * POINTS_PER_MISSION;
         COMPLETIONPOINTS = COMPLETIONPOINTS + areaId;
         CompletionPointInfo[3] = CompletionPointInfo[3] + areaId;
-        GOLDBRICKPOINTS = GOLDBRICKPOINTS + (uint32_t)MissionSys->count;
+        GOLDBRICKPOINTS = GOLDBRICKPOINTS + (u32)MissionSys->count;
     }
 
     // Tag_DrawIconFn = Tag_DrawIcon_LSW;
@@ -513,8 +513,8 @@ void InitGameAfterConfig(void) {
     //  LEGOHINT_FREEPLAYTOGGLE = 600;
     //  PUNCHGAP = 0.3;
     //  PUNCHCHARGAP = 0.3;
-    //  DoubleJump_AlwaysReachJump2Height = 1;
-    //  DoubleJump_JediSlam = 1;
+    //  f64Jump_AlwaysReachJump2Height = 1;
+    //  f64Jump_JediSlam = 1;
     //  CanPunchGirls = 0;
     //  ExtraHurtSfxFn = ExtraHurtSfx_LSW;
     //  ExtraDieSfxFn = ExtraDieSfx_LSW;
@@ -786,7 +786,7 @@ static void LoadPermData(BGPROCINFO *proc) {
     VARIPTR legalTex;
     legalTex.addr = superbuffer_end.addr + -0x400000;
 
-    int32_t legal_tid = NuTexRead("stuff\\legal\\LEGAL_ENGLISH", &legalTex, &superbuffer_end);
+    i32 legal_tid = NuTexRead("stuff\\legal\\LEGAL_ENGLISH", &legalTex, &superbuffer_end);
 
     MusicInfo = ConfigureMusic("audio\\music.txt", &permbuffer_ptr, &permbuffer_end);
 

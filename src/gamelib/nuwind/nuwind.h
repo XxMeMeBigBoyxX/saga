@@ -7,7 +7,7 @@ struct nuwind_s {
     int unk0[8];
     int unk1;
     NUVEC4 unk2;
-    float unk3;
+    f32 unk3;
 };
 
 typedef struct nuwind_s NUWIND;
@@ -16,7 +16,7 @@ typedef struct nuwind_s NUWIND;
 extern "C" {
 #endif
 
-void NuWindInitialise(NUWIND *wind);
+    void NuWindInitialise(NUWIND *wind);
 
 #ifdef __cplusplus
 }

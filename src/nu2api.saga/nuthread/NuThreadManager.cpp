@@ -5,10 +5,10 @@ NuThreadManager::NuThreadManager() {
     this->thread = NuThreadInitPS();
 }
 
-int32_t NuThreadManager::AllocTLS() {
-    for (int32_t i = 0; i < 32; i++) {
+i32 NuThreadManager::AllocTLS() {
+    for (i32 i = 0; i < 32; i++) {
         if ((this->bitflags >> (i & 0x1f) & 1) == 0) {
-            this->bitflags |= 1 << ((uint8_t)i & 0x1f);
+            this->bitflags |= 1 << ((u8)i & 0x1f);
             return i;
         }
     }

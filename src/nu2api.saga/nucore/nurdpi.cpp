@@ -63,7 +63,7 @@ static int hexcodetoint(char c) {
 }
 
 static int isnum(char c) {
-    if (((unsigned int)c - 0x30) < 10) {
+    if (((u32)c - 0x30) < 10) {
         return 1;
     }
 

@@ -12,15 +12,15 @@
 #define ALLOC_MASK 0x78000000
 #define BLOCK_SIZE_MASK ~ALLOC_MASK
 #define BLOCK_SIZE(header_val) ((header_val) & BLOCK_SIZE_MASK) * 4
-#define END_TAG(block, size) (unsigned int *)((int)block + size - 4)
-#define END_TAG_HI(block, size) (unsigned int *)((int)block + size - 8)
+#define END_TAG(block, size) (u32 *)((ssize_t)block + size - 4)
+#define END_TAG_HI(block, size) (u32 *)((ssize_t)block + size - 8)
 
 #define STRANDED_DUMP_SUFFIX "_stranded.txt"
 
-unsigned int NuMemoryManager::m_flags;
+u32 NuMemoryManager::m_flags;
 pthread_mutex_t *NuMemoryManager::m_globalCriticalSection;
 pthread_mutex_t NuMemoryManager::m_globalCriticalSectionBuff;
-unsigned int NuMemoryManager::m_headerSize;
+u32 NuMemoryManager::m_headerSize;
 
 // A table of values for counting leading zeros in the binary representation of
 // a 32-bit integer.
@@ -29,7 +29,7 @@ static char g_clzTable[] = {
     0x01, 0x0a, 0x04, 0x13, 0x06, 0x0f, 0x0d, 0x17, 0x0b, 0x14, 0x10, 0x18, 0x15, 0x19, 0x1a, 0x1b,
 };
 
-static inline unsigned int CountLeadingZeros(unsigned int value) {
+static inline u32 CountLeadingZeros(u32 value) {
     // An almost-branchless algorithm for calculating the leading zeros of a
     // binary value by exploiting de Bruijn sequences. The value is hashed
     // using a perfect hash function and the hash provides the index to a table
@@ -50,7 +50,7 @@ static inline unsigned int CountLeadingZeros(unsigned int value) {
 NuMemoryManager *NuMemoryManager::m_memoryManagers[0x100];
 
 NuMemoryManager::NuMemoryManager(IEventHandler *event_handler, IErrorHandler *error_handler, const char *name,
-                                 const char **category_names, unsigned int category_count) {
+                                 const char **category_names, u32 category_count) {
     pthread_mutexattr_t attrs;
 
     this->event_handler = event_handler;
@@ -156,7 +156,7 @@ NuMemoryManager::~NuMemoryManager() {
     pthread_mutex_destroy(&this->mutex);
 }
 
-void NuMemoryManager::SetFlags(unsigned int flags) {
+void NuMemoryManager::SetFlags(u32 flags) {
     m_flags = flags;
 
     if ((flags & MEM_MANAGER_EXTENDED_DEBUG) != 0) {
@@ -169,8 +169,7 @@ void NuMemoryManager::SetFlags(unsigned int flags) {
     }
 }
 
-void *NuMemoryManager::_BlockAlloc(unsigned int size, unsigned int alignment, unsigned int flags, const char *name,
-                                   unsigned short category) {
+void *NuMemoryManager::_BlockAlloc(u32 size, u32 alignment, u32 flags, const char *name, u16 category) {
     void *ptr = this->_TryBlockAlloc(size, alignment, flags, name, category);
 
     if (ptr == NULL) {
@@ -180,19 +179,17 @@ void *NuMemoryManager::_BlockAlloc(unsigned int size, unsigned int alignment, un
     return ptr;
 }
 
-void *NuMemoryManager::_TryBlockAlloc(unsigned int size, unsigned int alignment, unsigned int flags, const char *name,
-                                      unsigned short category) {
+void *NuMemoryManager::_TryBlockAlloc(u32 size, u32 alignment, u32 flags, const char *name, u16 category) {
     // UNIMPLEMENTED();
     return malloc(size);
 }
 
-void NuMemoryManager::ConvertToUsedBlock(FreeHeader *header, unsigned int alignment, unsigned int flags,
-                                         const char *name, unsigned short category) {
-    unsigned int align_mask;
-    unsigned int header_value;
-    unsigned int aligned;
-    unsigned int *end_tag;
-    unsigned int manager_idx;
+void NuMemoryManager::ConvertToUsedBlock(FreeHeader *header, u32 alignment, u32 flags, const char *name, u16 category) {
+    u32 align_mask;
+    u32 header_value;
+    u32 aligned;
+    u32 *end_tag;
+    u32 manager_idx;
 
     align_mask = -(CountLeadingZeros(alignment >> 2) << 0x1b);
     header_value = header->block_header.value & BLOCK_SIZE_MASK;
@@ -209,7 +206,7 @@ void NuMemoryManager::ConvertToUsedBlock(FreeHeader *header, unsigned int alignm
         *end_tag = aligned & BLOCK_SIZE_MASK;
     } else if (manager_idx >= 0x1d) {
         *end_tag = aligned | HEADER_MGR_HI_MASK;
-        *(unsigned int *)((int)header + BLOCK_SIZE(header->block_header.value) - 8) = manager_idx;
+        *(u32 *)((ssize_t)header + BLOCK_SIZE(header->block_header.value) - 8) = manager_idx;
     } else {
         *end_tag = ((manager_idx + 1) << 0x1b) | aligned & BLOCK_SIZE_MASK;
     }
@@ -236,16 +233,16 @@ void NuMemoryManager::ConvertToUsedBlock(FreeHeader *header, unsigned int alignm
     }
 }
 
-void *NuMemoryManager::ClearUsedBlock(Header *header, unsigned int flags) {
-    unsigned int size;
+void *NuMemoryManager::ClearUsedBlock(Header *header, u32 flags) {
+    u32 size;
     void *ptr;
-    unsigned int size_minus_header;
-    unsigned int *end_tag;
-    unsigned int tag_value;
-    unsigned int manager_idx;
-    unsigned int available_size;
+    u32 size_minus_header;
+    u32 *end_tag;
+    u32 tag_value;
+    u32 manager_idx;
+    u32 available_size;
 
-    ptr = (void *)((int)header + m_headerSize);
+    ptr = (void *)((ssize_t)header + m_headerSize);
     size = BLOCK_SIZE(header->value);
     size_minus_header = size - m_headerSize;
 
@@ -267,9 +264,9 @@ void *NuMemoryManager::ClearUsedBlock(Header *header, unsigned int flags) {
     return ptr;
 }
 
-void NuMemoryManager::____WE_HAVE_RUN_OUT_OF_MEMORY_____(unsigned int size, const char *name) {
-    unsigned int largest_fragment_size;
-    unsigned int free_bytes;
+void NuMemoryManager::____WE_HAVE_RUN_OUT_OF_MEMORY_____(u32 size, const char *name) {
+    u32 largest_fragment_size;
+    u32 free_bytes;
     char requested_str[14];
     char largest_fragment_size_str[14];
     char free_bytes_str[14];
@@ -302,7 +299,7 @@ void NuMemoryManager::SetZombie() {
     this->is_zombie = true;
 }
 
-void NuMemoryManager::BlockFree(void *ptr, unsigned int flags) {
+void NuMemoryManager::BlockFree(void *ptr, u32 flags) {
     NuMemoryManager *manager;
 
     if (ptr == NULL) {
@@ -315,13 +312,13 @@ void NuMemoryManager::BlockFree(void *ptr, unsigned int flags) {
     // at latest.
     while (true) {
         Header *header;
-        unsigned int *end_tag;
-        unsigned int tag_value;
-        unsigned int manager_idx;
+        u32 *end_tag;
+        u32 tag_value;
+        u32 manager_idx;
 
         manager->ValidateAddress(ptr, "BlockFree");
 
-        header = (Header *)((int)ptr - m_headerSize);
+        header = (Header *)((ssize_t)ptr - m_headerSize);
 
         manager->ValidateBlockIsAllocated(header, "BlockFree");
         manager->ValidateBlockFlags(header, flags, "BlockFree");
@@ -337,9 +334,9 @@ void NuMemoryManager::BlockFree(void *ptr, unsigned int flags) {
         }
 
         if (manager->idx == manager_idx) {
-            unsigned int header_value;
+            u32 header_value;
             Header *right;
-            unsigned int left_end;
+            u32 left_end;
             FreeHeader *final;
 
             manager->ValidateBlockIsPaged(ptr, "BlockFree");
@@ -360,7 +357,7 @@ void NuMemoryManager::BlockFree(void *ptr, unsigned int flags) {
             // See if we can combine this block with the one to the right.
             // It seems like a big assumption that there's a valid block to the
             // right in memory, but that seems to be what they assume.
-            right = (Header *)((int)header + BLOCK_SIZE(header->value));
+            right = (Header *)((ssize_t)header + BLOCK_SIZE(header->value));
             if ((right->value & ALLOC_MASK) == 0) {
                 manager->MergeBlocks(header, right, "BlockFree[R]");
             }
@@ -370,9 +367,9 @@ void NuMemoryManager::BlockFree(void *ptr, unsigned int flags) {
             // See if we can combine this block with the one to the left.
             // Again, it seems like a big assumption, but the assumption is
             // made.
-            left_end = *(unsigned int *)((int)header - 4);
+            left_end = *(u32 *)((ssize_t)header - 4);
             if ((left_end & HEADER_MGR_HI_MASK) == 0) {
-                final = (FreeHeader *)((int)header - BLOCK_SIZE(left_end));
+                final = (FreeHeader *)((ssize_t)header - BLOCK_SIZE(left_end));
                 manager->MergeBlocks(&final->block_header, header, "BlockFree[L]");
             }
 
@@ -394,11 +391,11 @@ void NuMemoryManager::BlockFree(void *ptr, unsigned int flags) {
 }
 
 inline void NuMemoryManager::MergeBlocks(Header *left, Header *right, const char *caller) {
-    unsigned int combined_values;
-    unsigned int alloc_value;
-    unsigned int new_value;
-    unsigned int combined_no_hi_bit;
-    unsigned int *end_tag;
+    u32 combined_values;
+    u32 alloc_value;
+    u32 new_value;
+    u32 combined_no_hi_bit;
+    u32 *end_tag;
 
     ValidateBlockEndTags(right, "BlockFree[R]");
 
@@ -422,10 +419,10 @@ inline void NuMemoryManager::MergeBlocks(Header *left, Header *right, const char
     }
 }
 
-void NuMemoryManager::AddPage(void *ptr, unsigned int size, bool _unknown) {
+void NuMemoryManager::AddPage(void *ptr, u32 size, bool _unknown) {
     Page *page;
 
-    page = (Page *)ALIGN((int)ptr, 0x4);
+    page = (Page *)ALIGN((ssize_t)ptr, 0x4);
 
     memset(page, 0, sizeof(Page));
 
@@ -443,10 +440,10 @@ void NuMemoryManager::ReleaseUnreferencedPages() {
     pthread_mutex_unlock(&this->mutex);
 }
 
-unsigned int NuMemoryManager::CalculateBlockSize(unsigned int size) {
-    unsigned int aligned;
+u32 NuMemoryManager::CalculateBlockSize(u32 size) {
+    u32 aligned;
     int block_size;
-    unsigned int mem_size;
+    u32 mem_size;
 
     aligned = ALIGN(size, 0x4);
     mem_size = MAX(aligned, 8);
@@ -459,19 +456,19 @@ unsigned int NuMemoryManager::CalculateBlockSize(unsigned int size) {
     return block_size;
 }
 
-unsigned int NuMemoryManager::GetLargeBinIndex(unsigned int size) {
+u32 NuMemoryManager::GetLargeBinIndex(u32 size) {
     // This could be negative if the size passed in were small enough, but in
     // practice this function is only called for allocations of sufficient size.
     return 0x15 - CountLeadingZeros(size);
 }
 
-unsigned int NuMemoryManager::GetSmallBinIndex(unsigned int size) {
+u32 NuMemoryManager::GetSmallBinIndex(u32 size) {
     return size >> 2;
 }
 
 void NuMemoryManager::BinLink(NuMemoryManager::FreeHeader *header, bool keep_sorted) {
-    unsigned int size;
-    unsigned int bin_idx;
+    u32 size;
+    u32 bin_idx;
 
     size = BLOCK_SIZE(header->block_header.value);
 
@@ -507,8 +504,8 @@ void NuMemoryManager::BinLink(NuMemoryManager::FreeHeader *header, bool keep_sor
 
 void NuMemoryManager::BinUnlink(NuMemoryManager::FreeHeader *header) {
     FreeHeader *next;
-    unsigned int size;
-    unsigned int bin_idx;
+    u32 size;
+    u32 bin_idx;
 
     // Remove the header from the linked list.
     next = header->next;
@@ -537,8 +534,8 @@ void NuMemoryManager::BinUnlink(NuMemoryManager::FreeHeader *header) {
 
         if (this->large_bins[bin_idx].next == NULL) {
             // Rotate left.
-            unsigned int shift = 0x1f - bin_idx;
-            this->large_bin_has_free_map &= ((unsigned int)-2 << shift) | ((unsigned int)-2 >> (0x20 - shift));
+            u32 shift = 0x1f - bin_idx;
+            this->large_bin_has_free_map &= ((u32)-2 << shift) | ((u32)-2 >> (0x20 - shift));
         }
     }
 
@@ -564,10 +561,10 @@ bool NuMemoryManager::PopContext(NuMemoryManager::PopDebugMode debug_mode) {
     char ctx_name[128];
     char largest_leak[128];
     char leak_value[257];
-    unsigned int stranded_block_count;
-    unsigned int stranded_bytes_count;
-    unsigned int leak_count;
-    unsigned int _unknown;
+    u32 stranded_block_count;
+    u32 stranded_bytes_count;
+    u32 leak_count;
+    u32 _unknown;
     Header *largest_stranded;
     Context *top_ctx;
 
@@ -645,7 +642,7 @@ bool NuMemoryManager::PopContext(NuMemoryManager::PopDebugMode debug_mode) {
             strcpy(largest_leak, block_name);
 
             if ((largest_stranded_dbg->flags.alloc_flags & MEM_ALLOC_UNKNOWN_4) != 0) {
-                unsigned int value_len;
+                u32 value_len;
                 int i;
 
                 value_len = MIN(BLOCK_SIZE(largest_stranded->value) - m_headerSize - 4, 0x100);
@@ -654,7 +651,7 @@ bool NuMemoryManager::PopContext(NuMemoryManager::PopDebugMode debug_mode) {
                     char byte;
 
                     if ((unsigned char)largest_leak[i] - 0x30 < 10 || (unsigned char)largest_leak[i] - 0x41 < 0x1a) {
-                        byte = *(char *)((int)largest_stranded + m_headerSize + i);
+                        byte = *(char *)((ssize_t)largest_stranded + m_headerSize + i);
                     } else {
                         byte = '_';
                     }
@@ -715,7 +712,7 @@ void NuMemoryManager::Validate() {
 
 void NuMemoryManager::ValidateAddress(void *ptr, const char *caller) {
     // Addresses should always be aligned to at minimum 4 bytes.
-    if (((unsigned int)ptr & 3) != 0) {
+    if (((ssize_t)ptr & 3) != 0) {
         char address[19];
 
         NuStrFormatAddress(address, sizeof(address), ptr);
@@ -733,16 +730,16 @@ void NuMemoryManager::ValidateAddress(void *ptr, const char *caller) {
     }
 }
 
-void NuMemoryManager::ValidateAllocAlignment(unsigned int alignment) {
+void NuMemoryManager::ValidateAllocAlignment(u32 alignment) {
 }
 
-void NuMemoryManager::ValidateAllocSize(unsigned int size) {
+void NuMemoryManager::ValidateAllocSize(u32 size) {
 }
 
 void NuMemoryManager::ValidateBlockEndTags(Header *header, const char *caller) {
 }
 
-void NuMemoryManager::ValidateBlockFlags(Header *header, unsigned int flags, const char *caller) {
+void NuMemoryManager::ValidateBlockFlags(Header *header, u32 flags, const char *caller) {
 }
 
 void NuMemoryManager::ValidateBlockIsAllocated(Header *header, const char *caller) {
@@ -762,17 +759,17 @@ void NuMemoryManager::StatsRemoveFragment(NuMemoryManager::FreeHeader *header) {
     this->stats.frag_count--;
 }
 
-unsigned int NuMemoryManager::CalculateLargestFragmentSize() {
+u32 NuMemoryManager::CalculateLargestFragmentSize() {
 }
 
-unsigned int NuMemoryManager::CalculateFreeBytes() {
+u32 NuMemoryManager::CalculateFreeBytes() {
 }
 
-void NuMemoryManager::Dump(unsigned int _unknown, const char *filepath) {
+void NuMemoryManager::Dump(u32 _unknown, const char *filepath) {
 }
 
-void NuMemoryManager::StrandBlocksForContext(Context *ctx, unsigned int &stranded_block_count, unsigned int &_unknown,
-                                             Header *&largest_stranded, unsigned int &stranded_bytes_count) {
+void NuMemoryManager::StrandBlocksForContext(Context *ctx, u32 &stranded_block_count, u32 &_unknown,
+                                             Header *&largest_stranded, u32 &stranded_bytes_count) {
 }
 
 void NuMemoryManager::FreeStrandedBlocks() {
@@ -781,12 +778,12 @@ void NuMemoryManager::FreeStrandedBlocks() {
 void NuMemoryManager::IErrorHandler::HandleError(NuMemoryManager *manager, ErrorCode code, const char *msg) {
 }
 
-int NuMemoryManager::IErrorHandler::OpenDump(NuMemoryManager *manager, const char *filename, unsigned int &id) {
+int NuMemoryManager::IErrorHandler::OpenDump(NuMemoryManager *manager, const char *filename, u32 &id) {
     return 0;
 }
 
-void NuMemoryManager::IErrorHandler::CloseDump(NuMemoryManager *manager, unsigned int id) {
+void NuMemoryManager::IErrorHandler::CloseDump(NuMemoryManager *manager, u32 id) {
 }
 
-void NuMemoryManager::IErrorHandler::Dump(NuMemoryManager *manager, unsigned int id, const char *msg) {
+void NuMemoryManager::IErrorHandler::Dump(NuMemoryManager *manager, u32 id, const char *msg) {
 }

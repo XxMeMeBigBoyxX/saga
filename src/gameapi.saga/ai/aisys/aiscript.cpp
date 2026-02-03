@@ -35,12 +35,12 @@ static int condition_has_no_goto;
 AIACTIONDEF *game_aiactiondefs;
 static AICONDITIONDEF *game_aiconditiondefs;
 
-static float Condition_AlwaysTrue(AISYS *sys, AISCRIPTPROCESS *processor, AIPACKET *packet, char *arg, void *void_arg) {
-    return *(float *)&void_arg;
+static f32 Condition_AlwaysTrue(AISYS *sys, AISCRIPTPROCESS *processor, AIPACKET *packet, char *arg, void *void_arg) {
+    return *(f32 *)&void_arg;
 }
 
 static void *Condition_AlwaysTrueInit(AISYS *sys, char *arg, AISCRIPT *script) {
-    float value;
+    f32 value;
 
     if (arg != NULL && NuStrLen(arg) != 0) {
         value = NuAToF(arg);
@@ -63,23 +63,23 @@ static int ExpressionNameLookupFailed;
 
 int AiParseExpressionFailed;
 
-GAMEPARAMTOFLOAT *GameParamToFloatFn;
+GAMEPARAMTOf32 *GameParamTof32Fn;
 
-static int AiParseExpressionNameLoopup(char *name, float *float_out, int *int_out) {
-    float value;
+static int AiParseExpressionNameLoopup(char *name, f32 *f32_out, int *int_out) {
+    f32 value;
 
     ExpressionRequiredNameLookup = 1;
     value = 0.0f;
     ExpressionNameLookupFailed = 1;
 
-    if (GameParamToFloatFn != NULL) {
-        if ((*GameParamToFloatFn)(NULL, NULL, name, &value) != 0) {
+    if (GameParamTof32Fn != NULL) {
+        if ((*GameParamTof32Fn)(NULL, NULL, name, &value) != 0) {
             ExpressionNameLookupFailed = 0;
         }
     }
 
-    if (float_out != NULL) {
-        *float_out = value;
+    if (f32_out != NULL) {
+        *f32_out = value;
     }
 
     if (int_out != NULL) {
@@ -89,8 +89,8 @@ static int AiParseExpressionNameLoopup(char *name, float *float_out, int *int_ou
     return 0;
 }
 
-float AiParseExpression(char *expr) {
-    float value;
+f32 AiParseExpression(char *expr) {
+    f32 value;
 
     ExpressionRequiredNameLookup = 0;
     ExpressionNameLookupFailed = 0;
@@ -114,7 +114,7 @@ static void *AIScriptBufferAlloc(VARIPTR *buf, VARIPTR *buf_end, int size) {
     } else {
         if (buf_end->addr > buf->addr + size) {
             ret = (void *)ALIGN(buf->addr, 0x10);
-            buf->void_ptr = (void *)((int)ret + size);
+            buf->void_ptr = (void *)((ssize_t)ret + size);
             memset(ret, 0, size);
         } else {
             // Debug logging goes here.
@@ -590,7 +590,7 @@ static void xState(NUFPAR *parser) {
 }
 
 static void xParam(NUFPAR *parser) {
-    unsigned int param_idx;
+    u32 param_idx;
 
     if (load_aiscript == NULL) {
         return;
@@ -606,19 +606,19 @@ static void xParam(NUFPAR *parser) {
     }
 
     load_aiscript->params[param_idx].name = AIScriptCopyString(parser->word_buf_ptr, load_buff, load_endbuff);
-    load_aiscript->params[param_idx].default_val = NuFParGetFloat(parser);
+    load_aiscript->params[param_idx].default_val = NuFParGetf32(parser);
 }
 
 static void xConst(NUFPAR *parser) {
     int cur;
-    float default_val;
+    f32 default_val;
 
     NuStrLen(parser->word_buf_ptr);
     NuFParGetWord(parser);
     NuStrNCpy(aiscript_const[aiscript_const_curr].name, parser->word_buf_ptr, 0x20);
 
     cur = aiscript_const_curr;
-    default_val = NuFParGetFloat(parser);
+    default_val = NuFParGetf32(parser);
     aiscript_const_curr++;
 
     aiscript_const[cur].default_val = default_val;

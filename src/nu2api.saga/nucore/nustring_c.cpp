@@ -354,9 +354,9 @@ unsigned char NuToUpper(unsigned char c) {
     return c;
 }
 
-float NuAToF(char *string) {
-    float dividend = 0.0f;
-    float divisor = 1.0f;
+f32 NuAToF(char *string) {
+    f32 dividend = 0.0f;
+    f32 divisor = 1.0f;
 
     char c = *string;
     string++;
@@ -370,7 +370,7 @@ float NuAToF(char *string) {
 
     while (c >= '0' && c <= '9') {
         dividend *= 10.0f;
-        dividend += (float)(c - 0x30);
+        dividend += (f32)(c - 0x30);
 
         c = *string;
         string++;
@@ -383,7 +383,7 @@ float NuAToF(char *string) {
         while (c >= '0' && c <= '9') {
             divisor *= 10.0f;
             dividend *= 10.0f;
-            dividend += (float)(c - 0x30);
+            dividend += (f32)(c - 0x30);
 
             c = *string;
             string++;

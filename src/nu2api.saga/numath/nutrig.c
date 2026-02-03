@@ -10,12 +10,12 @@
 #define NEG_35_OVER_1152 -0.0303819f
 #define MAX_SHORT_OVER_PI 10430.4f
 
-static short NuASin(float sin) {
-    float abs;
-    float sqrt;
-    float value;
-    float something_else;
-    float transformed_sin;
+static short NuASin(f32 sin) {
+    f32 abs;
+    f32 sqrt;
+    f32 value;
+    f32 something_else;
+    f32 transformed_sin;
 
     abs = NuFabs(sin);
     sqrt = NuFsqrt(1.0f - sin * sin);
@@ -55,6 +55,6 @@ static short NuASin(float sin) {
            10430.4f;
 }
 
-short NuACos(float cos) {
+short NuACos(f32 cos) {
     return 0x4000 - NuASin(cos);
 }

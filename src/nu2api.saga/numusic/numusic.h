@@ -1,7 +1,5 @@
 #pragma once
 
-#include <stdint.h>
-
 #include "game/level.h"
 #include "globals.h"
 #include "nu2api.saga/nufile/nufpar.h"
@@ -10,14 +8,14 @@
 
 struct Track;
 
-enum voice_status_e : uint32_t {
+enum voice_status_e : u32 {
     VOICE_STATUS_1 = 1,
     VOICE_STATUS_6 = 6,
     VOICE_STATUS_7 = 7,
 };
 typedef enum voice_status_e VOICE_STATUS;
 
-enum : uint32_t {
+enum : u32 {
     TRACK_CLASS_QUIET = 0x1,
     TRACK_CLASS_ACTION = 0x2,
     TRACK_CLASS_4 = 0x4,
@@ -25,56 +23,56 @@ enum : uint32_t {
     TRACK_CLASS_CUTSCENE = 0x10,
     TRACK_CLASS_NOMUSIC = 0x20,
 };
-typedef uint32_t TRACK_CLASS;
-typedef uint32_t TRACK_FLAGS;
+typedef u32 TRACK_CLASS;
+typedef u32 TRACK_FLAGS;
 
 class Track {
   public:
     char *path;
-    uint8_t field1_0x4;
-    uint8_t field2_0x5;
-    uint8_t field3_0x6;
-    uint8_t field4_0x7;
+    u8 field1_0x4;
+    u8 field2_0x5;
+    u8 field3_0x6;
+    u8 field4_0x7;
     char *ident;
     int field6_0xc[2];
-    uint8_t field7_0x10;
-    uint8_t field8_0x11;
-    uint8_t field9_0x12;
-    uint8_t field10_0x13;
+    u8 field7_0x10;
+    u8 field8_0x11;
+    u8 field9_0x12;
+    u8 field10_0x13;
     TRACK_CLASS clazz;
     void *field12_0x18;
-    int32_t index_count;
-    uint8_t field17_0x20;
-    uint8_t field18_0x21;
-    uint8_t field19_0x22;
-    uint8_t field20_0x23;
-    float field21_0x24;
-    uint32_t field22_0x28;
-    float field23_0x2c;
-    float field24_0x30;
-    float field25_0x34;
+    i32 index_count;
+    u8 field17_0x20;
+    u8 field18_0x21;
+    u8 field19_0x22;
+    u8 field20_0x23;
+    f32 field21_0x24;
+    u32 field22_0x28;
+    f32 field23_0x2c;
+    f32 field24_0x30;
+    f32 field25_0x34;
     TRACK_FLAGS flags;
 };
 
 class NuMusic {
     struct Voice {
-        int32_t stream_index;
+        i32 stream_index;
         Track *tracks[2];
-        int32_t track_index;
+        i32 track_index;
         VOICE_STATUS status;
-        uint32_t flags;
+        u32 flags;
         void *field16_0x2c;
 
         bool Load(Track *track, int trackIndex);
         void SetStatusFn(VOICE_STATUS status);
-        int32_t Play();
+        i32 Play();
     };
 
     class Album {
       public:
         char *name;
         Track *tracks_source;
-        int32_t tracks_count;
+        i32 tracks_count;
         Track *tracks[6];
 
         Track *GetTrack(TRACK_CLASS class_);
@@ -83,32 +81,32 @@ class NuMusic {
 
   private:
     nusound_filename_info_s *fileinfo;
-    int32_t field346_0x1e0;
+    i32 field346_0x1e0;
 
-    float *indexes;
-    int32_t index_count;
+    f32 *indexes;
+    i32 index_count;
 
     char current_path[256];
     char *string_pool_start;
     char *string_pool_end;
     bool strict_mode;
     Album *albums;
-    int32_t album_count;
+    i32 album_count;
     Album *current_album;
     Track *tracks;
-    int32_t track_count;
+    i32 track_count;
     Track *current_track;
     Voice voices[2];
     char *language;
 
     Album *album;
-    int32_t track_index;
+    i32 track_index;
 
   public:
-    int32_t Initialise(const char *file, char *null, VARIPTR *bufferStart, VARIPTR bufferEnd);
-    void GetSoundFiles(nusound_filename_info_s **finfo, int32_t *null);
+    i32 Initialise(const char *file, char *null, VARIPTR *bufferStart, VARIPTR bufferEnd);
+    void GetSoundFiles(nusound_filename_info_s **finfo, i32 *null);
 
-    int32_t PlayTrack(TRACK_CLASS track);
+    i32 PlayTrack(TRACK_CLASS track);
 
   private:
     void InitData(const char *file, VARIPTR *bufferStart, VARIPTR bufferEnd);
@@ -117,13 +115,13 @@ class NuMusic {
     Voice *FindVoiceByClassAndStatus(TRACK_CLASS class_, VOICE_STATUS status);
     Voice *FindVoiceByTrack(Track *track);
     Voice *FindVoiceByClass(TRACK_CLASS class_);
-    int32_t StopAll(int32_t toggle);
+    i32 StopAll(i32 toggle);
     Voice *FindIdleVoice();
-    int32_t PlayTrackI(TRACK_CLASS track);
+    i32 PlayTrackI(TRACK_CLASS track);
 
-    static int32_t ClassToIX(unsigned int i);
+    static i32 ClassToIX(u32 i);
 
-    void ParseTrack(unsigned int category, nufpar_s *fpar);
+    void ParseTrack(u32 category, nufpar_s *fpar);
 
     char *RemovePath(char *str);
     void SubstituteString(char *dst, char *src, char *find, char *subst);
@@ -209,6 +207,6 @@ extern "C" {
     extern NuMusic music_man;
 };
 
-int32_t GamePlayMusic(LEVELDATA *level, int32_t zero, OPTIONSSAVE *options);
+i32 GamePlayMusic(LEVELDATA *level, i32 zero, OPTIONSSAVE *options);
 
 #endif

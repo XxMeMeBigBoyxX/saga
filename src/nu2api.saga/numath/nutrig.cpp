@@ -5,7 +5,7 @@
 #include "nu2api.saga/numath/nuang.h"
 
 #define ANG_COUNT 513
-static unsigned short ang[ANG_COUNT] = {
+static u16 ang[ANG_COUNT] = {
     0x0000, 0x0014, 0x0029, 0x003d, 0x0051, 0x0066, 0x007a, 0x008f, 0x00a3, 0x00b7, 0x00cc, 0x00e0, 0x00f4, 0x0109,
     0x011d, 0x0131, 0x0146, 0x015a, 0x016f, 0x0183, 0x0197, 0x01ac, 0x01c0, 0x01d4, 0x01e9, 0x01fd, 0x0211, 0x0226,
     0x023a, 0x024e, 0x0262, 0x0277, 0x028b, 0x029f, 0x02b4, 0x02c8, 0x02dc, 0x02f0, 0x0305, 0x0319, 0x032d, 0x0341,
@@ -47,7 +47,7 @@ static unsigned short ang[ANG_COUNT] = {
 #define NU_ATAN2_LUT(y, x) ang[(y << 9) / x]
 #define NU_ATAN2F_LUT(y, x) ang[(int)((y * 512.0f) / x)]
 
-static unsigned short xy(unsigned int dx, unsigned int dy) {
+static u16 xy(u32 dx, u32 dy) {
     if (dx > dy) {
         return NUANG_90DEG - NU_ATAN2_LUT(dy, dx);
     } else {
@@ -55,7 +55,7 @@ static unsigned short xy(unsigned int dx, unsigned int dy) {
     }
 }
 
-static unsigned short fxyd(float dx, float dy) {
+static u16 fxyd(f32 dx, f32 dy) {
     if (dx > dy) {
         return NUANG_90DEG - NU_ATAN2F_LUT(dy, dx);
     } else {
@@ -65,7 +65,7 @@ static unsigned short fxyd(float dx, float dy) {
 
 #undef NU_ATAN2_LUT
 
-int NuAtan2D(float dx, float dy) {
+int NuAtan2D(f32 dx, f32 dy) {
     if (dx == 0.0f) {
         return 0.0f > dy ? NUANG_180DEG : 0;
     } else if (dy == 0.0f) {
@@ -83,6 +83,6 @@ int NuAtan2D(float dx, float dy) {
     }
 }
 
-float NuAtan2(float dx, float dy) {
-    return NuAtan2D(dx, dy) * (float)(2.0f * M_PI / USHRT_MAX); // the number of radians per discrete integer angle
+f32 NuAtan2(f32 dx, f32 dy) {
+    return NuAtan2D(dx, dy) * (f32)(2.0f * M_PI / USHRT_MAX); // the number of radians per discrete integer angle
 }

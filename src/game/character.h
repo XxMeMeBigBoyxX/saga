@@ -1,35 +1,14 @@
 #pragma once
 
-#include <stdint.h>
-
+#include "decomp.h"
 #include "nu2api.saga/nucore/common.h"
 
 struct charfixup_s {
     char *name;
-    int16_t *id;
+    i16 *id;
 };
 
 typedef struct charfixup_s CHARFIXUP;
-
-typedef unsigned char undefined;
-typedef unsigned char byte;
-typedef unsigned char dwfenc;
-typedef unsigned int dword;
-typedef long long longlong;
-typedef unsigned char uchar;
-typedef unsigned int uint;
-typedef unsigned long ulong;
-typedef unsigned long long ulonglong;
-typedef unsigned char undefined1;
-typedef unsigned short undefined2;
-typedef unsigned int undefined3;
-typedef unsigned int undefined4;
-typedef unsigned long long undefined5;
-typedef unsigned long long undefined6;
-typedef unsigned long long undefined7;
-typedef unsigned long long undefined8;
-typedef unsigned short ushort;
-typedef unsigned short word;
 
 struct gamecharacterdata_s { /* PlaceHolder Structure */
     undefined field0_0x0;
@@ -334,24 +313,24 @@ struct characterdata_s { /* PlaceHolder Structure */
     undefined4 field10_0x20;
     void *field11_0x24;
     undefined4 field12_0x28;
-    float field13_0x2c;
-    float field14_0x30;
-    float field15_0x34;
-    float field16_0x38;
-    float field17_0x3c;
+    f32 field13_0x2c;
+    f32 field14_0x30;
+    f32 field15_0x34;
+    f32 field16_0x38;
+    f32 field17_0x3c;
     byte flags;
     undefined field19_0x41;
-    short field20_0x42;
+    i16 field20_0x42;
     undefined4 field21_0x44;
     undefined4 field22_0x48;
 };
 typedef struct characterdata_s CHARACTERDATA;
 
-extern int32_t CHARCOUNT;
+extern i32 CHARCOUNT;
 extern CHARACTERDATA *CDataList;
 extern GAMECHARACTERDATA *GCDataList;
 
-int32_t CharIDFromName(char *name);
+i32 CharIDFromName(char *name);
 
-CHARACTERDATA *ConfigureCharacterList(char *file, VARIPTR *bufferStart, VARIPTR *bufferEnd, int32_t count,
-                                      int32_t *countDest, int32_t count2, GAMECHARACTERDATA **dest);
+CHARACTERDATA *ConfigureCharacterList(char *file, VARIPTR *bufferStart, VARIPTR *bufferEnd, i32 count, i32 *countDest,
+                                      i32 count2, GAMECHARACTERDATA **dest);

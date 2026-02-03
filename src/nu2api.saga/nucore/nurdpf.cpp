@@ -6,7 +6,7 @@
 
 typedef struct rdpfctxt_s {
     int cur_tok;
-    float cur_val;
+    f32 cur_val;
     char *buf;
     int pos;
     nurdpgetvarfn *get_var_fn;
@@ -35,7 +35,7 @@ static int isnumordot(char c) {
 
 static void get_tok(RDPFCTXT *ctx) {
     char var_name_buf[256];
-    float multiplier;
+    f32 multiplier;
     int var_name_pos;
     int ret;
 
@@ -107,11 +107,11 @@ static void get_tok(RDPFCTXT *ctx) {
                 if (ctx->buf[ctx->pos] == '.') {
                     multiplier = 0.1f;
                 } else if (multiplier != 0.0f) {
-                    ctx->cur_val += (float)(ctx->buf[ctx->pos] - 0x30) * multiplier;
+                    ctx->cur_val += (f32)(ctx->buf[ctx->pos] - 0x30) * multiplier;
                     multiplier /= 10.0f;
                 } else {
                     ctx->cur_val *= 10.0f;
-                    ctx->cur_val += (float)(ctx->buf[ctx->pos] - 0x30);
+                    ctx->cur_val += (f32)(ctx->buf[ctx->pos] - 0x30);
                 }
 
                 ctx->pos++;
@@ -139,10 +139,10 @@ static void get_tok(RDPFCTXT *ctx) {
     }
 }
 
-static float f_expr(RDPFCTXT *ctx);
+static f32 f_expr(RDPFCTXT *ctx);
 
-static float prim_rdpf(RDPFCTXT *ctx) {
-    float expr;
+static f32 prim_rdpf(RDPFCTXT *ctx) {
+    f32 expr;
 
     switch (ctx->cur_tok) {
         case TOK_NUM:
@@ -167,8 +167,8 @@ static float prim_rdpf(RDPFCTXT *ctx) {
     }
 }
 
-static float term_rdpf(RDPFCTXT *ctx) {
-    float term = prim_rdpf(ctx);
+static f32 term_rdpf(RDPFCTXT *ctx) {
+    f32 term = prim_rdpf(ctx);
 
     while (true) {
         switch (ctx->cur_tok) {
@@ -188,8 +188,8 @@ static float term_rdpf(RDPFCTXT *ctx) {
     }
 }
 
-static float f_expr(RDPFCTXT *ctx) {
-    float expr = term_rdpf(ctx);
+static f32 f_expr(RDPFCTXT *ctx) {
+    f32 expr = term_rdpf(ctx);
 
     while (true) {
         switch (ctx->cur_tok) {
@@ -209,13 +209,13 @@ static float f_expr(RDPFCTXT *ctx) {
     }
 }
 
-float NuRDPF(char *input) {
+f32 NuRDPF(char *input) {
     return NuRDPFVar(input, NULL);
 }
 
-float NuRDPFVar(char *input, nurdpgetvarfn *get_var_fn) {
+f32 NuRDPFVar(char *input, nurdpgetvarfn *get_var_fn) {
     RDPFCTXT ctx;
-    float ret;
+    f32 ret;
 
     ctx.buf = input;
     ctx.pos = 0;

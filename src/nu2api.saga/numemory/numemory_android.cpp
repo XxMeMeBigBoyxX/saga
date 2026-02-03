@@ -10,7 +10,7 @@ NuMemoryPS::Mem1EventHandler::Mem1EventHandler() {
     this->page_count = 0;
 }
 
-bool NuMemoryPS::Mem1EventHandler::AllocatePage(NuMemoryManager *manager, unsigned int size, unsigned int _unknown) {
+bool NuMemoryPS::Mem1EventHandler::AllocatePage(NuMemoryManager *manager, u32 size, u32 _unknown) {
     void *ptr;
 
     size = MAX(size, 0x400000);
@@ -28,7 +28,7 @@ bool NuMemoryPS::Mem1EventHandler::AllocatePage(NuMemoryManager *manager, unsign
     return false;
 }
 
-bool NuMemoryPS::Mem1EventHandler::ReleasePage(NuMemoryManager *manager, void *ptr, unsigned int _unknown) {
+bool NuMemoryPS::Mem1EventHandler::ReleasePage(NuMemoryManager *manager, void *ptr, u32 _unknown) {
     free(ptr);
     this->page_count--;
 
@@ -38,10 +38,10 @@ bool NuMemoryPS::Mem1EventHandler::ReleasePage(NuMemoryManager *manager, void *p
 NuMemoryPS::Mem2EventHandler::Mem2EventHandler() {
 }
 
-bool NuMemoryPS::Mem2EventHandler::AllocatePage(NuMemoryManager *manager, unsigned int size, unsigned int _unknown) {
+bool NuMemoryPS::Mem2EventHandler::AllocatePage(NuMemoryManager *manager, u32 size, u32 _unknown) {
     return false;
 }
 
-bool NuMemoryPS::Mem2EventHandler::ReleasePage(NuMemoryManager *manager, void *ptr, unsigned int _unknown) {
+bool NuMemoryPS::Mem2EventHandler::ReleasePage(NuMemoryManager *manager, void *ptr, u32 _unknown) {
     return false;
 }

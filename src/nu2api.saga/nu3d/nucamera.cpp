@@ -51,11 +51,11 @@ void NuCameraDestroy(NUCAMERA *cam) {
     }
 }
 
-float NuCameraDist(NUVEC *v) {
+f32 NuCameraDist(NUVEC *v) {
     return NuVecDist(v, NUMTX_GET_ROW_VEC(&global_camera.mtx, 3), NULL);
 }
 
-float NuCameraDistSqr(NUVEC *v) {
+f32 NuCameraDistSqr(NUVEC *v) {
     return NuVecDistSqr(v, NUMTX_GET_ROW_VEC(&global_camera.mtx, 3), NULL);
 }
 
@@ -71,7 +71,7 @@ NUMTX *NuCameraGetClipPlanes(void) {
     return &clip_planes;
 }
 
-int NuCameraClipTestSphere(NUVEC *pnt, float radius, NUMTX *wm) {
+int NuCameraClipTestSphere(NUVEC *pnt, f32 radius, NUMTX *wm) {
     NUCAMERA *cam = NuCameraGetCam();
     NUMTX *view = NuCameraGetViewMtx();
 

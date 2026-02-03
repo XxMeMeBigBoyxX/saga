@@ -6,22 +6,22 @@
 
 EPISODEDATA *EDataList = NULL;
 
-EPISODEDATA *Episodes_ConfigureList(char *file, VARIPTR *bufferStart, VARIPTR *bufferEnd, int32_t maxCount,
-                                    int32_t *countDest) {
-    short *psVar1;
+EPISODEDATA *Episodes_ConfigureList(char *file, VARIPTR *bufferStart, VARIPTR *bufferEnd, i32 maxCount,
+                                    i32 *countDest) {
+    i16 *psVar1;
     byte bVar2;
     char *a;
     bool bVar3;
     nufpar_s *fp;
     int iVar4;
-    unsigned int uVar5;
+    u32 uVar5;
     EPISODEDATA *episodePtr;
-    unsigned int i;
+    u32 i;
     EPISODEDATA *episodePtr2;
-    unsigned int uVar6;
+    u32 uVar6;
     EPISODEDATA *episode;
     int j;
-    short areaId;
+    i16 areaId;
     int count;
     int areaIndex;
     AREADATA *area;
@@ -34,7 +34,7 @@ EPISODEDATA *Episodes_ConfigureList(char *file, VARIPTR *bufferStart, VARIPTR *b
     } else {
         count = 0;
         bVar3 = false;
-        episodePtr = (EPISODEDATA *)((int)bufferStart->void_ptr + 3U & 0xfffffffc);
+        episodePtr = (EPISODEDATA *)((ssize_t)bufferStart->void_ptr + 3U & 0xfffffffc);
         bufferStart->void_ptr = episodePtr;
         episode = episodePtr;
     LAB_00488f90:
@@ -51,7 +51,7 @@ EPISODEDATA *Episodes_ConfigureList(char *file, VARIPTR *bufferStart, VARIPTR *b
                         episode->name_id = -1;
                         episode->text_id = -1;
                         episode->area_count = 0;
-                        episode->index = (uint8_t)count;
+                        episode->index = (u8)count;
                         bVar3 = true;
                     }
                     break;
@@ -67,7 +67,7 @@ EPISODEDATA *Episodes_ConfigureList(char *file, VARIPTR *bufferStart, VARIPTR *b
                         bVar3 = true;
                         if (areaIndex != -1) {
                             bVar2 = episode->area_count;
-                            i = (unsigned int)bVar2;
+                            i = (u32)bVar2;
                             if (i == 0)
                                 goto LAB_0048910d;
                             if (areaIndex == episode->area_ids[0])
@@ -75,14 +75,14 @@ EPISODEDATA *Episodes_ConfigureList(char *file, VARIPTR *bufferStart, VARIPTR *b
                             iVar4 = NuStrICmp(fp->word_buf_ptr, "name_id");
                             if (iVar4 == 0) {
                                 iVar4 = NuFParGetInt(fp);
-                                episode->name_id = (short)iVar4;
+                                episode->name_id = (i16)iVar4;
                                 bVar3 = true;
                             } else {
                                 iVar4 = NuStrICmp(fp->word_buf_ptr, "text_id");
                                 bVar3 = true;
                                 if (iVar4 == 0) {
                                     iVar4 = NuFParGetInt(fp);
-                                    episode->text_id = (short)iVar4;
+                                    episode->text_id = (i16)iVar4;
                                 }
                             }
                         }
@@ -129,8 +129,8 @@ EPISODEDATA *Episodes_ConfigureList(char *file, VARIPTR *bufferStart, VARIPTR *b
             if (0 < count) {
                 do {
                     iVar4 = 0;
-                    while (iVar4 != (unsigned int)episodePtr2->area_count * 2) {
-                        psVar1 = (short *)((int)episodePtr2->area_ids + iVar4);
+                    while (iVar4 != (u32)episodePtr2->area_count * 2) {
+                        psVar1 = (i16 *)((ssize_t)episodePtr2->area_ids + iVar4);
                         iVar4 = iVar4 + 2;
                         if (areaIndex == *psVar1)
                             goto LAB_004890ae;
@@ -139,7 +139,7 @@ EPISODEDATA *Episodes_ConfigureList(char *file, VARIPTR *bufferStart, VARIPTR *b
                     episodePtr2 = episodePtr2 + 1;
                 } while (j != count);
             }
-            areaId = (short)areaIndex;
+            areaId = (i16)areaIndex;
             episode->area_ids[i] = areaId;
             bVar3 = true;
             episode->area_count = bVar2 + 1;

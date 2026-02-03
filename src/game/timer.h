@@ -1,18 +1,19 @@
 #ifndef GAME_TIMER_H
 #define GAME_TIMER_H
 
+#include "decomp.h"
 struct TIMER_s {
-    float time_elapsed;
-    float last_time_elapsed;
-    float time_elapsed_mod_seconds;
+    f32 time_elapsed;
+    f32 last_time_elapsed;
+    f32 time_elapsed_mod_seconds;
     int update_count;
 };
 
 typedef struct TIMER_s TIMER;
 
 #ifdef __cplusplus
-void ResetTimer(TIMER* timer, float reset_time);
-void UpdateTimer(TIMER* timer);
+void ResetTimer(TIMER *timer, f32 reset_time);
+void UpdateTimer(TIMER *timer);
 
 extern "C" {
 #endif

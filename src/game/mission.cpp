@@ -8,17 +8,17 @@
 #include <string.h>
 
 MISSIONSYS *Missions_Configure(char *file, VARIPTR *bufferStart, VARIPTR *bufferEnd, MISSIONSAVE *save) {
-    short psVar2;
-    short sVar1;
+    i16 psVar2;
+    i16 sVar1;
     nufpar_s *fp;
     LEVELDATA *pLVar2;
     int i;
-    ushort uVar3;
+    u16 uVar3;
     MISSIONSYS *dest;
     int charId;
     MISSIONSYS sys;
     MISSIONSAVE local_c;
-    short *buffer;
+    i16 *buffer;
 
     sys.character_ids[6] = 2475;
     sys.character_ids[7] = 79;
@@ -29,14 +29,14 @@ MISSIONSYS *Missions_Configure(char *file, VARIPTR *bufferStart, VARIPTR *buffer
 
         for (i = 12; i != 0; i--) {
             dest->length = 0;
-            dest = (MISSIONSYS *)((int)dest + 4);
+            dest = (MISSIONSYS *)((ssize_t)dest + 4);
         }
 
         sys.flags = 1;
-        buffer = (short *)((int)bufferStart->void_ptr + 3U & 0xfffffffc);
+        buffer = (i16 *)((ssize_t)bufferStart->void_ptr + 3U & 0xfffffffc);
         bufferStart->void_ptr = buffer;
         sys.mission_save = save;
-        sys.length = (int)buffer;
+        sys.length = (ssize_t)buffer;
 
         do {
             i = NuFParGetLine(fp);
@@ -50,7 +50,7 @@ MISSIONSYS *Missions_Configure(char *file, VARIPTR *bufferStart, VARIPTR *buffer
                 while ((sys.character_count < 8 && (i = NuFParGetWord(fp), i != 0))) {
                     charId = CharIDFromName(fp->word_buf_ptr);
                     if (charId != -1) {
-                        sys.character_ids[sys.character_count] = (short)charId;
+                        sys.character_ids[sys.character_count] = (i16)charId;
                         sys.character_count = sys.character_count + 1;
                     }
                 }
@@ -100,15 +100,15 @@ MISSIONSYS *Missions_Configure(char *file, VARIPTR *bufferStart, VARIPTR *buffer
                                 i = NuFParGetWord(fp);
                                 if ((i != 0) &&
                                     (pLVar2 = Level_FindByName(fp->word_buf_ptr, &charId), pLVar2 != NULL)) {
-                                    buffer[1] = (short)charId;
+                                    buffer[1] = (i16)charId;
                                 }
                             } else {
                                 i = NuStrICmp(fp->word_buf_ptr, "time");
                                 if (i == 0) {
                                     i = NuFParGetInt(fp);
                                     uVar3 = 3;
-                                    if (2 < (ushort)i) {
-                                        uVar3 = (ushort)i;
+                                    if (2 < (u16)i) {
+                                        uVar3 = (u16)i;
                                     }
                                     buffer[8] = uVar3;
                                 } else {
@@ -122,12 +122,12 @@ MISSIONSYS *Missions_Configure(char *file, VARIPTR *bufferStart, VARIPTR *buffer
                                         i = NuStrICmp(fp->word_buf_ptr, "name_id");
                                         if (i == 0) {
                                             i = NuFParGetInt(fp);
-                                            buffer[2] = (short)i;
+                                            buffer[2] = (i16)i;
                                         } else {
                                             i = NuStrICmp(fp->word_buf_ptr, "text_id");
                                             if (i == 0) {
                                                 i = NuFParGetInt(fp);
-                                                buffer[3] = (short)i;
+                                                buffer[3] = (i16)i;
                                             }
                                         }
                                     }
@@ -139,7 +139,7 @@ MISSIONSYS *Missions_Configure(char *file, VARIPTR *bufferStart, VARIPTR *buffer
                         if ((*buffer != -1) && (buffer[1] != -1)) {
                             sys.count = sys.count + 1;
                             buffer = buffer + 0xc;
-                            bufferStart->void_ptr = (void *)((int)bufferStart->void_ptr + 0x18);
+                            bufferStart->void_ptr = (void *)((ssize_t)bufferStart->void_ptr + 0x18);
                         }
                     }
                 }
@@ -148,10 +148,10 @@ MISSIONSYS *Missions_Configure(char *file, VARIPTR *bufferStart, VARIPTR *buffer
 
         NuFParDestroy(fp);
         if (sys.count != 0) {
-            dest = (MISSIONSYS *)((int)bufferStart->void_ptr + 3U & 0xfffffffc);
+            dest = (MISSIONSYS *)((ssize_t)bufferStart->void_ptr + 3U & 0xfffffffc);
             bufferStart->void_ptr = dest;
             memmove(dest, &sys, 0x30);
-            bufferStart->void_ptr = (void *)((int)bufferStart->void_ptr + 0x33U & 0xfffffffc);
+            bufferStart->void_ptr = (void *)((ssize_t)bufferStart->void_ptr + 0x33U & 0xfffffffc);
             return dest;
         }
     }

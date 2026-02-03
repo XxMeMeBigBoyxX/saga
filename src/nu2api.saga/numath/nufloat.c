@@ -1,20 +1,20 @@
 #include "nu2api.saga/numath/nufloat.h"
 
-float NuFnabs(float f) {
-    float rv;
+f32 NuFnabs(f32 f) {
+    f32 rv;
 
     *(int *)&rv = *(int *)&f | 0x80000000;
     return rv;
 }
 
-float NuFneg(float v) {
-    float rv;
+f32 NuFneg(f32 v) {
+    f32 rv;
 
     *(int *)&rv = *(int *)&v ^ 0x80000000;
     return rv;
 }
 
-float NuFsign(float f) {
+f32 NuFsign(f32 f) {
     if (*(int *)&f < 0) {
         return -1.0f;
     } else {
@@ -22,7 +22,7 @@ float NuFsign(float f) {
     }
 }
 
-float NuFsqrt(float f) {
+f32 NuFsqrt(f32 f) {
     if (f <= 1e-6f) {
         return 0.0f;
     }
@@ -30,6 +30,6 @@ float NuFsqrt(float f) {
     return sqrtf(f);
 }
 
-float NuFmod(float a, float b) {
+f32 NuFmod(f32 a, f32 b) {
     return a - (int)(a / b) * b;
 }

@@ -12,7 +12,7 @@ struct nuapi_s {
     int screen_width;
     int screen_height;
     int video_is_pal;
-    float fps;
+    f32 fps;
     int nuframe_begin_cnt;
     char field12_0x24;
     char field13_0x25;
@@ -20,13 +20,13 @@ struct nuapi_s {
     char field15_0x27;
     NUTIME time;
     NUTIME time2;
-    float frametime;
+    f32 frametime;
     char field19_0x3c;
     char field20_0x3d;
     char field21_0x3e;
     char field22_0x3f;
-    float forced_frame_time;
-    float max_fps;
+    f32 forced_frame_time;
+    f32 max_fps;
     char field25_0x48;
     char field26_0x49;
     char field27_0x4a;
@@ -77,7 +77,7 @@ struct nuapi_s {
     char field75_0x86;
     char field76_0x87;
     int disable_os_menu_freeze;
-    float video_brightness;
+    f32 video_brightness;
 };
 
 typedef struct nuapi_s NUAPI;

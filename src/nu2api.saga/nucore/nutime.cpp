@@ -1,36 +1,37 @@
 #include <sys/time.h>
 #include <time.h>
 
+#include "decomp.h"
 #include "nu2api.saga/nucore/nutime.h"
 
-void NuTimeGetTicksPS(unsigned int *low, unsigned int *high) {
+void NuTimeGetTicksPS(u32 *low, u32 *high) {
     struct timespec ts;
-    unsigned long long ticks;
+    u64 ticks;
 
     clock_gettime(CLOCK_REALTIME, &ts);
 
-    ticks = ts.tv_nsec / 1000 + (unsigned long long)ts.tv_sec * 1000000;
+    ticks = ts.tv_nsec / 1000 + (u64)ts.tv_sec * 1000000;
 
     *high = ticks >> 32;
     *low = ticks;
 }
 
-unsigned long long NuGetCurrentTimeMilisecondsPS(void) {
+u64 NuGetCurrentTimeMilisecondsPS(void) {
     struct timespec ts;
 
     clock_gettime(0, &ts);
 
-    return (unsigned long long)ts.tv_nsec + (unsigned long long)ts.tv_sec * 1000;
+    return (u64)ts.tv_nsec + (u64)ts.tv_sec * 1000;
 }
 
-static unsigned long long g_startTime;
+static u64 g_startTime;
 
 void NuTimeInitPS(void) {
     g_startTime = NuGetCurrentTimeMilisecondsPS();
 }
 
 void NuTimeGet(NUTIME *t) {
-    NuTimeGetTicksPS(&t->low, (unsigned int *)&t->high);
+    NuTimeGetTicksPS(&t->low, (u32 *)&t->high);
 }
 
 void NuTimeSub(NUTIME *t, NUTIME *a, NUTIME *b) {

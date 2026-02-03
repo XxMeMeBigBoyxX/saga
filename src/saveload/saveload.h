@@ -1,35 +1,33 @@
 #pragma once
 
 #include <stddef.h>
-#include <stdint.h>
 
 #include "nu2api.saga/nucore/common.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-    extern int32_t saveload_status;
-    extern int32_t saveload_autosave;
-    extern int32_t saveload_savepresent;
+    extern i32 saveload_status;
+    extern i32 saveload_autosave;
+    extern i32 saveload_savepresent;
 
-    extern int32_t saveload_slotused[6];
-    extern int32_t saveload_slotcode[6];
+    extern i32 saveload_slotused[6];
+    extern i32 saveload_slotcode[6];
 
-    void saveloadInit(VARIPTR *buf, VARIPTR buf_end, int32_t, char *prodcode, char *iconname, char *unicodename,
-                      int32_t);
+    void saveloadInit(VARIPTR *buf, VARIPTR buf_end, i32, char *prodcode, char *iconname, char *unicodename, i32);
 
-    int32_t saveloadLoadSlot(int32_t slot, void *buffer, size_t size);
+    i32 saveloadLoadSlot(i32 slot, void *buffer, size_t size);
 
-    int32_t TriggerExtraDataLoad(void);
+    i32 TriggerExtraDataLoad(void);
 
-    void SaveSystemInitialise(int32_t slots, void *makeSaveHash, void *save, int32_t saveSize, int32_t saveCount,
-                              void *drawSaveIcon, void *extradata, int32_t extradataSize);
+    void SaveSystemInitialise(i32 slots, void *makeSaveHash, void *save, i32 saveSize, i32 saveCount,
+                              void *drawSaveIcon, void *extradata, i32 extradataSize);
 
-    int32_t ChecksumSaveData(void *buffer, int32_t size);
+    i32 ChecksumSaveData(void *buffer, i32 size);
 
-    void saveloadASSave(int32_t slot, void *buffer, int32_t size, uint32_t hash);
-    void saveloadASLoad(int32_t slot, void *buffer, int32_t size);
-    void saveloadASDelete(int32_t slot);
+    void saveloadASSave(i32 slot, void *buffer, i32 size, u32 hash);
+    void saveloadASLoad(i32 slot, void *buffer, i32 size);
+    void saveloadASDelete(i32 slot);
 #ifdef __cplusplus
 }
 #endif

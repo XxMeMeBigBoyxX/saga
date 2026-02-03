@@ -1,5 +1,6 @@
 #pragma once
 
+#include "decomp.h"
 #include <GLES2/gl2.h>
 
 struct nushaderobjectkey_s {};
@@ -27,8 +28,8 @@ struct nushaderobjectglsl_s {
 typedef struct nushaderobjectglsl_s NUSHADEROBJECTGLSL;
 
 struct glslparamter_s {
-    short unk1;
-    short unk2;
+    i16 unk1;
+    i16 unk2;
     char unk3;
     char unk4[3];
 };
@@ -62,7 +63,7 @@ extern "C" {
     void NuShaderObjectBaseInit(NUSHADEROBJECTBASE *shader, NUSHADEROBJECTKEY *key, int unk);
     void NuShaderObjectUnInit(NUSHADEROBJECT *shader);
     void NuShaderObjectBaseUnInit(NUSHADEROBJECTBASE *shader);
-    void NuShaderObjectBaseSetWaterSpeed(float speed);
+    void NuShaderObjectBaseSetWaterSpeed(f32 speed);
 #ifdef __cplusplus
 }
 #endif

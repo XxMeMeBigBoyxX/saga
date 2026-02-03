@@ -1,17 +1,19 @@
 #pragma once
 
+#include "decomp.h"
+
 typedef struct numtx_s NUMTX;
 
 /// @brief A 3-dimensional vector
 struct nuvec_s {
     /// @brief The x component of the vector
-    float x;
+    f32 x;
 
     /// @brief The y component of the vector
-    float y;
+    f32 y;
 
     /// @brief The z component of the vector
-    float z;
+    f32 z;
 };
 
 typedef struct nuvec_s NUVEC;
@@ -54,7 +56,7 @@ extern "C" {
     /// @param v0 The vector to scale
     /// @param k The scalar to scale the vector by
     /// @return void
-    void NuVecScale(NUVEC *v, NUVEC *v0, float k);
+    void NuVecScale(NUVEC *v, NUVEC *v0, f32 k);
 
     /// @brief Add a vector scaled by a scalar to another vector
     /// @details Adds the vector v1 scaled by the scalar k to v0 and stores the result in v.
@@ -63,7 +65,7 @@ extern "C" {
     /// @param v1 The vector to scale and add
     /// @param k The scalar to scale the vector by
     /// @return void
-    void NuVecAddScale(NUVEC *v, NUVEC *v0, NUVEC *v1, float k);
+    void NuVecAddScale(NUVEC *v, NUVEC *v0, NUVEC *v1, f32 k);
 
     /// @brief Scale a vector by a scalar and add the result to another vector
     /// @details Scales the vector v0 by the scalar k and adds the result to v and stores the result in v.
@@ -71,7 +73,7 @@ extern "C" {
     /// @param v0 The vector to scale
     /// @param k The scalar to scale the vector by
     /// @return void
-    void NuVecScaleAccum(NUVEC *v, NUVEC *v0, float k);
+    void NuVecScaleAccum(NUVEC *v, NUVEC *v0, f32 k);
 
     /// @brief Inverse scale a vector by a scalar
     /// @details Inverse scales the vector v0 by the scalar k and stores the result in v. If k is 0, v0 is scaled by 0.
@@ -79,7 +81,7 @@ extern "C" {
     /// @param v0 The vector to inverse scale
     /// @param k The scalar to inverse scale the vector by
     /// @return void
-    void NuVecInvScale(NUVEC *v, NUVEC *v0, float k);
+    void NuVecInvScale(NUVEC *v, NUVEC *v0, f32 k);
 
     /// @brief Compute the cross product of two vectors
     /// @details Computes the cross product of the vectors v0 and v1 and stores the result in v.
@@ -105,7 +107,7 @@ extern "C" {
     /// @param v0 The first vector to dot
     /// @param v1 The second vector to dot
     /// @return The dot product of the two vectors
-    float NuVecDot(NUVEC *v0, NUVEC *v1);
+    f32 NuVecDot(NUVEC *v0, NUVEC *v1);
 
     /// @brief Compute a vector formed of the maximum component from each vector
     /// @details Computes a vector formed of the maximum component from each vector v0 and v1 and stores the result in
@@ -129,19 +131,19 @@ extern "C" {
     /// @details Computes the magnitude squared of the vector v0 and returns the result.
     /// @param v0 The vector to compute the magnitude squared of
     /// @return The magnitude squared of the vector
-    float NuVecMagSqr(NUVEC *v0);
+    f32 NuVecMagSqr(NUVEC *v0);
 
     /// @brief Compute the magnitude of a vector
     /// @details Computes the magnitude of the vector v0 and returns the result.
     /// @param v0 The vector to compute the magnitude of
     /// @return The magnitude of the vector
-    float NuVecMag(NUVEC *v0);
+    f32 NuVecMag(NUVEC *v0);
 
     /// @brief Compute the magnitude of only the x and z components of a vector
     /// @details Computes the magnitude of only the x and z components of the vector v0 and returns the result.
     /// @param v0 The vector to compute the magnitude of
     /// @return The magnitude of the x and z components of the vector
-    float NuVecMagXZ(NUVEC *v0);
+    f32 NuVecMagXZ(NUVEC *v0);
 
     /// @brief Compute the normalized vector of a vector and return the initial length
     /// @details Computes the normalized vector of the vector v0, stores the result in v and returns the initial length
@@ -149,7 +151,7 @@ extern "C" {
     /// @param v The vector to store the result in
     /// @param v0 The vector to normalize
     /// @return The initial length of the vector
-    float NuVecNorm(NUVEC *v, NUVEC *v0);
+    f32 NuVecNorm(NUVEC *v, NUVEC *v0);
 
     /// @brief Compute the surface normal of a triangle
     /// @details Computes the surface normal of the triangle formed by the vectors v0, v1 and v2 and stores the result
@@ -168,7 +170,7 @@ extern "C" {
     /// @param v1 The second point vector
     /// @param d The vector to store the directional vector in, can be NULL
     /// @return The distance between the two point vectors
-    float NuVecDist(NUVEC *v0, NUVEC *v1, NUVEC *d);
+    f32 NuVecDist(NUVEC *v0, NUVEC *v1, NUVEC *d);
 
     /// @brief Compute the distance squared between two point vectors
     /// @details Computes the distance squared between the two point vectors v0 and v1 and returns the result.
@@ -177,7 +179,7 @@ extern "C" {
     /// @param v1 The second point vector
     /// @param d The vector to store the directional vector in, can be NULL
     /// @return The distance squared between the two point vectors
-    float NuVecDistSqr(NUVEC *v0, NUVEC *v1, NUVEC *d);
+    f32 NuVecDistSqr(NUVEC *v0, NUVEC *v1, NUVEC *d);
 
     /// @brief Compute the distance between only the x and z components of two point vectors
     /// @details Computes the distance between only the x and z components of the two point vectors v0 and v1 and
@@ -186,7 +188,7 @@ extern "C" {
     /// @param v1 The second point vector
     /// @param d The vector to store the directional vector in, can be NULL
     /// @return The distance between the two point vectors
-    float NuVecXZDist(NUVEC *v0, NUVEC *v1, NUVEC *d);
+    f32 NuVecXZDist(NUVEC *v0, NUVEC *v1, NUVEC *d);
 
     /// @brief Compute the distance squared between only the x and z components of two point vectors
     /// @details Computes the distance squared between only the x and z components of the two point vectors v0 and v1
@@ -196,7 +198,7 @@ extern "C" {
     /// @param v1 The second point vector
     /// @param d The vector to store the directional vector in, can be NULL
     /// @return The distance squared between the two point vectors
-    float NuVecXZDistSqr(NUVEC *v0, NUVEC *v1, NUVEC *d);
+    f32 NuVecXZDistSqr(NUVEC *v0, NUVEC *v1, NUVEC *d);
 
     /// @brief Compute the linear interpolation between two point vectors at a given ratio
     /// @details Computes the linear interpolation between the two point vectors v0 and v1 at the ratio t and stores the
@@ -206,7 +208,7 @@ extern "C" {
     /// @param v0 The first point vector
     /// @param t The ratio to interpolate at
     /// @return void
-    void NuVecLerp(NUVEC *vt, NUVEC *v1, NUVEC *v0, float t);
+    void NuVecLerp(NUVEC *vt, NUVEC *v1, NUVEC *v0, f32 t);
 
     /// @brief Compare two vectors with a tolerance
     /// @details Compares the two vectors a and b with a tolerance and returns 1 if they are equal, 0 otherwise.
@@ -214,7 +216,7 @@ extern "C" {
     /// @param b The second vector to compare
     /// @param tolerance The tolerance to compare the vectors with
     /// @return 1 if the vectors are equal, 0 otherwise
-    int NuVecCompareTolerance(NUVEC *a, NUVEC *b, float tolerance);
+    int NuVecCompareTolerance(NUVEC *a, NUVEC *b, f32 tolerance);
 
     void NuVecMtxTransform(NUVEC *v, NUVEC *v0, NUMTX *m0);
 #ifdef __cplusplus

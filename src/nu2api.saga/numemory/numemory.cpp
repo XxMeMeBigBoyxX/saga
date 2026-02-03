@@ -28,30 +28,30 @@ NuMemory::NuMemory(void **buf) {
 
     NuMemoryManager::SetFlags(0);
 
-    ptr = (void *)ALIGN((int)ptr, 0x8);
+    ptr = (void *)ALIGN((ssize_t)ptr, 0x8);
 
     this->error_handler = new (ptr) MemErrorHandler();
-    ptr = (void *)((int)ptr + sizeof(MemErrorHandler) + 0x100);
+    ptr = (void *)((ssize_t)ptr + sizeof(MemErrorHandler) + 0x100);
 
     this->mem1_event_handler = new (ptr) NuMemoryPS::Mem1EventHandler();
-    ptr = (void *)((int)ptr + sizeof(NuMemoryPS::Mem1EventHandler));
+    ptr = (void *)((ssize_t)ptr + sizeof(NuMemoryPS::Mem1EventHandler));
 
     this->mem1_manager = new (ptr) NuMemoryManager(this->mem1_event_handler, this->error_handler, "MEM1",
                                                    g_categoryNames, sizeof(g_categoryNames) / sizeof(char *));
-    ptr = (void *)((int)ptr + sizeof(NuMemoryManager));
+    ptr = (void *)((ssize_t)ptr + sizeof(NuMemoryManager));
 
     this->mem2_event_handler = new (ptr) NuMemoryPS::Mem2EventHandler();
-    ptr = (void *)((int)ptr + sizeof(NuMemoryPS::Mem2EventHandler));
+    ptr = (void *)((ssize_t)ptr + sizeof(NuMemoryPS::Mem2EventHandler));
 
     this->mem2_manager = new (ptr) NuMemoryManager(this->mem2_event_handler, this->error_handler, "MEM2",
                                                    g_categoryNames, sizeof(g_categoryNames) / sizeof(char *));
-    ptr = (void *)((int)ptr + sizeof(NuMemoryManager));
+    ptr = (void *)((ssize_t)ptr + sizeof(NuMemoryManager));
 
     this->fixed_pool_event_handler = new (ptr) FixedPoolEventHandler();
-    ptr = (void *)((int)ptr + sizeof(FixedPoolEventHandler));
+    ptr = (void *)((ssize_t)ptr + sizeof(FixedPoolEventHandler));
 
     this->dynamic_pool_event_handler = new (ptr) DynamicPoolEventHandler();
-    ptr = (void *)((int)ptr + sizeof(DynamicPoolEventHandler));
+    ptr = (void *)((ssize_t)ptr + sizeof(DynamicPoolEventHandler));
 
     this->unknown = 0;
 }
@@ -84,7 +84,7 @@ NuMemory *NuMemoryGet() {
         return g_memory;
     }
 
-    aligned = (char *)ALIGN((int)g_memoryBuffer, 0x8);
+    aligned = (char *)ALIGN((ssize_t)g_memoryBuffer, 0x8);
 
     mem = aligned + sizeof(NuMemory);
     g_memory = new (aligned) NuMemory(&mem);
@@ -97,7 +97,7 @@ void NuMemory::InitalizeThreadLocalStorage() {
     }
 }
 
-int NuMemory::FixedPoolEventHandler::AllocatePage(NuMemoryPool *pool, unsigned int _unknown, unsigned int _unknown2,
+int NuMemory::FixedPoolEventHandler::AllocatePage(NuMemoryPool *pool, u32 _unknown, u32 _unknown2,
                                                   const char *_unknown3) {
     return 0;
 }

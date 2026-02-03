@@ -4,12 +4,14 @@
 
 #include "nu2api.saga/numath/nuang.h"
 
+#include "decomp.h"
+
 #define NUTRIGTABLE_COUNT 32768
-#define NUTRIGTABLE_INTERVAL (float)(2.0f * M_PI / NUTRIGTABLE_COUNT)
+#define NUTRIGTABLE_INTERVAL (f32)(2.0f * M_PI / NUTRIGTABLE_COUNT)
 
 /// @brief The sine lookup table
 /// @details The sine lookup table is a table of the sine function for the angles 0 to 2π.
-extern float NuTrigTable[NUTRIGTABLE_COUNT];
+extern f32 NuTrigTable[NUTRIGTABLE_COUNT];
 
 #define NU_SIN_LUT(ang) NuTrigTable[(int)(ang) >> 1 & 0x7fff]
 #define NU_COS_LUT(ang) NuTrigTable[((int)(ang) + NUANG_90DEG) >> 1 & 0x7fff]
@@ -23,9 +25,9 @@ extern "C" {
     /// @return void
     void NuTrigInit(void);
 
-    short NuACos(float cos);
-    int NuAtan2D(float dx, float dy);
-    float NuAtan2(float dx, float dy);
+    i16 NuACos(f32 cos);
+    int NuAtan2D(f32 dx, f32 dy);
+    f32 NuAtan2(f32 dx, f32 dy);
 #ifdef __cplusplus
 }
 #endif

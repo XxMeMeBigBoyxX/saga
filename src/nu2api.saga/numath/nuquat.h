@@ -4,10 +4,10 @@
 #include "nu2api.saga/numath/numtx.h"
 
 typedef struct nuquat_s {
-    float x;
-    float y;
-    float z;
-    float w;
+    f32 x;
+    f32 y;
+    f32 z;
+    f32 w;
 } NUQUAT;
 
 #ifdef __cplusplus
@@ -19,15 +19,15 @@ extern "C" {
 
     void NuQuatInv(NUQUAT *out, NUQUAT *quat);
 
-    void NuQuatLerp(NUQUAT *out, NUQUAT *from, NUQUAT *to, float t);
-    void NuQuatSlerp(NUQUAT *out, NUQUAT *from, NUQUAT *to, float t);
-    void NuQuatCubicInt(NUQUAT *out, NUQUAT *m, NUQUAT *a, NUQUAT *b, NUQUAT *c, float t);
-    void NuQuatHermiteInt(NUQUAT *out, NUQUAT *m, NUQUAT *a, NUQUAT *b, NUQUAT *c, float t);
+    void NuQuatLerp(NUQUAT *out, NUQUAT *from, NUQUAT *to, f32 t);
+    void NuQuatSlerp(NUQUAT *out, NUQUAT *from, NUQUAT *to, f32 t);
+    void NuQuatCubicInt(NUQUAT *out, NUQUAT *m, NUQUAT *a, NUQUAT *b, NUQUAT *c, f32 t);
+    void NuQuatHermiteInt(NUQUAT *out, NUQUAT *m, NUQUAT *a, NUQUAT *b, NUQUAT *c, f32 t);
 
     void NuQuatHarmonize(NUQUAT *a, NUQUAT *b);
 #ifdef __cplusplus
 }
 #endif
 
-float NuCubicInterpolation(float m, float y0, float y1, float y2, float t);
-float NuHermiteInterpolation(float m, float y0, float y1, float y2, float t);
+f32 NuCubicInterpolation(f32 m, f32 y0, f32 y1, f32 y2, f32 t);
+f32 NuHermiteInterpolation(f32 m, f32 y0, f32 y1, f32 y2, f32 t);

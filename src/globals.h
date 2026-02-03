@@ -1,7 +1,6 @@
 #pragma once
 
-#include <stdint.h>
-
+#include "decomp.h"
 #include "game/mission.h"
 #include "nu2api.saga/nu3d/nucamera.h"
 #include "nu2api.saga/nucore/common.h"
@@ -9,12 +8,6 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-    typedef unsigned char undefined;
-    typedef unsigned char undefined1;
-    typedef unsigned char byte;
-    typedef unsigned short undefined2;
-    typedef unsigned int undefined4;
-
     struct cheat_s { /* PlaceHolder Structure */
         char *name;
         undefined field1_0x4;
@@ -24,7 +17,7 @@ extern "C" {
         byte enabled; /* Created by retype action */
         undefined field6_0x9;
         undefined field7_0xa;
-        uint8_t area;
+        u8 area;
         undefined field9_0xc;
         undefined field10_0xd;
         undefined field11_0xe;
@@ -35,7 +28,7 @@ extern "C" {
         undefined field16_0x16;
         undefined field17_0x17;
         char *extra_name;
-        unsigned int flag;
+        u32 flag;
     };
     typedef struct cheat_s CHEAT;
 
@@ -180,14 +173,14 @@ extern "C" {
         undefined field13_0x7831;
         undefined field14_0x7832;
         undefined field15_0x7833;
-        float field16_0x7834;
+        f32 field16_0x7834;
         char field17_0x7838[852];
         undefined1 episode_save; /* Created by retype action */
         char field19_0x7b8d[107];
-        unsigned int field20_0x7bf8[1];
+        u32 field20_0x7bf8[1];
         char field21_0x7bfc[36];
-        unsigned int coins;
-        uint16_t completion; /* Created by retype action */
+        u32 coins;
+        u16 completion; /* Created by retype action */
         undefined field24_0x7c26;
         undefined field25_0x7c27;
         undefined field26_0x7c28;
@@ -208,13 +201,13 @@ extern "C" {
 
     extern CHEATSYSTEM CheatSystem;
 
-    extern int32_t PAL;
-    extern float FRAMETIME;
-    extern float DEFAULTFPS;
-    extern float DEFAULTFRAMETIME;
-    extern float MAXFRAMETIME;
+    extern i32 PAL;
+    extern f32 FRAMETIME;
+    extern f32 DEFAULTFPS;
+    extern f32 DEFAULTFRAMETIME;
+    extern f32 MAXFRAMETIME;
 
-    extern int32_t SUPERBUFFERSIZE;
+    extern i32 SUPERBUFFERSIZE;
     extern VARIPTR permbuffer_base;
     extern VARIPTR original_permbuffer_base;
     extern VARIPTR superbuffer_end;
@@ -225,33 +218,33 @@ extern "C" {
     extern char *iconname;
     extern char unicodename[64];
 
-    extern int32_t EPISODECOUNT;
-    extern int32_t AREACOUNT;
-    extern int32_t LEVELCOUNT;
+    extern i32 EPISODECOUNT;
+    extern i32 AREACOUNT;
+    extern i32 LEVELCOUNT;
 
     extern GAMESAVE_s Game;
 
-    extern int32_t COMPLETIONPOINTS;
-    extern int32_t POINTS_PER_CHARACTER;
-    extern int32_t POINTS_PER_SUPERBONUSCOMPLETE;
-    extern int32_t POINTS_PER_TIMETRIAL;
-    extern int32_t POINTS_PER_STORY;
-    extern int32_t POINTS_PER_CHALLENGE;
-    extern int32_t POINTS_PER_MINIKIT;
-    extern int32_t POINTS_PER_TRUEJEDI;
-    extern int32_t POINTS_PER_REDBRICK;
-    extern int32_t POINTS_PER_MISSION;
-    extern int32_t POINTS_PER_CHEAT;
-    extern int32_t POINTS_PER_GOLDBRICK;
-    extern int32_t BOTHTRUEJEDIGOLDBRICKS;
-    extern int32_t SHOPGOLDBRICKS;
-    extern int32_t GOLDBRICKFORSUPERBONUS;
-    extern int32_t GOLDBRICKFORSUPERSTORY;
-    extern int32_t GOLDBRICKFORCHALLENGE;
-    extern int32_t POINTS_PER_SUPERSTORY;
-    extern int32_t GOLDBRICKPOINTS;
+    extern i32 COMPLETIONPOINTS;
+    extern i32 POINTS_PER_CHARACTER;
+    extern i32 POINTS_PER_SUPERBONUSCOMPLETE;
+    extern i32 POINTS_PER_TIMETRIAL;
+    extern i32 POINTS_PER_STORY;
+    extern i32 POINTS_PER_CHALLENGE;
+    extern i32 POINTS_PER_MINIKIT;
+    extern i32 POINTS_PER_TRUEJEDI;
+    extern i32 POINTS_PER_REDBRICK;
+    extern i32 POINTS_PER_MISSION;
+    extern i32 POINTS_PER_CHEAT;
+    extern i32 POINTS_PER_GOLDBRICK;
+    extern i32 BOTHTRUEJEDIGOLDBRICKS;
+    extern i32 SHOPGOLDBRICKS;
+    extern i32 GOLDBRICKFORSUPERBONUS;
+    extern i32 GOLDBRICKFORSUPERSTORY;
+    extern i32 GOLDBRICKFORCHALLENGE;
+    extern i32 POINTS_PER_SUPERSTORY;
+    extern i32 GOLDBRICKPOINTS;
 
-    extern int32_t CompletionPointInfo[7];
+    extern i32 CompletionPointInfo[7];
 
     struct nusound_filename_info_s;
     extern nusound_filename_info_s *MusicInfo;

@@ -1,13 +1,14 @@
 #pragma once
 
 #include <stddef.h>
-#include <stdint.h>
+
+#include "decomp.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-    typedef uint16_t NUWCHAR;
-    typedef uint16_t NUWCHAR16;
+    typedef u16 NUWCHAR;
+    typedef u16 NUWCHAR16;
 
     void NuStrCat(char *str, const char *ext);
     int NuStrCmp(const char *a, const char *b);
@@ -27,7 +28,7 @@ extern "C" {
     unsigned char NuToLower(unsigned char c);
     unsigned char NuToUpper(unsigned char c);
 
-    float NuAToF(char *string);
+    f32 NuAToF(char *string);
     int NuAToI(char *string);
     int NuHexStringToI(char *string);
 
@@ -37,8 +38,8 @@ extern "C" {
 #ifdef __cplusplus
 }
 
-void NuStrFormatAddress(char *buf, unsigned int buf_len, void *ptr);
-void NuStrFormatSize(char *buf, unsigned int buf_len, unsigned int size, bool align_left);
+void NuStrFormatAddress(char *buf, u32 buf_len, void *ptr);
+void NuStrFormatSize(char *buf, u32 buf_len, u32 size, bool align_left);
 const char *NuStrStripPath(const char *string);
 
 #endif

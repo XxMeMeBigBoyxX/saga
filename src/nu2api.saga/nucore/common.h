@@ -2,6 +2,8 @@
 
 #include <stddef.h>
 
+#include "decomp.h"
+
 #define MAX(a, b) (a) > (b) ? (a) : (b)
 #define MIN(a, b) (a) < (b) ? (a) : (b)
 
@@ -13,7 +15,7 @@
 typedef union variptr_u {
     void *void_ptr;
     char *char_ptr;
-    short *short_ptr;
+    i16 *short_ptr;
     size_t addr;
 } VARIPTR;
 

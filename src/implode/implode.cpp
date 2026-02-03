@@ -12,8 +12,8 @@ static int gExplodeInitialised = 1;
 
 char *implode_inbuffer;
 char *implode_outbuffer;
-unsigned int implode_origsize;
-unsigned int implode_compsize;
+size_t implode_origsize;
+size_t implode_compsize;
 
 static int bytes_to_copy;
 
@@ -101,21 +101,21 @@ ssize_t ExplodeBufferNoHeader(char *in_buf, char *out_buf, ssize_t compressed_si
 ssize_t ExplodeBufferSize(char *buf) {
     char magic[] = "LZ2K";
 
-    for (int32_t i = 0; i < 4; i++) {
+    for (i32 i = 0; i < 4; i++) {
         int does_not_match;
         if ((does_not_match = *(buf++) != magic[i]) != 0) {
             return 0;
         }
     }
 
-    int32_t size = ImplodeGetI(buf, 4);
+    i32 size = ImplodeGetI(buf, 4);
     return size;
 }
 
 ssize_t ExplodeCompressedSize(char *buf) {
     char magic[] = "LZ2K";
 
-    for (int32_t i = 0; i < 4; i++) {
+    for (i32 i = 0; i < 4; i++) {
         int does_not_match;
         if ((does_not_match = *(buf++) != magic[i]) != 0) {
             return 0;
@@ -123,7 +123,7 @@ ssize_t ExplodeCompressedSize(char *buf) {
     }
 
     buf += 4;
-    int32_t size = ImplodeGetI(buf, sizeof(int32_t));
+    i32 size = ImplodeGetI(buf, sizeof(i32));
     if (size != 0) {
         size += 0xc;
     }
@@ -131,9 +131,9 @@ ssize_t ExplodeCompressedSize(char *buf) {
     return size;
 }
 
-static uint32_t getmasktbl[5] = {0, 0xff, 0xffff, 0xffffff, 0xffffffff};
+static u32 getmasktbl[5] = {0, 0xff, 0xffff, 0xffffff, 0xffffffff};
 
-int32_t ImplodeGetI(void *buf, int32_t size) {
+i32 ImplodeGetI(void *buf, i32 size) {
     unsigned char *char_ptr;
     unsigned int buf_reversed;
 
@@ -148,7 +148,7 @@ int32_t ImplodeGetI(void *buf, int32_t size) {
         (dst) = (table)[implode_bitbuf >> shift];                                                                      \
                                                                                                                        \
         if ((dst) > (count)) {                                                                                         \
-            uint32_t mask = (initial_mask);                                                                            \
+            u32 mask = (initial_mask);                                                                                 \
                                                                                                                        \
             do {                                                                                                       \
                 if ((implode_bitbuf & mask) != 0) {                                                                    \
@@ -164,15 +164,15 @@ int32_t ImplodeGetI(void *buf, int32_t size) {
         ImplodeFillBuf((len)[(dst)]);                                                                                  \
     })
 
-static uint32_t blocksize;
+static u32 blocksize;
 
-static uint16_t offset_table[0x100];
-static uint8_t offset_len[0x13];
+static u16 offset_table[0x100];
+static u8 offset_len[0x13];
 
-static void read_offset_len(int32_t table_size, int32_t bit_count, int32_t zero_value) {
-    int32_t n;
-    int32_t i;
-    int32_t value;
+static void read_offset_len(i32 table_size, i32 bit_count, i32 zero_value) {
+    i32 n;
+    i32 i;
+    i32 value;
 
     n = ImplodeGetBits(bit_count);
     if (n == 0) {
@@ -194,7 +194,7 @@ static void read_offset_len(int32_t table_size, int32_t bit_count, int32_t zero_
         value = implode_bitbuf >> 0x1d;
 
         if (value == 7) {
-            for (uint32_t k = 0x10000000; (implode_bitbuf & k) != 0; k >>= 1, value++) {
+            for (u32 k = 0x10000000; (implode_bitbuf & k) != 0; k >>= 1, value++) {
             }
         }
 
@@ -220,13 +220,13 @@ static void read_offset_len(int32_t table_size, int32_t bit_count, int32_t zero_
     ImplodeMakeTable(table_size, offset_len, 8, offset_table);
 }
 
-static uint16_t literal_table[0x1000];
-static uint8_t literal_len[0x1fe];
+static u16 literal_table[0x1000];
+static u8 literal_len[0x1fe];
 
 static void read_literal_len() {
-    int32_t n;
-    int32_t i;
-    int32_t value;
+    i32 n;
+    i32 i;
+    i32 value;
 
     n = ImplodeGetBits(9);
     if (n == 0) {
@@ -273,11 +273,11 @@ static void read_literal_len() {
     ImplodeMakeTable(sizeof(literal_len), literal_len, 0xc, literal_table);
 }
 
-uint16_t implode_left[0x3fb];
-uint16_t implode_right[0x3fb];
+u16 implode_left[0x3fb];
+u16 implode_right[0x3fb];
 
-uint32_t ImplodeDecodeC() {
-    uint32_t value;
+u32 ImplodeDecodeC() {
+    u32 value;
 
     if (blocksize == 0) {
         blocksize = ImplodeGetBits(0x10);
@@ -294,8 +294,8 @@ uint32_t ImplodeDecodeC() {
     return value;
 }
 
-uint32_t ImplodeDecodeOffset() {
-    uint32_t offset;
+u32 ImplodeDecodeOffset() {
+    u32 offset;
 
     SELECT(offset, offset_table, 0x18, 0xd, 0x800000, offset_len);
 
@@ -306,15 +306,15 @@ uint32_t ImplodeDecodeOffset() {
     return offset;
 }
 
-void ImplodeMakeTable(int32_t size, uint8_t *len, int32_t unknown, uint16_t *table) {
-    int32_t shift;
-    uint32_t unknown2;
-    uint32_t unknown3;
-    uint32_t i;
-    uint32_t j;
-    uint16_t symbol_count[17];
-    uint16_t masks[17];
-    uint16_t offsets[18];
+void ImplodeMakeTable(i32 size, u8 *len, i32 unknown, u16 *table) {
+    i32 shift;
+    u32 unknown2;
+    u32 unknown3;
+    u32 i;
+    u32 j;
+    u16 symbol_count[17];
+    u16 masks[17];
+    u16 offsets[18];
 
     for (i = 1; i < 0x11; i++) {
         symbol_count[i] = 0;
@@ -345,7 +345,7 @@ void ImplodeMakeTable(int32_t size, uint8_t *len, int32_t unknown, uint16_t *tab
         masks[i] = 1 << (0x10 - i);
     }
 
-    i = (int32_t)offsets[unknown + 1] >> shift;
+    i = (i32)offsets[unknown + 1] >> shift;
     if (i != 0) {
         for (j = 1 << unknown; i != j; i++) {
             table[i] = 0;
@@ -355,9 +355,9 @@ void ImplodeMakeTable(int32_t size, uint8_t *len, int32_t unknown, uint16_t *tab
     unknown2 = size;
     unknown3 = 1 << (0xf - unknown);
 
-    for (uint32_t symbol = 0; symbol < size; symbol++) {
-        uint32_t length;
-        uint32_t unknown4;
+    for (u32 symbol = 0; symbol < size; symbol++) {
+        u32 length;
+        u32 unknown4;
 
         if ((length = len[symbol]) == 0) {
             continue;
@@ -369,12 +369,12 @@ void ImplodeMakeTable(int32_t size, uint8_t *len, int32_t unknown, uint16_t *tab
                 table[i] = symbol;
             }
         } else {
-            uint16_t *cursor;
+            u16 *cursor;
 
             j = offsets[length];
             cursor = table + (j >> shift);
 
-            for (uint32_t i = length - unknown; i != 0; i--) {
+            for (u32 i = length - unknown; i != 0; i--) {
                 if (*cursor == 0) {
                     implode_left[unknown2] = 0;
                     implode_right[unknown2] = implode_left[unknown2];
@@ -417,8 +417,8 @@ void ImplodeInitGetBits() {
     ImplodeFillBuf(0x20);
 }
 
-uint32_t ImplodeGetBits(int32_t count) {
-    uint32_t value;
+u32 ImplodeGetBits(i32 count) {
+    u32 value;
 
     if (count == 0) {
         return 0;
@@ -431,7 +431,7 @@ uint32_t ImplodeGetBits(int32_t count) {
     return value;
 }
 
-void ImplodeFillBuf(int32_t count) {
+void ImplodeFillBuf(i32 count) {
     implode_bitbuf <<= count;
 
     while (bitcount < count) {

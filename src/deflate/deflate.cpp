@@ -1,11 +1,10 @@
 #include "deflate.h"
 
-#include <stdint.h>
 #include <string.h>
 
 #include "decomp.h"
 
-static inline int32_t ReverseBits(int32_t x) {
+static inline i32 ReverseBits(i32 x) {
     x = (x & 0xaaaa) >> 1 | (x & 0x5555) << 1;
     x = (x & 0xcccc) >> 2 | (x & 0x3333) << 2;
     x = (x & 0xf0f0) >> 4 | (x & 0xf0f) << 4;
@@ -13,16 +12,16 @@ static inline int32_t ReverseBits(int32_t x) {
     return x;
 }
 
-uint32_t BuildHuffmanTree(DEFHUFFMAN *tree, uint8_t *codeLengths, int32_t symbolCount) {
-    uint32_t nextCode[16];
-    uint32_t lengthCount[17];
-    uint32_t symbolTableIndex;
-    int32_t code;
+u32 BuildHuffmanTree(DEFHUFFMAN *tree, u8 *codeLengths, i32 symbolCount) {
+    u32 nextCode[16];
+    u32 lengthCount[17];
+    u32 symbolTableIndex;
+    i32 code;
 
     memset(lengthCount, 0, sizeof(lengthCount));
     memset(tree->fast_lookup, -1, sizeof(tree->fast_lookup));
 
-    for (int32_t i = 0; i < symbolCount; i++) {
+    for (i32 i = 0; i < symbolCount; i++) {
         lengthCount[codeLengths[i]]++;
     }
 
@@ -34,7 +33,7 @@ uint32_t BuildHuffmanTree(DEFHUFFMAN *tree, uint8_t *codeLengths, int32_t symbol
     tree->num_codes[1] = 0;
     tree->base_code[0] = lengthCount[1] << 15;
 
-    for (uint32_t len = 2; len < 16; len++) {
+    for (u32 len = 2; len < 16; len++) {
         nextCode[len] = (nextCode[len - 1] + lengthCount[len - 1]) << 1;
 
         tree->first_code[len] = nextCode[len];
@@ -44,8 +43,8 @@ uint32_t BuildHuffmanTree(DEFHUFFMAN *tree, uint8_t *codeLengths, int32_t symbol
 
     tree->base_code[15] = 0x10000;
 
-    for (int32_t i = 0; i < symbolCount; i++) {
-        int32_t value = codeLengths[i];
+    for (i32 i = 0; i < symbolCount; i++) {
+        i32 value = codeLengths[i];
 
         if (value != 0) {
             code = nextCode[value];
@@ -55,10 +54,10 @@ uint32_t BuildHuffmanTree(DEFHUFFMAN *tree, uint8_t *codeLengths, int32_t symbol
             tree->symbol_index[symbolTableIndex] = i;
 
             if (value < 10) {
-                int32_t j = ReverseBits(code) >> (0x10 - value);
+                i32 j = ReverseBits(code) >> (0x10 - value);
 
                 do {
-                    tree->fast_lookup[j] = (int16_t)symbolTableIndex;
+                    tree->fast_lookup[j] = (i16)symbolTableIndex;
                     j = j + (1 << value);
                 } while (j < 512);
             }
@@ -70,11 +69,11 @@ uint32_t BuildHuffmanTree(DEFHUFFMAN *tree, uint8_t *codeLengths, int32_t symbol
     return 1;
 }
 
-int32_t InflateBuffer(char *buffer, int decodedSize, char *readBuffer, int32_t readBufferSize) {
+i32 InflateBuffer(char *buffer, int decodedSize, char *readBuffer, i32 readBufferSize) {
     DEFLATECONTEXT ctx;
 
-    ctx.read_buffer = (uint8_t *)readBuffer;
-    ctx.read_buffer_end = (uint8_t *)readBuffer + readBufferSize;
+    ctx.read_buffer = (u8 *)readBuffer;
+    ctx.read_buffer_end = (u8 *)readBuffer + readBufferSize;
 
     if (Inflate(&ctx, buffer, decodedSize) == 0) {
         return -1;
@@ -83,34 +82,34 @@ int32_t InflateBuffer(char *buffer, int decodedSize, char *readBuffer, int32_t r
     }
 }
 
-int32_t Inflate(DEFLATECONTEXT *ctx, char *buffer, int32_t size) {
+i32 Inflate(DEFLATECONTEXT *ctx, char *buffer, i32 size) {
     ctx->start_pos = buffer;
     ctx->current_pos = buffer;
     ctx->end_pos = buffer + size;
     return DecodeDeflated(ctx);
 }
 
-static uint8_t DefaultLengths[288] = {0};
-static uint8_t DefaultDistances[32] = {0};
+static u8 DefaultLengths[288] = {0};
+static u8 DefaultDistances[32] = {0};
 
 void InitHuffmanDefaults() {
-    for (int32_t i = 0; i < 144; i++) {
+    for (i32 i = 0; i < 144; i++) {
         DefaultLengths[i] = 8;
     }
 
-    for (int32_t i = 144; i < 256; i++) {
+    for (i32 i = 144; i < 256; i++) {
         DefaultLengths[i] = 9;
     }
 
-    for (int32_t i = 256; i < 280; i++) {
+    for (i32 i = 256; i < 280; i++) {
         DefaultLengths[i] = 7;
     }
 
-    for (int32_t i = 280; i < 288; i++) {
+    for (i32 i = 280; i < 288; i++) {
         DefaultLengths[i] = 8;
     }
 
-    for (int32_t i = 0; i < 32; i++) {
+    for (i32 i = 0; i < 32; i++) {
         DefaultDistances[i] = 5;
     }
 }
@@ -125,7 +124,7 @@ void InitHuffmanDefaults() {
     ({                                                                                                                 \
         if ((ctx)->num_bits_available < (n)) {                                                                         \
             do {                                                                                                       \
-                uint32_t byte = 0;                                                                                     \
+                u32 byte = 0;                                                                                          \
                 if ((ctx)->read_buffer < (ctx)->read_buffer_end) {                                                     \
                     byte = *ctx->read_buffer++;                                                                        \
                 }                                                                                                      \
@@ -140,20 +139,20 @@ void InitHuffmanDefaults() {
 
 #define READBITS(ctx, n)                                                                                               \
     ({                                                                                                                 \
-        uint32_t bits = PEEKBITS(ctx, n);                                                                              \
+        u32 bits = PEEKBITS(ctx, n);                                                                                   \
         DROPBITS(ctx, n);                                                                                              \
         bits;                                                                                                          \
     })
 
-static inline int32_t CtxReadHuffmanSymbol(DEFLATECONTEXT *ctx, DEFHUFFMAN *tree) {
-    uint32_t bits = PEEKBITS(ctx, 16);
+static inline i32 CtxReadHuffmanSymbol(DEFLATECONTEXT *ctx, DEFHUFFMAN *tree) {
+    u32 bits = PEEKBITS(ctx, 16);
 
-    uint32_t lookupIndex = tree->fast_lookup[bits & 0x1ff];
+    u32 lookupIndex = tree->fast_lookup[bits & 0x1ff];
 
     if (lookupIndex != 0xffff) {
         // fast path: 9-bit lookup
-        int32_t symbolLength = tree->symbols[lookupIndex];
-        int32_t symbolIndex = tree->symbol_index[lookupIndex];
+        i32 symbolLength = tree->symbols[lookupIndex];
+        i32 symbolIndex = tree->symbol_index[lookupIndex];
 
         DROPBITS(ctx, symbolLength);
 
@@ -161,35 +160,35 @@ static inline int32_t CtxReadHuffmanSymbol(DEFLATECONTEXT *ctx, DEFHUFFMAN *tree
     }
 
     // slow path: bit-by-bit traversal
-    int32_t rev = ReverseBits(bits);
+    i32 rev = ReverseBits(bits);
 
-    uint32_t len = 10;
+    u32 len = 10;
     while (rev >= tree->base_code[len - 1]) {
         len++;
     }
 
     DROPBITS(ctx, len);
 
-    uint16_t firstCode = tree->first_code[len];
-    uint16_t numCodes = tree->num_codes[len];
-    int32_t symbolIndex = tree->symbol_index[(rev >> (16 - len)) + numCodes - firstCode];
+    u16 firstCode = tree->first_code[len];
+    u16 numCodes = tree->num_codes[len];
+    i32 symbolIndex = tree->symbol_index[(rev >> (16 - len)) + numCodes - firstCode];
 
     return symbolIndex;
 }
 
-static int32_t LengthBase[31] = {3,  4,  5,  6,  7,  8,  9,  10,  11,  13,  15,  17,  19,  23, 27, 31,
-                                 35, 43, 51, 59, 67, 83, 99, 115, 131, 163, 195, 227, 258, 0,  0};
-static int32_t LengthExtraBits[31] = {0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2,
-                                      3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 0, 0, 0};
-static int32_t DistanceBase[32] = {1,    2,    3,    4,    5,    7,     9,     13,    17,  25,   33,
-                                   49,   65,   97,   129,  193,  257,   385,   513,   769, 1025, 1537,
-                                   2049, 3073, 4097, 6145, 8193, 12289, 16385, 24577, 0,   0};
-static int32_t DistanceExtraBits[32] = {0, 0, 0, 0, 1, 1, 2,  2,  3,  3,  4,  4,  5,  5,  6, 6,
-                                        7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 0, 0};
+static i32 LengthBase[31] = {3,  4,  5,  6,  7,  8,  9,  10,  11,  13,  15,  17,  19,  23, 27, 31,
+                             35, 43, 51, 59, 67, 83, 99, 115, 131, 163, 195, 227, 258, 0,  0};
+static i32 LengthExtraBits[31] = {0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2,
+                                  3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 0, 0, 0};
+static i32 DistanceBase[32] = {1,    2,    3,    4,    5,    7,     9,     13,    17,  25,   33,
+                               49,   65,   97,   129,  193,  257,   385,   513,   769, 1025, 1537,
+                               2049, 3073, 4097, 6145, 8193, 12289, 16385, 24577, 0,   0};
+static i32 DistanceExtraBits[32] = {0, 0, 0, 0, 1, 1, 2,  2,  3,  3,  4,  4,  5,  5,  6, 6,
+                                    7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 0, 0};
 
 int DecodeDeflatedBlock(DEFLATECONTEXT *ctx) {
     while (true) {
-        int32_t symbol = CtxReadHuffmanSymbol(ctx, &ctx->length_tree);
+        i32 symbol = CtxReadHuffmanSymbol(ctx, &ctx->length_tree);
 
         if (symbol < 256) {
             // Literal byte
@@ -198,19 +197,19 @@ int DecodeDeflatedBlock(DEFLATECONTEXT *ctx) {
             // Length/Distance pair
             symbol -= 257;
 
-            int32_t length = LengthBase[symbol];
+            i32 length = LengthBase[symbol];
             if (LengthExtraBits[symbol] != 0) {
                 length += READBITS(ctx, LengthExtraBits[symbol]);
             }
 
-            int32_t distanceSymbol = CtxReadHuffmanSymbol(ctx, &ctx->distance_tree);
-            int32_t distance = DistanceBase[distanceSymbol];
+            i32 distanceSymbol = CtxReadHuffmanSymbol(ctx, &ctx->distance_tree);
+            i32 distance = DistanceBase[distanceSymbol];
             if (DistanceExtraBits[distanceSymbol] != 0) {
                 distance += READBITS(ctx, DistanceExtraBits[distanceSymbol]);
             }
 
             char *src = ctx->current_pos - distance;
-            for (int32_t i = 0; i < length; i++) {
+            for (i32 i = 0; i < length; i++) {
                 *ctx->current_pos++ = *src++;
             }
         } else {
@@ -231,8 +230,8 @@ enum {
 };
 
 int DecodeDeflated(DEFLATECONTEXT *ctx) {
-    uint32_t is_final_block;
-    int32_t type;
+    u32 is_final_block;
+    i32 type;
 
     ctx->num_bits_available = 0;
     ctx->bit_buffer = 0;
@@ -282,18 +281,18 @@ int DecodeDeflated(DEFLATECONTEXT *ctx) {
     return 1;
 }
 
-static uint8_t LengthDeZigZag[19] = {0x10, 0x11, 0x12, 0x00, 0x08, 0x07, 0x09, 0x06, 0x0a, 0x05,
-                                     0x0b, 0x04, 0x0c, 0x03, 0x0d, 0x02, 0x0e, 0x01, 0x0f};
+static u8 LengthDeZigZag[19] = {0x10, 0x11, 0x12, 0x00, 0x08, 0x07, 0x09, 0x06, 0x0a, 0x05,
+                                0x0b, 0x04, 0x0c, 0x03, 0x0d, 0x02, 0x0e, 0x01, 0x0f};
 
 int DecompressHuffmanTrees(DEFLATECONTEXT *ctx) {
-    int32_t hlit = READBITS(ctx, 5) + 257;
-    int32_t hdist = READBITS(ctx, 5) + 1;
-    int32_t hclen = READBITS(ctx, 4) + 4;
+    i32 hlit = READBITS(ctx, 5) + 257;
+    i32 hdist = READBITS(ctx, 5) + 1;
+    i32 hclen = READBITS(ctx, 4) + 4;
 
-    uint8_t codeLengths[19];
+    u8 codeLengths[19];
     memset(codeLengths, 0, sizeof(codeLengths));
 
-    for (int32_t i = 0; i < hclen; i++) {
+    for (i32 i = 0; i < hclen; i++) {
         codeLengths[LengthDeZigZag[i]] = READBITS(ctx, 3);
     }
 
@@ -302,11 +301,11 @@ int DecompressHuffmanTrees(DEFLATECONTEXT *ctx) {
         return false;
     }
 
-    uint8_t allCodeLengths[288 + 32];
+    u8 allCodeLengths[288 + 32];
 
     unsigned int repeatCount;
     for (int i = 0; i < hlit + hdist; i += repeatCount) {
-        int32_t symbol = CtxReadHuffmanSymbol(ctx, &ctx->temp_code_length);
+        i32 symbol = CtxReadHuffmanSymbol(ctx, &ctx->temp_code_length);
 
         // Process the decoded symbol
         if (symbol < 16) {
@@ -317,7 +316,7 @@ int DecompressHuffmanTrees(DEFLATECONTEXT *ctx) {
             if (symbol == 16) {
                 // Repeat previous code length 3-6 times
                 repeatCount = READBITS(ctx, 2) + 3;
-                uint8_t prevCodeLength = allCodeLengths[i - 1];
+                u8 prevCodeLength = allCodeLengths[i - 1];
                 memset(allCodeLengths + i, prevCodeLength, repeatCount);
             } else {
                 if (symbol == 17) {

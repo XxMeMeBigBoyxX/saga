@@ -12,9 +12,9 @@ struct leveldatadisplay_s { /* PlaceHolder Structure */
     undefined field5_0x5;
     undefined field6_0x6;
     undefined field7_0x7;
-    int64_t field8_0x8;
-    float field9_0x10;
-    short field10_0x14;
+    i64 field8_0x8;
+    f32 field9_0x10;
+    i16 field10_0x14;
     undefined field11_0x16;
     undefined field12_0x17;
     undefined field13_0x18;
@@ -49,7 +49,7 @@ struct leveldata_s { /* PlaceHolder Structure */
     void *draw_fn;
     void *draw_status_fn;
     LEVELDATADISPLAY field12_0x84;
-    short music_index;
+    i16 music_index;
     undefined2 field14_0xa2;
     undefined2 field15_0xa4;
     undefined2 field16_0xa6;
@@ -69,7 +69,7 @@ struct leveldata_s { /* PlaceHolder Structure */
     undefined1 field30_0xbd;
     undefined1 field31_0xbe;
     undefined1 field32_0xbf;
-    float field33_0xc0;
+    f32 field33_0xc0;
     undefined4 field34_0xc4;
     undefined4 field35_0xc8;
     undefined4 field36_0xcc;
@@ -85,8 +85,8 @@ struct leveldata_s { /* PlaceHolder Structure */
     undefined1 field46_0xd9;
     undefined1 field47_0xda;
     undefined1 field48_0xdb;
-    float field49_0xdc;
-    float field50_0xe0;
+    f32 field49_0xdc;
+    f32 field50_0xe0;
     int field51_0xe4;
     undefined4 field52_0xe8;
     undefined4 field53_0xec;
@@ -130,8 +130,8 @@ struct leveldata_s { /* PlaceHolder Structure */
     undefined2 field91_0x118;
     undefined field92_0x11a;
     undefined field93_0x11b;
-    float field94_0x11c;
-    float field95_0x120;
+    f32 field94_0x11c;
+    f32 field95_0x120;
     undefined4 field96_0x124;
     undefined4 field97_0x128;
     int music_tracks[6];
@@ -153,7 +153,7 @@ extern "C" {
 
 #ifdef __cplusplus
 
-LEVELDATA *Levels_ConfigureList(char *file, VARIPTR *buf, VARIPTR *buf_end, int32_t maxLevelCount, int32_t *levelcount,
+LEVELDATA *Levels_ConfigureList(char *file, VARIPTR *buf, VARIPTR *buf_end, i32 maxLevelCount, i32 *levelcount,
                                 void *levelSetDefaults);
 
 void Level_SetDefaults(LEVELDATA *level);

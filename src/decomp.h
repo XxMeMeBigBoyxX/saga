@@ -4,6 +4,37 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+// Define fixed-width types
+typedef uint8_t u8;
+typedef uint16_t u16;
+typedef uint32_t u32;
+typedef uint64_t u64;
+typedef int8_t i8;
+typedef int16_t i16;
+typedef int32_t i32;
+typedef int64_t i64;
+typedef float f32;
+typedef double f64;
+
+// Define undefined* types from ghidra
+typedef u8 undefined;
+typedef u8 byte;
+typedef u8 dwfenc;
+typedef u32 dword;
+typedef u64 longlong;
+typedef u8 uchar;
+typedef u64 ulonglong;
+typedef u8 undefined1;
+typedef u16 undefined2;
+typedef u32 undefined3;
+typedef u32 undefined4;
+typedef u64 undefined5;
+typedef u64 undefined6;
+typedef u64 undefined7;
+typedef u64 undefined8;
+typedef u16 ushort;
+typedef u16 word;
+
 #define SAGA_NOMATCH __attribute__((section(".text.nomatch")))
 #define UNIMPLEMENTED(...)                                                                                             \
     ({                                                                                                                 \
@@ -67,7 +98,7 @@ static void _saga_log(enum log_level level, const char *file, int line, const ch
 #define BUFFER_ALLOC_ARRAY_ALIGNED(buffer, count, T) BUFFER_ALLOC_ARRAY((buffer), (count), T, alignof(T))
 
 static inline void *buffer_alloc_aligned(void **buffer, size_t size, size_t align) {
-    size_t current = (size_t)(*buffer);
+    size_t current = (ssize_t)(*buffer);
     size_t aligned = (current + (align - 1)) & ~(align - 1);
     *buffer = (void *)(aligned + size);
     return (void *)aligned;

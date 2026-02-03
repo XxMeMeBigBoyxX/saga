@@ -6,9 +6,9 @@
 
 static NUFILEPAK_ERROR fpk_err;
 
-static unsigned int CalcChecksum(void *data, int len) {
+static u32 CalcChecksum(void *data, int len) {
     unsigned char *bytes;
-    unsigned int sum;
+    u32 sum;
 
     sum = 0x12345678;
     bytes = (unsigned char *)data;
@@ -21,7 +21,7 @@ static unsigned int CalcChecksum(void *data, int len) {
     return sum;
 }
 
-static void DecryptData(NUFILEPAKHDR *hdr, unsigned int data_len, unsigned char *key, int key_len) {
+static void DecryptData(NUFILEPAKHDR *hdr, u32 data_len, unsigned char *key, int key_len) {
     unsigned char *bytes;
     int i;
 
@@ -47,11 +47,10 @@ void *NuFilePakLoad(char *filepath, VARIPTR *buf, VARIPTR buf_end, int alignment
     return NuFilePakLoadKey(filepath, buf, buf_end, alignment, NULL, 0);
 }
 
-void *NuFilePakLoadKey(char *filepath, VARIPTR *buf, VARIPTR buf_end, int alignment, unsigned char *key,
-                       unsigned int key_len) {
+void *NuFilePakLoadKey(char *filepath, VARIPTR *buf, VARIPTR buf_end, int alignment, unsigned char *key, u32 key_len) {
     NUFILEPAKHDR *hdr;
     int len;
-    unsigned int stored_sum;
+    u32 stored_sum;
 
     fpk_err = NUFILEPAK_ERROR_NONE;
 
@@ -134,7 +133,7 @@ static NUFILEPAKITEM *GetItems(NUFILEPAKHDR *hdr) {
 }
 
 int NuFilePakGetItem(void *hdr_ptr, char *item_name) {
-    unsigned int i;
+    u32 i;
     NUFILEPAKITEM *items;
     NUFILEPAKHDR_V0 *hdr_v0;
     NUFILEPAKHDR *hdr;

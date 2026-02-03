@@ -6,18 +6,18 @@
 static pthread_mutex_t NuThread_CriticalSections[16];
 static char NuThread_CriticalSectionsUsed[16];
 
-int32_t NuThreadCriticalSectionBegin(int32_t index) {
+i32 NuThreadCriticalSectionBegin(i32 index) {
     return pthread_mutex_lock(&NuThread_CriticalSections[index]);
 }
 
-int32_t NuThreadCriticalSectionEnd(int32_t index) {
+i32 NuThreadCriticalSectionEnd(i32 index) {
     return pthread_mutex_unlock(&NuThread_CriticalSections[index]);
 }
 
-int32_t NuThreadCreateCriticalSection(void) {
-    int32_t index = -1;
+i32 NuThreadCreateCriticalSection(void) {
+    i32 index = -1;
 
-    for (int32_t i = 0; i < 16; i++) {
+    for (i32 i = 0; i < 16; i++) {
         if (NuThread_CriticalSectionsUsed[i] == '\0') {
             index = i;
 

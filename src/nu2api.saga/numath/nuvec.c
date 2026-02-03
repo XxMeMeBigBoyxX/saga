@@ -29,26 +29,26 @@ void NuVecSub(NUVEC *v, NUVEC *v0, NUVEC *v1) {
     v->z = v0->z - v1->z;
 }
 
-void NuVecScale(NUVEC *v, NUVEC *v0, float k) {
+void NuVecScale(NUVEC *v, NUVEC *v0, f32 k) {
     v->x = v0->x * k;
     v->y = v0->y * k;
     v->z = v0->z * k;
 }
 
-void NuVecAddScale(NUVEC *v, NUVEC *v0, NUVEC *v1, float k) {
+void NuVecAddScale(NUVEC *v, NUVEC *v0, NUVEC *v1, f32 k) {
     v->x = v0->x + v1->x * k;
     v->y = v0->y + v1->y * k;
     v->z = v0->z + v1->z * k;
 }
 
-void NuVecScaleAccum(NUVEC *v, NUVEC *v0, float k) {
+void NuVecScaleAccum(NUVEC *v, NUVEC *v0, f32 k) {
     v->x += v0->x * k;
     v->y += v0->y * k;
     v->z += v0->z * k;
 }
 
-void NuVecInvScale(NUVEC *v, NUVEC *v0, float k) {
-    float ki;
+void NuVecInvScale(NUVEC *v, NUVEC *v0, f32 k) {
+    f32 ki;
 
     if (k == 0.0f) {
         ki = 0.0f;
@@ -62,7 +62,7 @@ void NuVecInvScale(NUVEC *v, NUVEC *v0, float k) {
 }
 
 void NuVecCross(NUVEC *v, NUVEC *v0, NUVEC *v1) {
-    float y, z;
+    f32 y, z;
     y = v0->z * v1->x - v0->x * v1->z;
     z = v0->x * v1->y - v0->y * v1->x;
     v->x = v0->y * v1->z - v0->z * v1->y;
@@ -72,7 +72,7 @@ void NuVecCross(NUVEC *v, NUVEC *v0, NUVEC *v1) {
 }
 
 void NuVecCrossRel(NUVEC *v, NUVEC *basepnt, NUVEC *v0, NUVEC *v1) {
-    float y, z;
+    f32 y, z;
     y = (v0->z - basepnt->z) * (v1->x - basepnt->x) - (v0->x - basepnt->x) * (v1->z - basepnt->z);
     z = (v0->x - basepnt->x) * (v1->y - basepnt->y) - (v0->y - basepnt->y) * (v1->x - basepnt->x);
     v->x = (v0->y - basepnt->y) * (v1->z - basepnt->z) - (v0->z - basepnt->z) * (v1->y - basepnt->y);
@@ -80,7 +80,7 @@ void NuVecCrossRel(NUVEC *v, NUVEC *basepnt, NUVEC *v0, NUVEC *v1) {
     v->z = z;
 }
 
-float NuVecDot(NUVEC *v0, NUVEC *v1) {
+f32 NuVecDot(NUVEC *v0, NUVEC *v1) {
     return v0->x * v1->x + v0->y * v1->y + v0->z * v1->z;
 }
 
@@ -124,21 +124,21 @@ void NuVecMin(NUVEC *v, NUVEC *v0, NUVEC *v1) {
     }
 }
 
-float NuVecMagSqr(NUVEC *v0) {
+f32 NuVecMagSqr(NUVEC *v0) {
     return v0->x * v0->x + v0->y * v0->y + v0->z * v0->z;
 }
 
-float NuVecMag(NUVEC *v0) {
+f32 NuVecMag(NUVEC *v0) {
     return NuFsqrt(NuVecMagSqr(v0));
 }
 
-float NuVecMagXZ(NUVEC *v0) {
+f32 NuVecMagXZ(NUVEC *v0) {
     return NuFsqrt(v0->x * v0->x + v0->z * v0->z);
 }
 
-float NuVecNorm(NUVEC *v, NUVEC *v0) {
-    float len = NuFsqrt(NuVecMagSqr(v0));
-    float leni;
+f32 NuVecNorm(NUVEC *v, NUVEC *v0) {
+    f32 len = NuFsqrt(NuVecMagSqr(v0));
+    f32 leni;
 
     if (len > 0.0f) {
         leni = 1.0f / len;
@@ -162,7 +162,7 @@ void NuVecSurfaceNormal(NUVEC *v, NUVEC *v0, NUVEC *v1, NUVEC *v2) {
     NuVecNorm(v, v);
 }
 
-float NuVecDist(NUVEC *v0, NUVEC *v1, NUVEC *d) {
+f32 NuVecDist(NUVEC *v0, NUVEC *v1, NUVEC *d) {
     NUVEC dist;
 
     if (d != NULL) {
@@ -174,7 +174,7 @@ float NuVecDist(NUVEC *v0, NUVEC *v1, NUVEC *d) {
     }
 }
 
-float NuVecDistSqr(NUVEC *v0, NUVEC *v1, NUVEC *d) {
+f32 NuVecDistSqr(NUVEC *v0, NUVEC *v1, NUVEC *d) {
     NUVEC dist;
 
     if (d != NULL) {
@@ -186,7 +186,7 @@ float NuVecDistSqr(NUVEC *v0, NUVEC *v1, NUVEC *d) {
     }
 }
 
-float NuVecXZDist(NUVEC *v0, NUVEC *v1, NUVEC *d) {
+f32 NuVecXZDist(NUVEC *v0, NUVEC *v1, NUVEC *d) {
     NUVEC dist;
 
     if (d != NULL) {
@@ -202,7 +202,7 @@ float NuVecXZDist(NUVEC *v0, NUVEC *v1, NUVEC *d) {
     }
 }
 
-float NuVecXZDistSqr(NUVEC *v0, NUVEC *v1, NUVEC *d) {
+f32 NuVecXZDistSqr(NUVEC *v0, NUVEC *v1, NUVEC *d) {
     NUVEC dist;
 
     if (d != NULL) {
@@ -218,17 +218,17 @@ float NuVecXZDistSqr(NUVEC *v0, NUVEC *v1, NUVEC *d) {
     }
 }
 
-void NuVecLerp(NUVEC *vt, NUVEC *v1, NUVEC *v0, float t) {
+void NuVecLerp(NUVEC *vt, NUVEC *v1, NUVEC *v0, f32 t) {
     vt->x = ((v1->x - v0->x) * t) + v0->x;
     vt->y = ((v1->y - v0->y) * t) + v0->y;
     vt->z = ((v1->z - v0->z) * t) + v0->z;
 }
 
-int NuVecCompareTolerance(NUVEC *a, NUVEC *b, float tolerance) {
+int NuVecCompareTolerance(NUVEC *a, NUVEC *b, f32 tolerance) {
     NUVEC diff;
     NuVecSub(&diff, a, b);
 
-    float result = NuVecMag(&diff);
+    f32 result = NuVecMag(&diff);
     if (result > tolerance) {
         return 0;
     } else {
@@ -237,8 +237,8 @@ int NuVecCompareTolerance(NUVEC *a, NUVEC *b, float tolerance) {
 }
 
 void NuVecMtxTransform(NUVEC *v, NUVEC *v0, NUMTX *m0) {
-    float y = v0->x * m0->m01 + v0->y * m0->m11 + v0->z * m0->m21 + m0->m31;
-    float z = v0->x * m0->m02 + v0->y * m0->m12 + v0->z * m0->m22 + m0->m32;
+    f32 y = v0->x * m0->m01 + v0->y * m0->m11 + v0->z * m0->m21 + m0->m31;
+    f32 z = v0->x * m0->m02 + v0->y * m0->m12 + v0->z * m0->m22 + m0->m32;
     v->x = v0->x * m0->m00 + v0->y * m0->m10 + v0->z * m0->m20 + m0->m30;
     v->y = y;
     v->z = z;

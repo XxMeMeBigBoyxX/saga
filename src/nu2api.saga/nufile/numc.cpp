@@ -4,7 +4,7 @@ int NuMcOpen(int port, int slot, char *filepath, int mode, int async) {
     return 0;
 }
 
-int32_t NuMcClose(int fd, int async) {
+i32 NuMcClose(int fd, int async) {
     return 0;
 }
 

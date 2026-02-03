@@ -1,15 +1,16 @@
 #pragma once
 
+#include "decomp.h"
 struct nutime_s {
-    unsigned int low;
+    u32 low;
     int high;
 };
 
 typedef struct nutime_s NUTIME;
 
 #ifdef __cplusplus
-void NuTimeGetTicksPS(unsigned int *low, unsigned int *high);
-unsigned long long NuGetCurrentTimeMilisecondsPS(void);
+void NuTimeGetTicksPS(u32 *low, u32 *high);
+u64 NuGetCurrentTimeMilisecondsPS(void);
 
 extern "C" {
 #endif

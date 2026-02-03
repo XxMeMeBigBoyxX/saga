@@ -5,23 +5,23 @@
 extern "C" {
 #endif
 
-    int EdFileOpen(char *filepath, NUFILEMODE mode);
-    int EdFileClose();
-    void EdFileSetMedia(int media);
+    i32 EdFileOpen(char *filepath, NUFILEMODE mode);
+    i32 EdFileClose();
+    void EdFileSetMedia(i32 media);
     void EdFileSetPakFile(void *pak);
-    void EdFileSetReadWrongEndianess(int value);
+    void EdFileSetReadWrongEndianess(i32 value);
 
-    void EdFileRead(void *buf, int len);
+    void EdFileRead(void *buf, i32 len);
     char EdFileReadChar();
     unsigned char EdFileReadUnsignedChar();
-    float EdFileReadFloat();
-    int EdFileReadInt();
-    unsigned int EdFileReadUnsignedInt();
-    short EdFileReadShort();
-    unsigned short EdFileReadUnsignedShort();
+    f32 EdFileReadf32();
+    i32 EdFileReadInt();
+    u32 EdFileReadUnsignedInt();
+    i16 EdFileReadShort();
+    u16 EdFileReadUnsignedShort();
     void EdFileReadNuVec(NUVEC *out);
 
-    void EdFileWrite(void *data, int len);
+    void EdFileWrite(void *data, i32 len);
 
     void EdFileSwapEndianess16(void *data);
     void EdFileSwapEndianess32(void *data);

@@ -1,7 +1,5 @@
 #pragma once
 
-#include <stdint.h>
-
 #include "globals.h"
 
 #ifdef __cplusplus
@@ -31,7 +29,7 @@ extern "C" {
     struct areadata_s { /* PlaceHolder Structure */
         char dir[64];
         char file[32];
-        short field2_0x60[1];
+        i16 field2_0x60[1];
         undefined field3_0x62;
         undefined field4_0x63;
         undefined field5_0x64;
@@ -61,10 +59,10 @@ extern "C" {
         byte cheat;
         undefined1 field30_0x7f;
         int field31_0x80;
-        short challenge_trial_time;
+        i16 challenge_trial_time;
         byte episode_index;
         byte area_index;
-        short area_music;
+        i16 area_music;
         undefined2 minikit_id;
         undefined4 field37_0x8c;
         undefined4 field38_0x90;
@@ -84,7 +82,7 @@ extern "C" {
 
 #ifdef __cplusplus
 
-AREADATA *Area_FindByName(char *name, int32_t *indexDest);
+AREADATA *Area_FindByName(char *name, i32 *indexDest);
 
 AREADATA *Areas_ConfigureList(char *file, VARIPTR *bufferStart, VARIPTR *bufferEnd, int count, int *countDest);
 

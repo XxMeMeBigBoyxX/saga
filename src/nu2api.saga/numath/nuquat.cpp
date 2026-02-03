@@ -4,16 +4,16 @@
 #include "nu2api.saga/numath/nutrig.h"
 
 void NuQuatFromEulerXYZ(NUQUAT *out, NUANG psi, NUANG theta, NUANG phi) {
-    float sin_psi_over_2;
-    float cos_psi_over_2;
-    float sin_theta_over_2;
-    float cos_theta_over_2;
-    float sin_phi_over_2;
-    float cos_phi_over_2;
-    float sin_phi_times_sin_theta;
-    float cos_phi_times_cos_theta;
-    float sin_phi_times_cos_theta;
-    float cos_phi_times_sin_theta;
+    f32 sin_psi_over_2;
+    f32 cos_psi_over_2;
+    f32 sin_theta_over_2;
+    f32 cos_theta_over_2;
+    f32 sin_phi_over_2;
+    f32 cos_phi_over_2;
+    f32 sin_phi_times_sin_theta;
+    f32 cos_phi_times_cos_theta;
+    f32 sin_phi_times_cos_theta;
+    f32 cos_phi_times_sin_theta;
 
     psi /= 2;
     theta /= 2;
@@ -42,16 +42,16 @@ void NuQuatFromEulerXYZ(NUQUAT *out, NUANG psi, NUANG theta, NUANG phi) {
 }
 
 void NuQuatToMtx(NUQUAT *quat, NUMTX *out) {
-    float w_sq;
-    float x_sq;
-    float y_sq;
-    float z_sq;
-    float xy_times_2;
-    float xz_times_2;
-    float xw_times_2;
-    float yz_times_2;
-    float yw_times_2;
-    float zw_times_2;
+    f32 w_sq;
+    f32 x_sq;
+    f32 y_sq;
+    f32 z_sq;
+    f32 xy_times_2;
+    f32 xz_times_2;
+    f32 xw_times_2;
+    f32 yz_times_2;
+    f32 yw_times_2;
+    f32 zw_times_2;
 
     w_sq = quat->w * quat->w;
     x_sq = quat->x * quat->x;
@@ -87,7 +87,7 @@ void NuQuatToMtx(NUQUAT *quat, NUMTX *out) {
 }
 
 void NuQuatInv(NUQUAT *out, NUQUAT *quat) {
-    float recip_sq;
+    f32 recip_sq;
 
     recip_sq = 1.0f / (quat->w * quat->w + quat->x * quat->x + quat->y * quat->y + quat->z * quat->z);
 
@@ -97,21 +97,21 @@ void NuQuatInv(NUQUAT *out, NUQUAT *quat) {
     out->z = -quat->z * recip_sq;
 }
 
-void NuQuatLerp(NUQUAT *out, NUQUAT *from, NUQUAT *to, float t) {
+void NuQuatLerp(NUQUAT *out, NUQUAT *from, NUQUAT *to, f32 t) {
     out->x = (to->x - from->x) * t + from->x;
     out->y = (to->y - from->y) * t + from->y;
     out->z = (to->z - from->z) * t + from->z;
     out->w = (to->w - from->w) * t + from->w;
 }
 
-void NuQuatSlerp(NUQUAT *out, NUQUAT *from, NUQUAT *to, float t) {
-    float _unused;
+void NuQuatSlerp(NUQUAT *out, NUQUAT *from, NUQUAT *to, f32 t) {
+    f32 _unused;
     NUQUAT to_prime;
-    float scale;
-    float omega;
-    float sin_omega;
-    float from_factor;
-    float to_factor;
+    f32 scale;
+    f32 omega;
+    f32 sin_omega;
+    f32 from_factor;
+    f32 to_factor;
 
     // Even though this same number is used later in the function, the
     // assignment here has nothing to do with it.
@@ -150,7 +150,7 @@ void NuQuatSlerp(NUQUAT *out, NUQUAT *from, NUQUAT *to, float t) {
     out->w = from->w * from_factor + to_prime.w * to_factor;
 }
 
-void NuQuatCubicInt(NUQUAT *out, NUQUAT *m, NUQUAT *a, NUQUAT *b, NUQUAT *c, float t) {
+void NuQuatCubicInt(NUQUAT *out, NUQUAT *m, NUQUAT *a, NUQUAT *b, NUQUAT *c, f32 t) {
     NuQuatHarmonize(m, a);
     NuQuatHarmonize(a, b);
     NuQuatHarmonize(b, c);
@@ -161,7 +161,7 @@ void NuQuatCubicInt(NUQUAT *out, NUQUAT *m, NUQUAT *a, NUQUAT *b, NUQUAT *c, flo
     out->w = NuCubicInterpolation(m->w, a->w, b->w, c->w, t);
 }
 
-void NuQuatHermiteInt(NUQUAT *out, NUQUAT *m, NUQUAT *q0, NUQUAT *q1, NUQUAT *q2, float t) {
+void NuQuatHermiteInt(NUQUAT *out, NUQUAT *m, NUQUAT *q0, NUQUAT *q1, NUQUAT *q2, f32 t) {
     NuQuatHarmonize(m, q0);
     NuQuatHarmonize(q0, q1);
     NuQuatHarmonize(q1, q2);
@@ -173,7 +173,7 @@ void NuQuatHermiteInt(NUQUAT *out, NUQUAT *m, NUQUAT *q0, NUQUAT *q1, NUQUAT *q2
 }
 
 void NuQuatHarmonize(NUQUAT *a, NUQUAT *b) {
-    float dot = a->x * b->x + a->y * b->y + a->z * b->z + a->w * b->w;
+    f32 dot = a->x * b->x + a->y * b->y + a->z * b->z + a->w * b->w;
 
     if (dot < 0.0f) {
         b->x = -b->x;
@@ -183,13 +183,13 @@ void NuQuatHarmonize(NUQUAT *a, NUQUAT *b) {
     }
 }
 
-float NuCubicInterpolation(float m, float y0, float y1, float y2, float t) {
-    float a;
-    float b;
-    float c;
-    float d;
-    float t_cb;
-    float t_sq;
+f32 NuCubicInterpolation(f32 m, f32 y0, f32 y1, f32 y2, f32 t) {
+    f32 a;
+    f32 b;
+    f32 c;
+    f32 d;
+    f32 t_cb;
+    f32 t_sq;
 
     a = -m / 6.0f + y0 / 2.0f + -y1 / 2.0f + y2 / 6.0f;
     b = m / 2.0f - y0 + y1 / 2.0f;
@@ -202,15 +202,15 @@ float NuCubicInterpolation(float m, float y0, float y1, float y2, float t) {
     return a * t_cb + b * t_sq + c * t + d;
 }
 
-float NuHermiteInterpolation(float m, float y0, float y1, float y2, float t) {
-    float m0;
-    float m1;
-    float t_sq;
-    float t_cb;
-    float h0;
-    float h1;
-    float h2;
-    float h3;
+f32 NuHermiteInterpolation(f32 m, f32 y0, f32 y1, f32 y2, f32 t) {
+    f32 m0;
+    f32 m1;
+    f32 t_sq;
+    f32 t_cb;
+    f32 h0;
+    f32 h1;
+    f32 h2;
+    f32 h3;
 
     m0 = (y1 - m) / 2.0f;
     m1 = (y2 - y0) / 2.0f;

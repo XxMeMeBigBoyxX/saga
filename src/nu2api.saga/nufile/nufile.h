@@ -1,10 +1,8 @@
 #pragma once
 
-#include <stdint.h>
-
 #include "nu2api.saga/nucore/common.h"
 
-typedef int32_t NUFILE;
+typedef i32 NUFILE;
 
 typedef enum nufilemode_e {
     NUFILE_READ = 0,
@@ -22,10 +20,10 @@ typedef struct filebuff_s {
 
 typedef struct fileinfo_s {
     int handle;
-    int64_t read_pos;
-    int64_t file_pos;
-    int64_t file_len;
-    int64_t buf_start;
+    i64 read_pos;
+    i64 file_pos;
+    i64 file_len;
+    i64 buf_start;
     int buf_len;
     int use_buf;
     int unused;
@@ -80,55 +78,55 @@ enum nufileseek_e {
 typedef enum nufileseek_e NUFILESEEK;
 
 typedef struct nudatinfo_s {
-    int file_offset;
-    int file_len;
-    int decompressed_len;
-    int compression_mode;
+    i32 file_offset;
+    i32 file_len;
+    i32 decompressed_len;
+    i32 compression_mode;
 } NUDATFINFO;
 
 typedef struct nudfnodev1_s {
-    short child_idx;
-    short sibling_idx;
+    i16 child_idx;
+    i16 sibling_idx;
     char *name;
 } NUDFNODE_V1;
 
 typedef struct nudfnodev2_s {
-    int16_t child_idx;
-    int16_t sibling_idx;
+    i16 child_idx;
+    i16 sibling_idx;
     char *name;
-    int16_t unknown;
-    int16_t unknown2;
+    i16 unknown;
+    i16 unknown2;
 } NUDFNODE;
 
 typedef struct nudatopenfileinfo_s {
     NUFILE dat_file;
     int info_idx;
-    int64_t pos;
+    i64 pos;
 } NUDATOPENFILEINFO;
 
 typedef struct nudathdr_s {
-    int32_t version;
-    int32_t file_count;
+    i32 version;
+    i32 file_count;
     NUDATFINFO *file_info;
-    int32_t tree_node_count;
+    i32 tree_node_count;
     NUDFNODE *file_tree;
-    int32_t leaf_names_len;
+    i32 leaf_names_len;
     char *leaf_names;
-    uint32_t *hash_idxs;
-    int32_t hash_count;
-    int32_t hashes_len;
+    u32 *hash_idxs;
+    i32 hash_count;
+    i32 hashes_len;
     char *hashes;
     NUDATOPENFILEINFO open_files[20];
-    short unknown;
-    short mode;
-    int unknown2;
+    i16 unknown;
+    i16 mode;
+    i32 unknown2;
     char *name;
 } NUDATHDR;
 
 typedef struct nudatfileinfo_s {
     NUDATHDR *hdr;
-    int64_t start;
-    int64_t pos;
+    i64 start;
+    i64 pos;
     int file_len;
     int decompressed_len;
     int open_file_idx;
@@ -136,7 +134,7 @@ typedef struct nudatfileinfo_s {
     int compression_mode;
 } NUDATFILEINFO;
 
-typedef int32_t NUPSFILE;
+typedef i32 NUPSFILE;
 
 enum NUFILE_OFFSETS {
     NUFILE_OFFSET_PS = 1,
@@ -169,51 +167,51 @@ extern "C" {
     // NuFile stuff
     NUFILE NuFileOpen(char *filepath, NUFILEMODE mode);
     void NuFileClose(NUFILE file);
-    int32_t NuFileStatus(NUFILE file);
-    NUFILE NuFileOpenDF(char *filepath, NUFILEMODE mode, NUDATHDR *header, int32_t _unused);
+    i32 NuFileStatus(NUFILE file);
+    NUFILE NuFileOpenDF(char *filepath, NUFILEMODE mode, NUDATHDR *header, i32 _unused);
     int NuFileRead(NUFILE file, void *buf, int size);
     int NuFileWrite(NUFILE file, void *data, int size);
     NUFILE_DEVICE *NuFileGetDeviceFromPath(char *path);
-    int64_t NuFileOpenSize(NUFILE file);
-    int64_t NuFileSeek(NUFILE file, int64_t offset, NUFILESEEK seekMode);
-    int32_t NuFileLoadBuffer(char *filepath, void *buf, int buf_size);
-    int32_t NuFileLoadBufferVP(char *filepath, VARIPTR *buf, VARIPTR *buf_end);
-    int32_t NuFileExists(char *name);
-    int64_t NuFileSize(char *filepath);
-    int64_t NuFilePos(NUFILE file);
+    i64 NuFileOpenSize(NUFILE file);
+    i64 NuFileSeek(NUFILE file, i64 offset, NUFILESEEK seekMode);
+    i32 NuFileLoadBuffer(char *filepath, void *buf, int buf_size);
+    i32 NuFileLoadBufferVP(char *filepath, VARIPTR *buf, VARIPTR *buf_end);
+    i32 NuFileExists(char *name);
+    i64 NuFileSize(char *filepath);
+    i64 NuFilePos(NUFILE file);
     void NuFileUpCase(NUFILE_DEVICE *device, char *filepath);
 
     // read types
-    int8_t NuFileReadChar(NUFILE file);
-    int32_t NuFileReadDir(NUFILE file);
-    float NuFileReadFloat(NUFILE file);
-    int32_t NuFileReadInt(NUFILE file);
-    int16_t NuFileReadShort(NUFILE file);
-    uint8_t NuFileReadUnsignedChar(NUFILE file);
-    uint32_t NuFileReadUnsignedInt(NUFILE file);
-    uint16_t NuFileReadUnsignedShort(NUFILE file);
-    uint16_t NuFileReadWChar(NUFILE file);
+    i8 NuFileReadChar(NUFILE file);
+    i32 NuFileReadDir(NUFILE file);
+    f32 NuFileReadf32(NUFILE file);
+    i32 NuFileReadInt(NUFILE file);
+    i16 NuFileReadShort(NUFILE file);
+    u8 NuFileReadUnsignedChar(NUFILE file);
+    u32 NuFileReadUnsignedInt(NUFILE file);
+    u16 NuFileReadUnsignedShort(NUFILE file);
+    u16 NuFileReadWChar(NUFILE file);
 
     // Platform-specific file functions
-    int32_t NuGetFileHandlePS(void);
-    int32_t NuPSFileOpen(char *filepath, NUFILEMODE mode);
-    int32_t NuPSFileClose(int32_t index);
-    int32_t NuPSFileRead(int32_t index, void *dest, int32_t len);
-    int32_t NuPSFileWrite(int32_t index, const void *src, int32_t len);
-    int64_t NuPSFileLSeek(int32_t index, int64_t offset, NUFILESEEK whence);
+    i32 NuGetFileHandlePS(void);
+    i32 NuPSFileOpen(char *filepath, NUFILEMODE mode);
+    i32 NuPSFileClose(i32 index);
+    i32 NuPSFileRead(i32 index, void *dest, i32 len);
+    i32 NuPSFileWrite(i32 index, const void *src, i32 len);
+    i64 NuPSFileLSeek(i32 index, i64 offset, NUFILESEEK whence);
 
     // Memory file functions
     NUFILE NuMemFileOpen(void *buf, int buf_size, NUFILEMODE mode);
     void NuMemFileClose(NUFILE file);
     int NuMemFileRead(NUFILE file, void *buf, int size);
     int NuMemFileWrite(NUFILE file, void *data, int size);
-    int64_t NuMemFileSeek(NUFILE file, int64_t offset, NUFILESEEK whence);
-    int64_t NuMemFilePos(NUFILE file);
+    i64 NuMemFileSeek(NUFILE file, i64 offset, NUFILESEEK whence);
+    i64 NuMemFilePos(NUFILE file);
     void *NuMemFileAddr(NUFILE file);
 
     // Memory card functions
     int NuMcOpen(int port, int slot, char *filepath, int mode, int async);
-    int32_t NuMcClose(int fd, int async);
+    i32 NuMcClose(int fd, int async);
     int NuMcSeek(int fd, int offset, NUFILESEEK mode, int async);
     int NuMcOpenSize(int fd);
     int NuMcRead(int fd, void *buf, int size, int async);
@@ -221,18 +219,18 @@ extern "C" {
 
     // NuDat functions
     NUDATHDR *NuDatOpen(char *filepath, VARIPTR *buf, int *_unused);
-    NUDATHDR *NuDatOpenEx(char *filepath, VARIPTR *buf, int *_unused, short mode);
+    NUDATHDR *NuDatOpenEx(char *filepath, VARIPTR *buf, int *_unused, i16 mode);
     void NuDatFileClose(NUFILE file);
     NUDATHDR *NuDatSet(NUDATHDR *header);
-    int32_t NuDatFileOpenSize(NUFILE file);
+    i32 NuDatFileOpenSize(NUFILE file);
 
     // NuDatFile functions
     NUFILE NuDatFileOpen(NUDATHDR *hdr, char *filepath, NUFILEMODE mode);
-    int64_t NuDatFilePos(NUFILE file);
+    i64 NuDatFilePos(NUFILE file);
     int NuDatFileRead(NUFILE file, void *buf, int size);
-    int64_t NuDatFileSeek(NUFILE file, int64_t offset, NUFILESEEK whence);
-    int32_t NuDatFileFindTree(NUDATHDR *header, char *name);
-    int32_t NuDatFileLoadBuffer(NUDATHDR *dat, char *name, void *dest, int32_t maxSize);
+    i64 NuDatFileSeek(NUFILE file, i64 offset, NUFILESEEK whence);
+    i32 NuDatFileFindTree(NUDATHDR *header, char *name);
+    i32 NuDatFileLoadBuffer(NUDATHDR *dat, char *name, void *dest, i32 maxSize);
 
     int NuPPLoadBuffer(NUFILE file, void *buf, int buf_size);
 
@@ -247,10 +245,10 @@ int NuMcFileOpenSize(NUFILE file);
 
 #ifdef __cplusplus
 
-int64_t NuDatCalcPos(NUDATHDR *header, int32_t index);
+i64 NuDatCalcPos(NUDATHDR *header, i32 index);
 
-int32_t NuDatFileFindHash(NUDATHDR *header, char *name);
-int32_t NuDatFileGetFreeInfo(void);
-int32_t NuDatFileGetFreeHandleIX(NUDATHDR *hdr, int32_t info_idx);
+i32 NuDatFileFindHash(NUDATHDR *header, char *name);
+i32 NuDatFileGetFreeInfo(void);
+i32 NuDatFileGetFreeHandleIX(NUDATHDR *hdr, i32 info_idx);
 
 #endif

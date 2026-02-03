@@ -4,7 +4,7 @@
 
 STOREPACK StorePack[11] = {0};
 
-int32_t Store_FindPack(int32_t id, char *name) {
+i32 Store_FindPack(i32 id, char *name) {
     if (id == -1) {
         if (name == NULL) {
             return -1;

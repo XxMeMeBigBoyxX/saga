@@ -21,7 +21,7 @@ int main(int argc, char **argv) {
     // original_permbuffer_base = permbuffer_base;
 
     const size_t buff_size = 0x200'000;
-    auto ptr = std::unique_ptr<uint8_t[]>(new uint8_t[buff_size]);
+    auto ptr = std::unique_ptr<u8[]>(new u8[buff_size]);
     VARIPTR buf = {.void_ptr = ptr.get()};
 
     const char *dat_path = "res/main.1060.com.wb.lego.tcs.obb";
@@ -31,11 +31,11 @@ int main(int argc, char **argv) {
     NuDatSet(dat);
 
     const char *file_path = "stuff\\text\\badwords.txt";
-    int32_t size = NuFileLoadBuffer(const_cast<char *>(file_path), buf.void_ptr, buff_size);
+    i32 size = NuFileLoadBuffer(const_cast<char *>(file_path), buf.void_ptr, buff_size);
     CHECK(size > 0, "Failed to load file from dat: {}", file_path);
 
     // replace \n with ,
-    for (int32_t i = 0; i < size; i++) {
+    for (i32 i = 0; i < size; i++) {
         if (buf.char_ptr[i] == '\r') {
             buf.char_ptr[i] = ',';
         } else if (buf.char_ptr[i] == '\n') {

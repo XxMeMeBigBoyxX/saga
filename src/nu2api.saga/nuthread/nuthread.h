@@ -1,8 +1,8 @@
 #pragma once
 
-#include <stdint.h>
-
 #include "nu2api.saga/numemory/NuMemoryManager.h"
+
+#include "decomp.h"
 
 typedef enum NUTHREADCAFECORE {
     NUTHREADCAFECORE_UNKNOWN_1 = 1,
@@ -17,20 +17,20 @@ typedef enum NUTHREADXBOX360CORE {
 #ifdef __cplusplus
 extern "C" {
 #endif
-    int32_t NuThreadCreateCriticalSection();
+    i32 NuThreadCreateCriticalSection();
     void NuThreadDestroyCriticalSection(int index);
 
-    int32_t NuThreadCriticalSectionBegin(int32_t index);
-    int32_t NuThreadCriticalSectionEnd(int32_t index);
+    i32 NuThreadCriticalSectionBegin(i32 index);
+    i32 NuThreadCriticalSectionEnd(i32 index);
 #ifdef __cplusplus
 }
 
 struct NuThreadCreateParameters {
     void (*thread_fn)(void *);
     void *fn_arg;
-    int32_t priority;
+    i32 priority;
     const char *name;
-    int32_t stack_size;
+    i32 stack_size;
     bool is_suspended;
     NUTHREADCAFECORE cafe_core;
     NUTHREADXBOX360CORE xbox360_core;
@@ -47,7 +47,7 @@ class NuThreadBase {
   public:
     NuThreadBase(const NuThreadCreateParameters &params);
 
-    NuMemoryManager *GetLocalStorage(uint32_t index) const;
+    NuMemoryManager *GetLocalStorage(u32 index) const;
 
     void SetDebugName(const char *name);
 
@@ -81,10 +81,10 @@ class NuThreadManager {
 
   private:
     NuThread *thread;
-    uint32_t bitflags;
+    u32 bitflags;
 
   public:
-    int32_t AllocTLS();
+    i32 AllocTLS();
     NuThreadBase *GetCurrentThread();
 
     NuThread *CreateThread(void (*thread_fn)(void *), void *fn_arg, int priority, const char *name, int stack_size,
@@ -92,7 +92,7 @@ class NuThreadManager {
 };
 
 NuThreadBase *NuThreadGetCurrentThread();
-void NuThreadSleep(int32_t seconds);
+void NuThreadSleep(i32 seconds);
 NuThread *NuThreadInitPS();
 
 #endif

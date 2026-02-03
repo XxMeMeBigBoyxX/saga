@@ -40,7 +40,7 @@ NUVIDEO_SWAPMODE NuVideoGetSwapMode(void) {
 void NuVideoRollingFrameRateReset(void) {
 }
 
-void NuVideoSetBrightness(float brightness) {
+void NuVideoSetBrightness(f32 brightness) {
     nuapi.video_brightness = brightness; // this has a weird register swap issue with the matching...
     NuVideoSetBrightnessPS();
 }
@@ -50,11 +50,11 @@ void NuVideoSetBrightnessPS() {
 
 void NuVideoSetResolution(int width, int height) {
     // 100% asm match btw...
-    __asm__("cmp $0, %0" : : "m" (width));
-    __asm__("cmp $0, %0" : : "m" (height));
+    __asm__("cmp $0, %0" : : "m"(width));
+    __asm__("cmp $0, %0" : : "m"(height));
 
-    ((volatile NUAPI*)&nuapi)->screen_width = width;
-    ((volatile NUAPI*)&nuapi)->screen_height = height;
+    ((volatile NUAPI *)&nuapi)->screen_width = width;
+    ((volatile NUAPI *)&nuapi)->screen_height = height;
 }
 
 void NuVideoSetSwapModePS(NUVIDEO_SWAPMODE video_swap_mode) {

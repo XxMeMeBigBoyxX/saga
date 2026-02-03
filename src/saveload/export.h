@@ -1,3 +1,5 @@
+// NOLINTBEGIN
+
 typedef struct SaveLoad SaveLoad, *PSaveLoad;
 
 struct SaveLoad {
@@ -17,3 +19,5 @@ struct SaveLoad {
     short field13_0x1828;
     char field14_0x182a[2046];
 };
+
+// NOLINTEND

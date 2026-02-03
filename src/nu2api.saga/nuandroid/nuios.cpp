@@ -4,9 +4,9 @@
 
 #include <string.h>
 
-int32_t g_isLowEndDevice = 0;
+i32 g_isLowEndDevice = 0;
 
-int32_t NuIOS_IsLowEndDevice(void) {
+i32 NuIOS_IsLowEndDevice(void) {
     return g_isLowEndDevice;
 }
 
@@ -14,7 +14,7 @@ SAGA_NOMATCH char *NuIOS_GetDocumentsPath(void) {
     return "res/";
 }
 
-char* NuIOS_GetAppBundlePath(void) {
+char *NuIOS_GetAppBundlePath(void) {
     static char storedAppBundlePath[4096];
 
     if (storedAppBundlePath[0] == '\0') {
@@ -24,6 +24,6 @@ char* NuIOS_GetAppBundlePath(void) {
     return storedAppBundlePath;
 }
 
-uint32_t NuIOS_YieldThread(void) {
+u32 NuIOS_YieldThread(void) {
     UNIMPLEMENTED();
 }

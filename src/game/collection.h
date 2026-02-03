@@ -1,14 +1,12 @@
 #pragma once
 
-#include <stdint.h>
-
 #include "nu2api.saga/nucore/common.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-    extern int32_t COLLECTION_COMPLETIONCOUNT;
+    extern i32 COLLECTION_COMPLETIONCOUNT;
 
 #ifdef __cplusplus
 }

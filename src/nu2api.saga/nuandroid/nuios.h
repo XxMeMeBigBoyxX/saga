@@ -1,18 +1,16 @@
 #pragma once
 
-#include <stdint.h>
-
 #ifdef __cplusplus
 extern "C" {
 #endif
-    extern int32_t g_isLowEndDevice;
+    extern i32 g_isLowEndDevice;
 
-    int32_t NuIOS_IsLowEndDevice(void);
+    i32 NuIOS_IsLowEndDevice(void);
 
     char *NuIOS_GetDocumentsPath(void);
     char* NuIOS_GetAppBundlePath(void);
 
-    uint32_t NuIOS_YieldThread(void);
+    u32 NuIOS_YieldThread(void);
 #ifdef __cplusplus
 }
 #endif

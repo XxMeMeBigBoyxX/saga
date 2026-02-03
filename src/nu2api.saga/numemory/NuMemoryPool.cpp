@@ -13,9 +13,9 @@ void NuMemoryPool::InterlockedAdd(volatile unsigned int *augend, unsigned int ad
     } while (actual != expected);
 }
 
-void NuMemoryPool::InterlockedSub(volatile unsigned int *minuend, unsigned int subtrahend) {
-    unsigned int expected;
-    unsigned int actual;
+void NuMemoryPool::InterlockedSub(volatile u32 *minuend, u32 subtrahend) {
+    u32 expected;
+    u32 actual;
 
     do {
         expected = *minuend;

@@ -11,13 +11,13 @@
 
 static COLLECTID *TempCollectID = NULL;
 
-int32_t CollectCount = 0;
+i32 CollectCount = 0;
 COLLECTID *CollectList = NULL;
-int32_t COLLECTION_COMPLETIONCOUNT = 0;
+i32 COLLECTION_COMPLETIONCOUNT = 0;
 
-int32_t InCollectList_Index(int32_t id, COLLECTID *list, int32_t count) {
-    int32_t i;
-    int32_t charId;
+i32 InCollectList_Index(i32 id, COLLECTID *list, i32 count) {
+    i32 i;
+    i32 charId;
 
     if (list == NULL && (list = CollectList, count = CollectCount, CollectList == NULL)) {
         return id;
@@ -45,7 +45,7 @@ int32_t InCollectList_Index(int32_t id, COLLECTID *list, int32_t count) {
 void Collection_Configure(char *file, VARIPTR *bufferStart, VARIPTR *bufferEnd) {
     byte bVar1;
     ushort uVar2;
-    short sVar3;
+    i16 sVar3;
     COLLECTID *collect;
     int iVar4;
     AREADATA *pAVar5;

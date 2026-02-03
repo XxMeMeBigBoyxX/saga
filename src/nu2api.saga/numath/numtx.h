@@ -4,22 +4,22 @@
 #include "nu2api.saga/numath/nuvec.h"
 
 struct numtx_s {
-    float m00;
-    float m01;
-    float m02;
-    float m03;
-    float m10;
-    float m11;
-    float m12;
-    float m13;
-    float m20;
-    float m21;
-    float m22;
-    float m23;
-    float m30;
-    float m31;
-    float m32;
-    float m33;
+    f32 m00;
+    f32 m01;
+    f32 m02;
+    f32 m03;
+    f32 m10;
+    f32 m11;
+    f32 m12;
+    f32 m13;
+    f32 m20;
+    f32 m21;
+    f32 m22;
+    f32 m23;
+    f32 m30;
+    f32 m31;
+    f32 m32;
+    f32 m33;
 };
 
 typedef struct numtx_s NUMTX;
@@ -109,14 +109,14 @@ extern "C" {
     void NuMtxTranslateNeg(NUMTX *m, NUVEC *t);
 
     void NuMtxPreTranslate(NUMTX *m, NUVEC *t);
-    void NuMtxPreTranslateX(NUMTX *m, float tx);
+    void NuMtxPreTranslateX(NUMTX *m, f32 tx);
     void NuMtxPreTranslateNeg(NUMTX *m, NUVEC *t);
     void NuMtxScale(NUMTX *m, NUVEC *s);
-    void NuMtxScaleU(NUMTX *m, float s);
-    void NuMtxPreScaleU(NUMTX *m, float s);
+    void NuMtxScaleU(NUMTX *m, f32 s);
+    void NuMtxPreScaleU(NUMTX *m, f32 s);
     NUVEC NuMtxGetScale(NUMTX *m);
     void NuMtxPreScale(NUMTX *m, NUVEC *s);
-    void NuMtxPreScaleX(NUMTX *m, float ScaleX);
+    void NuMtxPreScaleX(NUMTX *m, f32 ScaleX);
     void NuMtxRotateX(NUMTX *m, NUANG a);
     void NuMtxPreRotateX(NUMTX *m, NUANG a);
     void NuMtxRotateY(NUMTX *m, NUANG a);
@@ -125,12 +125,12 @@ extern "C" {
     void NuMtxPreRotateZ(NUMTX *m, NUANG a);
     void NuMtxPreRotateY180(NUMTX *m);
     void NuMtxPreRotateY180X(NUMTX *m, NUANG a);
-    void NuMtxPreSkewYX(NUMTX *Mtx, float SkewVal);
+    void NuMtxPreSkewYX(NUMTX *Mtx, f32 SkewVal);
     void NuMtxTransposeR(NUMTX *m, NUMTX *m0);
     void NuMtxTranspose(NUMTX *m, NUMTX *m0);
     void NuMtxInv(NUMTX *m, NUMTX *m0);
     void NuMtxInvR(NUMTX *m, NUMTX *m0);
-    float NuMtxDet3(NUMTX *m);
+    f32 NuMtxDet3(NUMTX *m);
     void NuMtxLookAtX(NUMTX *m, NUVEC *pnt);
     void NuMtxLookAtY(NUMTX *m, NUVEC *pnt);
     void NuMtxLookAtZ(NUMTX *m, NUVEC *pnt);
@@ -146,19 +146,19 @@ extern "C" {
     void NuMtxGetTranslation(NUMTX *m, NUVEC *t);
     int NuMtxCompare(NUMTX *a, NUMTX *b);
     void NuMtxTruncate24Bit(NUMTX *trunc, NUMTX *mtx);
-    void NuMtxRotateAng(NUANG ang, float x, float z, float *rx, float *rz);
+    void NuMtxRotateAng(NUANG ang, f32 x, f32 z, f32 *rx, f32 *rz);
     void NuMtxGetEulerXYZ(NUMTX *Mat, NUANG *x, NUANG *y, NUANG *z);
     void NuMtxLookAtD3D(NUMTX *mtx, NUVEC *eye, NUVEC *center, NUVEC *up);
-    void NuMtxSetPerspectiveD3D(NUMTX *mtx, float fovy, float aspect, float zNear, float zFar);
-    void NuMtxSetPerspectiveBlend(NUMTX *mtx, float fovy, float aspect, float zNear, float zFar);
-    void NuMtxSetFrustumD3D(NUMTX *mtx, float l, float r, float b, float t, float n, float f);
-    void NuMtxSetFrustumBlend(NUMTX *mtx, float l, float r, float b, float t, float n, float f);
-    void NuMtxSetOrthoD3D(NUMTX *mtx, float l, float r, float b, float t, float n, float f);
-    void NuMtxSetOrthoBlend(NUMTX *mtx, float l, float r, float b, float t, float n, float f);
-    void NuMtxGetPerspectiveD3D(NUMTX *mtx, float *fovy, float *aspect, float *zNear, float *zFar);
-    void NuMtxGetPerspectiveBlend(NUMTX *mtx, float *fovy, float *aspect, float *zNear, float *zFar);
-    void NuMtxGetFrustumD3D(NUMTX *mtx, float *l, float *r, float *b, float *t, float *n, float *f);
-    void NuMtxGetFrustumBlend(NUMTX *mtx, float *l, float *r, float *b, float *t, float *n, float *f);
+    void NuMtxSetPerspectiveD3D(NUMTX *mtx, f32 fovy, f32 aspect, f32 zNear, f32 zFar);
+    void NuMtxSetPerspectiveBlend(NUMTX *mtx, f32 fovy, f32 aspect, f32 zNear, f32 zFar);
+    void NuMtxSetFrustumD3D(NUMTX *mtx, f32 l, f32 r, f32 b, f32 t, f32 n, f32 f);
+    void NuMtxSetFrustumBlend(NUMTX *mtx, f32 l, f32 r, f32 b, f32 t, f32 n, f32 f);
+    void NuMtxSetOrthoD3D(NUMTX *mtx, f32 l, f32 r, f32 b, f32 t, f32 n, f32 f);
+    void NuMtxSetOrthoBlend(NUMTX *mtx, f32 l, f32 r, f32 b, f32 t, f32 n, f32 f);
+    void NuMtxGetPerspectiveD3D(NUMTX *mtx, f32 *fovy, f32 *aspect, f32 *zNear, f32 *zFar);
+    void NuMtxGetPerspectiveBlend(NUMTX *mtx, f32 *fovy, f32 *aspect, f32 *zNear, f32 *zFar);
+    void NuMtxGetFrustumD3D(NUMTX *mtx, f32 *l, f32 *r, f32 *b, f32 *t, f32 *n, f32 *f);
+    void NuMtxGetFrustumBlend(NUMTX *mtx, f32 *l, f32 *r, f32 *b, f32 *t, f32 *n, f32 *f);
     void NuMtxSetRotateXYZ(NUMTX *m, NUANGVEC *a);
     void NuMtxMul(NUMTX *m, NUMTX *m0, NUMTX *m1);
     void NuMtxMulH(NUMTX *m, NUMTX *m0, NUMTX *m1);
@@ -171,7 +171,7 @@ extern "C" {
     void NuMtxAlignZ(NUMTX *m, NUVEC *v);
     void NuMtxOrth(NUMTX *m);
     void NuMtxVecToEulerXYZ(NUVEC *XVec, NUVEC *ZVec, NUANG *x, NUANG *y, NUANG *z);
-    float NuMtxSSE(NUMTX *a, NUMTX *b);
+    f32 NuMtxSSE(NUMTX *a, NUMTX *b);
     void NuMtx24BitCorrection(NUMTX *X, NUMTX *mtx);
 #ifdef __cplusplus
 }

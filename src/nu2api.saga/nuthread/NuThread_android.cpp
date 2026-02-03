@@ -13,7 +13,7 @@ NuThreadBase *NuThreadGetCurrentThread() {
     return g_currentThread;
 }
 
-NuMemoryManager *NuThreadBase::GetLocalStorage(uint32_t index) const {
+NuMemoryManager *NuThreadBase::GetLocalStorage(u32 index) const {
     return this->memory_managers[index];
 }
 
@@ -148,7 +148,7 @@ NuThread *NuThreadInitPS() {
     return thread;
 }
 
-void NuThreadSleep(int32_t seconds) {
+void NuThreadSleep(i32 seconds) {
     timespec time;
 
     if (seconds < 1000) {

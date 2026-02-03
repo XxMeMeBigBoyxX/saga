@@ -6,11 +6,11 @@
 #include "nu2api.saga/nucore/nustring.h"
 #include "nu2api.saga/nufile/nufile.h"
 
-static uint32_t NameToHash(char *name) {
-    uint32_t constant = 0x811c9dc5;
-    uint32_t prime = 0x199933;
+static u32 NameToHash(char *name) {
+    u32 constant = 0x811c9dc5;
+    u32 prime = 0x199933;
 
-    uint32_t hash = constant;
+    u32 hash = constant;
     for (; *name != '\0'; name++) {
         hash ^= *name;
         hash *= prime;
@@ -19,7 +19,7 @@ static uint32_t NameToHash(char *name) {
     return hash;
 }
 
-ssize_t BinarySearch(uint32_t element, uint32_t *array, size_t length) {
+ssize_t BinarySearch(u32 element, u32 *array, size_t length) {
     ssize_t start = 0;
     ssize_t end = length - 1;
 
@@ -37,12 +37,12 @@ ssize_t BinarySearch(uint32_t element, uint32_t *array, size_t length) {
     return -1;
 }
 
-int32_t NuDatFileFindHash(nudathdr_s *header, char *name) {
+i32 NuDatFileFindHash(nudathdr_s *header, char *name) {
     LOG_DEBUG("header=%p name=%s", header, name);
 
-    uint32_t hash = NameToHash(name);
+    u32 hash = NameToHash(name);
 
-    int32_t r = BinarySearch(hash, header->hash_idxs, header->file_count);
+    i32 r = BinarySearch(hash, header->hash_idxs, header->file_count);
 
     if (r != -1) {
         return r;
@@ -53,7 +53,7 @@ int32_t NuDatFileFindHash(nudathdr_s *header, char *name) {
 
         ptr.char_ptr = header->hashes;
 
-        for (int32_t i = 0; i < header->hash_count; i++) {
+        for (i32 i = 0; i < header->hash_count; i++) {
             if (NuStrCmp(ptr.char_ptr, name) == 0) {
                 ptr.addr += NuStrLen(ptr.char_ptr) + 1;
 
@@ -75,12 +75,12 @@ int32_t NuDatFileFindHash(nudathdr_s *header, char *name) {
     return -1;
 }
 
-int32_t datsys_offset = 0;
+i32 datsys_offset = 0;
 
-int32_t NuDatFileFindTree(nudathdr_s *header, char *name) {
+i32 NuDatFileFindTree(nudathdr_s *header, char *name) {
     char buf[256];
     char *backslash;
-    int32_t node_idx;
+    i32 node_idx;
 
     LOG_DEBUG("header=%p name=%s", header, name);
 
@@ -130,8 +130,8 @@ int32_t NuDatFileFindTree(nudathdr_s *header, char *name) {
     return -1;
 }
 
-int64_t NuDatCalcPos(nudathdr_s *header, int32_t index) {
-    int64_t pos = index;
+i64 NuDatCalcPos(nudathdr_s *header, i32 index) {
+    i64 pos = index;
 
     if (header->version < -1) {
         pos <<= 8;

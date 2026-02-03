@@ -2,7 +2,6 @@
 
 #include <pthread.h>
 #include <stddef.h>
-#include <stdint.h>
 
 #include "nu2api.saga/nucore/common.h"
 
@@ -28,7 +27,7 @@ typedef struct nunativetex_s {
     unsigned char checksum[16];
     int ref_count;
     void *image_data;
-    unsigned int size;
+    u32 size;
     NUNATIVETEXPS platform;
 } NUNATIVETEX;
 

@@ -1,8 +1,9 @@
 #pragma once
 
 #include <cstddef>
-#include <stdint.h>
 #include <unistd.h>
+
+#include "decomp.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -16,26 +17,26 @@ extern "C" {
     extern char *implode_outbuffer;
     extern size_t implode_origsize;
     extern size_t implode_compsize;
-    extern uint32_t implode_bitbuf;
+    extern u32 implode_bitbuf;
 
-    extern uint16_t implode_left[];
-    extern uint16_t implode_right[];
+    extern u16 implode_left[];
+    extern u16 implode_right[];
 #ifdef __cplusplus
 }
 
-int32_t ImplodeGetI(void *buf, int32_t size);
+i32 ImplodeGetI(void *buf, i32 size);
 
-uint32_t ImplodeDecodeC();
-uint32_t ImplodeDecodeOffset();
+u32 ImplodeDecodeC();
+u32 ImplodeDecodeOffset();
 
-void ImplodeMakeTable(int32_t, uint8_t *, int32_t, uint16_t *);
+void ImplodeMakeTable(i32, u8 *, i32, u16 *);
 
 void ImplodeHufDecodeStart();
 void ImplodeInitGetBits();
 
-uint32_t ImplodeGetBits(int32_t count);
-void ImplodeFillBuf(int32_t count);
-uint8_t ImplodeGetByteFromMem();
+u32 ImplodeGetBits(i32 count);
+void ImplodeFillBuf(i32 count);
+u8 ImplodeGetByteFromMem();
 
 void ImplodeError(char *msg, ...);
 

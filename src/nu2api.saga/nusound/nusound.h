@@ -7,10 +7,10 @@ class NuSoundLoader;
 
 namespace NuSoundSystem {
     struct ChannelConfig {
-        uint32_t channels;
+        u32 channels;
     };
 
-    enum FileType : uint32_t { WAV = 0, OGG = 5 };
+    enum FileType : u32 { WAV = 0, OGG = 5 };
 
     NuSoundLoader *CreateFileLoader(FileType type);
 
@@ -25,8 +25,8 @@ class NuSoundStreamDesc {};
 class NuSoundLoader {
   private:
     NUFILE file;
-    int32_t field2_0x8;
-    int32_t field3_0xc;
+    i32 field2_0x8;
+    i32 field3_0xc;
     NuSoundStreamDesc *desc;
     NuSoundOutOfMemCallback *oom;
     char *path;
@@ -34,28 +34,28 @@ class NuSoundLoader {
   public:
     NuSoundLoader();
 
-    int32_t CloseStream();
-    uint64_t Deinterleave(byte *data, int length, char **dest, int count, NuSoundSystem::ChannelConfig config);
-    int32_t LoadFromFile(char *name, NuSoundStreamDesc *desc, NuSoundBuffer *buffer, NuSoundOutOfMemCallback *oom);
-    int32_t Load(NuSoundStreamDesc *desc, NuSoundBuffer *buffer);
+    i32 CloseStream();
+    u64 Deinterleave(byte *data, int length, char **dest, int count, NuSoundSystem::ChannelConfig config);
+    i32 LoadFromFile(char *name, NuSoundStreamDesc *desc, NuSoundBuffer *buffer, NuSoundOutOfMemCallback *oom);
+    i32 Load(NuSoundStreamDesc *desc, NuSoundBuffer *buffer);
 
     // virtual methods
     virtual ~NuSoundLoader();
 
     virtual NuSoundStreamDesc *CreateHeader() = 0;
 
-    virtual int32_t OpenForStreaming(const char *path);
+    virtual i32 OpenForStreaming(const char *path);
     virtual NuSoundBuffer *FillStreamBuffer(NuSoundBuffer *buffer, bool param2);
 
-    virtual bool SeekRawData(uint64_t position);
-    virtual bool SeekPCMSample(uint64_t sampleIndex) = 0;
-    virtual bool SeekTime(double seconds) = 0;
+    virtual bool SeekRawData(u64 position);
+    virtual bool SeekPCMSample(u64 sampleIndex) = 0;
+    virtual bool SeekTime(f64 seconds) = 0;
 
     virtual bool OpenFileForStreaming(const char *path, bool unused);
     virtual void Close();
 
     virtual void *ReadHeader(NuSoundStreamDesc *desc) = 0;
-    virtual uint64_t ReadData(void *buffer, uint64_t size);
+    virtual u64 ReadData(void *buffer, u64 size);
 };
 
 enum LoadState {
@@ -70,7 +70,7 @@ class NuSoundSample {
     LoadState load_state;
     ErrorState last_error;
     NuSoundSystem::FileType type;
-    int32_t ref_count;
+    i32 ref_count;
 
   public:
     LoadState GetLoadState();
@@ -92,7 +92,7 @@ nusound_filename_info_s *ConfigureMusic(char *file, VARIPTR *bufferStart, VARIPT
 
 extern "C" {
 #endif
-    int32_t NuSound3InitV(VARIPTR *bufferStart, VARIPTR bufferEnd, int32_t zero1, int32_t zero2);
+    i32 NuSound3InitV(VARIPTR *bufferStart, VARIPTR bufferEnd, i32 zero1, i32 zero2);
 #ifdef __cplusplus
 }
 #endif
