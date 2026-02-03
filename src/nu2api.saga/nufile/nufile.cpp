@@ -554,7 +554,7 @@ i8 NuFileReadChar(NUFILE file) {
     return value;
 }
 
-f32 NuFileReadf32(NUFILE file) {
+f32 NuFileReadFloat(NUFILE file) {
     f32 value;
     NuFileRead(file, &value, sizeof(f32));
     return value;

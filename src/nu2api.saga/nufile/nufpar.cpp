@@ -477,7 +477,7 @@ void NuFParUnGetWord(NUFPAR *parser) {
     parser->line_pos = old_line_pos;
 }
 
-f32 NuFParGetf32(NUFPAR *parser) {
+f32 NuFParGetFloat(NUFPAR *parser) {
     char buf[64];
 
     NuFParGetWord(parser);
@@ -494,7 +494,7 @@ f32 NuFParGetf32(NUFPAR *parser) {
     }
 }
 
-f32 NuFParGetf32RDP(NUFPAR *parser) {
+f32 NuFParGetFloatRDP(NUFPAR *parser) {
     char buf[64];
 
     NuFParGetWord(parser);

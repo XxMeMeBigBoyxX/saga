@@ -184,7 +184,7 @@ extern "C" {
     // read types
     i8 NuFileReadChar(NUFILE file);
     i32 NuFileReadDir(NUFILE file);
-    f32 NuFileReadf32(NUFILE file);
+    f32 NuFileReadFloat(NUFILE file);
     i32 NuFileReadInt(NUFILE file);
     i16 NuFileReadShort(NUFILE file);
     u8 NuFileReadUnsignedChar(NUFILE file);

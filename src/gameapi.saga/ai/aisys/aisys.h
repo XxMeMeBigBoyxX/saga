@@ -9,7 +9,7 @@ typedef struct AISCRIPTPROCESS_s AISCRIPTPROCESS;
 
 typedef struct AIPACKET_s AIPACKET;
 
-typedef int GAMEPARAMTOf32(AIPACKET *, AISCRIPTPROCESS *, char *, f32 *);
+typedef int GAMEPARAMTOFLOAT(AIPACKET *, AISCRIPTPROCESS *, char *, f32 *);
 
 typedef struct AISTATE_s {
     NULISTLNK list_node;

@@ -63,23 +63,23 @@ static int ExpressionNameLookupFailed;
 
 int AiParseExpressionFailed;
 
-GAMEPARAMTOf32 *GameParamTof32Fn;
+GAMEPARAMTOFLOAT *GameParamToFloatFn;
 
-static int AiParseExpressionNameLoopup(char *name, f32 *f32_out, int *int_out) {
+static int AiParseExpressionNameLoopup(char *name, f32 *float_out, int *int_out) {
     f32 value;
 
     ExpressionRequiredNameLookup = 1;
     value = 0.0f;
     ExpressionNameLookupFailed = 1;
 
-    if (GameParamTof32Fn != NULL) {
-        if ((*GameParamTof32Fn)(NULL, NULL, name, &value) != 0) {
+    if (GameParamToFloatFn != NULL) {
+        if ((*GameParamToFloatFn)(NULL, NULL, name, &value) != 0) {
             ExpressionNameLookupFailed = 0;
         }
     }
 
-    if (f32_out != NULL) {
-        *f32_out = value;
+    if (float_out != NULL) {
+        *float_out = value;
     }
 
     if (int_out != NULL) {
@@ -606,7 +606,7 @@ static void xParam(NUFPAR *parser) {
     }
 
     load_aiscript->params[param_idx].name = AIScriptCopyString(parser->word_buf_ptr, load_buff, load_endbuff);
-    load_aiscript->params[param_idx].default_val = NuFParGetf32(parser);
+    load_aiscript->params[param_idx].default_val = NuFParGetFloat(parser);
 }
 
 static void xConst(NUFPAR *parser) {
@@ -618,7 +618,7 @@ static void xConst(NUFPAR *parser) {
     NuStrNCpy(aiscript_const[aiscript_const_curr].name, parser->word_buf_ptr, 0x20);
 
     cur = aiscript_const_curr;
-    default_val = NuFParGetf32(parser);
+    default_val = NuFParGetFloat(parser);
     aiscript_const_curr++;
 
     aiscript_const[cur].default_val = default_val;

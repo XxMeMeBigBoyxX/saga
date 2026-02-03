@@ -14,7 +14,7 @@ extern "C" {
     void EdFileRead(void *buf, i32 len);
     char EdFileReadChar();
     unsigned char EdFileReadUnsignedChar();
-    f32 EdFileReadf32();
+    f32 EdFileReadFloat();
     i32 EdFileReadInt();
     u32 EdFileReadUnsignedInt();
     i16 EdFileReadShort();

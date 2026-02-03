@@ -74,8 +74,8 @@ extern "C" {
     int NuFParGetWordW(NUFPAR *parser);
     void NuFParUnGetWord(NUFPAR *parser);
 
-    f32 NuFParGetf32(NUFPAR *parser);
-    f32 NuFParGetf32RDP(NUFPAR *parser);
+    f32 NuFParGetFloat(NUFPAR *parser);
+    f32 NuFParGetFloatRDP(NUFPAR *parser);
     int NuFParGetInt(NUFPAR *parser);
     int NuFParGetIntRDP(NUFPAR *parser);
 

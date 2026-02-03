@@ -619,7 +619,7 @@ void NuMusic::xIdent(nufpar_s *fpar) {
     this->current_track->ident = AllocString(fpar->word_buf_ptr);
 }
 void NuMusic::xIndex(nufpar_s *fpar) {
-    this->indexes[this->index_count++] = NuFParGetf32RDP(fpar);
+    this->indexes[this->index_count++] = NuFParGetFloatRDP(fpar);
     this->current_track->index_count++;
 }
 void NuMusic::xNoMusic(nufpar_s *fpar) {
