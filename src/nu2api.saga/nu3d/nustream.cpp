@@ -1,5 +1,7 @@
 #include "nu2api.saga/nu3d/nustream.h"
 
+#include <string.h>
+
 #include "decomp.h"
 #include "nu2api.saga/numemory/numemory.h"
 
