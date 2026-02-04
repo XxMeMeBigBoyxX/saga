@@ -516,11 +516,11 @@ CHARACTERDATA *ConfigureCharacterList(char *file, VARIPTR *bufferStart, VARIPTR 
                     cdata->field10_0x20 = 0;
                     cdata->field11_0x24 = 0;
                     cdata->field12_0x28 = 0;
-                    cdata->field13_0x2c = 1.0;
-                    cdata->field14_0x30 = 0.5;
-                    cdata->field15_0x34 = -0.5;
-                    cdata->field16_0x38 = 0.5;
-                    cdata->field17_0x3c = 1.0;
+                    cdata->field13_0x2c = 1.0f;
+                    cdata->field14_0x30 = 0.5f;
+                    cdata->field15_0x34 = -0.5f;
+                    cdata->field16_0x38 = 0.5f;
+                    cdata->field17_0x3c = 1.0f;
                     cdata->flags = cdata->flags & 0xfe;
                     cdata->field20_0x42 = -1;
                     cdata->field21_0x44 = 0;

@@ -67,7 +67,7 @@ void Collection_Configure(char *file, VARIPTR *bufferStart, VARIPTR *bufferEnd) 
             if (NuFParGetWord(fp) != 0 && NuStrICmp(fp->word_buf, "collect") == 0 && NuFParGetWord(fp) != 0) {
                 sVar3 = CharIDFromName(fp->word_buf);
 
-                LOG_DEBUG("Collection_Configure: Found collect id %s -> %d", fp->word_buf_ptr, sVar3);
+                LOG_DEBUG("Collection_Configure: Found collect id %s -> %d", fp->word_buf, sVar3);
 
                 collect->id = sVar3;
 
