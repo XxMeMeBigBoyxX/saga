@@ -1,7 +1,13 @@
 use std::collections::{HashMap, HashSet};
 
 use anyhow::Context;
-use object::{Object, ObjectSection as _, ObjectSymbol as _};
+use iced_x86::{Decoder, DecoderOptions, Instruction, Mnemonic, OpKind};
+use object::{
+    Endianness, Object, ObjectSection as _, ObjectSymbol as _, RelocationFlags,
+    elf::{FileHeader32, R_386_PC32, R_386_PLT32},
+    read,
+    write::Relocation,
+};
 
 #[derive(Debug, serde::Deserialize)]
 struct CompileCommand {
@@ -26,7 +32,7 @@ fn make_object<'a>(
     let mut sections = HashMap::new();
 
     for symbol in symbols {
-        let Some(symbol) = lib.symbols.get(symbol.as_ref()) else {
+        let Some(symbol) = lib.symbols_by_name.get(symbol.as_ref()) else {
             log::warn!("Failed to find symbol '{symbol:?}' in original object, skipping");
             continue;
         };
@@ -53,14 +59,29 @@ fn make_object<'a>(
                 )
             });
 
+        // symbols to make relocs against
+        // map of original address to dummy symbol id
         let offset = if section.kind() == object::SectionKind::UninitializedData {
             obj.append_section_bss(write_id, symbol.size(), 1)
         } else {
             let bytes = section.data().context("Failed to get section data")?;
-            let bytes = &bytes[(symbol.address() - section.address()) as usize
-                ..(symbol.address() - section.address() + symbol.size()) as usize];
 
-            obj.append_section_data(write_id, bytes, 8)
+            let symbol_start = (symbol.address() - section.address()) as usize;
+            let bytes = &bytes[symbol_start..symbol_start + symbol.size() as usize];
+
+            let current_symbol_offset = obj.append_section_data(write_id, bytes, 8);
+
+            process_text_symbol(
+                lib,
+                &mut obj,
+                symbol,
+                name,
+                write_id,
+                bytes,
+                current_symbol_offset,
+            )?;
+
+            current_symbol_offset
         };
 
         // add symbol to output
@@ -77,6 +98,79 @@ fn make_object<'a>(
     }
 
     Ok(obj)
+}
+
+fn process_text_symbol(
+    lib: &Lib<'_, '_>,
+    obj: &mut object::write::Object<'_>,
+    symbol: &read::elf::ElfSymbol<FileHeader32<Endianness>>,
+    name: &str,
+    section_id: object::write::SectionId,
+    bytes: &[u8],
+    current_symbol_offset: u64,
+) -> Result<(), anyhow::Error> {
+    let mut external_symbols: HashMap<u64, object::write::SymbolId> = HashMap::new();
+    let mut decoder = Decoder::with_ip(32, bytes, symbol.address(), DecoderOptions::NONE);
+
+    while decoder.can_decode() {
+        let mut instruction = Instruction::default();
+        decoder.decode_out(&mut instruction);
+
+        #[allow(clippy::single_match)]
+        match instruction.mnemonic() {
+            Mnemonic::Call => match instruction.op0_kind() {
+                OpKind::NearBranch32 => {
+                    let target = instruction.near_branch_target();
+                    if let Some(target_symbol) = lib.symbols_by_address.get(&target) {
+                        // a dummy symbol in the written object file to make a reloc against
+                        let target_reloc_symbol =
+                            *external_symbols.entry(target).or_insert_with(|| {
+                                obj.add_symbol(object::write::Symbol {
+                                    name: target_symbol.name().unwrap().as_bytes().to_vec(),
+                                    value: 0,
+                                    size: 0,
+                                    kind: target_symbol.kind(),
+                                    scope: target_symbol.scope(),
+                                    weak: target_symbol.is_weak(),
+                                    section: object::write::SymbolSection::Undefined,
+                                    flags: object::SymbolFlags::None,
+                                })
+                            });
+
+                        let r_type = if target_symbol.is_local() {
+                            R_386_PC32
+                        } else {
+                            R_386_PLT32
+                        };
+
+                        obj.add_relocation(
+                            section_id,
+                            Relocation {
+                                offset: current_symbol_offset
+                                    + (decoder.position() - instruction.len()) as u64
+                                    + 1,
+                                symbol: target_reloc_symbol,
+                                addend: -4,
+                                flags: RelocationFlags::Elf { r_type },
+                            },
+                        )
+                        .context("Failed to add relocation")?;
+                    } else {
+                        log::warn!(
+                            "failed to find target symbol for near relative call to 0x{target:x} in {name} (0x{:x}) in original object, skipping",
+                            symbol.address()
+                        );
+                    }
+                }
+
+                _ => (),
+            },
+
+            _ => (),
+        }
+    }
+
+    Ok(())
 }
 
 #[derive(serde::Serialize)]
@@ -132,7 +226,8 @@ type ElfSymbol<'data, 'file, E> =
 
 struct Lib<'data, 'file> {
     file: &'file object::read::elf::ElfFile32<'file>,
-    symbols: HashMap<&'data str, ElfSymbol<'data, 'file, object::Endianness>>,
+    symbols_by_name: HashMap<&'data str, ElfSymbol<'data, 'file, object::Endianness>>,
+    symbols_by_address: HashMap<u64, ElfSymbol<'data, 'file, object::Endianness>>,
 }
 
 pub fn split() -> anyhow::Result<()> {
@@ -145,14 +240,18 @@ pub fn split() -> anyhow::Result<()> {
     let orig_lib_file = object::read::elf::ElfFile32::parse(&*contents)
         .context("Failed to parse original libTTapp.so")?;
 
-    let orig_symbols = orig_lib_file
+    let orig_symbols: HashMap<_, _> = orig_lib_file
         .symbols()
         .map(|sym| (sym.name().unwrap(), sym))
         .collect();
 
     let original_lib = Lib {
         file: &orig_lib_file,
-        symbols: orig_symbols,
+        symbols_by_name: orig_symbols.clone(),
+        symbols_by_address: orig_symbols
+            .into_values()
+            .map(|symbol| (symbol.address(), symbol))
+            .collect(),
     };
 
     std::fs::create_dir_all("build/split").context("Failed to create build/split directory")?;
