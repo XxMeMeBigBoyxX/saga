@@ -4,8 +4,8 @@ use anyhow::Context;
 use iced_x86::{Decoder, DecoderOptions, Instruction, Mnemonic, OpKind};
 use object::{
     Endianness, Object, ObjectSection as _, ObjectSymbol as _, RelocationFlags,
-    elf::{FileHeader32, R_386_PC32},
-    read::{self, elf::FileHeader},
+    elf::{FileHeader32, R_386_PC32, R_386_PLT32},
+    read,
     write::Relocation,
 };
 
@@ -74,8 +74,8 @@ fn make_object<'a>(
             process_text_symbol(
                 lib,
                 &mut obj,
-                name,
                 symbol,
+                name,
                 write_id,
                 bytes,
                 current_symbol_offset,
@@ -129,13 +129,19 @@ fn process_text_symbol(
                                     name: target_symbol.name().unwrap().as_bytes().to_vec(),
                                     value: 0,
                                     size: 0,
-                                    kind: symbol.kind(),
-                                    scope: symbol.scope(),
-                                    weak: symbol.is_weak(),
+                                    kind: target_symbol.kind(),
+                                    scope: target_symbol.scope(),
+                                    weak: target_symbol.is_weak(),
                                     section: object::write::SymbolSection::Undefined,
                                     flags: object::SymbolFlags::None,
                                 })
                             });
+
+                        let r_type = if target_symbol.is_local() {
+                            R_386_PC32
+                        } else {
+                            R_386_PLT32
+                        };
 
                         obj.add_relocation(
                             section_id,
@@ -145,7 +151,7 @@ fn process_text_symbol(
                                     + 1,
                                 symbol: target_reloc_symbol,
                                 addend: -4,
-                                flags: RelocationFlags::Elf { r_type: R_386_PC32 },
+                                flags: RelocationFlags::Elf { r_type },
                             },
                         )
                         .context("Failed to add relocation")?;
@@ -160,7 +166,7 @@ fn process_text_symbol(
                 _ => (),
             },
 
-            _ => for op_idx in 0..instruction.op_count() {},
+            _ => (),
         }
     }
 
