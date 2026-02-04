@@ -22,12 +22,13 @@ typedef struct MENUFNINFO_s {
 #ifdef __cplusplus
 
 void APIMenuDrawMemCardSlots(MENU* menu, float y);
+void APIMenuDrawGameState(float x, float y, int highlight, int slot);
 
 extern "C" {
 #endif
 
     void MenuReset(void);
-    void MenuInitialiseEx(MENUFNINFO* menu_infos, int menu_infos_count, int language_count, void(*draw_save_slots_fn)(MENU*, float), int fade_enabled, int shadow_enabled);
+    void MenuInitialiseEx(MENUFNINFO* menu_infos, int menu_infos_count, int language_count, void(*draw_save_slots_info_fn)(float, float, int, int), int fade_enabled, int shadow_enabled);
     void MenuInitialise(MENUFNINFO* menu_infos, int menu_infos_count, int language_count, void(*draw_save_slots_fn)(MENU*, float), int fade_enabled, int shadow_enabled);
 
 #ifdef __cplusplus

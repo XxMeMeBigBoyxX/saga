@@ -173,6 +173,7 @@ set(SAGA_SOURCE_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nu3d/nurndr.c
     ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nu3d/nuprim.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/gameapi.saga/gui/apimenu.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nu3d/numtl.cpp
 )
 
 set(SAGA_INCLUDE_DIRS
