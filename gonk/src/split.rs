@@ -93,6 +93,14 @@ struct ObjDiffUnit {
     name: String,
     target_path: String,
     base_path: String,
+    scratch: Option<ObjDiffScratch>,
+}
+
+#[derive(serde::Serialize)]
+struct ObjDiffScratch {
+    platform: String,
+    compiler: String,
+    c_flags: String,
 }
 
 fn symbol_filter<'a>(symbol: &impl object::ObjectSymbol<'a>) -> bool {
@@ -200,6 +208,11 @@ pub fn split() -> anyhow::Result<()> {
                     .to_string_lossy()
             ),
             base_path: binary.display().to_string(),
+            scratch: Some(ObjDiffScratch {
+                platform: String::from("android_x86"),
+                compiler: String::from("ndk-r8e-gcc-4.7"),
+                c_flags: String::new(),
+            }),
         });
     }
 
@@ -222,6 +235,7 @@ pub fn split() -> anyhow::Result<()> {
         name: "remaining".to_string(),
         target_path: "build/split/remaining.c.o".to_string(),
         base_path: String::from("remaining.c.o"),
+        scratch: None,
     });
 
     let json = std::io::BufWriter::new(
