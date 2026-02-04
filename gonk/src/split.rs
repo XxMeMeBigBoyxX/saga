@@ -2,7 +2,10 @@ use std::collections::{HashMap, HashSet};
 
 use anyhow::Context;
 use iced_x86::{Decoder, DecoderOptions, Instruction, Mnemonic, OpKind};
-use object::{Object, ObjectSection as _, ObjectSymbol as _, RelocationFlags, elf::R_386_PC32, write::Relocation};
+use object::{
+    Object, ObjectSection as _, ObjectSymbol as _, RelocationFlags, elf::R_386_PC32,
+    write::Relocation,
+};
 
 #[derive(Debug, serde::Deserialize)]
 struct CompileCommand {
@@ -72,42 +75,57 @@ fn make_object<'a>(
             while decoder.can_decode() {
                 decoder.decode_out(&mut instruction);
 
+                #[allow(clippy::single_match)]
                 match instruction.mnemonic() {
                     Mnemonic::Call => match instruction.op0_kind() {
                         OpKind::NearBranch32 => {
                             let target = instruction.near_branch_target();
                             if let Some(target_symbol) = lib.symbols_by_address.get(&target) {
                                 // a dummy symbol in the written object file to make a reloc against
-                                let target_reloc_symbol = if let Some(id) = dummy_symbols.get(&target) {
-                                    *id
-                                } else {
-                                    let id = obj.add_symbol(object::write::Symbol {
-                                        name: target_symbol.name().context("Failed to get target symbol name")?.as_bytes().to_vec(),
-                                        value: 0,
-                                        size: 0,
-                                        kind: object::SymbolKind::Text,
-                                        scope: object::SymbolScope::Dynamic,
-                                        weak: false,
-                                        section: object::write::SymbolSection::Undefined,
-                                        flags: object::SymbolFlags::None,
-                                    });
+                                let target_reloc_symbol =
+                                    if let Some(id) = dummy_symbols.get(&target) {
+                                        *id
+                                    } else {
+                                        let id = obj.add_symbol(object::write::Symbol {
+                                            name: target_symbol
+                                                .name()
+                                                .context("Failed to get target symbol name")?
+                                                .as_bytes()
+                                                .to_vec(),
+                                            value: 0,
+                                            size: 0,
+                                            kind: object::SymbolKind::Text,
+                                            scope: object::SymbolScope::Dynamic,
+                                            weak: false,
+                                            section: object::write::SymbolSection::Undefined,
+                                            flags: object::SymbolFlags::None,
+                                        });
 
-                                    dummy_symbols.insert(target, id);
-                                    id
-                                };
+                                        dummy_symbols.insert(target, id);
+                                        id
+                                    };
 
-                                obj.add_relocation(write_id, Relocation {
-                                    offset: current_symbol_offset + (decoder.position() - instruction.len()) as u64 + 1,
-                                    symbol: target_reloc_symbol,
-                                    addend: -4,
-                                    flags: RelocationFlags::Elf { r_type: R_386_PC32 },
-                                }).context("Failed to add relocation")?;
+                                obj.add_relocation(
+                                    write_id,
+                                    Relocation {
+                                        offset: current_symbol_offset
+                                            + (decoder.position() - instruction.len()) as u64
+                                            + 1,
+                                        symbol: target_reloc_symbol,
+                                        addend: -4,
+                                        flags: RelocationFlags::Elf { r_type: R_386_PC32 },
+                                    },
+                                )
+                                .context("Failed to add relocation")?;
                             } else {
-                                log::warn!("failed to find target symbol for near relative call to 0x{target:x} in {name} (0x{:x}) in original object, skipping", symbol.address());
+                                log::warn!(
+                                    "failed to find target symbol for near relative call to 0x{target:x} in {name} (0x{:x}) in original object, skipping",
+                                    symbol.address()
+                                );
                             }
-                        },
+                        }
                         _ => (),
-                    }
+                    },
                     _ => (),
                 }
             }
@@ -206,7 +224,10 @@ pub fn split() -> anyhow::Result<()> {
     let original_lib = Lib {
         file: &orig_lib_file,
         symbols_by_name: orig_symbols.clone(),
-        symbols_by_address: orig_symbols.into_iter().map(|(name, symbol)| (symbol.address(), symbol)).collect(),
+        symbols_by_address: orig_symbols
+            .into_iter()
+            .map(|(name, symbol)| (symbol.address(), symbol))
+            .collect(),
     };
 
     std::fs::create_dir_all("build/split").context("Failed to create build/split directory")?;
