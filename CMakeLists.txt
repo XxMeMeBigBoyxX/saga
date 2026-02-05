@@ -177,6 +177,40 @@ set(SAGA_SOURCE_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nu3d/nuqfnt.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/gizmo.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/gizmos/lever.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/gizmos/gizforce.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/gizmos/ai.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/gizmos/teleport.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/gizmos/tightropes.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/gizmos/signals.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/gizmos/zipups.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/gizmos/shards.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/gizmos/technos.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/gizmos/attractos.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/gizmos/ledges.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/gizmos/securitydoors.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/gizmos/gizpanel.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/gizmos/hatmachine.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/gizmos/giztorpmachine.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/gizmos/gizbombgen.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/gizmos/door.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/gizmos/gizobstacles.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/gizmos/guidelines.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/gizmos/giztimer.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/gizmos/gizspecial.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/gizmos/gizaimessage.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/gizmos/gizrandom.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/gizmos/newblowup.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/gizmos/gizmopickups.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/gizmos/gizturrets.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/gizmos/spinner.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/gizmos/gizbuildits.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/gizmos/grapples.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/gizmos/minicut.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/gizmos/tubes.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/gizmos/push.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/gizmos/edgizshadowmachine.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/gizmos/portal.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/gizmos/plugs.cpp
 )
 
 set(SAGA_INCLUDE_DIRS
@@ -260,6 +294,40 @@ else()
     set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nu3d/nuqfnt.cpp PROPERTIES COMPILE_OPTIONS "-O2")
     set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/game/gizmo.cpp PROPERTIES COMPILE_OPTIONS "-O3")
     set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/game/gizmos/lever.cpp PROPERTIES COMPILE_OPTIONS "-O3")
+    set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/game/gizmos/gizforce.cpp PROPERTIES COMPILE_OPTIONS "-O3")
+    set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/game/gizmos/ai.cpp PROPERTIES COMPILE_OPTIONS "-O3")
+    set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/game/gizmos/teleport.cpp PROPERTIES COMPILE_OPTIONS "-O3")
+    set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/game/gizmos/tightropes.cpp PROPERTIES COMPILE_OPTIONS "-O3")
+    set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/game/gizmos/signals.cpp PROPERTIES COMPILE_OPTIONS "-O3")
+    set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/game/gizmos/zipups.cpp PROPERTIES COMPILE_OPTIONS "-O3")
+    set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/game/gizmos/shards.cpp PROPERTIES COMPILE_OPTIONS "-O3")
+    set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/game/gizmos/technos.cpp PROPERTIES COMPILE_OPTIONS "-O3")
+    set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/game/gizmos/attractos.cpp PROPERTIES COMPILE_OPTIONS "-O3")
+    set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/game/gizmos/ledges.cpp PROPERTIES COMPILE_OPTIONS "-O3")
+    set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/game/gizmos/securitydoors.cpp PROPERTIES COMPILE_OPTIONS "-O3")
+    set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/game/gizmos/gizpanel.cpp PROPERTIES COMPILE_OPTIONS "-O3")
+    set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/game/gizmos/hatmachine.cpp PROPERTIES COMPILE_OPTIONS "-O3")
+    set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/game/gizmos/giztorpmachine.cpp PROPERTIES COMPILE_OPTIONS "-O3")
+    set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/game/gizmos/gizbombgen.cpp PROPERTIES COMPILE_OPTIONS "-O3")
+    set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/game/gizmos/door.cpp PROPERTIES COMPILE_OPTIONS "-O3")
+    set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/game/gizmos/gizobstacles.cpp PROPERTIES COMPILE_OPTIONS "-O3")
+    set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/game/gizmos/guidelines.cpp PROPERTIES COMPILE_OPTIONS "-O3")
+    set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/game/gizmos/giztimer.cpp PROPERTIES COMPILE_OPTIONS "-O3")
+    set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/game/gizmos/gizspecial.cpp PROPERTIES COMPILE_OPTIONS "-O3")
+    set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/game/gizmos/gizaimessage.cpp PROPERTIES COMPILE_OPTIONS "-O3")
+    set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/game/gizmos/gizrandom.cpp PROPERTIES COMPILE_OPTIONS "-O3")
+    set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/game/gizmos/newblowup.cpp PROPERTIES COMPILE_OPTIONS "-O3")
+    set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/game/gizmos/gizmopickups.cpp PROPERTIES COMPILE_OPTIONS "-O3")
+    set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/game/gizmos/gizturrets.cpp PROPERTIES COMPILE_OPTIONS "-O3")
+    set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/game/gizmos/spinner.cpp PROPERTIES COMPILE_OPTIONS "-O3")
+    set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/game/gizmos/gizbuildits.cpp PROPERTIES COMPILE_OPTIONS "-O3")
+    set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/game/gizmos/grapples.cpp PROPERTIES COMPILE_OPTIONS "-O3")
+    set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/game/gizmos/minicut.cpp PROPERTIES COMPILE_OPTIONS "-O3")
+    set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/game/gizmos/tubes.cpp PROPERTIES COMPILE_OPTIONS "-O3")
+    set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/game/gizmos/push.cpp PROPERTIES COMPILE_OPTIONS "-O3")
+    set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/game/gizmos/edgizshadowmachine.cpp PROPERTIES COMPILE_OPTIONS "-O3")
+    set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/game/gizmos/portal.cpp PROPERTIES COMPILE_OPTIONS "-O3")
+    set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/game/gizmos/plugs.cpp PROPERTIES COMPILE_OPTIONS "-O3")
 endif()
 
 foreach(source_file IN LISTS SAGA_SOURCE_FILES)
