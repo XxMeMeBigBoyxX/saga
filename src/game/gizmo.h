@@ -49,10 +49,9 @@ typedef void (*GIZMOUSINGSPECIALFN)(GIZMO**, void*, int, char*);
 typedef void (*GIZMOPANELDRAWFN)(void*, void*, float);
 typedef void (*GIZMOEARLYUPDATEFN)(void*, void*, float);
 
-typedef struct ADDGIZMOTYPE_s {
-    char *name;
-    char *prefix;
+typedef struct GIZMOFNS_s {
     i16 unknown1;
+    // pretty sure these two are just padding and can be removed, but keeping them for now to be safe
     u8 unknown2;
     u8 unknown3;
     GIZMOGETMAXGIZMOSFN get_max_gizmos_fn;
@@ -83,9 +82,29 @@ typedef struct ADDGIZMOTYPE_s {
     GIZMOLOADFN load_fn;
     GIZMOPOSTLOADFN post_load_fn;
     GIZMOADDLEVELSFXFN add_level_sfx_fn;
+} GIZMOFNS;
+
+typedef struct ADDGIZMOTYPE_s {
+    char *name;
+    char *prefix;
+    GIZMOFNS fns;
 } ADDGIZMOTYPE;
 
 typedef ADDGIZMOTYPE* (*REGISTERGIZMOTYPEFN)(int);
+
+typedef struct GIZMOTYPE_s {
+    char name[32];
+    char prefix[8];
+    GIZMOFNS fns;
+    VARIPTR* buffer;
+} GIZMOTYPE;
+
+typedef struct GIZMOTYPES_s {
+    int count;
+    int unknown;
+    GIZMOTYPE *types;
+} GIZMOTYPES;
+
 extern ADDGIZMOTYPE Default_ADDGIZMOTYPE;
 
 #ifdef __cplusplus
