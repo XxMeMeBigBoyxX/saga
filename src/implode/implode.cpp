@@ -1,9 +1,9 @@
+#include "implode/implode.h"
+
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-#include "implode/implode.h"
 
 #include "nu2api.saga/nucore/common.h"
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "decomp.h"
+#include "nu2api.saga/nucore/common.h"
 
 typedef struct numtx_s NUMTX;
 

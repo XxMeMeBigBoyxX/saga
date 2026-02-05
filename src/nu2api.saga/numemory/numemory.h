@@ -4,7 +4,7 @@
 #include "nu2api.saga/numemory/NuMemoryPool.h"
 #include "nu2api.saga/numemory/numemory_android.h"
 
-#include "decomp.h"
+#include "nu2api.saga/nucore/common.h"
 
 #ifdef __cplusplus
 

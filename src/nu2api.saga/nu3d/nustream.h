@@ -8,9 +8,4 @@
 
 void NuRndrStreamInit(int stream_buffer_size, VARIPTR *buffer);
 
-extern "C" {
-#endif
-
-#ifdef __cplusplus
-}
 #endif

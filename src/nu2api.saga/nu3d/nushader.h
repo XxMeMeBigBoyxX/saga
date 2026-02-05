@@ -1,7 +1,8 @@
 #pragma once
 
-#include "decomp.h"
 #include <GLES2/gl2.h>
+
+#include "nu2api.saga/nucore/common.h"
 
 struct nushaderobjectkey_s {};
 

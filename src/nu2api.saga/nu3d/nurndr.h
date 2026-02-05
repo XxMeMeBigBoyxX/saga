@@ -5,9 +5,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-void NuRndrInitEx(int stream_buffer_size, VARIPTR *buffer);
-
+    void NuRndrInitEx(int stream_buffer_size, VARIPTR *buffer);
 #ifdef __cplusplus
 }
 #endif

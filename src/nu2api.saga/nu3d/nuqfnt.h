@@ -24,11 +24,9 @@ int NuQFntReadPS(VUFNT* font, int t_id, int flags, int render_plane, VARIPTR* bu
 
 extern "C" {
 #endif
-
     void NuQFntInit(VARIPTR *buffer, VARIPTR buffer_end);
     NUQFNT *NuQFntReadBuffer(VARIPTR *font, VARIPTR *buffer, VARIPTR buffer_end);
     void NuQFntSetICGap(NUQFNT *font, float ic_gap);
-
 #ifdef __cplusplus
 }
 #endif

@@ -1,12 +1,11 @@
 #pragma once
 
-#include "decomp.h"
-struct nutime_s {
-    u32 low;
-    int high;
-};
+#include "nu2api.saga/nucore/common.h"
 
-typedef struct nutime_s NUTIME;
+typedef struct nutime_s {
+    u32 low;
+    i32 high;
+} NUTIME;
 
 #ifdef __cplusplus
 void NuTimeGetTicksPS(u32 *low, u32 *high);

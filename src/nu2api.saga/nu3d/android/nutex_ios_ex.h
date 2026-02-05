@@ -3,11 +3,9 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-
     extern int g_currentTexUnit;
 
     void NuTexSetTextureWithStagePS(NUNATIVETEX *tex, GLuint stage);
-
 #ifdef __cplusplus
 }
 #endif

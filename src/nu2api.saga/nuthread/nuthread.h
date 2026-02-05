@@ -2,7 +2,7 @@
 
 #include "nu2api.saga/numemory/NuMemoryManager.h"
 
-#include "decomp.h"
+#include "nu2api.saga/nucore/common.h"
 
 typedef enum NUTHREADCAFECORE {
     NUTHREADCAFECORE_UNKNOWN_1 = 1,

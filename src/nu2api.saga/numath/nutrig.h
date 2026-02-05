@@ -2,9 +2,8 @@
 
 #include <math.h>
 
+#include "nu2api.saga/nucore/common.h"
 #include "nu2api.saga/numath/nuang.h"
-
-#include "decomp.h"
 
 #define NUTRIGTABLE_COUNT 32768
 #define NUTRIGTABLE_INTERVAL (f32)(2.0f * M_PI / NUTRIGTABLE_COUNT)

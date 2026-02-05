@@ -1,6 +1,6 @@
 #include <pthread.h>
 
-#include "decomp.h"
+#include "nu2api.saga/nucore/common.h"
 
 class NuMemoryPool {
   public:

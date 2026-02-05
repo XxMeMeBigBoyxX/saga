@@ -11,11 +11,9 @@ typedef enum {
 #ifdef __cplusplus
 extern "C" {
 #endif
-
     void NuPrimSetCoordinateSystem(NUPRIMSCALEMODE scale_mode);
     void NuPrimPushCoordSystem(NUPRIMSCALEMODE scale_mode);
     void NuPrimInit(VARIPTR *buffer, VARIPTR buffer_end);
-
 #ifdef __cplusplus
 }
 #endif

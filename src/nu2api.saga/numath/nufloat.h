@@ -2,7 +2,7 @@
 
 #include <math.h>
 
-#include "decomp.h"
+#include "nu2api.saga/nucore/common.h"
 
 // /// @brief The epsilon for float equivalence in NuEquiv
 // extern f32 fetol;

@@ -1,7 +1,6 @@
 #include <sys/time.h>
 #include <time.h>
 
-#include "decomp.h"
 #include "nu2api.saga/nucore/nutime.h"
 
 void NuTimeGetTicksPS(u32 *low, u32 *high) {

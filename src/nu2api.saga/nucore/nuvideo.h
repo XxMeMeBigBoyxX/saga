@@ -1,6 +1,6 @@
 #pragma once
 
-#include "decomp.h"
+#include "nu2api.saga/nucore/common.h"
 
 enum NUVIDEO_SWAPMODE {
     NUVIDEO_SWAPMODE_INVALID = 0,
