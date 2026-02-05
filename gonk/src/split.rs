@@ -216,7 +216,7 @@ fn build_data_sections<'data>(
             });
 
         let new_offset = match section.kind() {
-            SectionKind::Data => {
+            SectionKind::Data | SectionKind::ReadOnlyData => {
                 let bytes = section.data().context("Failed to get section data")?;
 
                 let symbol_start = (symbol.address() - section.address()) as usize;
@@ -549,7 +549,7 @@ fn symbol_filter<'a>(symbol: &impl object::ObjectSymbol<'a>) -> bool {
 
     if name.is_empty()
         || name.starts_with("__x86.get_pc_thunk")
-        || ["__discard", "_GLOBAL_OFFSET_TABLE_"].contains(&name)
+        || ["__discard", "_GLOBAL_OFFSET_TABLE_", "_DYNAMIC"].contains(&name)
         || symbol.size() == 0
     {
         return false;
