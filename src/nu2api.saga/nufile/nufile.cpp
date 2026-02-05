@@ -447,7 +447,7 @@ i64 NuFilePos(NUFILE file) {
 
 i64 NuFileOpenSize(NUFILE file) {
     if (file >= 0x2000) {
-        return NuFileAndroidAPK::GetFilePos(file);
+        return NuFileAndroidAPK::GetFileSize(file);
     }
 
     if (file >= 0x1000) {
