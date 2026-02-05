@@ -1,25 +1,32 @@
 #pragma once
 
 #include "game/gizmo.h"
+#include "game/world.h"
 
 extern int giztimer_gizmotype_id;
 
-#ifdef __cplusplus
-
 typedef struct GIZTIMER_s {
+    f32 time_remaining;
+    f32 unknown;
+    char filler1[2];
+    char active; // unsure if this is actually what this is
+    char filler2;
+    char name[16];
 } GIZTIMER;
 
-ADDGIZMOTYPE* GizTimer_RegisterGizmo(int type_id);
+#ifdef __cplusplus
+
+ADDGIZMOTYPE *GizTimer_RegisterGizmo(int type_id);
 int GizTimer_GetMaxGizmos(void *timer);
 void GizTimer_AddGizmos(GIZMOSYS *gizmo_sys, int, void *, void *);
-void GizTimer_Update(void *, void *, float);
+void GizTimer_Update(void *world_info, void *, float delta_time);
 char *GizTimer_GetGizmoName(GIZMO *gizmo);
 int GizTimer_GetOutput(GIZMO *gizmo, int, int);
 char *GizTimer_GetOutputName(GIZMO *gizmo, int output_index);
 int GizTimer_GetNumOutputs(GIZMO *gizmo);
 void GizTimer_Activate(GIZMO *gizmo, int);
 int GizTimer_ReserveBufferSpace(void *, int);
-int GizTimer_Load(void *, void *);
+int GizTimer_Load(void *world_info, void *);
 
 extern "C" {
 #endif

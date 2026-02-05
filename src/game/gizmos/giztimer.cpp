@@ -1,6 +1,7 @@
 #include "game/gizmos/giztimer.h"
 
 #include "decomp.h"
+#include "gameapi.saga/edtools/edfile.h"
 
 int giztimer_gizmotype_id = -1;
 
@@ -12,16 +13,31 @@ void GizTimer_AddGizmos(GIZMOSYS *gizmo_sys, int, void *, void *) {
     UNIMPLEMENTED();
 }
 
-void GizTimer_Update(void *, void *, float) {
-    UNIMPLEMENTED();
+void GizTimer_Update(void *world_info, void *, float delta_time) {
+    WORLDINFO *world = (WORLDINFO *)world_info;
+    for (int i = 0; i < world->giz_timers_count; i++) {
+        GIZTIMER *timer = &world->giz_timers[i];
+
+        if (timer->time_remaining >= 0.0f) {
+            timer->time_remaining -= delta_time;
+        }
+    }
 }
 
 char *GizTimer_GetGizmoName(GIZMO *gizmo) {
-    UNIMPLEMENTED();
+    if (gizmo == NULL) {
+        return 0;
+    }
+
+    return gizmo->object.timer->name;
 }
 
 int GizTimer_GetOutput(GIZMO *gizmo, int, int) {
-    UNIMPLEMENTED();
+    if (gizmo->object.timer->active & 1) {
+        return gizmo->object.timer->time_remaining <= 0.0f;
+    }
+
+    return 0;
 }
 
 char *GizTimer_GetOutputName(GIZMO *gizmo, int output_index) {
@@ -40,18 +56,37 @@ int GizTimer_ReserveBufferSpace(void *, int) {
     UNIMPLEMENTED();
 }
 
-int GizTimer_Load(void *, void *) {
-    UNIMPLEMENTED();
+int GizTimer_Load(void *world_info, void *) {
+    NUVEC vec;
+    char buffer[16];
+
+    WORLDINFO *world = (WORLDINFO *)world_info;
+    if (world->giz_timers_count == 0) {
+        EdFileReadInt();
+        int count = EdFileReadInt();
+
+        for (int i = 0; i < count; i++) {
+            int length = EdFileReadInt();
+            EdFileRead(buffer, length);
+            EdFileReadFloat();
+            EdFileReadUnsignedShort();
+            EdFileReadNuVec(&vec);
+        }
+
+        return 1;
+    }
+
+    return 0;
 }
 
-ADDGIZMOTYPE* GizTimer_RegisterGizmo(int type_id) {
+ADDGIZMOTYPE *GizTimer_RegisterGizmo(int type_id) {
     static ADDGIZMOTYPE addtype;
 
     addtype = Default_ADDGIZMOTYPE;
     addtype.name = "GizTimer";
     addtype.prefix = "";
     addtype.fns.unknown1 = 0;
-    addtype.fns.early_update_fn = GizTimer_Update;
+    addtype.fns.early_update_fn = (GIZMOEARLYUPDATEFN)GizTimer_Update;
     addtype.fns.panel_draw_fn = NULL;
     addtype.fns.get_visibility_fn = NULL;
     addtype.fns.get_max_gizmos_fn = GizTimer_GetMaxGizmos;

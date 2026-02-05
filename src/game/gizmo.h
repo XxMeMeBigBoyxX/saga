@@ -3,12 +3,16 @@
 #include "nu2api.saga/nucore/common.h"
 #include "nu2api.saga/numath/nuvec.h"
 
-typedef struct GIZMO_s {
+struct GIZTIMER_s;
 
+typedef struct GIZMO_s {
+    union {
+        struct GIZTIMER_s* timer;
+    } object;
 } GIZMO;
 
 typedef struct GIZMOSYS_s {
-    void *object;
+    
 } GIZMOSYS;
 
 typedef struct GIZMOSET_s {
@@ -21,7 +25,7 @@ typedef struct BOLT_s {
 
 typedef int (*GIZMOGETMAXGIZMOSFN)(void *);
 typedef void (*GIZMOADDGIZMOSFN)(GIZMOSYS *gizmo_sys, int, void *, void *);
-typedef void (*GIZMOLATEUPDATEFN)(void *, void *, float);
+typedef void (*GIZMOLATEUPDATEFN)(void *, void *, float delta_time);
 typedef int (*GIZMOGETOUTPUTFN)(GIZMO *gizmo, int, int);
 typedef char *(*GIZMOGETOUTPUTNAMEFN)(GIZMO *gizmo, int output_index);
 typedef int (*GIZMOGETNUMOUTPUTSFN)(GIZMO *gizmo);
@@ -47,7 +51,7 @@ typedef void (*GIZMOADDLEVELSFXFN)(void *, void *, int *, int *, int);
 typedef int (*GIZMOGETVISIBILITYFN)(GIZMO*);
 typedef void (*GIZMOUSINGSPECIALFN)(GIZMO**, void*, int, char*);
 typedef void (*GIZMOPANELDRAWFN)(void*, void*, float);
-typedef void (*GIZMOEARLYUPDATEFN)(void*, void*, float);
+typedef void (*GIZMOEARLYUPDATEFN)(void*, void*, float delta_time);
 
 typedef struct GIZMOFNS_s {
     i16 unknown1;
