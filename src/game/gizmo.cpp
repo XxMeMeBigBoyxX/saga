@@ -77,7 +77,8 @@ ADDGIZMOTYPE Default_ADDGIZMOTYPE = {
     NULL,                       // add_level_sfx_fn
 };
 
-REGISTERGIZMOTYPEFN GizmoTypesLSW[] = {GizObstacles_RegisterGizmo,
+// this technically has the wrong linkage, it does not have a C++ mangled name in the original binary... maybe should be in a different file?
+static REGISTERGIZMOTYPEFN GizmoTypesLSW[] = {GizObstacles_RegisterGizmo,
                                        GizBuildIts_RegisterGizmo,
                                        GizForce_RegisterGizmo,
                                        NewBlowup_RegisterGizmo,
