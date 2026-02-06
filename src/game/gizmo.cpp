@@ -1,6 +1,5 @@
 #include "game/gizmo.h"
 #include "decomp.h"
-#include "nu2api.saga/nucore/nustring.h"
 #include "game/gizmos/ai.h"
 #include "game/gizmos/door.h"
 #include "game/gizmos/edgizshadowmachine.h"
@@ -29,6 +28,9 @@
 #include "game/gizmos/teleport.h"
 #include "game/gizmos/tubes.h"
 #include "game/gizmos/zipups.h"
+#include "nu2api.saga/nucore/nustring.h"
+
+#include <string.h>
 
 static int DefaultGizmo_GetOutput(GIZMO *, int, int) {
     return 0;
@@ -78,40 +80,41 @@ ADDGIZMOTYPE Default_ADDGIZMOTYPE = {
     NULL,                       // add_level_sfx_fn
 };
 
-// this technically has the wrong linkage, it does not have a C++ mangled name in the original binary... maybe should be in a different file?
+// this technically has the wrong linkage, it does not have a C++ mangled name in the original binary... maybe should be
+// in a different file?
 static REGISTERGIZMOTYPEFN GizmoTypesLSW[] = {GizObstacles_RegisterGizmo,
-                                       GizBuildIts_RegisterGizmo,
-                                       GizForce_RegisterGizmo,
-                                       NewBlowup_RegisterGizmo,
-                                       GizmoPickups_RegisterGizmo,
-                                       Levers_RegisterGizmo,
-                                       Spinner_RegisterGizmo,
-                                       MiniCut_RegisterGizmo,
-                                       Tubes_RegisterGizmo,
-                                       ZipUps_RegisterGizmo,
-                                       GizTurrets_RegisterGizmo,
-                                       GizBombGen_RegisterGizmo,
-                                       AI_RegisterGizmo,
-                                       GizSpecial_RegisterGizmo,
-                                       GizAIMessage_RegisterGizmo,
-                                       GizTimer_RegisterGizmo,
-                                       GizRandom_RegisterGizmo,
-                                       GizPanel_RegisterGizmo,
-                                       HatMachine_RegisterGizmo,
-                                       Push_RegisterGizmo,
-                                       Door_RegisterGizmo,
-                                       Teleport_RegisterGizmo,
-                                       GizTorpMachine_RegisterGizmo,
-                                       EdGizShadowMachine_RegisterGizmo,
-                                       Portal_RegisterGizmo,
-                                       Grapples_RegisterGizmo,
-                                       Plugs_RegisterGizmo,
-                                       Technos_RegisterGizmo,
-                                       NULL};
+                                              GizBuildIts_RegisterGizmo,
+                                              GizForce_RegisterGizmo,
+                                              NewBlowup_RegisterGizmo,
+                                              GizmoPickups_RegisterGizmo,
+                                              Levers_RegisterGizmo,
+                                              Spinner_RegisterGizmo,
+                                              MiniCut_RegisterGizmo,
+                                              Tubes_RegisterGizmo,
+                                              ZipUps_RegisterGizmo,
+                                              GizTurrets_RegisterGizmo,
+                                              GizBombGen_RegisterGizmo,
+                                              AI_RegisterGizmo,
+                                              GizSpecial_RegisterGizmo,
+                                              GizAIMessage_RegisterGizmo,
+                                              GizTimer_RegisterGizmo,
+                                              GizRandom_RegisterGizmo,
+                                              GizPanel_RegisterGizmo,
+                                              HatMachine_RegisterGizmo,
+                                              Push_RegisterGizmo,
+                                              Door_RegisterGizmo,
+                                              Teleport_RegisterGizmo,
+                                              GizTorpMachine_RegisterGizmo,
+                                              EdGizShadowMachine_RegisterGizmo,
+                                              Portal_RegisterGizmo,
+                                              Grapples_RegisterGizmo,
+                                              Plugs_RegisterGizmo,
+                                              Technos_RegisterGizmo,
+                                              NULL};
 
 #define GIZMO_TYPES_LSW_COUNT ((sizeof(GizmoTypesLSW) / sizeof(REGISTERGIZMOTYPEFN)) - 1)
 
-GIZMOTYPES* gizmo_types;
+GIZMOTYPES *gizmo_types;
 
 VARIPTR *GizmoBufferAlloc(VARIPTR *buffer, VARIPTR *buffer_end, int size) {
     VARIPTR *ptr = NULL;
@@ -133,7 +136,7 @@ void RegisterGizmoTypes(VARIPTR *buffer, VARIPTR *buffer_end, REGISTERGIZMOTYPEF
     GIZMOTYPES *types;
     GIZMOTYPE *gizmo;
     void *pvVar4;
-    VARIPTR* pvVar3;
+    VARIPTR *pvVar3;
     int i;
 
     if (gizmo_types != NULL || register_gizmo_type_fns == NULL || *register_gizmo_type_fns == NULL) {
@@ -141,7 +144,8 @@ void RegisterGizmoTypes(VARIPTR *buffer, VARIPTR *buffer_end, REGISTERGIZMOTYPEF
     }
 
     int ntypes = 0;
-    for (; register_gizmo_type_fns[ntypes] != NULL; ntypes++) {}
+    for (; register_gizmo_type_fns[ntypes] != NULL; ntypes++) {
+    }
 
     types = (GIZMOTYPES *)GizmoBufferAlloc(buffer, buffer_end, 0xc);
     gizmo_types = types;
@@ -167,7 +171,8 @@ void RegisterGizmoTypes(VARIPTR *buffer, VARIPTR *buffer_end, REGISTERGIZMOTYPEF
             do {
                 while (gizmo_types->types[i].prefix[0] == '\0') {
                     i = i + 1;
-                    if (i == n) goto copy_data;
+                    if (i == n)
+                        goto copy_data;
                 }
                 NuStrICmp(addgizmo->prefix, gizmo_types->types[i].prefix);
                 i = i + 1;
@@ -214,10 +219,11 @@ void RegisterGizmoTypes(VARIPTR *buffer, VARIPTR *buffer_end, REGISTERGIZMOTYPEF
             if (types != NULL && gizmo_types->unknown > 0) {
                 i = 0;
                 while (1) {
-                    void* pvVar5 = gizmo->fns.allocate_progress_data_fn(buffer, buffer_end);
+                    void *pvVar5 = gizmo->fns.allocate_progress_data_fn(buffer, buffer_end);
                     pvVar3[i].void_ptr = pvVar5;
                     i = i + 1;
-                    if (gizmo_types->unknown <= i) break;
+                    if (gizmo_types->unknown <= i)
+                        break;
                     pvVar3 = gizmo->buffer;
                 }
             }
