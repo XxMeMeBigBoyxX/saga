@@ -48,10 +48,10 @@ struct nuapi_s {
     char field43_0x5d;
     char field44_0x5e;
     char field45_0x5f;
-    char field46_0x60;
-    char field47_0x61;
-    char field48_0x62;
-    char field49_0x63;
+
+    // Type uncertain.
+    i32 unknown_60;
+
     int field50_0x64;
     int field51_0x68;
     int pad_recording;
@@ -85,7 +85,7 @@ typedef struct nuapi_s NUAPI;
 extern NUAPI nuapi;
 
 extern int nuapi_use_target_manager;
-extern char* nuapi_target_manager_mac_address;
+extern char *nuapi_target_manager_mac_address;
 
 #ifdef __cplusplus
 void NuAPIInit(void);

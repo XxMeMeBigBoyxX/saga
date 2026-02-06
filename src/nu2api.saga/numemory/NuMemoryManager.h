@@ -24,6 +24,11 @@ class NuMemoryManager {
         MEM_ERROR_DEFERRED_CONTENT_CHANGED = 0x8000007,
     };
 
+    enum AllocFlags {
+        MEM_ALLOC_ZERO = 1 << 0x0,
+        MEM_ALLOC_UNKNOWN_4 = 1 << 0x2,
+    };
+
     class IErrorHandler {
       public:
         virtual void HandleError(NuMemoryManager *manager, ErrorCode code, const char *msg);
@@ -116,11 +121,6 @@ class NuMemoryManager {
         POP_DEBUG_MODE_NONE = 0,
         POP_DEBUG_MODE_NORMAL = 1,
         POP_DEBUG_MODE_FREE_STRANDED_BLOCKS = 2,
-    };
-
-    enum AllocFlags {
-        MEM_ALLOC_ZERO = 1,
-        MEM_ALLOC_UNKNOWN_4 = 4,
     };
 
   private:
