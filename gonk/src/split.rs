@@ -30,15 +30,9 @@ fn make_object<'a>(
     );
 
     let mut sections = HashMap::new();
-    let mut orig_sym_idx_to_new_offset = HashMap::new();
 
-    build_data_sections(
-        lib,
-        data_symbols,
-        &mut obj,
-        &mut sections,
-        &mut orig_sym_idx_to_new_offset,
-    )?;
+    let mut orig_sym_idx_to_new_offset =
+        build_data_sections(lib, data_symbols, &mut obj, &mut sections)?;
 
     // Place .text symbols, editing as necessary to replace offsets, while also
     // gathering relocs.
@@ -91,7 +85,7 @@ fn make_object<'a>(
                 name,
                 write_id,
                 &mut editable_bytes,
-                &orig_sym_idx_to_new_offset,
+                &mut orig_sym_idx_to_new_offset,
             )?;
 
             (editable_bytes.as_slice(), relocs)
@@ -114,6 +108,8 @@ fn make_object<'a>(
             section: object::write::SymbolSection::Section(write_id),
             flags: object::SymbolFlags::None,
         });
+
+        orig_sym_idx_to_new_offset.insert(orig_sym.index(), current_symbol_offset as u32);
     }
 
     add_relocs(lib, &mut obj, sections, all_relocs)?;
@@ -185,8 +181,9 @@ fn build_data_sections<'data>(
     data_symbols: &[impl AsRef<str> + std::fmt::Debug],
     obj: &mut object::write::Object<'_>,
     sections: &mut HashMap<&'data str, SectionId>,
-    orig_sym_idx_to_new_offset: &mut HashMap<read::SymbolIndex, u32>,
-) -> Result<(), anyhow::Error> {
+) -> Result<HashMap<read::SymbolIndex, u32>, anyhow::Error> {
+    let mut orig_sym_idx_to_new_offset = HashMap::new();
+
     for symbol in data_symbols {
         let Some(symbol) = lib.symbols_by_name.get(symbol.as_ref()) else {
             log::warn!("Failed to find symbol '{symbol:?}' in original object, skipping");
@@ -244,7 +241,7 @@ fn build_data_sections<'data>(
         orig_sym_idx_to_new_offset.insert(symbol.index(), new_offset as u32);
     }
 
-    Ok(())
+    Ok(orig_sym_idx_to_new_offset)
 }
 
 #[derive(Debug)]
@@ -278,7 +275,7 @@ fn generate_text_relocs<'data>(
     name: &str,
     section_id: object::write::SectionId,
     bytes: &mut [u8],
-    orig_sym_idx_to_new_offset: &HashMap<read::SymbolIndex, u32>,
+    orig_sym_idx_to_new_offset: &mut HashMap<read::SymbolIndex, u32>,
 ) -> Result<Vec<Reloc<'data>>, anyhow::Error> {
     let mut decoder = Decoder::with_ip(32, bytes, orig_sym.address(), DecoderOptions::NONE);
 
