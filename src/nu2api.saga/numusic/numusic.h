@@ -35,10 +35,6 @@ class Track {
     u8 field4_0x7;
     char *ident;
     int field6_0xc[2];
-    u8 field7_0x10;
-    u8 field8_0x11;
-    u8 field9_0x12;
-    u8 field10_0x13;
     TRACK_CLASS clazz;
     void *field12_0x18;
     i32 index_count;
@@ -106,7 +102,9 @@ class NuMusic {
     i32 Initialise(const char *file, char *null, VARIPTR *bufferStart, VARIPTR bufferEnd);
     void GetSoundFiles(nusound_filename_info_s **finfo, i32 *null);
 
+    bool SelectTrackByHandle(TRACK_CLASS clazz, i32 trackIndex);
     i32 PlayTrack(TRACK_CLASS track);
+    i32 GetTrackHandle(TRACK_CLASS clazz, const char *name);
 
   private:
     void InitData(const char *file, VARIPTR *bufferStart, VARIPTR bufferEnd);

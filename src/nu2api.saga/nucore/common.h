@@ -27,12 +27,11 @@ typedef int32_t isize;
 #endif
 
 // Ensure that floating-point types are of the expected width.
-#ifdef HOST_BUILD
-typedef _Float32 f32;
-typedef _Float64 f64;
-#else
 typedef float f32;
 typedef double f64;
+#ifdef __cplusplus
+static_assert(sizeof(f32) == 4, "f32 is not 4 bytes");
+static_assert(sizeof(f64) == 8, "f64 is not 8 bytes");
 #endif
 
 #define MAX(a, b) (a) > (b) ? (a) : (b)
@@ -49,6 +48,6 @@ typedef union variptr_u {
     void *void_ptr;
     char *char_ptr;
     i16 *short_ptr;
-    u8* uchar_ptr;
+    u8 *uchar_ptr;
     usize addr;
 } VARIPTR;

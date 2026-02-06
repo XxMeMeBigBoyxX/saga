@@ -134,7 +134,7 @@ struct LEVELDATA_s { /* PlaceHolder Structure */
     f32 field95_0x120;
     undefined4 field96_0x124;
     undefined4 field97_0x128;
-    int music_tracks[6];
+    i32 music_tracks[6];
 };
 
 typedef struct LEVELDATA_s LEVELDATA;

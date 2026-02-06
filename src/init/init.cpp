@@ -15,6 +15,7 @@
 #include "nu2api.saga/nucore/nuvideo.h"
 #include "nu2api.saga/nufile/nufile.h"
 #include "nu2api.saga/numemory/numemory.h"
+#include "nu2api.saga/numusic/numusic.h"
 #include "nu2api.saga/nusound/nusound.h"
 #include "saveload/saveload.h"
 
@@ -782,6 +783,39 @@ void InitGameAfterConfig(void) {
     //  }
 }
 
+struct LEVELFIXUP {};
+LEVELFIXUP LevFixUp;
+
+void FixUpLevels(LEVELFIXUP *fixup) {
+    // Levels_FixUp(fixup);
+
+    LEVELDATA *level = Level_FindByName("titles", NULL);
+    // TITLES_LDATA = level;
+    if (level != NULL) {
+        // level->init_fn = Titles_Init;
+        // level->update_fn = Titles_Update;
+        // level->draw_fn = Titles_Draw;
+        // level->flags = level->flags & 0xfffffff5;
+        // level->music_index = GetMusicIndex("titles", MusicInfo, -1);
+        level->music_index = -1;
+
+        i32 handle = music_man.GetTrackHandle(TRACK_CLASS_QUIET, "titles");
+        level->music_tracks[0] = handle;
+        level->music_tracks[1] = handle;
+
+        handle = music_man.GetTrackHandle(TRACK_CLASS_ACTION, "titles");
+        level->music_tracks[2] = handle;
+        level->music_tracks[3] = handle;
+
+        handle = music_man.GetTrackHandle(TRACK_CLASS_NOMUSIC, "titles");
+        level->music_tracks[4] = handle;
+        level->music_tracks[5] = handle;
+
+        LOG_DEBUG("Titles level track handles: %d, %d, %d, %d, %d, %d", level->music_tracks[0], level->music_tracks[1],
+                  level->music_tracks[2], level->music_tracks[3], level->music_tracks[4], level->music_tracks[5]);
+    }
+}
+
 static void LoadPermData(BGPROCINFO *proc) {
     VARIPTR legalTex;
     legalTex.addr = superbuffer_end.addr + -0x400000;
@@ -799,7 +833,7 @@ static void LoadPermData(BGPROCINFO *proc) {
 
     LDataList = Levels_ConfigureList("levels\\levels.txt", &permbuffer_ptr, &permbuffer_end, 365, &LEVELCOUNT,
                                      (void *)Level_SetDefaults);
-    // FixUpLevels(&LevFixUp);
+    FixUpLevels(&LevFixUp);
 
     for (int i = 0; i < LEVELCOUNT; i++) {
         LOG_INFO("Level %d: %s / %s", i, LDataList[i].dir, LDataList[i].name);

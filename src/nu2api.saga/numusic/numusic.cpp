@@ -96,8 +96,7 @@ void NuMusic::InitData(const char *file, VARIPTR *buffer_start, VARIPTR buffer_e
     this->albums = BUFFER_ALLOC_ARRAY_ALIGNED(&buffer_start->void_ptr, 512, Album);
     this->tracks = BUFFER_ALLOC_ARRAY_ALIGNED(&buffer_start->void_ptr, 2048, Track);
     this->indexes = BUFFER_ALLOC_ARRAY_ALIGNED(&buffer_start->void_ptr, 2048, f32);
-
-    LOG_DEBUG("albums=%p, tracks=%p, indexes=%p", this->albums, this->tracks, this->indexes);
+    LOG_DEBUG("this->albums=%p, this->tracks=%p, this->indexes=%p", this->albums, this->tracks, this->indexes);
 
     NuFParSetInterpreterErrorHandler(0);
     nufpar_s *fpar = NuFParCreate(const_cast<char *>(file));
@@ -113,6 +112,7 @@ void NuMusic::InitData(const char *file, VARIPTR *buffer_start, VARIPTR buffer_e
     }
     NuFParSetInterpreterErrorHandler(0);
     LOG_DEBUG("Loaded %d albums, %d tracks, %d indexes", this->album_count, this->track_count, this->index_count);
+    LOG_DEBUG("this->albums=%p, this->tracks=%p, this->indexes=%p", this->albums, this->tracks, this->indexes);
 
     i32 count = this->album_count;
     if (count == 0 || (track_count = this->track_count, track_count == 0)) {
@@ -127,7 +127,6 @@ void NuMusic::InitData(const char *file, VARIPTR *buffer_start, VARIPTR buffer_e
     Track *tracksPtr;
     Track *alloced;
     Track *pTVar3;
-    Album *pAVar3;
 
     Album *albumPtr = this->albums;
     album = (Album *)((usize)this->string_pool_end + 3U & 0xfffffffc);
@@ -138,12 +137,12 @@ void NuMusic::InitData(const char *file, VARIPTR *buffer_start, VARIPTR buffer_e
         if (tracksPtr == alloced)
             goto LAB_003203e6;
     LAB_003204e0:
-        memmove(alloced, pTVar3, track_count * 0x3c);
+        memmove(alloced, pTVar3, track_count * sizeof(Track));
         track_count = this->track_count;
         count = this->album_count;
         tracksPtr = alloced;
     } else {
-        memmove(album, albumPtr, count * 0x24);
+        memmove(album, albumPtr, count * sizeof(Album));
         count = this->album_count;
         this->albums = album;
         track_count = this->track_count;
@@ -155,16 +154,15 @@ void NuMusic::InitData(const char *file, VARIPTR *buffer_start, VARIPTR buffer_e
         if (track_count != 0)
             goto LAB_003204e0;
     }
+
     this->tracks = tracksPtr;
     if (0 < count) {
-        pAVar3 = this->albums;
-        albumPtr = pAVar3 + count;
-        do {
-            if (pAVar3->tracks_source != (Track *)0x0) {
-                pAVar3->tracks_source = (Track *)((usize)pAVar3->tracks_source + ((usize)tracksPtr - (usize)pTVar3));
+        for (Album *album = this->albums; album < &this->albums[count]; album++) {
+            if (album->tracks_source != NULL) {
+                // album->tracks_source = (Track *)((usize)album->tracks_source + ((usize)tracksPtr - (usize)pTVar3));
+                album->tracks_source += (tracksPtr - pTVar3);
             }
-            pAVar3 = pAVar3 + 1;
-        } while (pAVar3 != albumPtr);
+        }
         tracksPtr = this->tracks;
     }
 
@@ -198,7 +196,8 @@ LAB_003203e6:
     }
 
     buffer_start->void_ptr = __dest + local_20;
-    for (i32 i = 0; i < track_count; i++) {
+    LOG_DEBUG("this->albums=%p, this->tracks=%p, this->indexes=%p", this->albums, this->tracks, this->indexes);
+    for (i32 i = 0; i < this->album_count; i++) {
         this->albums[i].Initialise();
     }
 
@@ -206,13 +205,14 @@ LAB_003203e6:
 }
 
 void NuMusic::Album::Initialise() {
-    int i;
     int j;
     TRACK_CLASS clazz;
     Track *track;
     int count;
 
-    i = 0;
+    LOG_DEBUG("this=%p, this->tracks_source=%p", this, this->tracks_source);
+
+    i32 i = 0;
     count = this->tracks_count;
     do {
         while (this->tracks[i] = NULL, count < 1) {
@@ -224,7 +224,6 @@ void NuMusic::Album::Initialise() {
         }
 
         j = 0;
-        LOG_DEBUG("this=%p", this);
         clazz = this->tracks_source->clazz;
         track = this->tracks_source;
         while ((i32)clazz != 1 << ((byte)i & 0x1f)) {
@@ -294,6 +293,58 @@ NuMusic::Voice *NuMusic::FindVoiceByClass(TRACK_CLASS clazz) {
     return &this->voices[index];
 }
 
+bool NuMusic::SelectTrackByHandle(TRACK_CLASS clazz, i32 trackIndex) {
+    Album *album;
+
+    if (this != NULL && the_music_player != NULL && this->album != NULL) {
+        u32 index = ClassToIX(clazz);
+        if (index < 6) {
+            if (trackIndex == -1) {
+                this->album->tracks[index] = NULL;
+            } else {
+                album = this->album;
+                if (
+                    // (((int)album - (int)this->albums >> 2) * 0x38e38e39 - (trackIndex >> 0xb) == 0) &&
+                    trackIndex < album->tracks_count) {
+                    album->tracks[index] = &album->tracks_source[trackIndex];
+                    return true;
+                }
+            }
+        }
+    }
+
+    return false;
+}
+
+i32 NuMusic::GetTrackHandle(TRACK_CLASS clazz, const char *name) {
+    if (this != NULL && the_music_player != NULL && this->album != NULL) {
+        if (name == NULL) {
+            i32 index = ClassToIX(clazz);
+            if (index != -1) {
+                if (this->album->tracks[index] != NULL) {
+                    // return ((int)album->tracks[index] - (int)album->tracks_source >> 2) * -0x11111111 |
+                    //        ((int)pAVar1 - (int)this->albums >> 2) * 0x1c71c800;
+                    return this->album->tracks[index] - this->album->tracks_source;
+                }
+            }
+        } else {
+            LOG_DEBUG("Searching for track name '%s' of class %d, tracks_count=%d", name, clazz,
+                      this->album->tracks_count);
+            for (i32 i = 0; i < this->album->tracks_count; i++) {
+                if (this->album->tracks_source[i].clazz == clazz && this->album->tracks_source[i].ident != NULL) {
+                    LOG_DEBUG("Comparing '%s' to '%s'", this->album->tracks_source[i].ident, name);
+                    if (NuStrICmp(this->album->tracks_source[i].ident, name) == 0) {
+                        // return ((int)this->album - (int)this->albums >> 2) * 0x1c71c800 | i;
+                        return i;
+                    }
+                }
+            }
+        }
+    }
+
+    return -1;
+}
+
 void NuMusic::Voice::SetStatusFn(VOICE_STATUS status) {
     if (this->status != status) {
         this->field16_0x2c = NULL;
@@ -301,8 +352,8 @@ void NuMusic::Voice::SetStatusFn(VOICE_STATUS status) {
     }
 }
 
-extern "C" void NuSound3StopStereoStream(int streamIndex) {
-    UNIMPLEMENTED();
+extern "C" void NuSound3StopStereoStream(i32 streamIndex) {
+    LOG_WARN("Unimplemented: NuSound3StopStereoStream(%d)", streamIndex);
 }
 
 bool NuMusic::Voice::Load(Track *track, int trackIndex) {
@@ -358,6 +409,7 @@ i32 NuMusic::PlayTrackI(TRACK_CLASS clazz) {
     }
 
     Track *track = this->album->GetTrack(clazz);
+    LOG_DEBUG("Playing track class %d: track=%p", clazz, track);
 
     if (track == NULL || track->field6_0xc[this->track_index] == -1) {
         return -3;
@@ -405,6 +457,10 @@ i32 NuMusic::PlayTrackI(TRACK_CLASS clazz) {
 
 void NuMusic::ParseTrack(u32 category, nufpar_s *fpar) {
     Track *track = &this->tracks[this->track_count++];
+    if (this->current_album != NULL) {
+        this->current_album->tracks_count++;
+    }
+
     memset(track, 0, sizeof(Track));
 
     this->current_track = track;
@@ -428,7 +484,6 @@ void NuMusic::ParseTrack(u32 category, nufpar_s *fpar) {
     SubstituteString(buf2, buf, "$lang", this->language);
 
     track->path = AllocString(buf2);
-
     track->ident = RemovePath(track->path);
 
     nufpcomfn *errorHandler = NULL;
@@ -450,6 +505,8 @@ void NuMusic::ParseTrack(u32 category, nufpar_s *fpar) {
     if (this->strict_mode != 0) {
         NuFParSetInterpreterErrorHandler(errorHandler);
     }
+
+    LOG_DEBUG("Parsed track: class=%d, path='%s', ident='%s'", track->clazz, track->path, track->ident);
 }
 
 char *NuMusic::RemovePath(char *str) {
@@ -555,8 +612,7 @@ void NuMusic::xAlbum(nufpar_s *fpar) {
 
     NuFParGetWord(fpar);
     this->current_album->name = AllocString(fpar->word_buf);
-    LOG_DEBUG("Parsing album: '%s' at %p, tracks_source=%p", this->current_album->name, this->current_album,
-              this->current_album->tracks_source);
+    LOG_DEBUG("Parsing album '%s'", this->current_album->name);
 }
 void NuMusic::xAction(nufpar_s *fpar) {
     ParseTrack(TRACK_CLASS_ACTION, fpar);
@@ -647,5 +703,7 @@ void NuMusic::TrackParseErrorFn(nufpar_s *param_1) {
 }
 
 i32 GamePlayMusic(LEVELDATA *level, i32 zero, OPTIONSSAVE *options) {
+    music_man.SelectTrackByHandle(TRACK_CLASS_QUIET, level->music_tracks[0]);
+
     return music_man.PlayTrack(TRACK_CLASS_QUIET);
 }
