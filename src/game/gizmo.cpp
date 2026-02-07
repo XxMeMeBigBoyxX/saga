@@ -114,7 +114,7 @@ static REGISTERGIZMOTYPEFN GizmoTypesLSW[] = {GizObstacles_RegisterGizmo,
 
 #define GIZMO_TYPES_LSW_COUNT ((sizeof(GizmoTypesLSW) / sizeof(REGISTERGIZMOTYPEFN)) - 1)
 
-GIZMOTYPES *gizmo_types;
+GIZMOTYPES *gizmotypes;
 
 VARIPTR *GizmoBufferAlloc(VARIPTR *buffer, VARIPTR *buffer_end, int size) {
     VARIPTR *ptr = NULL;
@@ -139,7 +139,7 @@ void RegisterGizmoTypes(VARIPTR *buffer, VARIPTR *buffer_end, REGISTERGIZMOTYPEF
     VARIPTR *pvVar3;
     int i;
 
-    if (gizmo_types != NULL || register_gizmo_type_fns == NULL || *register_gizmo_type_fns == NULL) {
+    if (gizmotypes != NULL || register_gizmo_type_fns == NULL || *register_gizmo_type_fns == NULL) {
         return;
     }
 
@@ -148,33 +148,33 @@ void RegisterGizmoTypes(VARIPTR *buffer, VARIPTR *buffer_end, REGISTERGIZMOTYPEF
     }
 
     types = (GIZMOTYPES *)GizmoBufferAlloc(buffer, buffer_end, 0xc);
-    gizmo_types = types;
+    gizmotypes = types;
     if (types == NULL) {
         return;
     }
 
     types->unknown = unknown;
     types->types = (GIZMOTYPE *)GizmoBufferAlloc(buffer, buffer_end, ntypes * sizeof(GIZMOTYPE));
-    gizmo = gizmo_types->types;
+    gizmo = gizmotypes->types;
 
     if (gizmo == NULL) {
         return;
     }
 
-    gizmo_types->count = ntypes;
+    gizmotypes->count = ntypes;
 
-    for (int n = 0; n < gizmo_types->count; n++, gizmo++) {
+    for (int n = 0; n < gizmotypes->count; n++, gizmo++) {
         addgizmo = register_gizmo_type_fns[n](n);
 
         if (*addgizmo->prefix != '\0' && n != 0) {
             i = 0;
             do {
-                while (gizmo_types->types[i].prefix[0] == '\0') {
+                while (gizmotypes->types[i].prefix[0] == '\0') {
                     i = i + 1;
                     if (i == n)
                         goto copy_data;
                 }
-                NuStrICmp(addgizmo->prefix, gizmo_types->types[i].prefix);
+                NuStrICmp(addgizmo->prefix, gizmotypes->types[i].prefix);
                 i = i + 1;
             } while (i != n);
         }
@@ -213,16 +213,16 @@ void RegisterGizmoTypes(VARIPTR *buffer, VARIPTR *buffer_end, REGISTERGIZMOTYPEF
 
         pvVar4 = (void *)addgizmo->fns.allocate_progress_data_fn;
 
-        if (pvVar4 != NULL && gizmo_types->unknown != 0) {
-            pvVar3 = GizmoBufferAlloc(buffer, buffer_end, gizmo_types->unknown << 2);
+        if (pvVar4 != NULL && gizmotypes->unknown != 0) {
+            pvVar3 = GizmoBufferAlloc(buffer, buffer_end, gizmotypes->unknown << 2);
             gizmo->buffer = pvVar3;
-            if (types != NULL && gizmo_types->unknown > 0) {
+            if (types != NULL && gizmotypes->unknown > 0) {
                 i = 0;
                 while (1) {
                     void *pvVar5 = gizmo->fns.allocate_progress_data_fn(buffer, buffer_end);
                     pvVar3[i].void_ptr = pvVar5;
                     i = i + 1;
-                    if (gizmo_types->unknown <= i)
+                    if (gizmotypes->unknown <= i)
                         break;
                     pvVar3 = gizmo->buffer;
                 }
@@ -237,6 +237,46 @@ void RegisterGizmoTypes_LSW(VARIPTR *buffer, VARIPTR *buffer_end) {
     RegisterGizmoTypes(buffer, buffer_end, gizmo_types, 12);
 }
 
-GIZMO *AddGizmo(GIZMOSYS *gizmo_sys, int, char *, void *) {
-    UNIMPLEMENTED();
+GIZMO *AddGizmo(GIZMOSYS *gizmo_sys, int type_id, char *name, void *object) {
+    if (gizmotypes == NULL || gizmo_sys == NULL) {
+        return NULL;
+    }
+
+    if (name != NULL) {
+        type_id = GizmoGetTypeIDByName(gizmo_sys, name);
+    }
+
+    if (type_id > -1 && gizmotypes->count > type_id) {
+        GIZMOSET *set = &gizmo_sys->sets[type_id];
+        if (set->count < set->max_count) {
+            GIZMO *gizmo = &set->gizmos[set->count];
+            if (gizmo != NULL) {
+                if (object != NULL) {
+                    gizmo->object.void_ptr = object;
+                }
+
+                gizmo->unknown = 0;
+                gizmo->type_id = (u8)type_id;
+                set->count++;
+
+                return gizmo;
+            }
+        }
+    }
+
+    return NULL;
+}
+
+int GizmoGetTypeIDByName(GIZMOSYS_s *gizmo_sys, char *name) {
+    if (gizmotypes == NULL || name == NULL || gizmo_sys == NULL || gizmotypes->count <= 0) {
+        return -1;
+    }
+
+    for (int i = 0; i < gizmotypes->count; i++) {
+        if (NuStrCmp(gizmotypes->types[i].name, name) == 0) {
+            return i;
+        }
+    }
+
+    return -1;
 }

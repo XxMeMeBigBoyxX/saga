@@ -3,23 +3,29 @@
 #include "nu2api.saga/nucore/common.h"
 #include "nu2api.saga/numath/nuvec.h"
 
-struct GIZTIMER_s;
-struct nuportal_s;
-
 typedef struct GIZMO_s {
     union {
+        void *void_ptr;
         struct GIZTIMER_s *timer;
         struct nuportal_s *portal;
     } object;
+    i16 unknown;
+    u8 type_id;
 } GIZMO;
 
-typedef struct GIZMOSYS_s {
-
-} GIZMOSYS;
-
 typedef struct GIZMOSET_s {
-
+    struct gizmotype_s *type;
+    i32 count;
+    i32 max_count;
+    GIZMO *gizmos;
+    void *unknown;
 } GIZMOSET;
+
+typedef struct GIZMOSYS_s {
+    GIZMOSET *sets;
+    char *error_log;
+    u8 flags;
+} GIZMOSYS;
 
 typedef struct BOLT_s {
 
@@ -98,7 +104,7 @@ typedef struct ADDGIZMOTYPE_s {
 
 typedef ADDGIZMOTYPE *(*REGISTERGIZMOTYPEFN)(int);
 
-typedef struct GIZMOTYPE_s {
+typedef struct gizmotype_s {
     char name[32];
     char prefix[8];
     GIZMOFNS fns;
@@ -119,7 +125,8 @@ VARIPTR *GizmoBufferAlloc(VARIPTR *buffer, VARIPTR *buffer_end, int size);
 void RegisterGizmoTypes(VARIPTR *buffer, VARIPTR *buffer_end, REGISTERGIZMOTYPEFN *register_gizmo_type_fns,
                         int unknown);
 void RegisterGizmoTypes_LSW(VARIPTR *buffer, VARIPTR *buffer_end);
-GIZMO *AddGizmo(GIZMOSYS *gizmo_sys, int, char *, void *);
+GIZMO *AddGizmo(GIZMOSYS *gizmo_sys, int type_id, char *name, void *object);
+int GizmoGetTypeIDByName(GIZMOSYS *gizmo_sys, char *name);
 
 extern "C" {
 #endif
