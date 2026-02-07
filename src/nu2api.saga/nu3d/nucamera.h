@@ -1,7 +1,6 @@
 #pragma once
 
 #include "nu2api.saga/numath/numtx.h"
-#include "nu2api.saga/numath/nuquat.h"
 
 typedef struct nucamera_s {
     NUMTX mtx;
@@ -9,9 +8,17 @@ typedef struct nucamera_s {
     f32 aspect;
     f32 nearclip;
     f32 farclip;
-    NUVEC forward;
-    NUVEC right;
-    NUQUAT rotation;
+
+    f32 unknown_50;
+    f32 unknown_54;
+    f32 unknown_58;
+    f32 unknown_5c;
+    f32 unknown_60;
+    f32 unknown_64;
+
+    f32 portal_nearclip;
+
+    NUVEC scale;
 } NUCAMERA;
 
 extern NUMTX clip_planes;

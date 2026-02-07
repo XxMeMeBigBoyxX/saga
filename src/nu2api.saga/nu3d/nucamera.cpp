@@ -29,18 +29,21 @@ NUCAMERA *NuCameraCreate() {
 
     cam->nearclip = 0.15f;
     cam->farclip = 10000.0f;
-    cam->rotation.x = 0.0f;
+    cam->portal_nearclip = 0.0f;
     cam->fov = 0.75f;
     cam->aspect = 0.75f;
-    cam->forward.z = 1.0f;
-    cam->right.x = 1.0f;
-    cam->forward.x = 0.0f;
-    cam->forward.y = 0.0f;
-    cam->rotation.w = 1.0f;
-    cam->rotation.z = 1.0f;
-    cam->rotation.y = 1.0f;
-    cam->right.z = 0.0f;
-    cam->right.y = 0.0f;
+
+    cam->unknown_58 = 1.0f;
+    cam->unknown_5c = 1.0f;
+    cam->unknown_50 = 0.0f;
+    cam->unknown_54 = 0.0f;
+
+    cam->scale.z = 1.0f;
+    cam->scale.y = 1.0f;
+    cam->scale.x = 1.0f;
+
+    cam->unknown_64 = 0.0f;
+    cam->unknown_60 = 0.0f;
 
     return cam;
 }
