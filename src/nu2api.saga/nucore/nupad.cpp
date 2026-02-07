@@ -529,15 +529,15 @@ void NuPadRecordPlay(NUGENERICPAD *pad) {
             *record_ptr->u32_ptr++ = pad->is_valid;
 
             if (pad->is_valid) {
-                *record_ptr->uchar_ptr++ = pad->analog_left_x;
-                *record_ptr->uchar_ptr++ = pad->analog_left_y;
-                *record_ptr->uchar_ptr++ = pad->analog_right_x;
-                *record_ptr->uchar_ptr++ = pad->analog_right_y;
+                *record_ptr->u8_ptr++ = pad->analog_left_x;
+                *record_ptr->u8_ptr++ = pad->analog_left_y;
+                *record_ptr->u8_ptr++ = pad->analog_right_x;
+                *record_ptr->u8_ptr++ = pad->analog_right_y;
 
-                *record_ptr->uchar_ptr++ = pad->analog_l1;
-                *record_ptr->uchar_ptr++ = pad->analog_l2;
-                *record_ptr->uchar_ptr++ = pad->analog_r1;
-                *record_ptr->uchar_ptr++ = pad->analog_r2;
+                *record_ptr->u8_ptr++ = pad->analog_l1;
+                *record_ptr->u8_ptr++ = pad->analog_l2;
+                *record_ptr->u8_ptr++ = pad->analog_r1;
+                *record_ptr->u8_ptr++ = pad->analog_r2;
 
                 *record_ptr->u32_ptr++ = pad->digital_buttons;
             }
@@ -546,15 +546,15 @@ void NuPadRecordPlay(NUGENERICPAD *pad) {
             pad->is_valid = *record_ptr->u32_ptr++;
 
             if (pad->is_valid) {
-                pad->analog_left_x = *record_ptr->uchar_ptr++;
-                pad->analog_left_y = *record_ptr->uchar_ptr++;
-                pad->analog_right_x = *record_ptr->uchar_ptr++;
-                pad->analog_right_y = *record_ptr->uchar_ptr++;
+                pad->analog_left_x = *record_ptr->u8_ptr++;
+                pad->analog_left_y = *record_ptr->u8_ptr++;
+                pad->analog_right_x = *record_ptr->u8_ptr++;
+                pad->analog_right_y = *record_ptr->u8_ptr++;
 
-                pad->analog_l1 = *record_ptr->uchar_ptr++;
-                pad->analog_l2 = *record_ptr->uchar_ptr++;
-                pad->analog_r1 = *record_ptr->uchar_ptr++;
-                pad->analog_r2 = *record_ptr->uchar_ptr++;
+                pad->analog_l1 = *record_ptr->u8_ptr++;
+                pad->analog_l2 = *record_ptr->u8_ptr++;
+                pad->analog_r1 = *record_ptr->u8_ptr++;
+                pad->analog_r2 = *record_ptr->u8_ptr++;
 
                 pad->digital_buttons = *record_ptr->u32_ptr++;
             }
@@ -571,7 +571,7 @@ void NuPadRecordEnd() {
             break;
         case NUPAD_PLAY:
             nuapi.pad_record.mode = NUPAD_NORM;
-            nuapi.pad_record.record.uchar_ptr = nuapi.pad_record.buf_start;
+            nuapi.pad_record.record.u8_ptr = nuapi.pad_record.buf_start;
             break;
     }
 
@@ -586,7 +586,7 @@ void NuPadRecordSave(char *filepath) {
 
     record = &nuapi.pad_record;
 
-    if (record->mode == NUPAD_RECORD && record->record.uchar_ptr != record->buf_start) {
+    if (record->mode == NUPAD_RECORD && record->record.u8_ptr != record->buf_start) {
         if (filepath != NULL) {
             file = NuFileOpen(filepath, NUFILE_WRITE);
 

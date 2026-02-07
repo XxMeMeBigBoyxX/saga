@@ -429,7 +429,7 @@ void NuQFntInit(VARIPTR *buffer, VARIPTR buffer_end) {
 
     nuqfnt_init = 1;
     VARIPTR sysfont_ptr;
-    sysfont_ptr.uchar_ptr = sysfont;
+    sysfont_ptr.u8_ptr = sysfont;
     system_qfont = NuQFntReadBuffer(&sysfont_ptr, buffer, buffer_end);
 
     if (system_qfont != NULL) {

@@ -49,8 +49,8 @@ static_assert(sizeof(f64) == 8, "f64 is not 8 bytes");
 typedef union variptr_u {
     void *void_ptr;
     char *char_ptr;
-    i16 *short_ptr;
-    u8 *uchar_ptr;
+    i16 *i16_ptr;
+    u8 *u8_ptr;
     u32 *u32_ptr;
     usize addr;
 } VARIPTR;
