@@ -2,18 +2,17 @@
 
 #include "globals.h"
 
-struct LEVELDATA_s;
-struct GIZTIMER_s;
-
 struct WORLDINFO_s {
     char filler0[0x104];
     VARIPTR giz_buffer;
     char filler1[0x20];
     struct LEVELDATA_s *current_level;
-    char filler2[0x4fd0];
+    char filler2[0x10];
+    struct nugscn_s *current_gscn;
+    char filler3[0x4fbc];
     struct GIZTIMER_s* giz_timers;
     i32 giz_timers_count;
-    char filler3[21084];
+    char filler4[21084];
 };
 
 typedef struct WORLDINFO_s WORLDINFO;

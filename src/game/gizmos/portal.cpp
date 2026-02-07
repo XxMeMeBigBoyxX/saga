@@ -1,15 +1,36 @@
 #include "game/gizmos/portal.h"
 
 #include "decomp.h"
+#include "game/world.h"
+#include "nu2api.saga/nu3d/nugscn.h"
 
 int portal_gizmotype_id = -1;
 
-static int Portal_GetMaxGizmos(void *portal) {
-    UNIMPLEMENTED();
+static int Portal_GetMaxGizmos(void *world_info) {
+    WORLDINFO *world = (WORLDINFO *)world_info;
+
+    if (world == NULL || world->current_gscn == NULL) {
+        return 0;
+    }
+
+    return world->current_gscn->max_portals;
 }
 
-static void Portal_AddGizmos(GIZMOSYS *gizmo_sys, int, void *, void *) {
-    UNIMPLEMENTED();
+static void Portal_AddGizmos(GIZMOSYS *gizmo_sys, int unknown, void *world_info, void *) {
+    WORLDINFO *world = (WORLDINFO *)world_info;
+
+    if (world == NULL || world->current_gscn == NULL || world->current_gscn->max_portals <= 0) {
+        return;
+    }
+
+    for (int i = 0; i < world->current_gscn->max_portals; i++) {
+        NUPORTAL *portal = &world->current_gscn->portals[i];
+        if (portal->id == 0) {
+            continue;
+        }
+
+        AddGizmo(gizmo_sys, unknown, NULL, portal);
+    }
 }
 
 static char *Portal_GetGizmoName(GIZMO *gizmo) {
@@ -33,7 +54,7 @@ static int Portal_GetOutput(GIZMO *gizmo, int, int) {
 }
 
 char *Portal_GetOutputName(GIZMO *gizmo, int output_index) {
-    static char name[] = "Active";
+    static char name[64] = "Active";
 
     return name;
 }
@@ -77,15 +98,71 @@ static void Portals_ClearProgress(void *, void *progress) {
         return;
     }
 
-    portal_progress->unknown = -1;
+    portal_progress->progress_mask = ~0u;
 }
 
-static void Portals_StoreProgress(void *, void *, void* progress) {
-    UNIMPLEMENTED();
+static void Portals_StoreProgress(void *world_info, void *, void *progress) {
+    WORLDINFO *world = (WORLDINFO *)world_info;
+    GIZPORTALPROGRESS *portal_progress = (GIZPORTALPROGRESS *)progress;
+
+    if (portal_progress != NULL) {
+        portal_progress->progress_mask = ~0u;
+    }
+
+    if (world == NULL || world->current_gscn == NULL || portal_progress == NULL ||
+        world->current_gscn->max_portals <= 0) {
+        return;
+    }
+
+    NUPORTAL *portal = world->current_gscn->portals;
+    NUPORTAL *end = portal + world->current_gscn->max_portals;
+    int index = 0;
+    for (;;) {
+        if (portal->id != 0 && index <= SIZEOF_BITS(portal_progress->progress_mask) - 1) {
+            if (portal->active & 1) {
+                portal_progress->progress_mask |= (1 << index);
+            }
+            index++;
+        }
+        portal++;
+
+        if (portal == end) {
+            break;
+        }
+    }
 }
 
-static void Portals_Reset(void *, void *, void *) {
-    UNIMPLEMENTED();
+static void Portals_Reset(void *world_info, void *, void *progress) {
+    WORLDINFO *world = (WORLDINFO *)world_info;
+    GIZPORTALPROGRESS *portal_progress = (GIZPORTALPROGRESS *)progress;
+
+    if (world == NULL || world->current_gscn == NULL) {
+        return;
+    }
+
+    PortalDoors_Reset(world);
+
+    NUGSCN *gscn = world->current_gscn;
+    if (gscn->max_portals <= 0) {
+        return;
+    }
+
+    int index = 0;
+    for (int i = 0; i < gscn->max_portals; i++) {
+        NUPORTAL *portal = &gscn->portals[i];
+        if (portal->id == 0) {
+            continue;
+        }
+
+        NuPortalSetActiveDirect(portal, 1);
+        gscn = world->current_gscn;
+        if (index <= SIZEOF_BITS(portal_progress->progress_mask) - 1 && portal_progress != NULL &&
+            (gscn->portals[i].active & 1)) {
+            portal_progress->progress_mask |= (1 << index);
+        }
+
+        index++;
+    }
 }
 
 ADDGIZMOTYPE *Portal_RegisterGizmo(int type_id) {
@@ -137,4 +214,8 @@ void NuPortalSetActiveDirect(NUPORTAL *portal, int active) {
     } else {
         portal->active = 0;
     }
+}
+
+void PortalDoors_Reset(WORLDINFO *world_info) {
+    UNIMPLEMENTED();
 }

@@ -1,10 +1,9 @@
 #pragma once
 
 #include "game/gizmo.h"
+#include "game/world.h"
 
 extern int portal_gizmotype_id;
-
-#ifdef __cplusplus
 
 typedef struct nuportal_s {
     u8 filler[0x1a];
@@ -14,12 +13,15 @@ typedef struct nuportal_s {
 } NUPORTAL;
 
 typedef struct gizportalprogress_s {
-    i32 unknown;
+    u32 progress_mask;
 } GIZPORTALPROGRESS;
+
+#ifdef __cplusplus
 
 ADDGIZMOTYPE* Portal_RegisterGizmo(int type_id);
 char *Portal_GetOutputName(GIZMO *gizmo, int output_index);
 void Portal_Activate(GIZMO *gizmo, int active);
+void PortalDoors_Reset(WORLDINFO* world_info);
 
 extern "C" {
 #endif

@@ -39,6 +39,8 @@ static_assert(sizeof(f64) == 8, "f64 is not 8 bytes");
 
 #define ALIGN(value, alignment) (((value) + alignment - 1) & -alignment)
 
+#define SIZEOF_BITS(type) ((i32)(sizeof(type) * 8))
+
 // In the original engine, `variptr_u` is a union of a wide variety of pointer
 // types from various parts of the engine. This allows for convenient casting of
 // buffer memory to the desired resulting allocated type, but we choose to omit
