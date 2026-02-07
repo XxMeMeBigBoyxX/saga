@@ -42,7 +42,7 @@ static void GizMiniCut_Reset(void *, void *, void *) {
     UNIMPLEMENTED();
 }
 
-static int GizMiniCut_ReserveBufferSpace(void *, int) {
+static void *GizMiniCut_ReserveBufferSpace(void *) {
     UNIMPLEMENTED();
 }
 

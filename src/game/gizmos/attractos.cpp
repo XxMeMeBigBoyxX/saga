@@ -62,7 +62,7 @@ static void Attractos_Reset(void *, void *, void *) {
     UNIMPLEMENTED();
 }
 
-static int Attractos_ReserveBufferSpace(void *, int) {
+static void *Attractos_ReserveBufferSpace(void *) {
     UNIMPLEMENTED();
 }
 

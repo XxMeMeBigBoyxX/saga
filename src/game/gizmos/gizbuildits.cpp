@@ -68,7 +68,7 @@ static void GizBuildIts_Reset(void *, void *, void *) {
     UNIMPLEMENTED();
 }
 
-static int GizBuildIts_ReserveBufferSpace(void *, int) {
+static void *GizBuildIts_ReserveBufferSpace(void *) {
     UNIMPLEMENTED();
 }
 

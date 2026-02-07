@@ -66,7 +66,7 @@ static void Signals_Reset(void *, void *, void *) {
     UNIMPLEMENTED();
 }
 
-static int Signals_ReserveBufferSpace(void *, int) {
+static void *Signals_ReserveBufferSpace(void *) {
     UNIMPLEMENTED();
 }
 

@@ -68,7 +68,7 @@ static void Technos_Reset(void *, void *, void *) {
     UNIMPLEMENTED();
 }
 
-static int Technos_ReserveBufferSpace(void *, int) {
+static void *Technos_ReserveBufferSpace(void *) {
     UNIMPLEMENTED();
 }
 

@@ -64,7 +64,7 @@ static void ZipUps_Reset(void *, void *, void *) {
     UNIMPLEMENTED();
 }
 
-static int ZipUps_ReserveBufferSpace(void *, int) {
+static void *ZipUps_ReserveBufferSpace(void *) {
     UNIMPLEMENTED();
 }
 

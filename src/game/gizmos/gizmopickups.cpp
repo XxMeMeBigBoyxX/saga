@@ -64,7 +64,7 @@ static void GizmoPickups_Reset(void *, void *, void *) {
     UNIMPLEMENTED();
 }
 
-static int GizmoPickups_ReserveBufferSpace(void *, int) {
+static void *GizmoPickups_ReserveBufferSpace(void *) {
     UNIMPLEMENTED();
 }
 

@@ -38,7 +38,7 @@ typedef void *(*GIZMOALLOCATEPROGRESSDATAFN)(VARIPTR *, VARIPTR *);
 typedef void (*GIZMOCLEARPROGRESSFN)(void *, void *);
 typedef void (*GIZMOSTOREPROGRESSFN)(void *, void *, void *);
 typedef void (*GIZMORESETFN)(void *, void *, void *);
-typedef int (*GIZMORESERVEBUFFERSPACEFN)(void *, int);
+typedef void *(*GIZMORESERVEBUFFERSPACEFN)(void *);
 typedef int (*GIZMOLOADFN)(void *, void *);
 typedef int (*GIZMOGETPOSFN)(GIZMO *gizmo);
 typedef int (*GIZMOBOLTHITPLATFN)(void *, void *, BOLT *, unsigned char *);

@@ -62,7 +62,7 @@ static void SecurityDoors_Reset(void *, void *, void *) {
     UNIMPLEMENTED();
 }
 
-static int SecurityDoors_ReserveBufferSpace(void *, int) {
+static void *SecurityDoors_ReserveBufferSpace(void *) {
     UNIMPLEMENTED();
 }
 

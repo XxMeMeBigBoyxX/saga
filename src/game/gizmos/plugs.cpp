@@ -64,7 +64,7 @@ static void Plugs_Reset(void *, void *, void *) {
     UNIMPLEMENTED();
 }
 
-static int Plugs_ReserveBufferSpace(void *, int) {
+static void *Plugs_ReserveBufferSpace(void *) {
     UNIMPLEMENTED();
 }
 

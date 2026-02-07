@@ -48,7 +48,7 @@ static void GizTorps_Reset(void *, void *, void *) {
     UNIMPLEMENTED();
 }
 
-static int GizTorps_ReserveBufferSpace(void *, int) {
+static void *GizTorps_ReserveBufferSpace(void *) {
     UNIMPLEMENTED();
 }
 

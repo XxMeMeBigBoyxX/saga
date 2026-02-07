@@ -60,7 +60,7 @@ static void Push_Reset(void *, void *, void *) {
     UNIMPLEMENTED();
 }
 
-static int PushBlocks_ReserveBufferSpace(void *, int) {
+static void *PushBlocks_ReserveBufferSpace(void *) {
     UNIMPLEMENTED();
 }
 

@@ -54,7 +54,7 @@ static void Ledges_Reset(void *, void *, void *) {
     UNIMPLEMENTED();
 }
 
-static int Ledges_ReserveBufferSpace(void *, int) {
+static void *Ledges_ReserveBufferSpace(void *) {
     UNIMPLEMENTED();
 }
 

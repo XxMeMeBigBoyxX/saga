@@ -1,15 +1,15 @@
 #include "game/gizmos/giztimer.h"
 
 #include "decomp.h"
+#include "game/level.h"
 #include "gameapi.saga/edtools/edfile.h"
 #include "lostandfound/qrand.h"
 #include "nu2api.saga/nucore/nustring.h"
-#include "game/level.h"
 
 int giztimer_gizmotype_id = -1;
-    
+
 int GizTimer_GetMaxGizmos(void *world_info) {
-    WORLDINFO* world = (WORLDINFO*)world_info;
+    WORLDINFO *world = (WORLDINFO *)world_info;
 
     if (world == NULL || world->current_level == NULL) {
         return 0;
@@ -18,7 +18,7 @@ int GizTimer_GetMaxGizmos(void *world_info) {
     return world->current_level->max_giz_timers;
 }
 
-void GizTimer_AddGizmos(GIZMOSYS *gizmo_sys, int unknown1, void * world_info, void * unknown2) {
+void GizTimer_AddGizmos(GIZMOSYS *gizmo_sys, int unknown1, void *world_info, void *unknown2) {
     WORLDINFO *world = (WORLDINFO *)world_info;
 
     for (int i = 0; i < world->giz_timers_count; i++) {
@@ -67,11 +67,11 @@ int GizTimer_GetNumOutputs(GIZMO *gizmo) {
 
 void GizTimer_Activate(GIZMO *gizmo, int unknown) {
     // can't get this stupid function to match
-    GIZTIMER* timer = gizmo->object.timer;
+    GIZTIMER *timer = gizmo->object.timer;
 
     if (timer->flags & 2) {
         timer->time_remaining = QRAND_FLOAT() * timer->start_time;
-        
+
     } else {
         timer->time_remaining = timer->start_time;
     }
@@ -79,8 +79,22 @@ void GizTimer_Activate(GIZMO *gizmo, int unknown) {
     timer->flags = (timer->flags & ~1) | (unknown != 0);
 }
 
-int GizTimer_ReserveBufferSpace(void *, int) {
-    UNIMPLEMENTED();
+void *GizTimer_ReserveBufferSpace(void *world_info) {
+    WORLDINFO *world = (WORLDINFO *)world_info;
+
+    world->giz_timers = NULL;
+    world->giz_timers_count = 0;
+
+    // yes i know this is horrible, but it's the only way i could get it to match
+    u32 buffer = NULL;
+    if (world->current_level->max_giz_timers != 0) {
+        buffer = ALIGN(world->giz_buffer.addr, 4);
+        world->giz_buffer.addr = buffer;
+        world->giz_timers = (GIZTIMER *)buffer;
+        world->giz_buffer.addr = buffer + (world->current_level->max_giz_timers * sizeof(GIZTIMER));
+    }
+
+    return (void *)buffer;
 }
 
 int GizTimer_Load(void *world_info, void *) {
@@ -113,13 +127,13 @@ ADDGIZMOTYPE *GizTimer_RegisterGizmo(int type_id) {
     addtype.name = "GizTimer";
     addtype.prefix = "";
     addtype.fns.unknown1 = 0;
-    addtype.fns.early_update_fn = (GIZMOEARLYUPDATEFN)GizTimer_Update;
+    addtype.fns.get_max_gizmos_fn = GizTimer_GetMaxGizmos;
+    addtype.fns.add_gizmos_fn = GizTimer_AddGizmos;
+    addtype.fns.early_update_fn = GizTimer_Update;
     addtype.fns.panel_draw_fn = NULL;
     addtype.fns.get_visibility_fn = NULL;
-    addtype.fns.get_max_gizmos_fn = GizTimer_GetMaxGizmos;
     addtype.fns.get_pos_fn = NULL;
     addtype.fns.using_special_fn = NULL;
-    addtype.fns.add_gizmos_fn = GizTimer_AddGizmos;
     addtype.fns.bolt_hit_plat_fn = NULL;
     addtype.fns.get_best_bolt_target_fn = NULL;
     addtype.fns.late_update_fn = NULL;

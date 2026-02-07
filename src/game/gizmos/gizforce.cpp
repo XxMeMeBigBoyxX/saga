@@ -82,7 +82,7 @@ static void GizForces_Reset(void *, void *, void *) {
     UNIMPLEMENTED();
 }
 
-static int GizForces_ReserveBufferSpace(void *, int) {
+static void *GizForces_ReserveBufferSpace(void *) {
     UNIMPLEMENTED();
 }
 

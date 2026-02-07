@@ -62,7 +62,7 @@ static void Shards_Reset(void *, void *, void *) {
     UNIMPLEMENTED();
 }
 
-static int Shards_ReserveBufferSpace(void *, int) {
+static void *Shards_ReserveBufferSpace(void *) {
     UNIMPLEMENTED();
 }
 

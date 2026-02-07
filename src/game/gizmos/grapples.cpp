@@ -60,7 +60,7 @@ static void Grapples_Reset(void *, void *, void *) {
     UNIMPLEMENTED();
 }
 
-static int Grapples_ReserveBufferSpace(void *, int) {
+static void *Grapples_ReserveBufferSpace(void *) {
     UNIMPLEMENTED();
 }
 

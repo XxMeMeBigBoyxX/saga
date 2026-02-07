@@ -60,7 +60,7 @@ static void GizBombGens_SetResetFlag(void *, void *, void *) {
     UNIMPLEMENTED();
 }
 
-static int GizBombGens_ReserveBufferSpace(void *, int) {
+static void *GizBombGens_ReserveBufferSpace(void *) {
     UNIMPLEMENTED();
 }
 

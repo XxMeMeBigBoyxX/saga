@@ -76,7 +76,7 @@ static void Levers_Reset(void *, void *, void *) {
     UNIMPLEMENTED();
 }
 
-static int Levers_ReserveBufferSpace(void *, int) {
+static void *Levers_ReserveBufferSpace(void *) {
     UNIMPLEMENTED();
 }
 

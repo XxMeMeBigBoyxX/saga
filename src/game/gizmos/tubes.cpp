@@ -66,7 +66,7 @@ static void Tubes_Reset(void *, void *, void *) {
     UNIMPLEMENTED();
 }
 
-static int Tubes_ReserveBufferSpace(void *, int) {
+static void *Tubes_ReserveBufferSpace(void *) {
     UNIMPLEMENTED();
 }
 

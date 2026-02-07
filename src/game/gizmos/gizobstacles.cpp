@@ -82,7 +82,7 @@ static void GizObstacles_Reset(void *, void *, void *) {
     UNIMPLEMENTED();
 }
 
-static int GizObstacles_ReserveBufferSpace(void *, int) {
+static void *GizObstacles_ReserveBufferSpace(void *) {
     UNIMPLEMENTED();
 }
 

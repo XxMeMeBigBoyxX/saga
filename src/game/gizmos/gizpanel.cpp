@@ -60,7 +60,7 @@ static void GizPanels_Reset(void *, void *, void *) {
     UNIMPLEMENTED();
 }
 
-static int GizPanels_ReserveBufferSpace(void *, int) {
+static void *GizPanels_ReserveBufferSpace(void *) {
     UNIMPLEMENTED();
 }
 

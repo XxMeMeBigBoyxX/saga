@@ -72,7 +72,7 @@ static void Blowups_Reset(void *, void *, void *) {
     UNIMPLEMENTED();
 }
 
-static int gizmoblowup_reservebuffers(void *, int) {
+static void *gizmoblowup_reservebuffers(void *) {
     UNIMPLEMENTED();
 }
 

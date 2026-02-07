@@ -82,7 +82,7 @@ static void GizTurrets_Reset(void *, void *, void *) {
     UNIMPLEMENTED();
 }
 
-static int GizTurrets_ReserveBufferSpace(void *, int) {
+static void *GizTurrets_ReserveBufferSpace(void *) {
     UNIMPLEMENTED();
 }
 

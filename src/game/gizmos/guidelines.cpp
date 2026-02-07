@@ -54,7 +54,7 @@ static void GuideLines_Reset(void *, void *, void *) {
     UNIMPLEMENTED();
 }
 
-static int GuideLines_ReserveBufferSpace(void *, int) {
+static void *GuideLines_ReserveBufferSpace(void *) {
     UNIMPLEMENTED();
 }
 

@@ -86,7 +86,7 @@ static void GizSpinner_ResetAll(void *, void *, void *) {
     UNIMPLEMENTED();
 }
 
-static int GizSpinner_ReserveBufferSpace(void *, int) {
+static void *GizSpinner_ReserveBufferSpace(void *) {
     UNIMPLEMENTED();
 }
 

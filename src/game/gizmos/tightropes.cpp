@@ -54,7 +54,7 @@ static void TightRopes_Reset(void *, void *, void *) {
     UNIMPLEMENTED();
 }
 
-static int TightRopes_ReserveBufferSpace(void *, int) {
+static void *TightRopes_ReserveBufferSpace(void *) {
     UNIMPLEMENTED();
 }
 

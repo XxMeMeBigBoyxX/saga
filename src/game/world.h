@@ -6,12 +6,14 @@ struct LEVELDATA_s;
 struct GIZTIMER_s;
 
 struct WORLDINFO_s {
-    char filler0[0x128];
+    char filler0[0x104];
+    VARIPTR giz_buffer;
+    char filler1[0x20];
     struct LEVELDATA_s *current_level;
-    char filler1[0x4fd0];
+    char filler2[0x4fd0];
     struct GIZTIMER_s* giz_timers;
     int giz_timers_count;
-    char filler2[21084];
+    char filler3[21084];
 };
 
 typedef struct WORLDINFO_s WORLDINFO;

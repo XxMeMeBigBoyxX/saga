@@ -32,7 +32,7 @@ static void GizRandom_Activate(GIZMO *gizmo, int) {
     UNIMPLEMENTED();
 }
 
-static int GizRandom_ReserveBufferSpace(void *, int) {
+static void *GizRandom_ReserveBufferSpace(void *) {
     UNIMPLEMENTED();
 }
 

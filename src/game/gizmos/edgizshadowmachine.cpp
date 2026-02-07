@@ -28,7 +28,7 @@ static int edGizShadow_GetNumOutputs(GIZMO *gizmo) {
     UNIMPLEMENTED();
 }
 
-static int edGizShadow_ReserveBufferSpace(void *, int) {
+static void *edGizShadow_ReserveBufferSpace(void *) {
     UNIMPLEMENTED();
 }
 

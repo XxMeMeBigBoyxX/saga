@@ -60,7 +60,7 @@ static void HatMachines_Reset(void *, void *, void*) {
     UNIMPLEMENTED();
 }
 
-static int HatMachines_ReserveBufferSpace(void *, int) {
+static void *HatMachines_ReserveBufferSpace(void *) {
     UNIMPLEMENTED();
 }
 
