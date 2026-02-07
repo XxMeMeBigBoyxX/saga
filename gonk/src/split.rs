@@ -20,10 +20,10 @@ struct CompileCommand {
 }
 
 /// construct a new object file containing only the specified symbols from the original object file
-fn make_object<'a>(
+fn make_object<'a, E: object::Endian>(
     lib: &Lib<'_, '_>,
-    text_symbols: &[impl AsRef<str> + std::fmt::Debug],
-    data_symbols: &[impl AsRef<str> + std::fmt::Debug],
+    text_symbols: &[object::read::elf::ElfSymbol<FileHeader32<E>>],
+    data_symbols: &[object::read::elf::ElfSymbol<FileHeader32<E>>],
     should_process_relocs: bool,
 ) -> anyhow::Result<object::write::Object<'a>> {
     let mut obj = object::write::Object::new(
@@ -41,12 +41,7 @@ fn make_object<'a>(
     // gathering relocs.
     let mut all_relocs = HashMap::new();
 
-    for symbol in text_symbols {
-        let Some(orig_sym) = lib.symbols_by_name.get(symbol.as_ref()) else {
-            log::warn!("Failed to find symbol '{symbol:?}' in original object, skipping");
-            continue;
-        };
-
+    for orig_sym in text_symbols {
         let name = orig_sym.name().context("Failed to get symbol name")?;
 
         let Some(section_idx) = orig_sym.section().index() else {
@@ -179,23 +174,18 @@ fn add_relocs(
     Ok(())
 }
 
-fn build_data_sections<'data>(
+fn build_data_sections<'data, E: object::Endian>(
     lib: &Lib<'_, 'data>,
-    data_symbols: &[impl AsRef<str> + std::fmt::Debug],
+    data_symbols: &[read::elf::ElfSymbol<FileHeader32<E>>],
     obj: &mut object::write::Object<'_>,
     sections: &mut HashMap<&'data str, SectionId>,
 ) -> Result<HashMap<read::SymbolIndex, u32>, anyhow::Error> {
     let mut orig_sym_idx_to_new_offset = HashMap::new();
 
-    for symbol in data_symbols {
-        let Some(symbol) = lib.symbols_by_name.get(symbol.as_ref()) else {
-            log::warn!("Failed to find symbol '{symbol:?}' in original object, skipping");
-            continue;
-        };
+    for orig_sym in data_symbols {
+        let name = orig_sym.name().context("Failed to get symbol name")?;
 
-        let name = symbol.name().context("Failed to get symbol name")?;
-
-        let Some(section_idx) = symbol.section().index() else {
+        let Some(section_idx) = orig_sym.section().index() else {
             log::warn!("failed to find section for symbol {}, skipping", name);
             continue;
         };
@@ -219,13 +209,13 @@ fn build_data_sections<'data>(
             SectionKind::Data | SectionKind::ReadOnlyData => {
                 let bytes = section.data().context("Failed to get section data")?;
 
-                let symbol_start = (symbol.address() - section.address()) as usize;
-                let bytes = &bytes[symbol_start..symbol_start + symbol.size() as usize];
+                let symbol_start = (orig_sym.address() - section.address()) as usize;
+                let bytes = &bytes[symbol_start..symbol_start + orig_sym.size() as usize];
 
                 obj.append_section_data(write_id, bytes, 8)
             }
 
-            SectionKind::UninitializedData => obj.append_section_bss(write_id, symbol.size(), 1),
+            SectionKind::UninitializedData => obj.append_section_bss(write_id, orig_sym.size(), 1),
 
             _ => continue,
         };
@@ -233,15 +223,15 @@ fn build_data_sections<'data>(
         obj.add_symbol(object::write::Symbol {
             name: name.as_bytes().to_vec(),
             value: new_offset,
-            size: symbol.size(),
-            kind: symbol.kind(),
-            scope: symbol.scope(),
-            weak: symbol.is_weak(),
+            size: orig_sym.size(),
+            kind: orig_sym.kind(),
+            scope: orig_sym.scope(),
+            weak: orig_sym.is_weak(),
             section: object::write::SymbolSection::Section(write_id),
             flags: object::SymbolFlags::None,
         });
 
-        orig_sym_idx_to_new_offset.insert(symbol.index(), new_offset as u32);
+        orig_sym_idx_to_new_offset.insert(orig_sym.index(), new_offset as u32);
     }
 
     Ok(orig_sym_idx_to_new_offset)
@@ -272,9 +262,9 @@ enum RelocTarget<'a> {
     Section(&'a str),
 }
 
-fn generate_text_relocs<'data>(
+fn generate_text_relocs<'data, E: object::Endian>(
     lib: &Lib<'_, 'data>,
-    orig_sym: &read::elf::ElfSymbol<FileHeader32<Endianness>>,
+    orig_sym: &read::elf::ElfSymbol<FileHeader32<E>>,
     name: &str,
     section_id: object::write::SectionId,
     bytes: &mut [u8],
@@ -602,7 +592,7 @@ pub fn split() -> anyhow::Result<()> {
     std::fs::create_dir_all("build/split").context("Failed to create build/split directory")?;
 
     let mut objdiff_units = vec![];
-    let mut used_symbols: HashSet<_> = HashSet::new();
+    let mut used_symbols = HashSet::new();
 
     for command in compile_commands.iter() {
         log::info!("processing file '{}'", command.file.display());
@@ -614,28 +604,22 @@ pub fn split() -> anyhow::Result<()> {
         let elf = read::elf::ElfFile32::<'_, object::LittleEndian, _>::parse(&*contents)
             .context("Failed to parse ELF file")?;
 
-        let (text_symbols, data_symbols): (Vec<_>, Vec<_>) =
-            elf.symbols().filter(symbol_filter).partition(|sym| {
-                elf.section_by_index(sym.section_index().unwrap())
+        let (text_symbols, data_symbols): (Vec<_>, Vec<_>) = elf
+            .symbols()
+            .filter(symbol_filter)
+            .filter_map(|sym| original_lib.symbols_by_name.get(sym.name().unwrap()))
+            .partition(|sym| {
+                orig_lib_file
+                    .section_by_index(sym.section_index().unwrap())
                     .unwrap()
                     .kind()
                     == SectionKind::Text
             });
 
-        let text_symbols: Vec<_> = text_symbols
-            .into_iter()
-            .map(|sym| sym.name().unwrap().to_string())
-            .collect();
-
-        let data_symbols: Vec<_> = data_symbols
-            .into_iter()
-            .map(|sym| sym.name().unwrap().to_string())
-            .collect();
-
         let new_obj = make_object(&original_lib, &text_symbols, &data_symbols, true)?;
 
-        used_symbols.extend(text_symbols);
-        used_symbols.extend(data_symbols);
+        used_symbols.extend(text_symbols.iter().map(|sym| sym.index()));
+        used_symbols.extend(data_symbols.iter().map(|sym| sym.index()));
 
         let output_relative_path = command.output.strip_prefix("CMakeFiles/saga.dir").unwrap();
         let output_path = std::path::Path::new("build/split").join(output_relative_path);
@@ -673,7 +657,8 @@ pub fn split() -> anyhow::Result<()> {
     let (text_symbols, data_symbols): (Vec<_>, Vec<_>) = orig_lib_file
         .symbols()
         .filter(symbol_filter)
-        .filter(|sym| !used_symbols.contains(sym.name().unwrap()))
+        .filter(|sym| !used_symbols.contains(&sym.index()))
+        .filter_map(|sym| original_lib.symbols_by_name.get(sym.name().unwrap()))
         .partition(|sym| {
             orig_lib_file
                 .section_by_index(sym.section_index().unwrap())
@@ -681,16 +666,6 @@ pub fn split() -> anyhow::Result<()> {
                 .kind()
                 == SectionKind::Text
         });
-
-    let text_symbols: Vec<_> = text_symbols
-        .into_iter()
-        .map(|sym| sym.name().unwrap().to_string())
-        .collect();
-
-    let data_symbols: Vec<_> = data_symbols
-        .into_iter()
-        .map(|sym| sym.name().unwrap().to_string())
-        .collect();
 
     let remaining = make_object(&original_lib, &text_symbols, &data_symbols, false)?;
     let bytes = remaining.write()?;
