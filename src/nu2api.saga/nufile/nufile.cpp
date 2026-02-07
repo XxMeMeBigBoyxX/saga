@@ -596,6 +596,46 @@ u16 NuFileReadWChar(NUFILE file) {
     return value;
 }
 
+i32 NuFile_SwapEndianOnWrite;
+
+static void NuFileEndianSwap32(void *value) {
+    u8 *value_ptr;
+    u32 swapped;
+    u8 *swap_ptr;
+
+    value_ptr = (u8 *)value;
+    swap_ptr = (u8 *)&swapped;
+
+    swap_ptr[0] = value_ptr[3];
+    swap_ptr[1] = value_ptr[2];
+    swap_ptr[2] = value_ptr[1];
+    swap_ptr[3] = value_ptr[0];
+
+    *((u32 *)value) = swapped;
+}
+
+i32 NuFileWriteInt(NUFILE file, i32 value) {
+    i32 tmp;
+
+    tmp = value;
+    if (NuFile_SwapEndianOnWrite != 0) {
+        NuFileEndianSwap32(&tmp);
+    }
+
+    return NuFileWrite(file, &tmp, sizeof(i32));
+}
+
+u32 NuFileWriteUnsignedInt(NUFILE file, u32 value) {
+    u32 tmp;
+
+    tmp = value;
+    if (NuFile_SwapEndianOnWrite != 0) {
+        NuFileEndianSwap32(&tmp);
+    }
+
+    return NuFileWrite(file, &tmp, sizeof(u32));
+}
+
 i32 NuFileLoadBuffer(char *filepath, void *buf, int buf_size) {
     NUFILE file;
     int iVar2;

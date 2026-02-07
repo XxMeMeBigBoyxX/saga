@@ -158,6 +158,7 @@ extern int read_critical_section;
 extern "C" {
 #endif
     extern char g_datfileMode;
+    extern i32 NuFile_SwapEndianOnWrite;
 
     int DEV_FormatName(NUFILE_DEVICE *device, char *formatted_name, char *path, int buf_size);
     int DEVHOST_Interrogate(NUFILE_DEVICE *device);
@@ -192,6 +193,9 @@ extern "C" {
     u32 NuFileReadUnsignedInt(NUFILE file);
     u16 NuFileReadUnsignedShort(NUFILE file);
     u16 NuFileReadWChar(NUFILE file);
+
+    i32 NuFileWriteInt(NUFILE file, i32 value);
+    u32 NuFileWriteUnsignedInt(NUFILE file, u32 value);
 
     // Platform-specific file functions
     i32 NuGetFileHandlePS(void);
