@@ -4,10 +4,12 @@
 #include "nu2api.saga/numath/nuvec.h"
 
 struct GIZTIMER_s;
+struct nuportal_s;
 
 typedef struct GIZMO_s {
     union {
         struct GIZTIMER_s *timer;
+        struct nuportal_s *portal;
     } object;
 } GIZMO;
 

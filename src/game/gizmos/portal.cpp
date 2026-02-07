@@ -13,22 +13,36 @@ static void Portal_AddGizmos(GIZMOSYS *gizmo_sys, int, void *, void *) {
 }
 
 static char *Portal_GetGizmoName(GIZMO *gizmo) {
-    UNIMPLEMENTED();
+    static char name[16];
+
+    if (gizmo == NULL || gizmo->object.portal == NULL) {
+        return NULL;
+    }
+
+    sprintf(name, "%s%d", "portal_", gizmo->object.portal->id);
+
+    return name;
 }
 
 static int Portal_GetOutput(GIZMO *gizmo, int, int) {
-    UNIMPLEMENTED();
+    if (gizmo == NULL || gizmo->object.portal == NULL) {
+        return 0;
+    }
+
+    return gizmo->object.portal->active & 1;
 }
 
-static char *Portal_GetOutputName(GIZMO *gizmo, int output_index) {
-    UNIMPLEMENTED();
+char *Portal_GetOutputName(GIZMO *gizmo, int output_index) {
+    static char name[] = "Active";
+
+    return name;
 }
 
 static int Portal_GetNumOutputs(GIZMO *gizmo) {
-    UNIMPLEMENTED();
+    return 1;
 }
 
-static void Portal_Activate(GIZMO *gizmo, int) {
+void Portal_Activate(GIZMO *gizmo, int) {
     UNIMPLEMENTED();
 }
 
@@ -36,8 +50,8 @@ static int Portal_ActivateRev(GIZMO *gizmo, int, int) {
     UNIMPLEMENTED();
 }
 
-static void *Portals_AllocateProgressData(VARIPTR *, VARIPTR *) {
-    UNIMPLEMENTED();
+static void *Portals_AllocateProgressData(VARIPTR * buffer, VARIPTR * buffer_end) {
+    return GizmoBufferAlloc(buffer, buffer_end, 4);
 }
 
 static void Portals_ClearProgress(void *, void *) {
