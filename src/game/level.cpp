@@ -170,8 +170,7 @@ LAB_00484810:
             level->flags = level->flags | LEVEL_TEST;
         } else if (NuStrICmp(fp->word_buf, "intro_level") == 0) {
             level->flags = level->flags | LEVEL_INTRO;
-        } else if (NuStrICmp(fp->word_buf, "midtro_level") == 0 ||
-                   NuStrICmp(fp->word_buf, "cutscene_level") == 0) {
+        } else if (NuStrICmp(fp->word_buf, "midtro_level") == 0 || NuStrICmp(fp->word_buf, "cutscene_level") == 0) {
             level->flags = level->flags | LEVEL_MIDTRO;
         } else if (NuStrICmp(fp->word_buf, "outro_level") == 0) {
             level->flags = level->flags | LEVEL_OUTRO;

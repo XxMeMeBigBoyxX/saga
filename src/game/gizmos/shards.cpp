@@ -70,7 +70,7 @@ static int Shards_Load(void *, void *) {
     UNIMPLEMENTED();
 }
 
-ADDGIZMOTYPE* Shards_RegisterGizmo(int type_id) {
+ADDGIZMOTYPE *Shards_RegisterGizmo(int type_id) {
     static ADDGIZMOTYPE addtype;
 
     addtype = Default_ADDGIZMOTYPE;

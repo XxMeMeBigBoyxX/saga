@@ -68,7 +68,7 @@ static int Grapples_Load(void *, void *) {
     UNIMPLEMENTED();
 }
 
-ADDGIZMOTYPE* Grapples_RegisterGizmo(int type_id) {
+ADDGIZMOTYPE *Grapples_RegisterGizmo(int type_id) {
     static ADDGIZMOTYPE addtype;
 
     addtype = Default_ADDGIZMOTYPE;

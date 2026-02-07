@@ -165,8 +165,8 @@ AREADATA *Areas_ConfigureList(char *file, VARIPTR *bufferStart, VARIPTR *bufferE
                                                                         bVar2 = true;
                                                                         area->flags |= AREAFLAG_BONUS_AREA;
                                                                     } else {
-                                                                        iVar6 = NuStrICmp(fp->word_buf,
-                                                                                          "super_bonus_area");
+                                                                        iVar6 =
+                                                                            NuStrICmp(fp->word_buf, "super_bonus_area");
                                                                         if (iVar6 == 0) {
                                                                             bVar2 = true;
                                                                             area->flags |= AREAFLAG_SUPER_BONUS_AREA;

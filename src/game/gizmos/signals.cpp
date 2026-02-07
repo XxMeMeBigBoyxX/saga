@@ -74,7 +74,7 @@ static int Signals_Load(void *, void *) {
     UNIMPLEMENTED();
 }
 
-ADDGIZMOTYPE* Signals_RegisterGizmo(int type_id) {
+ADDGIZMOTYPE *Signals_RegisterGizmo(int type_id) {
     static ADDGIZMOTYPE addtype;
 
     addtype = Default_ADDGIZMOTYPE;

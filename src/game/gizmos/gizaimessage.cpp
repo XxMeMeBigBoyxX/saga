@@ -30,7 +30,7 @@ static int GizAIMessage_GetNumOutputs(GIZMO *gizmo) {
     UNIMPLEMENTED();
 }
 
-ADDGIZMOTYPE* GizAIMessage_RegisterGizmo(int type_id) {
+ADDGIZMOTYPE *GizAIMessage_RegisterGizmo(int type_id) {
     static ADDGIZMOTYPE addtype;
 
     addtype = Default_ADDGIZMOTYPE;

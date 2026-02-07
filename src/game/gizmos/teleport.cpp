@@ -36,7 +36,7 @@ static int Teleport_ActivateRev(GIZMO *gizmo, int, int) {
     UNIMPLEMENTED();
 }
 
-ADDGIZMOTYPE* Teleport_RegisterGizmo(int type_id) {
+ADDGIZMOTYPE *Teleport_RegisterGizmo(int type_id) {
     static ADDGIZMOTYPE addtype;
 
     addtype = Default_ADDGIZMOTYPE;

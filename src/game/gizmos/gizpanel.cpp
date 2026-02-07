@@ -68,7 +68,7 @@ static int GizPanel_Load(void *, void *) {
     UNIMPLEMENTED();
 }
 
-ADDGIZMOTYPE* GizPanel_RegisterGizmo(int type_id) {
+ADDGIZMOTYPE *GizPanel_RegisterGizmo(int type_id) {
     static ADDGIZMOTYPE addtype;
 
     addtype = Default_ADDGIZMOTYPE;

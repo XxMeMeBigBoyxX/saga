@@ -94,7 +94,7 @@ static int GizSpinner_Load(void *, void *) {
     UNIMPLEMENTED();
 }
 
-ADDGIZMOTYPE* Spinner_RegisterGizmo(int type_id) {
+ADDGIZMOTYPE *Spinner_RegisterGizmo(int type_id) {
     static ADDGIZMOTYPE addtype;
 
     addtype = Default_ADDGIZMOTYPE;

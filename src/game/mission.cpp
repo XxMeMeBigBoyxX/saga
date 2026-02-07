@@ -98,8 +98,7 @@ MISSIONSYS *Missions_Configure(char *file, VARIPTR *bufferStart, VARIPTR *buffer
                             i = NuStrICmp(fp->word_buf, "in_level");
                             if (i == 0) {
                                 i = NuFParGetWord(fp);
-                                if ((i != 0) &&
-                                    (pLVar2 = Level_FindByName(fp->word_buf, &charId), pLVar2 != NULL)) {
+                                if ((i != 0) && (pLVar2 = Level_FindByName(fp->word_buf, &charId), pLVar2 != NULL)) {
                                     buffer[1] = (i16)charId;
                                 }
                             } else {

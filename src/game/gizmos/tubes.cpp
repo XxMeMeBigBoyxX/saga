@@ -74,7 +74,7 @@ static int Tubes_Load(void *, void *) {
     UNIMPLEMENTED();
 }
 
-ADDGIZMOTYPE* Tubes_RegisterGizmo(int type_id) {
+ADDGIZMOTYPE *Tubes_RegisterGizmo(int type_id) {
     static ADDGIZMOTYPE addtype;
 
     addtype = Default_ADDGIZMOTYPE;

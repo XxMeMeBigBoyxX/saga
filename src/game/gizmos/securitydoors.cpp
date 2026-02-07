@@ -70,7 +70,7 @@ static int SecurityDoors_Load(void *, void *) {
     UNIMPLEMENTED();
 }
 
-ADDGIZMOTYPE* SecurityDoors_RegisterGizmo(int type_id) {
+ADDGIZMOTYPE *SecurityDoors_RegisterGizmo(int type_id) {
     static ADDGIZMOTYPE addtype;
 
     addtype = Default_ADDGIZMOTYPE;

@@ -76,7 +76,7 @@ static int Technos_Load(void *, void *) {
     UNIMPLEMENTED();
 }
 
-ADDGIZMOTYPE* Technos_RegisterGizmo(int type_id) {
+ADDGIZMOTYPE *Technos_RegisterGizmo(int type_id) {
     static ADDGIZMOTYPE addtype;
 
     addtype = Default_ADDGIZMOTYPE;

@@ -72,7 +72,7 @@ static int ZipUps_Load(void *, void *) {
     UNIMPLEMENTED();
 }
 
-ADDGIZMOTYPE* ZipUps_RegisterGizmo(int type_id) {
+ADDGIZMOTYPE *ZipUps_RegisterGizmo(int type_id) {
     static ADDGIZMOTYPE addtype;
 
     addtype = Default_ADDGIZMOTYPE;

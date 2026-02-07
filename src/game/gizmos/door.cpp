@@ -32,7 +32,7 @@ static void Door_Activate(GIZMO *gizmo, int) {
     UNIMPLEMENTED();
 }
 
-ADDGIZMOTYPE* Door_RegisterGizmo(int type_id) {
+ADDGIZMOTYPE *Door_RegisterGizmo(int type_id) {
     static ADDGIZMOTYPE addtype;
 
     addtype = Default_ADDGIZMOTYPE;

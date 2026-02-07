@@ -56,7 +56,7 @@ static void HatMachines_StoreProgress(void *, void *, void *) {
     UNIMPLEMENTED();
 }
 
-static void HatMachines_Reset(void *, void *, void*) {
+static void HatMachines_Reset(void *, void *, void *) {
     UNIMPLEMENTED();
 }
 
@@ -68,7 +68,7 @@ static int HatMachine_Load(void *, void *) {
     UNIMPLEMENTED();
 }
 
-ADDGIZMOTYPE* HatMachine_RegisterGizmo(int type_id) {
+ADDGIZMOTYPE *HatMachine_RegisterGizmo(int type_id) {
     static ADDGIZMOTYPE addtype;
 
     addtype = Default_ADDGIZMOTYPE;

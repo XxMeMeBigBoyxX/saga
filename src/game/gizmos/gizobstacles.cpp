@@ -98,7 +98,7 @@ static void GizObstacles_AddLevelSfx(void *, void *, int *, int *, int) {
     UNIMPLEMENTED();
 }
 
-ADDGIZMOTYPE* GizObstacles_RegisterGizmo(int type_id) {
+ADDGIZMOTYPE *GizObstacles_RegisterGizmo(int type_id) {
     static ADDGIZMOTYPE addtype;
 
     addtype = Default_ADDGIZMOTYPE;

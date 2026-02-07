@@ -30,7 +30,7 @@ static void AI_Activate(GIZMO *gizmo, int) {
     UNIMPLEMENTED();
 }
 
-ADDGIZMOTYPE* AI_RegisterGizmo(int type_id) {
+ADDGIZMOTYPE *AI_RegisterGizmo(int type_id) {
     static ADDGIZMOTYPE addtype;
 
     addtype = Default_ADDGIZMOTYPE;

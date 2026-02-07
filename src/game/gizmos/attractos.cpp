@@ -70,7 +70,7 @@ static int Attractos_Load(void *, void *) {
     UNIMPLEMENTED();
 }
 
-ADDGIZMOTYPE* Attractos_RegisterGizmo(int type_id) {
+ADDGIZMOTYPE *Attractos_RegisterGizmo(int type_id) {
     static ADDGIZMOTYPE addtype;
 
     addtype = Default_ADDGIZMOTYPE;

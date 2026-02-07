@@ -4,18 +4,18 @@
 
 NuRenderDevice g_renderDevice;
 
-int NuRenderDevice::BeginCriticalSection(const char* file, int line) {
+int NuRenderDevice::BeginCriticalSection(const char *file, int line) {
     UNIMPLEMENTED();
 }
 
-void NuRenderDevice::EndCriticalSection(const char* file, int line) {
+void NuRenderDevice::EndCriticalSection(const char *file, int line) {
     UNIMPLEMENTED();
 }
 
-void BeginCriticalSectionGL(const char* file, int line) {
+void BeginCriticalSectionGL(const char *file, int line) {
     g_renderDevice.BeginCriticalSection(file, line);
 }
 
-void EndCriticalSectionGL(const char* file, int line) {
+void EndCriticalSectionGL(const char *file, int line) {
     g_renderDevice.EndCriticalSection(file, line);
 }

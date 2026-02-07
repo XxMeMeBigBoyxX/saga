@@ -22,10 +22,10 @@ NUMTL *NuMtlCreate(int count) {
     UNIMPLEMENTED();
 }
 
-void NuMtlUpdate(NUMTL* mtl) {
+void NuMtlUpdate(NUMTL *mtl) {
     UNIMPLEMENTED();
 }
 
-void NuMtlSetShaderDescPS(NUMTL* mtl, NUSHADERMTLDESC* shader_mtl_desc) {
+void NuMtlSetShaderDescPS(NUMTL *mtl, NUSHADERMTLDESC *shader_mtl_desc) {
     UNIMPLEMENTED();
 }

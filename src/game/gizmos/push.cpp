@@ -68,7 +68,7 @@ static int edpush_Load(void *, void *) {
     UNIMPLEMENTED();
 }
 
-ADDGIZMOTYPE* Push_RegisterGizmo(int type_id) {
+ADDGIZMOTYPE *Push_RegisterGizmo(int type_id) {
     static ADDGIZMOTYPE addtype;
 
     addtype = Default_ADDGIZMOTYPE;

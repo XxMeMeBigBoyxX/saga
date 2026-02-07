@@ -70,7 +70,7 @@ static void *GizSpecial_ReserveBuffer(void *) {
     UNIMPLEMENTED();
 }
 
-ADDGIZMOTYPE* GizSpecial_RegisterGizmo(int type_id) {
+ADDGIZMOTYPE *GizSpecial_RegisterGizmo(int type_id) {
     static ADDGIZMOTYPE addtype;
 
     addtype = Default_ADDGIZMOTYPE;

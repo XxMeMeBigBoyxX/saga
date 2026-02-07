@@ -62,7 +62,7 @@ static int Ledges_Load(void *, void *) {
     UNIMPLEMENTED();
 }
 
-ADDGIZMOTYPE* Ledges_RegisterGizmo(int type_id) {
+ADDGIZMOTYPE *Ledges_RegisterGizmo(int type_id) {
     static ADDGIZMOTYPE addtype;
 
     addtype = Default_ADDGIZMOTYPE;

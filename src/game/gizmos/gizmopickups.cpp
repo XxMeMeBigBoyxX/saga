@@ -76,7 +76,7 @@ static void GizmoPickups_PostLoad(void *, void *) {
     UNIMPLEMENTED();
 }
 
-ADDGIZMOTYPE* GizmoPickups_RegisterGizmo(int type_id) {
+ADDGIZMOTYPE *GizmoPickups_RegisterGizmo(int type_id) {
     static ADDGIZMOTYPE addtype;
 
     addtype = Default_ADDGIZMOTYPE;

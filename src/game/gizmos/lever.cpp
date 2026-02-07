@@ -84,7 +84,7 @@ static int Levers_Load(void *, void *) {
     UNIMPLEMENTED();
 }
 
-ADDGIZMOTYPE* Levers_RegisterGizmo(int type_id) {
+ADDGIZMOTYPE *Levers_RegisterGizmo(int type_id) {
     static ADDGIZMOTYPE addtype;
 
     addtype = Default_ADDGIZMOTYPE;

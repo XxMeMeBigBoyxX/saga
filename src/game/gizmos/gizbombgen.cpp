@@ -68,7 +68,7 @@ static int GizBombGens_Load(void *, void *) {
     UNIMPLEMENTED();
 }
 
-ADDGIZMOTYPE* GizBombGen_RegisterGizmo(int type_id) {
+ADDGIZMOTYPE *GizBombGen_RegisterGizmo(int type_id) {
     static ADDGIZMOTYPE addtype;
 
     addtype = Default_ADDGIZMOTYPE;

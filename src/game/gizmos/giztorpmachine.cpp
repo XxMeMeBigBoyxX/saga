@@ -56,7 +56,7 @@ static int GizTorp_Load(void *, void *) {
     UNIMPLEMENTED();
 }
 
-ADDGIZMOTYPE* GizTorpMachine_RegisterGizmo(int type_id) {
+ADDGIZMOTYPE *GizTorpMachine_RegisterGizmo(int type_id) {
     static ADDGIZMOTYPE addtype;
 
     addtype = Default_ADDGIZMOTYPE;

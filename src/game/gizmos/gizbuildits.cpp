@@ -80,7 +80,7 @@ static void GizBuildIts_PostLoad(void *, void *) {
     UNIMPLEMENTED();
 }
 
-ADDGIZMOTYPE* GizBuildIts_RegisterGizmo(int type_id) {
+ADDGIZMOTYPE *GizBuildIts_RegisterGizmo(int type_id) {
     static ADDGIZMOTYPE addtype;
 
     addtype = Default_ADDGIZMOTYPE;

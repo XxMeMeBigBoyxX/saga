@@ -62,7 +62,7 @@ static int GuideLines_Load(void *, void *) {
     UNIMPLEMENTED();
 }
 
-ADDGIZMOTYPE* GuideLines_RegisterGizmo(int type_id) {
+ADDGIZMOTYPE *GuideLines_RegisterGizmo(int type_id) {
     static ADDGIZMOTYPE addtype;
 
     addtype = Default_ADDGIZMOTYPE;
