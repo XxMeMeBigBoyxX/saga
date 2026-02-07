@@ -511,7 +511,6 @@ void NuPadRecordStart(void) {
 
 void NuPadRecordPlay(NUGENERICPAD *pad) {
     VARIPTR *record_ptr;
-    u8 *next;
 
     if (pad->is_valid && nuapi.pad_record.mode == NUPAD_PLAY &&
         (pad->digital_buttons & nuapi.pad_record.end_play_buttons) != 0) {
