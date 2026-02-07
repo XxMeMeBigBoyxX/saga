@@ -408,7 +408,7 @@ fn rewrite_text_symbol<'data, 'file, E: object::Endian>(
 
                     Rewrite::GotOffset(new_addr, target) => match target {
                         OffsetTarget::Symbol(orig_sym) => {
-                            (R_386_GOT32, RelocTarget::Symbol(orig_sym), new_addr)
+                            (R_386_GOTOFF, RelocTarget::Symbol(orig_sym), new_addr)
                         }
 
                         OffsetTarget::Section(orig_section) => (
@@ -521,20 +521,20 @@ fn generate_rewrite<'data, 'file: 'data>(
         && orig_sym.kind() != SymbolKind::Section
     {
         // The address points directly to a symbol.
-        let orig_section = lib
-            .file
-            .section_by_index(orig_sym.section_index().unwrap())
-            .unwrap();
-
         let new_addr = orig_sym_idx_to_new_offset.get(&orig_sym.index()).copied();
 
-        let target = if new_addr.is_some() {
-            OffsetTarget::Section(orig_section)
+        let rewrite = if new_addr.is_some() {
+            let orig_section = lib
+                .file
+                .section_by_index(orig_sym.section_index().unwrap())
+                .unwrap();
+
+            Rewrite::GotOffset(new_addr, OffsetTarget::Section(orig_section))
         } else {
-            OffsetTarget::Symbol(*orig_sym)
+            Rewrite::Got(*orig_sym)
         };
 
-        Some(Rewrite::GotOffset(new_addr, target))
+        Some(rewrite)
     } else if (orig_got_section.address()..orig_got_section.address() + orig_got_section.size())
         .contains(&orig_addr)
     {
