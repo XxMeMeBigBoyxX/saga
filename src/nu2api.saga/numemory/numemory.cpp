@@ -1,3 +1,4 @@
+#include <new>
 #include <pthread.h>
 
 #include "nu2api.saga/numemory/numemory.h"

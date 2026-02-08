@@ -26,6 +26,7 @@ class NuMemoryManager {
 
     enum AllocFlags {
         MEM_ALLOC_ZERO = 1 << 0x0,
+        MEM_ALLOC_UNKNOWN_2 = 1 << 0x1,
         MEM_ALLOC_UNKNOWN_4 = 1 << 0x2,
     };
 

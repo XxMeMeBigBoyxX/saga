@@ -54,8 +54,3 @@ typedef union variptr_u {
     u32 *u32_ptr;
     usize addr;
 } VARIPTR;
-
-// include nucore for custom new and delete operators using NuMemoryManager
-#ifdef __cplusplus
-#include "nu2api.saga/nucore/nunew.hpp"
-#endif
