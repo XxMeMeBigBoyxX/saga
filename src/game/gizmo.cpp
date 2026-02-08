@@ -280,3 +280,19 @@ int GizmoGetTypeIDByName(GIZMOSYS_s *gizmo_sys, char *name) {
 
     return -1;
 }
+
+void GizmoSetVisibility(GIZMOSYS *gizmo_sys, GIZMO *gizmo, int visibility, int unknown) {
+    if (gizmotypes == NULL || gizmo == NULL || gizmo_sys == NULL || gizmo->type_id >= gizmotypes->count) {
+        return;
+    }
+
+    if (gizmotypes->types[gizmo->type_id].fns.set_visibility_fn == NULL) {
+        return;
+    }
+
+    if (visibility == 0 && gizmotypes->types[gizmo->type_id].fns.activate_fn != NULL) {
+        gizmotypes->types[gizmo->type_id].fns.activate_fn(gizmo, 0);
+    }
+
+    gizmotypes->types[gizmo->type_id].fns.set_visibility_fn(gizmo, visibility);
+}

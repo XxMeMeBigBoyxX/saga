@@ -127,6 +127,7 @@ void RegisterGizmoTypes(VARIPTR *buffer, VARIPTR *buffer_end, REGISTERGIZMOTYPEF
 void RegisterGizmoTypes_LSW(VARIPTR *buffer, VARIPTR *buffer_end);
 GIZMO *AddGizmo(GIZMOSYS *gizmo_sys, int type_id, char *name, void *object);
 int GizmoGetTypeIDByName(GIZMOSYS *gizmo_sys, char *name);
+void GizmoSetVisibility(GIZMOSYS *gizmo_sys, GIZMO *gizmo, int visibility, int unknown);
 
 extern "C" {
 #endif
