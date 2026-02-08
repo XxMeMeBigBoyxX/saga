@@ -11,81 +11,15 @@
 #include "nu2api.saga/nu3d/nucamera.h"
 #include "nu2api.saga/nu3d/nutex.h"
 #include "nu2api.saga/nuandroid/nuios.h"
+#include "nu2api.saga/nucore/nuapi.h"
 #include "nu2api.saga/nucore/nustring.h"
 #include "nu2api.saga/nucore/nuvideo.h"
-#include "nu2api.saga/nufile/nufile.h"
 #include "nu2api.saga/numemory/numemory.h"
 #include "nu2api.saga/numusic/numusic.h"
 #include "nu2api.saga/nusound/nusound.h"
 #include "saveload/saveload.h"
 
 #include <stdarg.h>
-
-extern "C" void NuMtlInitEx(VARIPTR *buf, i32 usually512) {
-    // iVar2 = AndroidOBBUtils::LookupPackagePath(path, 1);
-    char *path = "res/main.1060.com.wb.lego.tcs.obb";
-
-    nudathdr_s *dat = NuDatOpen(path, buf, 0);
-    NuDatSet(dat);
-
-    i32 size = NuFileLoadBuffer("stuff\\text\\badwords.txt", buf->void_ptr, 0x100000);
-    LOG_DEBUG("Loaded badwords.txt, size=%d", size);
-
-    // replace \n with ,
-    for (i32 i = 0; i < size; i++) {
-        if (buf->char_ptr[i] == '\r') {
-            buf->char_ptr[i] = ',';
-        } else if (buf->char_ptr[i] == '\n') {
-            buf->char_ptr[i] = ' ';
-        }
-    }
-    LOG_INFO("%*s", size, buf->char_ptr);
-}
-
-i32 NuInitHardwarePS(VARIPTR *buffer_start, VARIPTR *buffer_end, i32 zero) {
-    // NuIOSThreadInit();
-    // NuIOS_IsLowEndDevice();
-    // g_vaoLifetimeMutex = NuThreadCreateCriticalSection();
-    // g_texAnimCriticalSection = NuThreadCreateCriticalSection();
-    // InitializeGLMutex();
-    // NuPad_Interface_InputManagerInitialise();
-    // BeginCriticalSectionGL("i:/SagaTouch-Android_9176564/nu2api.saga/nucore/android/nuapi_android.c", 0xf9);
-    // NuIOSMtlInit();
-    // NuInitDebrisRenderer(buffer_start, buffer_end->voidptr);
-    // EndCriticalSectionGL("i:/SagaTouch-Android_9176564/nu2api.saga/nucore/android/nuapi_android.c", 0xfe);
-    // NuRenderThreadCreate();
-    // BeginCriticalSectionGL("i:/SagaTouch-Android_9176564/nu2api.saga/nucore/android/nuapi_android.c", 0x103);
-    // NuShaderManagerInit(buffer_start, buffer_end->voidptr);
-    // NuRenderContextInit();
-    // EndCriticalSectionGL("i:/SagaTouch-Android_9176564/nu2api.saga/nucore/android/nuapi_android.c", 0x108);
-    // nurndr_pixel_width = g_backingWidth;
-    // nurndr_pixel_height = g_backingHeight;
-    NuSound3InitV(buffer_start, *buffer_end, 0, 0);
-
-    return 0;
-}
-
-enum nuapi_setup_e : i32 {
-    NUAPI_SETUP_END = 0,
-    NUAPI_SETUP_HOSTFS = 4,
-    NUAPI_SETUP_CDDVDMODE = 5,
-    NUAPI_SETUP_STREAMSIZE = 8,
-    NUAPI_SETUP_PAD0 = 14,
-    NUAPI_SETUP_PAD1 = 15,
-    NUAPI_SETUP_VIDEOMODE = 18,
-    NUAPI_SETUP_GLASSRPLANE = 21,
-    NUAPI_SETUP_RESOLUTION = 33,
-    NUAPI_SETUP_SWAPMODE = 34,
-    NUAPI_SETUP_0x46 = 70,
-    NUAPI_SETUP_0x47 = 71,
-    NUAPI_SETUP_0x49 = 73,
-    NUAPI_SETUP_0x4b = 75,
-};
-typedef enum nuapi_setup_e NUAPI_SETUP;
-
-i32 NuInitHardwareParseArgsPS(i32 setup, char **value) {
-    return 0;
-}
 
 extern "C" {
     void *DVD = NULL;
@@ -95,91 +29,6 @@ extern "C" {
 
     nupad_s **Game_NuPad;
 };
-
-extern "C" i32 NuInitHardware(VARIPTR *buf, VARIPTR *buf_end, int zero, ...) {
-    // NuAPIInit();
-    // ParseCommandLine();
-
-    i32 hostfs = 0;
-    i32 streamsize = 0x200000;
-    nupad_s *pad0 = NULL;
-    nupad_s *pad1 = NULL;
-    i32 videomode = 2;
-    i32 resolution_x = 0;
-    i32 resolution_y = 0;
-    NUVIDEO_SWAPMODE swapmode = NUVIDEO_SWAPMODE_FIELDSYNC;
-    i32 flags = 0;
-
-    va_list args;
-    va_start(args, zero);
-
-    NUAPI_SETUP setup;
-    do {
-        setup = (NUAPI_SETUP)va_arg(args, i32);
-        LOG_DEBUG("NuInitHardware setup=%d", setup);
-        switch (setup) {
-            case NUAPI_SETUP_HOSTFS:
-                hostfs = va_arg(args, i32);
-                break;
-            case NUAPI_SETUP_STREAMSIZE:
-                streamsize = va_arg(args, i32);
-                break;
-            case NUAPI_SETUP_PAD0:
-                pad0 = va_arg(args, nupad_s *);
-                break;
-            case NUAPI_SETUP_PAD1:
-                pad1 = va_arg(args, nupad_s *);
-                break;
-            case NUAPI_SETUP_VIDEOMODE:
-                videomode = va_arg(args, i32);
-                break;
-            case NUAPI_SETUP_RESOLUTION:
-                resolution_x = va_arg(args, i32);
-                resolution_y = va_arg(args, i32);
-                break;
-            case NUAPI_SETUP_SWAPMODE:
-                swapmode = (NUVIDEO_SWAPMODE)va_arg(args, i32);
-                break;
-            case NUAPI_SETUP_0x46:
-                if (va_arg(args, i32) != 0) {
-                    flags |= 0x4;
-                }
-                break;
-            case NUAPI_SETUP_0x47:
-                if (va_arg(args, i32) != 0) {
-                    flags |= 0x8;
-                }
-                break;
-            case NUAPI_SETUP_0x49:
-                if (va_arg(args, i32) != 0) {
-                    flags |= 0x20;
-                }
-                break;
-            case NUAPI_SETUP_0x4b:
-                if (va_arg(args, i32) != 0) {
-                    flags |= 0x80;
-                }
-                break;
-            default:
-                if (NuInitHardwareParseArgsPS(setup, va_arg(args, char **)) == 0) {
-                    switch (setup) {
-                        case NUAPI_SETUP_CDDVDMODE:
-                            break;
-                        case NUAPI_SETUP_GLASSRPLANE:
-                            break;
-                    }
-                }
-                break;
-        }
-    } while (setup != NUAPI_SETUP_END);
-
-    va_end(args);
-
-    NuInitHardwarePS(buf, buf_end, zero);
-    NuMtlInitEx(buf, 512);
-
-    return 0;
-}
 
 u16 MakeSaveHash(void) {
     return Game.completion;

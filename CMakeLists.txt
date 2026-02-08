@@ -121,6 +121,7 @@ set(SAGA_SOURCE_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nuandroid/nuios.cpp
 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nucore/nuapi.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nucore/nuapi_android.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nucore/nucore.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nucore/nunew.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nucore/nulist.cpp
@@ -134,7 +135,6 @@ set(SAGA_SOURCE_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nucore/nutime.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nucore/nuvideo.cpp
 
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nucore/android/nuapi_android.c
 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nufile/nufile.c
     ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nufile/nufile.cpp
@@ -223,9 +223,9 @@ set(SAGA_SOURCE_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/gizmos/edgizshadowmachine.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/gizmos/portal.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/gizmos/plugs.cpp
- 
+
     ${CMAKE_CURRENT_SOURCE_DIR}/src/lostandfound/qrand.cpp
- 
+
     ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nu3d/nugscn.cpp
 )
 

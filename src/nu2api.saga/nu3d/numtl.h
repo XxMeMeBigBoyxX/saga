@@ -38,6 +38,8 @@ void NuMtlCreatePS(NUMTL *mtl, int unk_flag);
 
 extern "C" {
 #endif
+    void NuMtlInitEx(VARIPTR *buf, i32 max_mtls);
+
     void NuShaderMtlDescInit(NUSHADERMTLDESC *shader_mtl_desc);
     void NuMtlSetShaderDescPS(NUMTL *mtl, NUSHADERMTLDESC *shader_mtl_desc);
     NUMTL *NuMtlCreate(int count);

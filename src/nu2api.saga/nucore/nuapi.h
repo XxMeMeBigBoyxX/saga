@@ -60,6 +60,23 @@ typedef struct nuapi_s {
 
 extern NUAPI nuapi;
 
+enum {
+    NUAPI_SETUP_END = 0x00,
+    NUAPI_SETUP_HOSTFS = 0x04,
+    NUAPI_SETUP_CDDVDMODE = 0x05,
+    NUAPI_SETUP_STREAMSIZE = 0x08,
+    NUAPI_SETUP_PAD0 = 0x0e,
+    NUAPI_SETUP_PAD1 = 0x0f,
+    NUAPI_SETUP_VIDEOMODE = 0x12,
+    NUAPI_SETUP_GLASSRPLANE = 0x15,
+    NUAPI_SETUP_RESOLUTION = 0x21,
+    NUAPI_SETUP_SWAPMODE = 0x22,
+    NUAPI_SETUP_0x46 = 0x46,
+    NUAPI_SETUP_0x47 = 0x47,
+    NUAPI_SETUP_0x49 = 0x49,
+    NUAPI_SETUP_0x4b = 0x4b,
+};
+
 extern int nuapi_use_target_manager;
 extern char *nuapi_target_manager_mac_address;
 
@@ -68,6 +85,8 @@ void NuAPIInit(void);
 
 extern "C" {
 #endif
+    i32 NuInitHardware(VARIPTR *buf, VARIPTR *buf_end, i32 heap_size, ...);
+
     void NuCommandLine(int argc, char **argv);
     void NuDisableOSMenuFreeze(void);
 
@@ -76,3 +95,6 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
+
+i32 NuInitHardwarePS(VARIPTR *buf, VARIPTR *buf_end, i32 heap_size);
+i32 NuInitHardwareParseArgsPS(i32 setup, char **value);

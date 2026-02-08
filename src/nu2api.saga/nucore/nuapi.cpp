@@ -1,6 +1,11 @@
 #include "nu2api.saga/nucore/nuapi.h"
 
+#include <stdarg.h>
 #include <string.h>
+
+#include "decomp.h"
+
+#include "nu2api.saga/nu3d/numtl.h"
 
 NUAPI nuapi;
 
@@ -38,4 +43,88 @@ void NuCommandLine(int argc, char **argv) {
 
 void NuDisableOSMenuFreeze(void) {
     nuapi.disable_os_menu_freeze = 1;
+}
+
+i32 NuInitHardware(VARIPTR *buf, VARIPTR *buf_end, int heap_size, ...) {
+    i32 hostfs = 0;
+    i32 streamsize = 0x200000;
+    nupad_s *pad0 = NULL;
+    nupad_s *pad1 = NULL;
+    i32 videomode = 2;
+    i32 resolution_x = 0;
+    i32 resolution_y = 0;
+    NUVIDEO_SWAPMODE swapmode = NUVIDEO_SWAPMODE_FIELDSYNC;
+    i32 flags = 0;
+
+    va_list args;
+    va_start(args, heap_size);
+
+    i32 setup_tok;
+    do {
+        setup_tok = va_arg(args, i32);
+
+        LOG_DEBUG("NuInitHardware setup=%d", setup_tok);
+
+        switch (setup_tok) {
+            case NUAPI_SETUP_HOSTFS:
+                hostfs = va_arg(args, i32);
+                break;
+            case NUAPI_SETUP_STREAMSIZE:
+                streamsize = va_arg(args, i32);
+                break;
+            case NUAPI_SETUP_PAD0:
+                pad0 = va_arg(args, NUPAD *);
+                break;
+            case NUAPI_SETUP_PAD1:
+                pad1 = va_arg(args, NUPAD *);
+                break;
+            case NUAPI_SETUP_VIDEOMODE:
+                videomode = va_arg(args, i32);
+                break;
+            case NUAPI_SETUP_RESOLUTION:
+                resolution_x = va_arg(args, i32);
+                resolution_y = va_arg(args, i32);
+                break;
+            case NUAPI_SETUP_SWAPMODE:
+                swapmode = (NUVIDEO_SWAPMODE)va_arg(args, i32);
+                break;
+            case NUAPI_SETUP_0x46:
+                if (va_arg(args, i32) != 0) {
+                    flags |= 0x4;
+                }
+                break;
+            case NUAPI_SETUP_0x47:
+                if (va_arg(args, i32) != 0) {
+                    flags |= 0x8;
+                }
+                break;
+            case NUAPI_SETUP_0x49:
+                if (va_arg(args, i32) != 0) {
+                    flags |= 0x20;
+                }
+                break;
+            case NUAPI_SETUP_0x4b:
+                if (va_arg(args, i32) != 0) {
+                    flags |= 0x80;
+                }
+                break;
+            default:
+                if (NuInitHardwareParseArgsPS(setup_tok, va_arg(args, char **)) == 0) {
+                    switch (setup_tok) {
+                        case NUAPI_SETUP_CDDVDMODE:
+                            break;
+                        case NUAPI_SETUP_GLASSRPLANE:
+                            break;
+                    }
+                }
+                break;
+        }
+    } while (setup_tok != NUAPI_SETUP_END);
+
+    va_end(args);
+
+    NuInitHardwarePS(buf, buf_end, heap_size);
+    NuMtlInitEx(buf, 512);
+
+    return 0;
 }
