@@ -138,6 +138,7 @@ void GizmoSysDraw(GIZMOSYS *gizmo_sys, void *world_info, float delta_time);
 void GizmoSysPanelDraw(GIZMOSYS *gizmo_sys, void *world_info, float delta_time);
 int GizmoSys_BoltHitPlat(GIZMOSYS *gizmo_sys, void *world_info, BOLT *bolt, unsigned char *unknown);
 int ResetGizmoType(GIZMOSYS *gizmo_sys, int type_id, char *name);
+void GizmoSysClearLevelProgress(void *unknown, int type_id);
 
 extern "C" {
 #endif

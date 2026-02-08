@@ -434,3 +434,29 @@ int ResetGizmoType(GIZMOSYS *gizmo_sys, int type_id, char *name) {
 
     return 1;
 }
+
+void GizmoSysClearLevelProgress(void *unknown, int type_id) {
+    GIZMOTYPE *type = gizmotypes->types;
+    if (gizmotypes == NULL || gizmotypes->count <= 0) {
+        return;
+    }
+
+    if (type_id < 0) {
+        for (i32 i = 0; i < gizmotypes->count; i++, type++) {
+            if (type->fns.clear_progress_fn != NULL) {
+                type->fns.clear_progress_fn(unknown, NULL);
+            }
+        }
+    } else {
+        for (i32 i = 0; i < gizmotypes->count; i++, type++) {
+            if (type->fns.clear_progress_fn != NULL) {
+                void *progress = NULL;
+                if (type->buffer != NULL && type_id < gizmotypes->unknown) {
+                    progress = type->buffer[type_id].void_ptr;
+                }
+
+                type->fns.clear_progress_fn(unknown, progress);
+            }
+        }
+    }
+}
