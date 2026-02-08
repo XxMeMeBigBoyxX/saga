@@ -128,6 +128,11 @@ void RegisterGizmoTypes_LSW(VARIPTR *buffer, VARIPTR *buffer_end);
 GIZMO *AddGizmo(GIZMOSYS *gizmo_sys, int type_id, char *name, void *object);
 int GizmoGetTypeIDByName(GIZMOSYS *gizmo_sys, char *name);
 void GizmoSetVisibility(GIZMOSYS *gizmo_sys, GIZMO *gizmo, int visibility, int unknown);
+int GizmoGetVisibility(GIZMOSYS *gizmo_sys, GIZMO *gizmo);
+void GizmoActivate(GIZMOSYS *gizmo_sys, GIZMO *gizmo, int unknown1, int unknown2);
+char *GizmoGetOutputName(GIZMOSYS *gizmo_sys, GIZMO *gizmo, int output_index);
+int GizmoGetOutput(GIZMOSYS *gizmo_sys, GIZMO *gizmo, int unknown1, int unknown2);
+void GizmoSysEarlyUpdate(GIZMOSYS *gizmo_sys, void *world_info, float delta_time);
 
 extern "C" {
 #endif

@@ -282,11 +282,8 @@ int GizmoGetTypeIDByName(GIZMOSYS_s *gizmo_sys, char *name) {
 }
 
 void GizmoSetVisibility(GIZMOSYS *gizmo_sys, GIZMO *gizmo, int visibility, int unknown) {
-    if (gizmotypes == NULL || gizmo == NULL || gizmo_sys == NULL || gizmo->type_id >= gizmotypes->count) {
-        return;
-    }
-
-    if (gizmotypes->types[gizmo->type_id].fns.set_visibility_fn == NULL) {
+    if (gizmotypes == NULL || gizmo == NULL || gizmo_sys == NULL || gizmo->type_id >= gizmotypes->count ||
+        gizmotypes->types[gizmo->type_id].fns.set_visibility_fn == NULL) {
         return;
     }
 
@@ -295,4 +292,69 @@ void GizmoSetVisibility(GIZMOSYS *gizmo_sys, GIZMO *gizmo, int visibility, int u
     }
 
     gizmotypes->types[gizmo->type_id].fns.set_visibility_fn(gizmo, visibility);
+}
+
+int GizmoGetVisibility(GIZMOSYS *gizmo_sys, GIZMO *gizmo) {
+
+    if (gizmotypes == NULL || gizmo == NULL || gizmo_sys == NULL || gizmo->type_id >= gizmotypes->count ||
+        gizmotypes->types[gizmo->type_id].fns.get_visibility_fn == NULL) {
+        return 0;
+    }
+
+    return gizmotypes->types[gizmo->type_id].fns.get_visibility_fn(gizmo);
+}
+
+void GizmoActivate(GIZMOSYS *gizmo_sys, GIZMO *gizmo, int unknown1, int unknown2) {
+    if (gizmotypes == NULL || gizmo == NULL || gizmo_sys == NULL || gizmo->type_id >= gizmotypes->count) {
+        return;
+    }
+
+    GIZMOTYPE *type = &gizmotypes->types[gizmo->type_id];
+    if (type->fns.activate_fn == NULL) {
+        return;
+    }
+
+    if (unknown1 != 0 && type->fns.set_visibility_fn != NULL) {
+        type->fns.set_visibility_fn(gizmo, 1);
+    }
+
+    type->fns.activate_fn(gizmo, unknown1);
+}
+
+char *GizmoGetOutputName(GIZMOSYS *gizmo_sys, GIZMO *gizmo, int output_index) {
+    if (gizmotypes == NULL || gizmo == NULL || gizmo_sys == NULL) {
+        return NULL;
+    }
+
+    if (gizmo->type_id >= gizmotypes->count || gizmotypes->types[gizmo->type_id].fns.get_output_name_fn == NULL) {
+        return "default";
+    }
+
+    return gizmotypes->types[gizmo->type_id].fns.get_output_name_fn(gizmo, output_index);
+}
+
+int GizmoGetOutput(GIZMOSYS *gizmo_sys, GIZMO *gizmo, int unknown1, int unknown2) {
+    if (gizmotypes == NULL || gizmo == NULL || gizmo_sys == NULL) {
+        return 0;
+    }
+
+    if (gizmo->type_id >= gizmotypes->count || gizmotypes->types[gizmo->type_id].fns.get_output_fn == NULL) {
+        return 0;
+    }
+
+    return gizmotypes->types[gizmo->type_id].fns.get_output_fn(gizmo, unknown1, unknown2);
+}
+
+void GizmoSysEarlyUpdate(GIZMOSYS *gizmo_sys, void *world_info, float delta_time) {
+    if (gizmotypes == NULL || gizmo_sys == NULL) {
+        return;
+    }
+
+    GIZMOTYPE *type = gizmotypes->types;
+    GIZMOSET *set = gizmo_sys->sets;
+    for (i32 i = 0; i < gizmotypes->count; i++, set++, type++) {
+        if (type->fns.early_update_fn != NULL) {
+            type->fns.early_update_fn(world_info, set->unknown, delta_time);
+        }
+    }
 }
