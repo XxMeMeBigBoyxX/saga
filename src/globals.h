@@ -6,6 +6,9 @@
 #include "nu2api.saga/nucore/common.h"
 
 #ifdef __cplusplus
+
+extern bool g_disallowGlobalNew;
+
 extern "C" {
 #endif
     struct cheat_s { /* PlaceHolder Structure */
@@ -250,6 +253,7 @@ extern "C" {
     extern nusound_filename_info_s *MusicInfo;
 
     extern NUCAMERA *pNuCam;
+
 #ifdef __cplusplus
 }
 #endif

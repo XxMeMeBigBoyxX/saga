@@ -2,6 +2,8 @@
 
 #include "nu2api.saga/nuthread/nuthread.h"
 
+#include <cstddef>
+
 class NuApplicationState {
   private:
     void *field0_0x0;

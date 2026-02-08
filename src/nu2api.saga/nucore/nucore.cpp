@@ -1,8 +1,8 @@
-#include <new>
 #include <stddef.h>
 
-#include "nu2api.saga/nucore/nucore.h"
+#include "nu2api.saga/nucore/nucore.hpp"
 
+#include "globals.h"
 #include "nu2api.saga/numemory/numemory.h"
 #include "nu2api.saga/nuthread/nuthread.h"
 

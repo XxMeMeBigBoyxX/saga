@@ -32,13 +32,13 @@ typedef u16 ushort;
 typedef u16 word;
 
 #define SAGA_NOMATCH __attribute__((section(".text.nomatch")))
+
+#ifdef HOST_BUILD
 #define UNIMPLEMENTED(...)                                                                                             \
     ({                                                                                                                 \
         fprintf(stderr, "%s:%d: %s: UNIMPLEMENTED: %s\n", __FILE__, __LINE__, __func__, #__VA_ARGS__);                 \
         exit(EXIT_FAILURE);                                                                                            \
     })
-
-#ifdef HOST_BUILD
 
 enum log_level {
     LOG_LEVEL_WARN,
@@ -81,6 +81,8 @@ static void _saga_log(enum log_level level, const char *file, int line, const ch
 #define LOG_DEBUG(...) LOG(LOG_LEVEL_DEBUG, __VA_ARGS__)
 
 #else
+
+#define UNIMPLEMENTED(...)
 
 #define LOG(_, ...)
 #define LOG_WARN(...)

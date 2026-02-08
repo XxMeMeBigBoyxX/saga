@@ -396,7 +396,6 @@ i32 NuMusic::StopAll(i32 toggle) {
 }
 
 i32 NuMusic::Voice::Play() {
-    UNIMPLEMENTED();
 }
 
 i32 NuMusic::PlayTrackI(TRACK_CLASS clazz) {
