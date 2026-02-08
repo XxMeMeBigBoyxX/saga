@@ -1,14 +1,16 @@
 #include "nu2api.saga/nufile/nufile.h"
 
+#include <stdio.h>
+#include <string.h>
+#include <unistd.h>
+
 #include "decomp.h"
+
 #include "lostandfound/tmclient.h"
 #include "nu2api.saga/nuandroid/nuios.h"
 #include "nu2api.saga/nucore/nuapi.h"
 #include "nu2api.saga/nucore/nustring.h"
 #include "nu2api.saga/nuthread/nuthread.h"
-
-#include <string.h>
-#include <unistd.h>
 
 static FILE *g_fileHandles[32] = {NULL};
 

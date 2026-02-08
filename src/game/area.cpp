@@ -1,5 +1,7 @@
 #include "game/area.h"
 
+#include <stdlib.h>
+
 #include "game/character.h"
 #include "game/cheat.h"
 #include "game/level.h"

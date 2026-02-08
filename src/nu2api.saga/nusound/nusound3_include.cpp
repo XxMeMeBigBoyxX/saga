@@ -1,10 +1,9 @@
-#pragma once
-
 #include "nu2api.saga/nusound/nusound3_include.hpp"
+
 #include "decomp.h"
+
 #include "nu2api.saga/nucore/nucore.hpp"
 #include "nu2api.saga/nucore/nuvector.hpp"
-#include "nu2api.saga/nucore/nuvuvec.hpp"
 #include "nu2api.saga/numusic/numusic.h"
 #include "nu2api.saga/nusound/nusound.h"
 #include "nu2api.saga/nusound/nusound_buffer.hpp"

@@ -1,5 +1,6 @@
 #include "gameapi.saga/gui/apimenu.h"
 
+#include <stdio.h>
 #include <string.h>
 
 #include "decomp.h"

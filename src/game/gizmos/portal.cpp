@@ -1,6 +1,9 @@
 #include "game/gizmos/portal.h"
 
+#include <stdio.h>
+
 #include "decomp.h"
+
 #include "game/world.h"
 #include "nu2api.saga/nu3d/nugscn.h"
 

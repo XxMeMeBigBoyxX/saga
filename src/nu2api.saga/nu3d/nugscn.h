@@ -1,6 +1,5 @@
 #pragma once
 
-#include "decomp.h"
 #include "game/gizmos/portal.h"
 
 typedef struct nugscn_s { /* PlaceHolder Structure */
