@@ -1,8 +1,8 @@
 #include "test.hpp"
 
 #include "globals.h"
+#include "nu2api.saga/nucore/numemory.h"
 #include "nu2api.saga/nufile/nufile.h"
-#include "nu2api.saga/numemory/numemory.h"
 #include "nu2api.saga/nuplatform/nuplatform.h"
 
 #include <iostream>
