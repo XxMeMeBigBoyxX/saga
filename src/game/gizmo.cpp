@@ -358,3 +358,17 @@ void GizmoSysEarlyUpdate(GIZMOSYS *gizmo_sys, void *world_info, float delta_time
         }
     }
 }
+
+void GizmoSysLateUpdate(GIZMOSYS *gizmo_sys, void *world_info, float delta_time) {
+    if (gizmotypes == NULL || gizmo_sys == NULL) {
+        return;
+    }
+
+    GIZMOTYPE *type = gizmotypes->types;
+    GIZMOSET *set = gizmo_sys->sets;
+    for (i32 i = 0; i < gizmotypes->count; i++, set++, type++) {
+        if (type->fns.late_update_fn != NULL) {
+            type->fns.late_update_fn(world_info, set->unknown, delta_time);
+        }
+    }
+}
