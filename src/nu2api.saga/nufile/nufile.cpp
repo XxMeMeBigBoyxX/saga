@@ -1,8 +1,8 @@
+#include "nu2api.saga/nufile/nufile.h"
+
 #include <string.h>
 
 #include "decomp.h"
-
-#include "nu2api.saga/nufile/nufile.h"
 
 #include "deflate/deflate.h"
 #include "implode/implode.h"
@@ -10,45 +10,9 @@
 #include "nu2api.saga/nucore/nustring.h"
 #include "nu2api.saga/nuthread/nuthread.h"
 
-namespace NuFile {
-    namespace SeekOrigin {
-        typedef i32 T;
-    };
-
-    namespace OpenMode {
-        typedef int T;
-    }
-}; // namespace NuFile
-
-class NuFileAndroidAPK {
-  public:
-    static SAGA_NOMATCH NUFILE OpenFile(const char *filepath, NuFile::OpenMode::T mode) {
-        UNIMPLEMENTED("android specific");
-    }
-
-    static SAGA_NOMATCH i32 CloseFile(NUFILE file) {
-        UNIMPLEMENTED("android specific");
-    }
-
-    static SAGA_NOMATCH i64 SeekFile(NUFILE file, i64 offset, NuFile::SeekOrigin::T mode) {
-        UNIMPLEMENTED("android specific");
-    }
-
-    static SAGA_NOMATCH i32 ReadFile(NUFILE file, void *buf, u32 size) {
-        UNIMPLEMENTED("android specific");
-    }
-
-    static SAGA_NOMATCH i64 GetFilePos(NUFILE file) {
-        UNIMPLEMENTED("android specific");
-    }
-    static SAGA_NOMATCH i64 GetFileSize(NUFILE file) {
-        UNIMPLEMENTED("android specific");
-    }
-};
-
-class NuFileDeviceAndroidAPK {};
-
-NuFileDeviceAndroidAPK *g_apkFileDevice;
+#ifdef ANDROID
+#include "nu2api.saga/nufile/nufile_android.h"
+#endif
 
 char g_datfileMode = 1;
 
@@ -194,10 +158,12 @@ NUFILE NuFileOpen(char *filepath, NUFILEMODE mode) {
 void NuFileClose(NUFILE file) {
     FILEINFO *info;
 
+#ifdef ANDROID
     if (file >= 0x2000) {
         NuFileAndroidAPK::CloseFile(file);
         return;
     }
+#endif
 
     if (file >= 0x1000) {
         NuMcClose(file - 0x1000, 0);
@@ -242,9 +208,11 @@ NUFILE NuFileOpenDF(char *filepath, NUFILEMODE mode, NUDATHDR *header, i32 _unus
             if (header != NULL) {
                 file_handle = NuDatFileOpen(header, filepath, mode);
             } else {
+#ifdef ANDROID
                 if (g_apkFileDevice != NULL) {
-                    file_handle = NuFileAndroidAPK::OpenFile(filepath, 0);
+                    file_handle = NuFileAndroidAPK::OpenFile(filepath, NuFile::OpenMode::READ);
                 }
+#endif
             }
 
             if (file_handle > 0) {
@@ -326,24 +294,27 @@ NUFILE NuFileOpenDF(char *filepath, NUFILEMODE mode, NUDATHDR *header, i32 _unus
 
 i64 NuFileSeek(NUFILE file, i64 offset, NUFILESEEK whence) {
     FILEINFO *info;
-    int native_mode;
     i64 pos;
+
+#ifdef ANDROID
+    NuFile::SeekOrigin::T native_mode;
 
     if (file >= 0x2000) {
         switch (whence) {
             default:
-                native_mode = 0;
+                native_mode = NuFile::SeekOrigin::T::START;
                 break;
             case NUFILE_SEEK_CURRENT:
-                native_mode = 1;
+                native_mode = NuFile::SeekOrigin::T::CURRENT;
                 break;
             case NUFILE_SEEK_END:
-                native_mode = 2;
+                native_mode = NuFile::SeekOrigin::T::END;
                 break;
         }
 
         return NuFileAndroidAPK::SeekFile(file, offset, native_mode);
     }
+#endif
 
     if (file >= 0x1000) {
         pos = (i64)NuMcSeek(file - 0x1000, offset, whence, 0);
@@ -418,9 +389,11 @@ i64 NuFilePos(NUFILE file) {
     FILEINFO *info;
     i64 pos;
 
+#ifdef ANDROID
     if (file >= 0x2000) {
         return NuFileAndroidAPK::GetFilePos(file);
     }
+#endif
 
     if (file >= 0x1000) {
         pos = NuMcSeek(file - 0x1000, 0, NUFILE_SEEK_END, 0);
@@ -446,9 +419,11 @@ i64 NuFilePos(NUFILE file) {
 }
 
 i64 NuFileOpenSize(NUFILE file) {
+#ifdef ANDROID
     if (file >= 0x2000) {
         return NuFileAndroidAPK::GetFileSize(file);
     }
+#endif
 
     if (file >= 0x1000) {
         return NuMcFileOpenSize(file);
@@ -471,11 +446,13 @@ int NuFileRead(NUFILE file, void *buf, int size) {
     FILEINFO *info;
     int bytes_read;
     char *char_buf;
-    int available;
+    i32 available;
 
+#ifdef ANDROID
     if (file >= 0x2000) {
         return NuFileAndroidAPK::ReadFile(file, buf, size);
     }
+#endif
 
     if (file >= 0x1000) {
         return NuMcRead(file - 0x1000, buf, size, 0);
@@ -1123,7 +1100,7 @@ NUFILE NuDatFileOpen(NUDATHDR *hdr, char *filepath, NUFILEMODE mode) {
                     return info_idx + 0x800;
                 }
 
-                dat_file_infos[info_idx].used = 0;
+                dat_file_infos[info_idx].is_used = 0;
             }
         }
     }
@@ -1143,7 +1120,7 @@ void NuDatFileClose(NUFILE file) {
         hdr->open_files[info->open_file_idx].info_idx = -1;
     }
 
-    info->used = 0;
+    info->is_used = 0;
 }
 
 i64 NuDatFileSeek(NUFILE file, i64 offset, NUFILESEEK whence) {
@@ -1256,8 +1233,8 @@ i32 NuDatFileGetFreeInfo(void) {
     NuThreadCriticalSectionBegin(file_criticalsection);
 
     for (i = 0; i < 20; i++) {
-        if (!dat_file_infos[i].used) {
-            dat_file_infos[i].used = 1;
+        if (!dat_file_infos[i].is_used) {
+            dat_file_infos[i].is_used = 1;
             found = i;
             break;
         }

@@ -5,9 +5,7 @@
 
 #include "nu2api.saga/nucore/common.h"
 
-#if 1
-// Isolate platform-specific definitions to make it easier to add platform
-// support in future.
+#ifdef ANDROID
 #include "nu2api.saga/nu3d/nutex_android.h"
 #endif
 

@@ -131,7 +131,7 @@ typedef struct nudatfileinfo_s {
     int file_len;
     int decompressed_len;
     int open_file_idx;
-    int used;
+    int is_used;
     int compression_mode;
 } NUDATFILEINFO;
 
@@ -155,6 +155,64 @@ typedef struct fileextinfo_s {
 extern int read_critical_section;
 
 #ifdef __cplusplus
+namespace NuFile {
+    namespace SeekOrigin {
+        enum T {
+            START = 0,
+            CURRENT = 1,
+            END = 2,
+        };
+    };
+
+    namespace OpenMode {
+        enum T {
+            READ = 0,
+        };
+    }
+
+    class IFile {
+      public:
+        // Return types uncertain.
+        virtual i32 GetCapabilities() const;
+        virtual const char *GetFilename() const;
+        virtual u32 GetType() const;
+        virtual void Seek(i64 offset, SeekOrigin::T);
+        virtual isize Read(void *buf, usize size);
+        virtual isize Write(const void *buf, usize size);
+        virtual usize GetPos() const;
+        virtual i64 GetSize() const;
+        virtual void Close();
+        virtual void Flush();
+    };
+}; // namespace NuFile
+
+class NuFileBase : NuFile::IFile {
+  public:
+    NuFileBase() = delete;
+    NuFileBase(const char *filepath, NuFile::OpenMode::T mode, u32 type);
+
+    virtual i32 GetCapabilities() const override;
+    virtual const char *GetFilename() const override;
+    virtual u32 GetType() const override;
+
+    virtual usize GetPos() const override;
+    virtual i64 GetSize() const override;
+
+    virtual void Flush() override;
+
+  protected:
+    virtual ~NuFileBase() = default;
+
+  private:
+    // Type uncertain.
+    i32 unknown;
+
+    u32 type;
+    NuFile::OpenMode::T mode;
+
+    char filepath[0x100];
+};
+
 extern "C" {
 #endif
     extern char g_datfileMode;

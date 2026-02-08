@@ -77,8 +77,8 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-exceptions -fno-rtti -Wno-write-strings")
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-write-strings")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-exceptions -fno-rtti -Wno-write-strings -DANDROID")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DANDROID")
 
 set(CMAKE_BUILD_TYPE Debug)
 
@@ -136,9 +136,11 @@ set(SAGA_SOURCE_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nucore/nutime.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nucore/nuvideo.cpp
 
-
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nufile/NuFileAndroidDeviceAPK.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nufile/nufile.c
     ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nufile/nufile.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nufile/nufile_android.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nufile/nufilebase.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nufile/nufilepak.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nufile/nufpar.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nufile/nupsfile.cpp
@@ -284,6 +286,8 @@ else()
     set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nucore/nucore.cpp PROPERTIES COMPILE_OPTIONS "-O2")
     set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nucore/nustring.cpp PROPERTIES COMPILE_OPTIONS "-O2")
     set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nufile/nufile.c PROPERTIES COMPILE_OPTIONS "-O2")
+    set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nufile/nufile_android.cpp PROPERTIES COMPILE_OPTIONS "-O2")
+    set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nufile/nufilebase.cpp PROPERTIES COMPILE_OPTIONS "-O2")
     set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nufile/nupsfile.cpp PROPERTIES COMPILE_OPTIONS "-O2")
     set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/numemory/numemory.cpp PROPERTIES COMPILE_OPTIONS "-O2")
     set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/numemory/numemory_android.cpp PROPERTIES COMPILE_OPTIONS "-O2")
