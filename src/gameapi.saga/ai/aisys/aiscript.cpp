@@ -35,6 +35,8 @@ static int condition_has_no_goto;
 AIACTIONDEF *game_aiactiondefs;
 static AICONDITIONDEF *game_aiconditiondefs;
 
+NULISTHDR global_aiscripts;
+
 static f32 Condition_AlwaysTrue(AISYS *sys, AISCRIPTPROCESS *processor, AIPACKET *packet, char *arg, void *void_arg) {
     return *(f32 *)&void_arg;
 }
@@ -741,6 +743,36 @@ static NUFPCOMJMP cfgtab_Script[] = {
     {NULL, NULL},
 };
 
+i32 ai_usepackfile = 1;
+
+void AIScriptLoadAll(char *path, VARIPTR *buf, VARIPTR *buf_end, AISYS *sys) {
+    void *pak;
+    VARIPTR pak_start;
+    char filepath[0x80];
+    i32 pak_size;
+
+    pak_start = *buf_end;
+
+    if (ai_usepackfile) {
+        sprintf(filepath, "%s\\ai.pak", path);
+
+        pak_size = NuFileSize(filepath);
+        if (pak_size > 0) {
+            pak_start.addr = buf_end->addr - ALIGN(pak_size + 1, 0x10);
+            pak = NuFilePakLoad(filepath, &pak_start, *buf_end, 0x10);
+        } else {
+            pak = NULL;
+        }
+    } else {
+        pak = NULL;
+    }
+
+    AIScriptLoadAllPakFile(pak, path, buf, &pak_start, sys);
+}
+
+void AIScriptLoadAllPakFile(void *pak, char *path, VARIPTR *buf, VARIPTR *buf_end, AISYS *sys) {
+}
+
 void AIScriptOpenPakFileParse(AISCRIPT_s **script_ref, void *pak, char *filename, char *path, VARIPTR *buf,
                               VARIPTR *buf_end) {
     char script_name[64];
@@ -837,4 +869,15 @@ void AIScriptOpenPakFileParse(AISCRIPT_s **script_ref, void *pak, char *filename
 
 done:
     NuFParDestroy(parser);
+}
+
+void AIScriptClearInterrupt(AISCRIPTPROCESS *processor, char *state_name) {
+    if (processor->interrupt_state != NULL) {
+        if (NuStrCmp(state_name, processor->interrupt_state->name) == 0) {
+            processor->interrupt_timer = 0.0f;
+            processor->interrupt_priority = 0;
+            processor->interrupt_id = 0;
+            processor->interrupt_state = NULL;
+        }
+    }
 }
