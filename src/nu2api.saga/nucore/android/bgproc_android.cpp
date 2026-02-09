@@ -1,5 +1,7 @@
 #include "nu2api.saga/nucore/bgproc.h"
 
+#include <string.h>
+
 #include "nu2api.saga/nucore/android/NuThread_android.h"
 #include "nu2api.saga/nucore/nucore.hpp"
 #include "nu2api.saga/nucore/nulst.h"
@@ -86,4 +88,59 @@ void bgProcInit() {
 
 i32 bgProcIsBgThread(void) {
     return NuCore::m_threadManager->GetCurrentThread() == g_bgProcThread;
+}
+
+BGPROCINFO *bgPostRequest(bgprocdofn *do_fn, bgprocackfn *ack_fn, void *data, i32 data_size) {
+    BGPROCINFO local;
+    BGPROCINFO *info;
+
+    if (!multithreaded) {
+        local.unknown_flag_1 = false;
+        local.unknown_flag_2 = false;
+
+        local.do_fn = do_fn;
+        local.ack_fn = ack_fn;
+
+        local.vars = NULL;
+        local.var_count = 0;
+
+        if (data_size != 0 && data != NULL) {
+            memcpy(local.data, data, data_size);
+        }
+
+        if (do_fn != NULL) {
+            (*do_fn)(&local);
+        }
+
+        if (ack_fn != NULL) {
+            (*ack_fn)(&local);
+        }
+
+        // ORIG_BUG: This is returned uninitialized.
+        return info;
+    }
+
+    NuThreadCriticalSectionBegin(g_bgCritSec);
+
+    info = (BGPROCINFO *)NuLstAllocTail(procinfo_pool);
+    if (info != NULL) {
+        info->unknown_flag_1 = false;
+        info->unknown_flag_2 = false;
+
+        info->do_fn = do_fn;
+        info->ack_fn = ack_fn;
+
+        info->vars = NULL;
+        info->var_count = 0;
+
+        if (data_size != 0 && data != NULL) {
+            memcpy(info->data, data, data_size);
+        }
+    }
+
+    NuThreadCriticalSectionEnd(g_bgCritSec);
+
+    events[0].Signal();
+
+    return info;
 }
