@@ -2,10 +2,8 @@
 
 #include <pthread.h>
 #include <sched.h>
-#include <string.h>
 
 #include "nu2api.saga/nucore/common.h"
-#include "nu2api.saga/nucore/nustring.h"
 
 u32 nu_current_thread_id;
 
@@ -51,32 +49,4 @@ void NuThreadDestroyCriticalSection(int index) {
     pthread_mutex_destroy(&NuThread_CriticalSections[index]);
 
     NuThread_CriticalSectionsUsed[index] = false;
-}
-
-NuMemoryManager *NuThreadBase::GetLocalStorage(u32 index) const {
-    return this->memory_managers[index];
-}
-
-NuThreadBase::NuThreadBase(const NuThreadCreateParameters &params) {
-    this->thread_fn = params.thread_fn;
-    this->fn_arg = params.fn_arg;
-
-    this->name[0] = '\0';
-
-    memset(this->memory_managers, 0, sizeof(this->memory_managers));
-}
-
-NuThreadBase::~NuThreadBase() {
-}
-
-void NuThreadBase::SetDebugName(const char *name) {
-    NuStrNCpy(this->name, name, 0x20);
-}
-
-void (*NuThreadBase::GetThreadFn() const)(void *) {
-    return this->thread_fn;
-}
-
-void *NuThreadBase::GetParam() const {
-    return this->fn_arg;
 }
