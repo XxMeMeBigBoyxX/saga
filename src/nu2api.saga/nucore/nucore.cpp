@@ -4,7 +4,7 @@
 #include <stddef.h>
 
 #include "nu2api.saga/nucore/numemory.h"
-#include "nu2api.saga/nuthread/nuthread.h"
+#include "nu2api.saga/nucore/nuthread.h"
 
 NuApplicationState *NuCore::m_applicationState;
 NuThreadManager *NuCore::m_threadManager;

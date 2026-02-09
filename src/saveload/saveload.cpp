@@ -10,7 +10,7 @@
 #include "nu2api.saga/nucore/numemory.h"
 #include "nu2api.saga/nucore/nustring.h"
 #include "nu2api.saga/nucore/nutime.h"
-#include "nu2api.saga/nuthread/nuthread.h"
+#include "nu2api.saga/nucore/nuthread.h"
 
 #include "export.h"
 

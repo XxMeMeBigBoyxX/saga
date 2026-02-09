@@ -1,8 +1,6 @@
 #pragma once
 
-#include "nu2api.saga/nuthread/nuthread.h"
-
-#include <cstddef>
+#include "nu2api.saga/nucore/nuthread.h"
 
 class NuApplicationState {
   private:

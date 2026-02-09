@@ -1,44 +1,14 @@
 #include <pthread.h>
-#include <string.h>
 
-#include "nu2api.saga/nuthread/nuthread.h"
+#include "nu2api.saga/nucore/nuthread.h"
 
 #include "java/java.h"
-#include "nu2api.saga/nucore/nustring.h"
 
 static __thread NuThreadBase *g_currentThread;
 static __thread pthread_t g_currentPthread;
 
 NuThreadBase *NuThreadGetCurrentThread() {
     return g_currentThread;
-}
-
-NuMemoryManager *NuThreadBase::GetLocalStorage(u32 index) const {
-    return this->memory_managers[index];
-}
-
-NuThreadBase::NuThreadBase(const NuThreadCreateParameters &params) {
-    this->thread_fn = params.thread_fn;
-    this->fn_arg = params.fn_arg;
-
-    this->name[0] = '\0';
-
-    memset(this->memory_managers, 0, sizeof(this->memory_managers));
-}
-
-NuThreadBase::~NuThreadBase() {
-}
-
-void NuThreadBase::SetDebugName(const char *name) {
-    NuStrNCpy(this->name, name, 0x20);
-}
-
-void (*NuThreadBase::GetThreadFn() const)(void *) {
-    return this->thread_fn;
-}
-
-void *NuThreadBase::GetParam() const {
-    return this->fn_arg;
 }
 
 NuThread::NuThread(const NuThreadCreateParameters &params) : NuThreadBase(params) {

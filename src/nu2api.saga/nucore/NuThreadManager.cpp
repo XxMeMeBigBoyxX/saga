@@ -1,4 +1,4 @@
-#include "nu2api.saga/nuthread/nuthread.h"
+#include "nu2api.saga/nucore/nuthread.h"
 
 NuThreadManager::NuThreadManager() {
     this->bitflags = 0;

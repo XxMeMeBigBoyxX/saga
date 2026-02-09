@@ -8,7 +8,7 @@
 #include "implode/implode.h"
 #include "nu2api.saga/nucore/common.h"
 #include "nu2api.saga/nucore/nustring.h"
-#include "nu2api.saga/nuthread/nuthread.h"
+#include "nu2api.saga/nucore/nuthread.h"
 
 #ifdef ANDROID
 #include "nu2api.saga/nufile/android/nufile_android.h"

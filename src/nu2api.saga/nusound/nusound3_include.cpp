@@ -3,6 +3,7 @@
 #include "decomp.h"
 
 #include "nu2api.saga/nucore/nucore.hpp"
+#include "nu2api.saga/nucore/nuthread.h"
 #include "nu2api.saga/nucore/nuvector.hpp"
 #include "nu2api.saga/numusic/numusic.h"
 #include "nu2api.saga/nusound/nusound.h"
@@ -10,7 +11,6 @@
 #include "nu2api.saga/nusound/nusound_loader.hpp"
 #include "nu2api.saga/nusound/nusound_sample.hpp"
 #include "nu2api.saga/nusound/nusound_voice.hpp"
-#include "nu2api.saga/nuthread/nuthread.h"
 
 extern "C" {
     const char *audio_ps2_music_ext = ".vag";

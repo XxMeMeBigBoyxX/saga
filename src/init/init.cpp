@@ -1,4 +1,7 @@
 #include "init/init.hpp"
+
+#include <stdarg.h>
+
 #include "decomp.h"
 #include "game/area.h"
 #include "game/character.h"
@@ -11,6 +14,7 @@
 #include "nu2api.saga/nu3d/nucamera.h"
 #include "nu2api.saga/nu3d/nutex.h"
 #include "nu2api.saga/nuandroid/nuios.h"
+#include "nu2api.saga/nucore/bgproc.h"
 #include "nu2api.saga/nucore/nuapi.h"
 #include "nu2api.saga/nucore/numemory.h"
 #include "nu2api.saga/nucore/nustring.h"
@@ -18,8 +22,6 @@
 #include "nu2api.saga/numusic/numusic.h"
 #include "nu2api.saga/nusound/nusound.h"
 #include "saveload/saveload.h"
-
-#include <stdarg.h>
 
 extern "C" {
     void *DVD = NULL;

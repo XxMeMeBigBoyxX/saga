@@ -1,5 +1,5 @@
 #include "nu2api.saga/nucore/nucore.hpp"
-#include "nu2api.saga/nuthread/nuthread.h"
+#include "nu2api.saga/nucore/bgproc.h"
 
 NuThreadBase *g_bgProcThread;
 

@@ -7,6 +7,7 @@
 #include "init/init.hpp"
 #include "nu2api.saga/numusic/numusic.h"
 #include "nu2api.saga/nuplatform/nuplatform.h"
+#include "saveload/saveload.h"
 
 extern "C" i32 NuMain(i32 argc, char **argv) {
     InitOnce(argc, argv);

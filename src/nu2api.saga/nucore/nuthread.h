@@ -57,10 +57,6 @@ class NuThreadBase {
     ~NuThreadBase();
 };
 
-extern NuThreadBase *g_bgProcThread;
-
-int bgProcIsBgThread(void);
-
 class NuThread : public NuThreadBase {
   private:
     bool is_suspended;

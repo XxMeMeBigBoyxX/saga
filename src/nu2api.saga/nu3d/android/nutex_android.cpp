@@ -11,9 +11,9 @@
 #include "nu2api.saga/nucore/common.h"
 #include "nu2api.saga/nucore/nuapi.h"
 #include "nu2api.saga/nucore/nustring.h"
+#include "nu2api.saga/nucore/nuthread.h"
 #include "nu2api.saga/nufile/nufile.h"
 #include "nu2api.saga/nuplatform/nuplatform.h"
-#include "nu2api.saga/nuthread/nuthread.h"
 
 #define TEX_PATH "mnt/sdcard/TTGames/com.wb.lego.tcs/files/androidTextures/"
 
