@@ -13,16 +13,24 @@ typedef enum NUTHREADXBOX360CORE {
     NUTHREADXBOX360CORE_UNKNOWN_2 = 2,
 } NUTHREADXBOX360CORE;
 
+typedef void nuthreadenableswapfn();
+typedef void nuthreaddisableswapfn();
+
 #ifdef __cplusplus
 extern "C" {
 #endif
     extern u32 nu_current_thread_id;
+    extern nuthreadenableswapfn *NuThreadEnableThreadSwap;
+    extern nuthreaddisableswapfn *NuThreadDisableThreadSwap;
 
     i32 NuThreadCreateCriticalSection();
     void NuThreadDestroyCriticalSection(int index);
 
     i32 NuThreadCriticalSectionBegin(i32 index);
     i32 NuThreadCriticalSectionEnd(i32 index);
+
+    void NuEnableVBlank();
+    void NuDisableVBlank();
 #ifdef __cplusplus
 }
 

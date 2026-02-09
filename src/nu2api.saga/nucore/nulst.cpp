@@ -61,14 +61,56 @@ void NuLstDestroy(NULSTHDR *list) {
 }
 
 void NuLstFree(NULNKHDR *node) {
+    u32 current_thread;
+    NULSTHDR *list;
+
+    node--;
+    list = node->owner;
+
+    current_thread = nu_current_thread_id;
+
+    if (list->safe_thread != current_thread) {
+        (*NuThreadDisableThreadSwap)();
+    }
+
+    if (node->next != NULL) {
+        node->next->prev = node->prev;
+    } else {
+        list->tail = node->prev;
+    }
+
+    if (node->prev != NULL) {
+        node->prev->next = node->next;
+    } else {
+        list->head = node->next;
+    }
+
+    node->prev = list->free_tail;
+    node->next = NULL;
+
+    if (list->free_tail != NULL) {
+        list->free_tail->next = node;
+    } else {
+        list->free_tail = list->free = node;
+    }
+
+    list->free_tail = node;
+
+    list->used_count--;
+
+    node->is_used = false;
+
+    if (list->safe_thread != current_thread) {
+        (*NuThreadEnableThreadSwap)();
+    }
 }
 
 NULNKHDR *NuLstGetNext(NULSTHDR *list, NULNKHDR *node) {
     if (node != NULL) {
         node--;
 
-        if (node[0].next != NULL) {
-            return node[0].next + 1;
+        if (node->next != NULL) {
+            return node->next + 1;
         }
     } else if (list->head != NULL) {
         return list->head + 1;

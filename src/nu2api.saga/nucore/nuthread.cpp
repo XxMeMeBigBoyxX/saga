@@ -50,3 +50,12 @@ void NuThreadDestroyCriticalSection(int index) {
 
     NuThread_CriticalSectionsUsed[index] = false;
 }
+
+void NuEnableVBlank() {
+}
+
+void NuDisableVBlank() {
+}
+
+nuthreadenableswapfn *NuThreadEnableThreadSwap = &NuEnableVBlank;
+nuthreaddisableswapfn *NuThreadDisableThreadSwap = &NuDisableVBlank;
