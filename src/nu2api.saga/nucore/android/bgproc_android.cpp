@@ -86,10 +86,6 @@ void bgProcInit() {
     }
 }
 
-i32 bgProcIsBgThread(void) {
-    return NuCore::m_threadManager->GetCurrentThread() == g_bgProcThread;
-}
-
 BGPROCINFO *bgPostRequest(bgprocdofn *do_fn, bgprocackfn *ack_fn, void *data, i32 data_size) {
     BGPROCINFO local;
     BGPROCINFO *info;
@@ -143,4 +139,16 @@ BGPROCINFO *bgPostRequest(bgprocdofn *do_fn, bgprocackfn *ack_fn, void *data, i3
     events[0].Signal();
 
     return info;
+}
+
+BGPROCINFO *bgGetProcActive() {
+    if (cur_pi != NULL) {
+        return cur_pi;
+    }
+
+    return (BGPROCINFO *)NuLstGetNext(procinfo_pool, NULL);
+}
+
+i32 bgProcIsBgThread(void) {
+    return NuCore::m_threadManager->GetCurrentThread() == g_bgProcThread;
 }

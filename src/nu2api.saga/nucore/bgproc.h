@@ -42,4 +42,6 @@ void bgProcInit();
 
 BGPROCINFO *bgPostRequest(bgprocdofn *do_fn, bgprocackfn *ack_fn, void *data, i32 data_size);
 
+BGPROCINFO *bgGetProcActive();
+
 i32 bgProcIsBgThread(void);
