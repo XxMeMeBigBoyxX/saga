@@ -678,34 +678,36 @@ static void xActionMacro(NUFPAR *parser) {
 }
 
 static void xDeriveFromScript(NUFPAR *parser) {
+    i32 is_done;
+
     if (load_aiscript == NULL || load_aiscript->derived_from != NULL) {
         return;
     }
 
     load_aiscript->is_derived_from_level_script = 0;
 
-    while (NuFParGetLine(parser) != 0) {
-        while (NuFParGetWord(parser) != 0) {
+    is_done = 0;
+    while (!is_done && NuFParGetLine(parser) != 0) {
+        while (!is_done && NuFParGetWord(parser) != 0) {
             char *cursor;
 
-            if (NuStrICmp(parser->word_buf, "}") == 0) {
-                goto done;
-            }
-
-            if ((cursor = NuStrIStr(parser->word_buf, "Script")) != NULL) {
-                load_aiscript->derived_from =
-                    AIScriptCopyString(cursor + strlen("Script") + 1, load_buff, load_endbuff);
-            } else if (NuStrIStr(parser->word_buf, "Source") != NULL) {
-                if (NuStrIStr(parser->word_buf, "Global") != NULL) {
-                    load_aiscript->is_derived_from_level_script = 0;
-                } else if (NuStrIStr(parser->word_buf, "Level") != NULL) {
-                    load_aiscript->is_derived_from_level_script = 1;
+            if (NuStrICmp(parser->word_buf, "}") != 0) {
+                if ((cursor = NuStrIStr(parser->word_buf, "Script")) != NULL) {
+                    load_aiscript->derived_from =
+                        AIScriptCopyString(cursor + strlen("Script") + 1, load_buff, load_endbuff);
+                } else if (NuStrIStr(parser->word_buf, "Source") != NULL) {
+                    if (NuStrIStr(parser->word_buf, "Global") != NULL) {
+                        load_aiscript->is_derived_from_level_script = 0;
+                    } else if (NuStrIStr(parser->word_buf, "Level") != NULL) {
+                        load_aiscript->is_derived_from_level_script = 1;
+                    }
                 }
+            } else {
+                is_done = 1;
             }
         }
     }
 
-done:
     if (load_aiscript->derived_from != NULL) {
         load_aiscript->is_derived = 1;
     }
