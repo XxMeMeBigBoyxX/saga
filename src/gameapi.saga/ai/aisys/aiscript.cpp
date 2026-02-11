@@ -479,6 +479,7 @@ static void xConditions(NUFPAR *parser) {
 static void xRefScript(NUFPAR *parser) {
     AIREFSCRIPT *ref_script;
     VARIPTR orig_buf;
+    i32 is_done;
 
     if (load_refscripthdr == NULL) {
         return;
@@ -493,42 +494,42 @@ static void xRefScript(NUFPAR *parser) {
 
     memset(ref_script, 0, sizeof(AIREFSCRIPT));
 
-    while (NuFParGetLine(parser) != 0) {
-        while (NuFParGetWord(parser) != 0) {
+    is_done = false;
+    while (!is_done && NuFParGetLine(parser) != 0) {
+        while (!is_done && NuFParGetWord(parser) != 0) {
             char *cursor;
 
-            if (NuStrICmp(parser->word_buf, "}") == 0) {
-                goto done;
-            }
+            if (NuStrICmp(parser->word_buf, "}") != 0) {
+                if ((cursor = NuStrIStr(parser->word_buf, "Script")) != NULL) {
+                    ref_script->name = AIScriptCopyString(cursor + strlen("Script") + 1, load_buff, load_endbuff);
+                } else if ((cursor = NuStrIStr(parser->word_buf, "ReturnState")) != NULL) {
+                    ref_script->return_state_name =
+                        AIScriptCopyString(cursor + strlen("ReturnState") + 1, load_buff, load_endbuff);
+                } else if (NuStrICmp(parser->word_buf, "CONDITIONS") == 0) {
+                    load_conditionshdr = &ref_script->conditions;
+                    condition_has_no_goto = 1;
 
-            if ((cursor = NuStrIStr(parser->word_buf, "Script")) != NULL) {
-                ref_script->name = AIScriptCopyString(cursor + strlen("Script") + 1, load_buff, load_endbuff);
-            } else if ((cursor = NuStrIStr(parser->word_buf, "ReturnState")) != NULL) {
-                ref_script->return_state_name =
-                    AIScriptCopyString(cursor + strlen("ReturnState") + 1, load_buff, load_endbuff);
-            } else if (NuStrICmp(parser->word_buf, "CONDITIONS") == 0) {
-                load_conditionshdr = &ref_script->conditions;
-                condition_has_no_goto = 1;
+                    xConditions(parser);
 
-                xConditions(parser);
-
-                load_conditionshdr = NULL;
-                condition_has_no_goto = 0;
-            } else if (NuStrIStr(parser->word_buf, "Source") != NULL) {
-                if (NuStrIStr(parser->word_buf, "Global") != NULL) {
-                    ref_script->check_global_scripts = 1;
-                } else if (NuStrIStr(parser->word_buf, "Local") != NULL) {
-                    ref_script->check_local_scripts = 1;
+                    load_conditionshdr = NULL;
+                    condition_has_no_goto = 0;
+                } else if (NuStrIStr(parser->word_buf, "Source") != NULL) {
+                    if (NuStrIStr(parser->word_buf, "Global") != NULL) {
+                        ref_script->check_global_scripts = 1;
+                    } else if (NuStrIStr(parser->word_buf, "Level") != NULL) {
+                        ref_script->check_level_scripts = 1;
+                    }
                 }
+            } else {
+                is_done = true;
             }
         }
     }
 
-done:
     if (ref_script->name != NULL) {
-        if (!ref_script->check_global_scripts && !ref_script->check_local_scripts) {
+        if (!ref_script->check_global_scripts && !ref_script->check_level_scripts) {
             ref_script->check_global_scripts = 1;
-            ref_script->check_local_scripts = 1;
+            ref_script->check_level_scripts = 1;
         }
 
         NuLinkedListAppend(load_refscripthdr, &ref_script->list_node);

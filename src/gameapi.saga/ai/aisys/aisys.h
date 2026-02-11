@@ -16,7 +16,7 @@ typedef struct AIREFSCRIPT_s {
     char *return_state_name;
     struct AISTATE_s *return_state;
     u32 check_global_scripts : 1;
-    u32 check_local_scripts : 1;
+    u32 check_level_scripts : 1;
     NULISTHDR conditions;
 } AIREFSCRIPT;
 
