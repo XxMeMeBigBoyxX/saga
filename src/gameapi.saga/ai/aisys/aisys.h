@@ -319,6 +319,9 @@ extern "C" {
     void AIScriptLoadAll(char *path, VARIPTR *buf, VARIPTR *buf_end, AISYS *sys);
     void AIScriptLoadAllPakFile(void *pak, char *path, VARIPTR *buf, VARIPTR *buf_end, AISYS *sys);
 
+    AISCRIPT *AIScriptFind(AISYS *sys, char *name, i32 can_use_default, i32 check_level_scripts,
+                           i32 check_global_scripts);
+
     void AIScriptClearInterrupt(AISCRIPTPROCESS *processor, char *state_name);
 
     AISTATE *AIStateFind(char *name, AISCRIPT *script);

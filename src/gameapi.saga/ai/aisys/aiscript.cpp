@@ -773,7 +773,131 @@ void AIScriptLoadAll(char *path, VARIPTR *buf, VARIPTR *buf_end, AISYS *sys) {
     AIScriptLoadAllPakFile(pak, path, buf, &pak_start, sys);
 }
 
+static AISCRIPT *AIScriptLoadPakFile(void *pak, char *script_file, char *path, VARIPTR *buf, VARIPTR *buf_end) {
+    AISCRIPT *script;
+    AISTATE *state;
+    AICONDITION *condition;
+    AISTATE *_unused;
+
+    load_path = path;
+    load_pakfile = pak;
+
+    script = NULL;
+    AIScriptOpenPakFileParse(&script, pak, script_file, path, buf, buf_end);
+
+    load_path = NULL;
+    load_pakfile = NULL;
+
+    if (script != NULL) {
+        state = (AISTATE *)NuLinkedListGetHead(&script->states);
+
+        while (state != NULL) {
+            condition = (AICONDITION *)NuLinkedListGetHead(&state->conditions);
+            _unused = state;
+
+            while (condition != NULL) {
+                condition->next_state = AIStateFind(condition->next_state_name, script);
+
+                condition = (AICONDITION *)NuLinkedListGetNext(&state->conditions, &condition->list_node);
+            }
+
+            while ((_unused = (AISTATE *)NuLinkedListGetNext(&script->states, &_unused->list_node)) != NULL) {
+                NuStrICmp(state->name, _unused->name);
+            }
+
+            state = (AISTATE *)NuLinkedListGetNext(&script->states, &state->list_node);
+        }
+    }
+
+    return script;
+}
+
+static i32 AIScriptBuildDerivedScript(AISCRIPT *script, VARIPTR *buf, VARIPTR *buf_end, AISYS *sys) {
+
+}
+
 void AIScriptLoadAllPakFile(void *pak, char *path, VARIPTR *buf, VARIPTR *buf_end, AISYS *sys) {
+    NULISTHDR *scripts;
+    i32 item_idx;
+    void *memfile;
+    i32 memfile_size;
+    NUFILE file;
+    char filepath[0x80];
+    char script_files[0x18][0x80];
+    NUFPAR *parser;
+    i32 i;
+    i32 j;
+    AISCRIPT *script;
+    AISTATE *state;
+    AICONDITION *condition;
+    char keep_processing;
+
+    if (sys != NULL) {
+        scripts = &sys->scripts;
+    } else {
+        scripts = &global_aiscripts;
+    }
+
+    file = 0;
+    if (pak != NULL && (item_idx = NuFilePakGetItem(pak, "script.txt")) != 0) {
+        NuFilePakGetItemInfo(pak, item_idx, &memfile, &memfile_size);
+
+        file = NuMemFileOpen(memfile, memfile_size, NUFILE_READ);
+    }
+
+    if (file == 0) {
+        sprintf(filepath, "%s\\script.txt", path);
+
+        file = NuFileOpen(filepath, NUFILE_READ);
+    }
+
+    if (file != 0) {
+        parser = NuFParOpen(file);
+
+        if (parser != NULL) {
+            i = 0;
+            while (NuFParGetLine(parser) != 0) {
+                NuFParGetWord(parser);
+                NuStrLen(parser->word_buf);
+                NuStrCpy(script_files[i], parser->word_buf);
+                NuStrCat(script_files[i], ".scp");
+
+                i++;
+            }
+
+            NuFParClose(parser);
+            NuFileClose(file);
+
+            for (j = 0; j != i; j++) {
+                script = AIScriptLoadPakFile(pak, script_files[j], path, buf, buf_end);
+
+                if (script != NULL) {
+                    NuLinkedListAppend(scripts, &script->list_node);
+
+                    if (sys != NULL) {
+                        script->is_level_script = true;
+                    }
+                }
+            }
+        } else {
+            NuFileClose(file);
+        }
+    }
+
+    if (sys != NULL) {
+        do {
+            keep_processing = true;
+            script = (AISCRIPT *)NuLinkedListGetHead(&sys->scripts);
+
+            while (script != NULL) {
+                if (AIScriptBuildDerivedScript(script, buf, buf_end, sys) == 0) {
+                    keep_processing = false;
+                }
+
+                script = (AISCRIPT *)NuLinkedListGetNext(&sys->scripts, &script->list_node);
+            }
+        } while (!keep_processing);
+    }
 }
 
 void AIScriptOpenPakFileParse(AISCRIPT **script_ref, void *pak, char *filename, char *path, VARIPTR *buf,
@@ -872,6 +996,50 @@ void AIScriptOpenPakFileParse(AISCRIPT **script_ref, void *pak, char *filename, 
 
 done:
     NuFParDestroy(parser);
+}
+
+AISCRIPT *AIScriptFind(AISYS *sys, char *name, i32 can_use_default, i32 check_level_scripts, i32 check_global_scripts) {
+    AISCRIPT *script;
+
+    if (name != NULL) {
+        if (check_level_scripts && sys != NULL) {
+            script = (AISCRIPT *)NuLinkedListGetHead(&sys->scripts);
+
+            while (script != NULL) {
+                if (NuStrICmp(name, script->name) == 0) {
+                    return script;
+                }
+
+                script = (AISCRIPT *)NuLinkedListGetNext(&sys->scripts, &script->list_node);
+            }
+        }
+
+        if (check_global_scripts) {
+            script = (AISCRIPT *)NuLinkedListGetHead(&global_aiscripts);
+
+            while (script != NULL) {
+                if (NuStrICmp(name, script->name) == 0) {
+                    return script;
+                }
+
+                script = (AISCRIPT *)NuLinkedListGetNext(&global_aiscripts, &script->list_node);
+            }
+        }
+    }
+
+    if (can_use_default) {
+        script = (AISCRIPT *)NuLinkedListGetHead(&global_aiscripts);
+
+        while (script != NULL) {
+            if (NuStrICmp("default", script->name) == 0) {
+                return script;
+            }
+
+            script = (AISCRIPT *)NuLinkedListGetNext(&global_aiscripts, &script->list_node);
+        }
+    }
+
+    return NULL;
 }
 
 void AIScriptClearInterrupt(AISCRIPTPROCESS *processor, char *state_name) {
