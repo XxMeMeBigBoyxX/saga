@@ -6,7 +6,6 @@
 
 #include "decomp.h"
 #include "nu2api.saga/nu3d/NuRenderDevice.h"
-#include "nu2api.saga/nuandroid/ios_graphics.h"
 
 void NuIOSInitOpenGLES(void) {
     BeginCriticalSectionGL("i:/SagaTouch-Android_9176564/nu2api.saga/nuandroid/ios_graphics.cpp", 308);
