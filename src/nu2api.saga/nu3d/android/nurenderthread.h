@@ -8,10 +8,12 @@ i32 renderThread_processRenderScenes(void);
 
 extern "C" {
 #endif
+
     void NuRenderThreadLock(void);
     void NuRenderThreadUnlock(void);
     i32 NuRenderThreadIsLocked(void);
     void NuRenderThreadCreate(void);
+
 #ifdef __cplusplus
 }
 #endif
