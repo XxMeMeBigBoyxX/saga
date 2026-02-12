@@ -1,7 +1,7 @@
+#include "gameapi.saga/ai/aisys/aisys.h"
+
 #include <stdio.h>
 #include <string.h>
-
-#include "gameapi.saga/ai/aisys/aisys.h"
 
 #include "nu2api.saga/nucore/common.h"
 #include "nu2api.saga/nucore/nulist.h"
@@ -10,9 +10,7 @@
 #include "nu2api.saga/nufile/nufile.h"
 #include "nu2api.saga/nufile/nufilepak.h"
 #include "nu2api.saga/nufile/nufpar.h"
-
-#include <stdio.h>
-#include <string.h>
+#include "nu2api.saga/numath/nurand.h"
 
 static void *load_pakfile;
 static char *load_path;
@@ -1378,6 +1376,27 @@ void AIScriptClearInterrupt(AISCRIPTPROCESS *processor, char *state_name) {
     }
 }
 
+i32 AIScriptSetInterrupt(AISCRIPTPROCESS *processor, u8 priority, u8 id, char *state_name, f32 time) {
+    AISTATE *state;
+
+    if (processor->interrupt_priority > priority) {
+        return 0;
+    }
+
+    state = AIStateFind(state_name, processor->script);
+
+    if (state == NULL) {
+        return 0;
+    }
+
+    processor->interrupt_priority = priority;
+    processor->interrupt_id = id;
+    processor->interrupt_state = state;
+    processor->interrupt_timer = time;
+
+    return 1;
+}
+
 void AIScriptSetState(AISCRIPTPROCESS *processor, AISTATE *state) {
     NULISTLNK *action_node;
 
@@ -1418,4 +1437,169 @@ i32 AIScriptSetStateByName(AISCRIPTPROCESS *processor, char *name) {
     }
 
     return 0;
+}
+
+i32 AIScriptSetBaseScriptStateByName(AISCRIPTPROCESS *processor, char *name) {
+    AISTATE *state;
+
+    if (name != NULL && processor != NULL && processor->script != NULL) {
+        state = AIStateFind(name, processor->base_script);
+
+        if (state != NULL) {
+            if (processor->script == processor->base_script) {
+                AIScriptSetState(processor, state);
+
+                return 1;
+            }
+
+            AIScriptProcessorInit(NULL, NULL, processor, NULL, NULL, NULL, 0, processor->base_script, state);
+
+            processor->active_ref_count = 0;
+
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
+void RegisterAIScriptActions(AIACTIONDEF *action_defs) {
+    AIACTIONDEF *def;
+    i16 i;
+
+    game_aiactiondefs = action_defs;
+
+    i = 0;
+    def = &action_defs[0];
+    while (def->name != NULL) {
+        def->idx = i;
+        def->is_game_action = 1;
+
+        def++;
+        i++;
+    }
+
+    i = 0;
+    def = &api_aiactiondefs[0];
+    while (def->name != NULL) {
+        def->idx = i;
+        def->is_game_action = 0;
+
+        def++;
+        i++;
+    }
+}
+
+void RegisterAIScriptConditions(AICONDITIONDEF *cond_defs) {
+    game_aiconditiondefs = cond_defs;
+}
+
+f32 AIParamToFloat(AISCRIPTPROCESS *processor, char *param) {
+    char *cursor;
+    u32 i;
+
+    if (param == NULL) {
+        return 0.0f;
+    }
+
+    if (processor != NULL) {
+        cursor = NuStrIStr(param, "param");
+
+        if (cursor != NULL) {
+            i = NuAToI(cursor);
+
+            if (i < 4) {
+                return processor->params[i];
+            }
+        } else if (processor->script != NULL) {
+            for (i = 0; i < 4; i++) {
+                if (processor->script->params[i].name != NULL &&
+                    NuStrICmp(processor->script->params[i].name, param) == 0) {
+                    return processor->params[i];
+                }
+            }
+        }
+    }
+
+    return NuAToF(param);
+}
+
+static AISCRIPTPROCESS *AiEvalExpressionProcessor;
+static AIPACKET *AiEvalExpressionPacket;
+
+static i32 AiEvalExpressionNameLoopup(char *expr, f32 *float_out, i32 *int_out) {
+    f32 value;
+    i32 got_value;
+
+    got_value = 0;
+    value = 0.0f;
+
+    if (NuStrICmp(expr, "Rand") == 0) {
+        got_value = 1;
+        value = NuRandFloat();
+    } else if (NuStrICmp(expr, "false") == 0) {
+        got_value = 1;
+        value = 0.0f;
+    } else if (NuStrICmp(expr, "true") == 0) {
+        got_value = 1;
+        value = 1.0f;
+    } else if (NuStrICmp(expr, "max") == 0) {
+        got_value = 1;
+        value = 3.4028235e+38f;
+    }
+
+    if (!got_value) {
+        if (GameParamToFloatFn != NULL) {
+            got_value = (*GameParamToFloatFn)(AiEvalExpressionPacket, AiEvalExpressionProcessor, expr, &value);
+        }
+
+        if (!got_value) {
+            value = AIParamToFloat(AiEvalExpressionProcessor, expr);
+        }
+    }
+
+    if (float_out != NULL) {
+        *float_out = value;
+    }
+
+    if (int_out != NULL) {
+        *int_out = value;
+    }
+
+    return 0;
+}
+
+f32 AIParamToFloatEx(AIPACKET *packet, AISCRIPTPROCESS *processor, char *param) {
+    u8 *cursor;
+    f32 result;
+    i32 is_number;
+
+    is_number = 1;
+    cursor = (u8 *)param;
+
+    do {
+        if (*cursor == '\0') {
+            break;
+        }
+
+        if (*cursor == '/' || *cursor - '0' > 9) {
+            is_number = 0;
+            break;
+        }
+
+        cursor++;
+    } while (true);
+
+    if (is_number) {
+        result = NuAToF(param);
+    } else {
+        AiEvalExpressionProcessor = processor;
+        AiEvalExpressionPacket = packet;
+
+        result = NuRDPFVar(param, AiEvalExpressionNameLoopup);
+
+        AiEvalExpressionProcessor = NULL;
+    }
+
+    return result;
 }

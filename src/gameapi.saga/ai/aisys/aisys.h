@@ -344,8 +344,8 @@ typedef struct AISCRIPTACTIONDEF_s {
     char *name;
     AIACTIONFN *eval_fn;
     char unknown;
-    char unknown2;
-    i16 unknown3;
+    char is_game_action;
+    i16 idx;
 } AIACTIONDEF;
 
 typedef struct AISCRIPTCONDITIONDEF_s {
@@ -385,10 +385,18 @@ extern "C" {
                            i32 check_global_scripts);
 
     void AIScriptClearInterrupt(AISCRIPTPROCESS *processor, char *state_name);
+    i32 AIScriptSetInterrupt(AISCRIPTPROCESS *processor, u8 priority, u8 id, char *state_name, f32 time);
     void AIScriptSetState(AISCRIPTPROCESS *processor, AISTATE *state);
     i32 AIScriptSetStateByName(AISCRIPTPROCESS *processor, char *name);
+    i32 AIScriptSetBaseScriptStateByName(AISCRIPTPROCESS *processor, char *name);
 
     AISTATE *AIStateFind(char *name, AISCRIPT *script);
+
+    void RegisterAIScriptActions(AIACTIONDEF *action_defs);
+    void RegisterAIScriptConditions(AICONDITIONDEF *cond_defs);
+
+    f32 AIParamToFloat(AISCRIPTPROCESS *processor, char *param);
+    f32 AIParamToFloatEx(AIPACKET *packet, AISCRIPTPROCESS *processor, char *param);
 #ifdef __cplusplus
 }
 #endif
