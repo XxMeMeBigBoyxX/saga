@@ -3,9 +3,11 @@ cmake_minimum_required(VERSION 3.10)
 project(saga)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
+set(CMAKE_SYSTEM_NAME Linux) 
 
 # add option to compile for host
 option(BUILD_FOR_HOST "Build for host system" OFF)
+option(BUILD_WINDOWS "Build on windows" OFF)
 
 function(get_ndk)
     # Download Android NDK if not present
@@ -61,6 +63,21 @@ else()
     message(STATUS "Building for Android x86")
 
     get_ndk()
+    if (BUILD_WINDOWS)
+        set(CMAKE_C_COMPILER "${CMAKE_SOURCE_DIR}/ndk/android-ndk-r8e/toolchains/x86-4.7/prebuilt/windows-x86_64/bin/i686-linux-android-gcc")
+        set(CMAKE_CXX_COMPILER "${CMAKE_SOURCE_DIR}/ndk/android-ndk-r8e/toolchains/x86-4.7/prebuilt/windows-x86_64/bin/i686-linux-android-g++")
+        set(CMAKE_SYSROOT "${CMAKE_SOURCE_DIR}/ndk/android-ndk-r8e/platforms/android-9/arch-x86")
+        include_directories(SYSTEM "${CMAKE_SOURCE_DIR}/ndk/android-ndk-r8e/sources/cxx-stl/system/include/")
+
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fno-function-sections -fno-data-sections")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-function-sections -fno-data-sections")
+
+        set(GLES2_LIBRARIES "GLESv2")
+        set(CMAKE_SYSTEM_NAME Linux) 
+        set(CMAKE_SYSTEM_PROCESSOR i686)  
+        set(CMAKE_EXECUTABLE_SUFFIX "")
+        set(CMAKE_CROSSCOMPILING TRUE)
+    else()
 
     set(CMAKE_C_COMPILER "${CMAKE_SOURCE_DIR}/ndk/android-ndk-r8e/toolchains/x86-4.7/prebuilt/linux-x86_64/bin/i686-linux-android-gcc")
     set(CMAKE_CXX_COMPILER "${CMAKE_SOURCE_DIR}/ndk/android-ndk-r8e/toolchains/x86-4.7/prebuilt/linux-x86_64/bin/i686-linux-android-g++")
@@ -71,6 +88,8 @@ else()
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-function-sections -fno-data-sections")
 
     set(GLES2_LIBRARIES "GLESv2")
+    endif()
+    
 endif()
 
 set(CMAKE_CXX_STANDARD 11)
@@ -84,7 +103,11 @@ set(CMAKE_BUILD_TYPE Debug)
 
 # disable --dependency-file argument on ld which is too old to support it
 set(CMAKE_LINK_DEPENDS_NO_SHARED ON)
-
+if(NOT BUILD_FOR_HOST)
+    set(CMAKE_PLATFORM_NO_VERSIONED_SONAME 1)
+    set(CMAKE_C_CREATE_SHARED_LIBRARY_FORBIDDEN_FLAGS "")
+    set(CMAKE_CXX_CREATE_SHARED_LIBRARY_FORBIDDEN_FLAGS "")
+endif()
 set(SAGA_SOURCE_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/batman.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/globals.cpp
@@ -254,7 +277,15 @@ set(SAGA_INCLUDE_DIRS
 )
 
 add_executable(saga ${SAGA_SOURCE_FILES})
+if(BUILD_FOR_HOST)
 set_target_properties(saga PROPERTIES ENABLE_EXPORTS TRUE)
+else()
+        set_target_properties(saga PROPERTIES LINK_FLAGS "-rdynamic")
+        set(CMAKE_CXX_LINK_EXECUTABLE "<CMAKE_CXX_COMPILER> <FLAGS> <CMAKE_CXX_LINK_FLAGS> <LINK_FLAGS> <OBJECTS> -o <TARGET> <LINK_LIBRARIES>")
+        set(CMAKE_C_LINK_EXECUTABLE   "<CMAKE_C_COMPILER>   <FLAGS> <CMAKE_C_LINK_FLAGS>   <LINK_FLAGS> <OBJECTS> -o <TARGET> <LINK_LIBRARIES>")
+        set(CMAKE_C_STANDARD_LIBRARIES "")
+        set(CMAKE_CXX_STANDARD_LIBRARIES "")
+endif()
 target_include_directories(saga PUBLIC ${SAGA_INCLUDE_DIRS})
 target_link_libraries(saga PRIVATE ${GLES2_LIBRARIES})
 
