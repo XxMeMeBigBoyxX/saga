@@ -13,7 +13,7 @@
 #include "globals.h"
 #include "nu2api.saga/nu3d/nucamera.h"
 #include "nu2api.saga/nu3d/nutex.h"
-#include "nu2api.saga/nuandroid/nuios.h"
+#include "nu2api.saga/nuandroid/ios_graphics.h"
 #include "nu2api.saga/nucore/bgproc.h"
 #include "nu2api.saga/nucore/nuapi.h"
 #include "nu2api.saga/nucore/numemory.h"

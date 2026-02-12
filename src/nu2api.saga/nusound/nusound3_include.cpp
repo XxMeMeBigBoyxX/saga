@@ -2,7 +2,7 @@
 
 #include "decomp.h"
 
-#include "nu2api.saga/nuandroid/nuios.h"
+#include "nu2api.saga/nuandroid/ios_graphics.h"
 #include "nu2api.saga/nucore/nucore.hpp"
 #include "nu2api.saga/nucore/numemory.h"
 #include "nu2api.saga/nucore/nuthread.h"

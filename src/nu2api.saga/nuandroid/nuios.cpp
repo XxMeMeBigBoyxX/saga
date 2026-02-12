@@ -1,6 +1,6 @@
 #include "decomp.h"
 
-#include "nu2api.saga/nuandroid/nuios.h"
+#include "nu2api.saga/nuandroid/ios_graphics.h"
 
 #include <pthread.h>
 #include <string.h>

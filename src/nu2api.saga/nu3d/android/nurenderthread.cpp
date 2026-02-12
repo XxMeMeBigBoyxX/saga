@@ -4,7 +4,7 @@
 
 #include "decomp.h"
 #include "nu2api.saga/nu3d/NuRenderDevice.h"
-#include "nu2api.saga/nuandroid/nuios.h"
+#include "nu2api.saga/nuandroid/ios_graphics.h"
 #include "nu2api.saga/nucore/nuthread.h"
 
 static volatile i32 renderThreadCS;

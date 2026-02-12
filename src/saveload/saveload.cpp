@@ -6,11 +6,11 @@
 
 #include "saveload/saveload.h"
 
-#include "nu2api.saga/nuandroid/nuios.h"
+#include "nu2api.saga/nuandroid/ios_graphics.h"
 #include "nu2api.saga/nucore/numemory.h"
 #include "nu2api.saga/nucore/nustring.h"
-#include "nu2api.saga/nucore/nutime.h"
 #include "nu2api.saga/nucore/nuthread.h"
+#include "nu2api.saga/nucore/nutime.h"
 
 #include "export.h"
 

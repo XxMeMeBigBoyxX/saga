@@ -6,7 +6,7 @@
 
 #include "decomp.h"
 #include "lostandfound/tmclient.h"
-#include "nu2api.saga/nuandroid/nuios.h"
+#include "nu2api.saga/nuandroid/ios_graphics.h"
 #include "nu2api.saga/nucore/nuapi.h"
 #include "nu2api.saga/nucore/nustring.h"
 #include "nu2api.saga/nucore/nuthread.h"

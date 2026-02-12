@@ -1,7 +1,7 @@
 #include "nu2api.saga/nu3d/nushader.h"
 
 #include "nu2api.saga/nu3d/NuRenderDevice.h"
-#include "nu2api.saga/nuandroid/nuios.h"
+#include "nu2api.saga/nuandroid/ios_graphics.h"
 #include "nu2api.saga/nucore/bgproc.h"
 
 static f32 water_theta_step = 0.26666668f;
