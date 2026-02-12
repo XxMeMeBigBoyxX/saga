@@ -294,8 +294,7 @@ static AICONDITIONDEF *AIConditionFind(char *name) {
     return NULL;
 }
 
-__attribute__((noinline)) static void AIScriptCopyConditions(NULISTHDR *src, NULISTHDR *dst, VARIPTR *buf,
-                                                             VARIPTR *buf_end) {
+static void AIScriptCopyConditions(NULISTHDR *src, NULISTHDR *dst, VARIPTR *buf, VARIPTR *buf_end) {
     AICONDITION *src_cond;
 
     src_cond = (AICONDITION *)NuLinkedListGetHead(src);
@@ -812,8 +811,125 @@ static AISCRIPT *AIScriptLoadPakFile(void *pak, char *script_file, char *path, V
     return script;
 }
 
-static i32 AIScriptBuildDerivedScript(AISCRIPT *script, VARIPTR *buf, VARIPTR *buf_end, AISYS *sys) {
+static AISTATE *AIScriptCopyState(AISTATE *src, VARIPTR *buf, VARIPTR *buf_end) {
+    AISTATE *dst;
+    AIREFSCRIPT *src_ref;
+    AIREFSCRIPT *dst_ref;
 
+    dst = (AISTATE *)AIScriptBufferAlloc(buf, buf_end, sizeof(AISTATE));
+
+    dst->name = AIScriptCopyString(src->name, buf, buf_end);
+
+    AIScriptCopyConditions(&src->conditions, &dst->conditions, buf, buf_end);
+    AIScriptCopyActions(&src->actions, &dst->actions, buf, buf_end);
+
+    src_ref = (AIREFSCRIPT *)NuLinkedListGetHead(&src->ref_scripts);
+
+    while (src_ref != NULL) {
+        dst_ref = (AIREFSCRIPT *)AIScriptBufferAlloc(buf, buf_end, sizeof(AIREFSCRIPT));
+
+        dst_ref->name = AIScriptCopyString(src_ref->name, buf, buf_end);
+        dst_ref->return_state_name = AIScriptCopyString(src_ref->return_state_name, buf, buf_end);
+
+        dst_ref->check_global_scripts = src_ref->check_global_scripts;
+        dst_ref->check_level_scripts = src_ref->check_level_scripts;
+
+        AIScriptCopyConditions(&src_ref->conditions, &dst_ref->conditions, buf, buf_end);
+
+        NuLinkedListAppend(&dst->ref_scripts, &dst_ref->list_node);
+
+        src_ref = (AIREFSCRIPT *)NuLinkedListGetNext(&src->ref_scripts, &src_ref->list_node);
+    }
+
+    return dst;
+}
+
+static i32 AIScriptBuildDerivedScript(AISCRIPT *script, VARIPTR *buf, VARIPTR *buf_end, AISYS *sys) {
+    AISCRIPT *src_script;
+    AISTATE *src_state;
+    i32 should_copy;
+    AISTATE *state;
+    AISTATE *new_state;
+    i32 i;
+    AICONDITION *condition;
+
+    if (script == NULL) {
+        return 1;
+    }
+
+    if (script->derived_from == NULL) {
+        return 1;
+    }
+
+    if (!script->is_derived) {
+        return 1;
+    }
+
+    src_script = AIScriptFind(sys, script->derived_from, 0, script->is_derived_from_level_script,
+                              !script->is_derived_from_level_script);
+
+    if (src_script == NULL) {
+        // Debug logging goes here.
+    } else if (src_script == script) {
+        // Do nothing.
+    } else {
+        if (src_script->is_derived) {
+            return 0;
+        }
+
+        src_state = (AISTATE *)NuLinkedListGetHead(&src_script->states);
+
+        while (src_state != NULL) {
+            should_copy = 1;
+
+            state = (AISTATE *)NuLinkedListGetHead(&script->states);
+
+            while (state != NULL) {
+                if (NuStrICmp(src_state->name, state->name) == 0) {
+                    should_copy = 0;
+                    break;
+                }
+
+                state = (AISTATE *)NuLinkedListGetNext(&script->states, &state->list_node);
+            }
+
+            if (should_copy) {
+                new_state = AIScriptCopyState(src_state, buf, buf_end);
+
+                if (new_state != NULL) {
+                    NuLinkedListAppend(&script->states, &new_state->list_node);
+                }
+            }
+
+            src_state = (AISTATE *)NuLinkedListGetNext(&src_script->states, &src_state->list_node);
+        }
+
+        for (i = 0; i < 4; i++) {
+            if (src_script->params[i].name != NULL && script->params[i].name == NULL) {
+                script->params[i].name = AIScriptCopyString(src_script->params[i].name, buf, buf_end);
+                script->params[i].default_val = src_script->params[i].default_val;
+            }
+        }
+
+        state = (AISTATE *)NuLinkedListGetHead(&script->states);
+
+        while (state != NULL) {
+            condition = (AICONDITION *)NuLinkedListGetHead(&state->conditions);
+
+            while (condition != NULL) {
+                condition->next_state = AIStateFind(condition->next_state_name, script);
+
+                condition = (AICONDITION *)NuLinkedListGetNext(&state->conditions, &condition->list_node);
+            }
+
+            state = (AISTATE *)NuLinkedListGetNext(&script->states, &state->list_node);
+        }
+    }
+
+    script->is_level_script = 0;
+    script->is_derived = 0;
+
+    return 1;
 }
 
 void AIScriptLoadAllPakFile(void *pak, char *path, VARIPTR *buf, VARIPTR *buf_end, AISYS *sys) {
