@@ -162,8 +162,7 @@ static AIACTIONDEF *AIActionFind(char *name) {
     return NULL;
 }
 
-__attribute__((noinline)) static void AIScriptCopyActions(NULISTHDR *src, NULISTHDR *dst, VARIPTR *buf,
-                                                          VARIPTR *buf_end) {
+static void AIScriptCopyActions(NULISTHDR *src, NULISTHDR *dst, VARIPTR *buf, VARIPTR *buf_end) {
     AIACTION *src_action;
 
     src_action = (AIACTION *)NuLinkedListGetHead(src);
@@ -828,15 +827,17 @@ static AISTATE *AIScriptCopyState(AISTATE *src, VARIPTR *buf, VARIPTR *buf_end) 
     while (src_ref != NULL) {
         dst_ref = (AIREFSCRIPT *)AIScriptBufferAlloc(buf, buf_end, sizeof(AIREFSCRIPT));
 
-        dst_ref->name = AIScriptCopyString(src_ref->name, buf, buf_end);
-        dst_ref->return_state_name = AIScriptCopyString(src_ref->return_state_name, buf, buf_end);
+        if (dst_ref != NULL) {
+            dst_ref->name = AIScriptCopyString(src_ref->name, buf, buf_end);
+            dst_ref->return_state_name = AIScriptCopyString(src_ref->return_state_name, buf, buf_end);
 
-        dst_ref->check_global_scripts = src_ref->check_global_scripts;
-        dst_ref->check_level_scripts = src_ref->check_level_scripts;
+            dst_ref->check_global_scripts = src_ref->check_global_scripts;
+            dst_ref->check_level_scripts = src_ref->check_level_scripts;
 
-        AIScriptCopyConditions(&src_ref->conditions, &dst_ref->conditions, buf, buf_end);
+            AIScriptCopyConditions(&src_ref->conditions, &dst_ref->conditions, buf, buf_end);
 
-        NuLinkedListAppend(&dst->ref_scripts, &dst_ref->list_node);
+            NuLinkedListAppend(&dst->ref_scripts, &dst_ref->list_node);
+        }
 
         src_ref = (AIREFSCRIPT *)NuLinkedListGetNext(&src->ref_scripts, &src_ref->list_node);
     }
@@ -868,10 +869,10 @@ static i32 AIScriptBuildDerivedScript(AISCRIPT *script, VARIPTR *buf, VARIPTR *b
     src_script = AIScriptFind(sys, script->derived_from, 0, script->is_derived_from_level_script,
                               !script->is_derived_from_level_script);
 
-    if (src_script == NULL) {
-        // Debug logging goes here.
-    } else if (src_script == script) {
+    if (src_script == script) {
         // Do nothing.
+    } else if (src_script == NULL) {
+        // Debug logging goes here.
     } else {
         if (src_script->is_derived) {
             return 0;
@@ -946,7 +947,7 @@ void AIScriptLoadAllPakFile(void *pak, char *path, VARIPTR *buf, VARIPTR *buf_en
     AISCRIPT *script;
     AISTATE *state;
     AICONDITION *condition;
-    char keep_processing;
+    i32 is_done;
 
     if (sys != NULL) {
         scripts = &sys->scripts;
@@ -982,38 +983,39 @@ void AIScriptLoadAllPakFile(void *pak, char *path, VARIPTR *buf, VARIPTR *buf_en
             }
 
             NuFParClose(parser);
-            NuFileClose(file);
+        }
 
-            for (j = 0; j != i; j++) {
-                script = AIScriptLoadPakFile(pak, script_files[j], path, buf, buf_end);
+        NuFileClose(file);
 
-                if (script != NULL) {
-                    NuLinkedListAppend(scripts, &script->list_node);
+        for (; i != 0; i--) {
+            script = AIScriptLoadPakFile(pak, script_files[i], path, buf, buf_end);
 
-                    if (sys != NULL) {
-                        script->is_level_script = true;
-                    }
+            if (script != NULL) {
+                NuLinkedListAppend(scripts, &script->list_node);
+
+                if (sys != NULL) {
+                    script->is_level_script = 1;
                 }
             }
-        } else {
-            NuFileClose(file);
         }
     }
 
-    if (sys != NULL) {
-        do {
-            keep_processing = true;
-            script = (AISCRIPT *)NuLinkedListGetHead(&sys->scripts);
-
-            while (script != NULL) {
-                if (AIScriptBuildDerivedScript(script, buf, buf_end, sys) == 0) {
-                    keep_processing = false;
-                }
-
-                script = (AISCRIPT *)NuLinkedListGetNext(&sys->scripts, &script->list_node);
-            }
-        } while (!keep_processing);
+    if (sys == NULL) {
+        return;
     }
+
+    do {
+        is_done = 1;
+        script = (AISCRIPT *)NuLinkedListGetHead(&sys->scripts);
+
+        while (script != NULL) {
+            if (AIScriptBuildDerivedScript(script, buf, buf_end, sys) == 0) {
+                is_done = 0;
+            }
+
+            script = (AISCRIPT *)NuLinkedListGetNext(&sys->scripts, &script->list_node);
+        }
+    } while (!is_done);
 }
 
 void AIScriptOpenPakFileParse(AISCRIPT **script_ref, void *pak, char *filename, char *path, VARIPTR *buf,
