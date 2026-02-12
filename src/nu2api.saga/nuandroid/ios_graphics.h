@@ -21,6 +21,7 @@ extern "C" {
     i32 NuCheckGLErrorsFL(char *file, i32 line);
     void NuIOS_WaitUntilAllowedToRender(void);
     void NuIOS_SetRenderIncomplete(void);
+    void NuIOS_SetRenderComplete(void);
 #ifdef __cplusplus
 }
 #endif

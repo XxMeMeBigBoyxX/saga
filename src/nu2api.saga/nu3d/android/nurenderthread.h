@@ -4,6 +4,7 @@
 
 #ifdef __cplusplus
 void *renderThread_main(void *arg);
+i32 renderThread_processRenderScenes(void);
 
 extern "C" {
 #endif

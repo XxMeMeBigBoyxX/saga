@@ -7,6 +7,7 @@ class NuRenderDevice {
     void SetThisTreadAsRender();
     int BeginCriticalSection(const char *file, int line);
     void EndCriticalSection(const char *file, int line);
+    void SwapBuffers();
 };
 
 extern NuRenderDevice g_renderDevice;
@@ -16,6 +17,7 @@ extern "C" {
     void NuRenderSetThisTreadAsRender(void);
     void BeginCriticalSectionGL(const char *file, int line);
     void EndCriticalSectionGL(const char *file, int line);
+    void NuRenderDeviceSwapBuffers(void);
 #ifdef __cplusplus
 }
 #endif

@@ -18,6 +18,10 @@ void NuRenderDevice::EndCriticalSection(const char *file, int line) {
     UNIMPLEMENTED();
 }
 
+void NuRenderDevice::SwapBuffers() {
+    UNIMPLEMENTED();
+}
+
 void NuRenderSetThisTreadAsRender() {
     g_renderDevice.SetThisTreadAsRender();
 }
@@ -28,4 +32,8 @@ void BeginCriticalSectionGL(const char *file, int line) {
 
 void EndCriticalSectionGL(const char *file, int line) {
     g_renderDevice.EndCriticalSection(file, line);
+}
+
+void NuRenderDeviceSwapBuffers() {
+    g_renderDevice.SwapBuffers();
 }

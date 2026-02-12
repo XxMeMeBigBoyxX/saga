@@ -1,5 +1,6 @@
 #include "nu2api.saga/nu3d/android/nurenderthread.h"
 
+#include <GLES2/gl2.h>
 #include <pthread.h>
 
 #include "decomp.h"
@@ -34,5 +35,23 @@ void NuRenderThreadCreate(void) {
 }
 
 void *renderThread_main(void *arg) {
+    NuRenderSetThisTreadAsRender();
+    NuIOSInitOpenGLES();
+
+    for (;;) {
+        NuIOS_WaitUntilAllowedToRender();
+        NuIOS_SetRenderIncomplete();
+        BeginCriticalSectionGL("i:/SagaTouch-Android_9176564/nu2api.saga/nu3d/android/nurenderthread.cpp", 259);
+        NuRenderThreadLock();
+        glFrontFace(GL_CW);
+        renderThread_processRenderScenes();
+        NuRenderThreadUnlock();
+        NuRenderDeviceSwapBuffers();
+        NuIOS_SetRenderComplete();
+        EndCriticalSectionGL("i:/SagaTouch-Android_9176564/nu2api.saga/nu3d/android/nurenderthread.cpp", 269);
+    }
+}
+
+i32 renderThread_processRenderScenes(void) {
     UNIMPLEMENTED();
 }

@@ -76,8 +76,8 @@ static pthread_cond_t g_renderThreadDoneThreadCondition;
 static pthread_mutex_t g_awaitingRenderWakeMutex;
 static pthread_cond_t g_awaitingRenderWakeCondition;
 static i32 g_awaitingRenderWake;
-static pthread_t *g_wakeRenderThread;
-static pthread_t *g_renderThreadDoneThread;
+static i32 g_wakeRenderThread;
+static i32 g_renderThreadDoneThread;
 
 void NuIOS_InitRenderThread() {
     pthread_mutex_init(&g_wakeRenderMutex, NULL);
@@ -94,10 +94,10 @@ void NuIOS_WaitUntilAllowedToRender(void) {
     pthread_cond_signal(&g_awaitingRenderWakeCondition);
     pthread_mutex_unlock(&g_awaitingRenderWakeMutex);
     pthread_mutex_lock(&g_wakeRenderMutex);
-    while (g_wakeRenderThread == NULL) {
+    while (g_wakeRenderThread == 0) {
         pthread_cond_wait(&g_wakeRenderCondition, &g_wakeRenderMutex);
     }
-    g_wakeRenderThread = NULL;
+    g_wakeRenderThread = 0;
     pthread_mutex_lock(&g_awaitingRenderWakeMutex);
     g_awaitingRenderWake = 0;
     pthread_mutex_unlock(&g_awaitingRenderWakeMutex);
@@ -106,6 +106,15 @@ void NuIOS_WaitUntilAllowedToRender(void) {
 
 void NuIOS_SetRenderIncomplete(void) {
     pthread_mutex_lock(&g_renderThreadDoneThreadMutex);
-    g_renderThreadDoneThread = NULL;
+    g_renderThreadDoneThread = 0;
+    pthread_mutex_unlock(&g_renderThreadDoneThreadMutex);
+}
+
+void NuIOS_SetRenderComplete(void) {
+    pthread_mutex_lock(&g_renderThreadDoneThreadMutex);
+    if (g_renderThreadDoneThread == 0) {
+        g_renderThreadDoneThread = 1;
+        pthread_cond_signal(&g_renderThreadDoneThreadCondition);
+    }
     pthread_mutex_unlock(&g_renderThreadDoneThreadMutex);
 }
