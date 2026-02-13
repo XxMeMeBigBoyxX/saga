@@ -226,8 +226,8 @@ void NuCameraBuildClipPlanes(void) {
     near_dist_sq = global_camera.near_clip * global_camera.near_clip;
 
     // Build the frustum planes.
-    left_right = zx * global_camera.near_clip;
-    top_bottom = zy * global_camera.near_clip;
+    left_right = zx * near_dist;
+    top_bottom = zy * near_dist;
 
     left_right_inv = 1.0f / NuFsqrt(left_right * left_right + near_dist_sq);
     top_bottom_inv = 1.0f / NuFsqrt(top_bottom * top_bottom + near_dist_sq);
@@ -235,13 +235,13 @@ void NuCameraBuildClipPlanes(void) {
     NuMtxSetZero(&frustum_planes);
 
     frustum_planes.m00 = -near_dist * left_right_inv;
-    frustum_planes.m12 = -near_dist * top_bottom_inv;
     frustum_planes.m20 = left_right * left_right_inv;
+    frustum_planes.m12 = -near_dist * top_bottom_inv;
     frustum_planes.m22 = top_bottom * top_bottom_inv;
 
     frustum_planes.m01 = -frustum_planes.m00;
-    frustum_planes.m13 = -frustum_planes.m12;
     frustum_planes.m21 = frustum_planes.m20;
+    frustum_planes.m13 = -frustum_planes.m12;
     frustum_planes.m23 = frustum_planes.m22;
 
     // Build the scissor planes.
@@ -254,20 +254,20 @@ void NuCameraBuildClipPlanes(void) {
     NuMtxSetZero(&scissor_planes);
 
     scissor_planes.m00 = -near_dist * left_right_inv;
-    scissor_planes.m12 = -near_dist * top_bottom_inv;
     scissor_planes.m20 = left_right * left_right_inv;
-    scissor_planes.m22 = near_dist * top_bottom_inv;
+    scissor_planes.m12 = -near_dist * top_bottom_inv;
+    scissor_planes.m22 = top_bottom * top_bottom_inv;
 
     scissor_planes.m01 = -scissor_planes.m00;
-    scissor_planes.m13 = -scissor_planes.m12;
     scissor_planes.m21 = scissor_planes.m20;
+    scissor_planes.m13 = -scissor_planes.m12;
     scissor_planes.m23 = scissor_planes.m22;
 
     NuMtxMulH(&ClipPlanes.frustum_planes, &vmtx, &frustum_planes);
     NuMtxMulH(&ClipPlanes.scissor_planes, &vmtx, &scissor_planes);
 
-    dot = global_camera.mtx.m30 * global_camera.mtx.m20 + global_camera.mtx.m31 * global_camera.mtx.m21 +
-          global_camera.mtx.m32 * global_camera.mtx.m22;
+    dot = global_camera.mtx.m20 * global_camera.mtx.m30 + global_camera.mtx.m21 * global_camera.mtx.m31 +
+          global_camera.mtx.m22 * global_camera.mtx.m32;
 
     ClipPlanes.near_plane.x = global_camera.mtx.m20;
     ClipPlanes.near_plane.y = global_camera.mtx.m21;
