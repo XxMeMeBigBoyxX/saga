@@ -216,7 +216,10 @@ extern "C" {
     /// @return 1 if the vectors are equal, 0 otherwise
     int NuVecCompareTolerance(NUVEC *a, NUVEC *b, f32 tolerance);
 
-    void NuVecMtxTransform(NUVEC *v, NUVEC *v0, NUMTX *m0);
+    void NuVecMtxTransform(NUVEC *out, NUVEC *v, NUMTX *m);
+    void NuVecMtxRotate(NUVEC *out, NUVEC *v, NUMTX *m);
+    void NuVecMtxScale(NUVEC *out, NUVEC *v, NUMTX *m);
+    void NuVecMtxTranslate(NUVEC *out, NUVEC *v, NUMTX *m);
 #ifdef __cplusplus
 }
 #endif

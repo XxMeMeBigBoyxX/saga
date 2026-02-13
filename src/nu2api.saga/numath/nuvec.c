@@ -236,10 +236,32 @@ int NuVecCompareTolerance(NUVEC *a, NUVEC *b, f32 tolerance) {
     }
 }
 
-void NuVecMtxTransform(NUVEC *v, NUVEC *v0, NUMTX *m0) {
-    f32 y = v0->x * m0->m01 + v0->y * m0->m11 + v0->z * m0->m21 + m0->m31;
-    f32 z = v0->x * m0->m02 + v0->y * m0->m12 + v0->z * m0->m22 + m0->m32;
-    v->x = v0->x * m0->m00 + v0->y * m0->m10 + v0->z * m0->m20 + m0->m30;
-    v->y = y;
-    v->z = z;
+void NuVecMtxTransform(NUVEC *out, NUVEC *v, NUMTX *m) {
+    f32 y = v->x * m->m01 + v->y * m->m11 + v->z * m->m21 + m->m31;
+    f32 z = v->x * m->m02 + v->y * m->m12 + v->z * m->m22 + m->m32;
+
+    out->x = v->x * m->m00 + v->y * m->m10 + v->z * m->m20 + m->m30;
+    out->y = y;
+    out->z = z;
+}
+
+void NuVecMtxRotate(NUVEC *out, NUVEC *v, NUMTX *m) {
+    f32 y = v->x * m->m01 + v->y * m->m11 + v->z * m->m21;
+    f32 z = v->x * m->m02 + v->y * m->m12 + v->z * m->m22;
+
+    out->x = v->x * m->m00 + v->y * m->m10 + v->z * m->m20;
+    out->y = y;
+    out->z = z;
+}
+
+void NuVecMtxScale(NUVEC *out, NUVEC *v, NUMTX *m) {
+    out->x = v->x * m->m00;
+    out->y = v->y * m->m11;
+    out->z = v->z * m->m22;
+}
+
+void NuVecMtxTranslate(NUVEC *out, NUVEC *v, NUMTX *m) {
+    out->x = v->x + m->m30;
+    out->y = v->y + m->m31;
+    out->z = v->z + m->m32;
 }
