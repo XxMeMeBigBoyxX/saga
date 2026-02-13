@@ -2,17 +2,46 @@
 
 #include "nu2api.saga/numath/nuvec.h"
 
+typedef struct numtlattrib_s {
+    u32 alpha_mode : 4;
+    u32 filter_mode : 2;
+
+    u32 unknown_0_64_128 : 2;
+
+    u32 unknown_1_1_2 : 2;
+    u32 unknown_1_4_8 : 2;
+
+    u32 cull_mode : 2;
+    u32 z_mode : 2;
+
+    u32 unknown_2_1_2 : 2;
+    u32 unknown_2_4 : 1;
+    u32 unknown_2_8 : 1;
+    u32 alpha_test : 3;
+    u32 alpha_ref : 8;
+
+    u32 alpha_fail : 2;
+
+    u32 unknown_4 : 30;
+} NUMTLATTRIB;
+
 typedef struct numtl_s {
-    char filler1[0x40];
-    unsigned char unk_flag1; // 0x40
-    unsigned char unk_flag2; // 0x41
-    unsigned char unk_flag3; // 0x42
-    char filler2[0x11];      // 0x43-0x53
-    NUVEC scale;             // 0x54
-    char filler3[0x10];      // 0x60-0x6F
-    float opacity;           // 0x70
-    u16 tex_id;              // 0x74
-    char filler4[0x24E];     // 0x76-0x2C3
+    struct numtl_s *next;
+    struct numtl_s *prev;
+
+    // Type uncertain.
+    i32 unknown_08;
+
+    char filler1[0x34];
+
+    NUMTLATTRIB attribs;
+
+    char filler2[0xc];   // 0x48-0x53
+    NUVEC scale;         // 0x54
+    char filler3[0x10];  // 0x60-0x6F
+    float opacity;       // 0x70
+    u16 tex_id;          // 0x74
+    char filler4[0x24E]; // 0x76-0x2C3
 } NUMTL;
 
 typedef struct nushadermtldesc_s {

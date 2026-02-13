@@ -77,15 +77,15 @@ void MenuInitialiseEx(MENUFNINFO *menu_infos, int menu_infos_count, int language
 
     NUMTL *menu_fade_mtl = NuMtlCreate(1);
     MenuFadeMtl = menu_fade_mtl;
-    unsigned char flag2 = menu_fade_mtl->unk_flag2;
-    unsigned char flag1 = menu_fade_mtl->unk_flag1;
-    unsigned char flag3 = menu_fade_mtl->unk_flag3;
-    flag2 = (flag2 & 0x30) | 0xc5;
-    flag1 = (flag1 & 0xc0) | 0x11;
-    flag3 = (flag3 & 0xfc) | 0x06;
-    menu_fade_mtl->unk_flag2 = flag2;
-    menu_fade_mtl->unk_flag3 = flag3;
-    menu_fade_mtl->unk_flag1 = flag1;
+
+    menu_fade_mtl->attribs.alpha_mode = 1;
+    menu_fade_mtl->attribs.filter_mode = 1;
+    menu_fade_mtl->attribs.unknown_1_1_2 = 1;
+    menu_fade_mtl->attribs.unknown_1_4_8 = 1;
+    menu_fade_mtl->attribs.z_mode = 3;
+    menu_fade_mtl->attribs.unknown_2_1_2 = 2;
+    menu_fade_mtl->attribs.unknown_2_4 = 1;
+
     NuMtlUpdate(menu_fade_mtl);
 }
 
