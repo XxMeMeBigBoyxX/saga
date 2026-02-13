@@ -44,6 +44,11 @@ extern "C" {
     extern NUMTX smtx;
     extern NUMTX vmtx;
 
+    extern NUMTX vpmtx;
+
+    extern NUMTX vpc_sci_mtx;
+    extern NUMTX vpc_vport_mtx;
+
     extern NUCLIPPLANES ClipPlanes;
 
     extern f32 zx;
@@ -55,12 +60,19 @@ extern "C" {
     NUCAMERA *NuCameraCreate(void);
     void NuCameraDestroy(NUCAMERA *cam);
 
+    void NuCameraInitClipTestVU0();
+
+    void NuCameraGet(NUCAMERA *out);
+
     NUCAMERA *NuCameraGetCam(void);
 
     NUMTX *NuCameraGetMtx(void);
+    void NuCameraGetClipMtx(NUMTX *viewport, NUMTX *scissor);
     NUMTX *NuCameraGetProjectionMtx(void);
     NUMTX *NuCameraGetScalingMtx(void);
     NUMTX *NuCameraGetViewMtx(void);
+    NUMTX *NuCameraGetVPMtx(void);
+    NUMTX *NuCameraGetVPCMtx(void);
 
     NUMTX *NuCameraGetClipPlanes(void);
     void NuCameraGetPosition(NUVEC *v);
@@ -72,6 +84,7 @@ extern "C" {
     i32 NuCameraClipTestSphere(NUVEC *pnt, float radius, NUMTX *wm);
 
     void NuCameraCalcRay(float screen_x, float screen_y, NUVEC *ray_start, NUVEC *ray_end, NUCAMERA *cam);
+    void NuCameraRayCast(NUVEC *pnt, f32 x, f32 y);
 #ifdef __cplusplus
 }
 #endif

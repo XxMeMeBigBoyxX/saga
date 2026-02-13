@@ -7,6 +7,7 @@
 #include "nu2api.saga/numath/nufloat.h"
 #include "nu2api.saga/numath/numtx.h"
 #include "nu2api.saga/numath/nutrig.h"
+#include "nu2api.saga/numath/nuvec.h"
 #include "nu2api.saga/numath/nuvec4.h"
 
 NUCAMERA global_camera;
@@ -22,6 +23,18 @@ NUMTX smtx = {
     1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f,
 };
 NUMTX vmtx = {
+    1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+};
+
+NUMTX vpmtx = {
+    1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+};
+
+NUMTX vpc_sci_mtx = {
+    1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+};
+
+NUMTX vpc_vport_mtx = {
     1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f,
 };
 
@@ -77,8 +90,38 @@ NUCAMERA *NuCameraGetCam(void) {
     return &global_camera;
 }
 
+NUMTX *NuCameraGetMtx(void) {
+    return &global_camera.mtx;
+}
+
+void NuCameraGetClipMtx(NUMTX *viewport, NUMTX *scissor) {
+    if (viewport != NULL) {
+        memcpy(viewport, &vpc_vport_mtx, sizeof(NUMTX));
+    }
+
+    if (scissor != NULL) {
+        memcpy(scissor, &vpc_sci_mtx, sizeof(NUMTX));
+    }
+}
+
+NUMTX *NuCameraGetProjectionMtx(void) {
+    return &pmtx;
+}
+
+NUMTX *NuCameraGetScalingMtx(void) {
+    return &smtx;
+}
+
 NUMTX *NuCameraGetViewMtx(void) {
     return &vmtx;
+}
+
+NUMTX *NuCameraGetVPMtx(void) {
+    return &vpmtx;
+}
+
+NUMTX *NuCameraGetVPCMtx(void) {
+    return &vpc_vport_mtx;
 }
 
 NUMTX *NuCameraGetClipPlanes(void) {
@@ -130,18 +173,6 @@ void NuCameraGetTrans(NUVEC *v) {
     memcpy(v, &global_camera.mtx.m30, sizeof(NUVEC));
 }
 
-NUMTX *NuCameraGetProjectionMtx(void) {
-    return &pmtx;
-}
-
-NUMTX *NuCameraGetScalingMtx(void) {
-    return &smtx;
-}
-
-NUMTX *NuCameraGetMtx(void) {
-    return &global_camera.mtx;
-}
-
 void NuCameraCalcRay(float screen_x, float screen_y, NUVEC *ray_start, NUVEC *ray_end, NUCAMERA *cam) {
     NUVEC near_point;
     NUVEC far_point;
@@ -166,6 +197,14 @@ void NuCameraCalcRay(float screen_x, float screen_y, NUVEC *ray_start, NUVEC *ra
 
     NuVecMtxTransform(ray_start, &near_point, &cam->mtx);
     NuVecMtxTransform(ray_end, &far_point, &cam->mtx);
+}
+
+void NuCameraRayCast(NUVEC *pnt, f32 x, f32 y) {
+    pnt->x = x * zx;
+    pnt->y = y * zy;
+    pnt->z = 1.0f;
+
+    NuVecMtxRotate(pnt, pnt, &global_camera.mtx);
 }
 
 void NuCameraBuildClipPlanes(void) {
