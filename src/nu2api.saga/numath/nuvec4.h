@@ -1,5 +1,6 @@
 #pragma once
 
+#include "nu2api.saga/numath/numtx.h"
 #include "nu2api.saga/numath/nuvec.h"
 
 typedef struct nuvec4_s {

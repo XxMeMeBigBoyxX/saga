@@ -5,7 +5,7 @@
 typedef struct numtx_s NUMTX;
 
 /// @brief A 3-dimensional vector
-struct nuvec_s {
+typedef struct nuvec_s {
     /// @brief The x component of the vector
     f32 x;
 
@@ -14,9 +14,7 @@ struct nuvec_s {
 
     /// @brief The z component of the vector
     f32 z;
-};
-
-typedef struct nuvec_s NUVEC;
+} NUVEC;
 
 extern NUVEC v000;
 extern NUVEC v100;
