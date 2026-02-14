@@ -33,6 +33,7 @@ typedef struct nuclipplanes_s {
 } NUCLIPPLANES;
 
 #ifdef __cplusplus
+
 void NuCameraBuildClipPlanes(void);
 
 extern "C" {

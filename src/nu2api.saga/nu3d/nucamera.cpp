@@ -86,6 +86,10 @@ f32 NuCameraDistSqr(NUVEC *v) {
     return NuVecDistSqr(v, NUMTX_GET_ROW_VEC(&global_camera.mtx, 3), NULL);
 }
 
+void NuCameraGet(NUCAMERA *out) {
+    *out = global_camera;
+}
+
 NUCAMERA *NuCameraGetCam(void) {
     return &global_camera;
 }
