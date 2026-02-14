@@ -4,6 +4,9 @@
 
 #define NURNDR_STREAM_MAX_BUFFERS 2
 
+typedef struct rndrstream_s {
+} RNDRSTREAM;
+
 #ifdef __cplusplus
 
 void NuRndrStreamInit(int stream_buffer_size, VARIPTR *buffer);

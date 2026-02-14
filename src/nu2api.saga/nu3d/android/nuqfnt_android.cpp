@@ -4,18 +4,22 @@
 
 #include "nu2api.saga/nu3d/numtl.h"
 #include "nu2api.saga/nucore/common.h"
+#include "nu2api.saga/numath/numtx.h"
+#include "nu2api.saga/numath/nuvec.h"
 
 typedef struct vufnt_android_s {
     u32 color_abgr;
 
     // Fields uncertain.
-    u8 unknown_04[0x4c];
+    u8 unknown_04[0xc];
+
+    NUMTX mtx;
 
     f32 x_scale;
     f32 y_scale;
 } VUFNT_ANDROID;
 
-int NuQFntReadPS(VUFNT *font, int tex_id, int flags, int render_plane, VARIPTR *buffer, VARIPTR buffer_end) {
+i32 NuQFntReadPS(VUFNT *font, int tex_id, int flags, int render_plane, VARIPTR *buf, VARIPTR buf_end) {
     NUMTL *mtl;
     NUSHADERMTLDESC shader_desc;
     VUFNT_ANDROID *platform_font;
@@ -49,8 +53,8 @@ int NuQFntReadPS(VUFNT *font, int tex_id, int flags, int render_plane, VARIPTR *
     NuMtlSetShaderDescPS(mtl, &shader_desc);
     NuMtlUpdate(font->mtl);
 
-    font->platform_data = (void *)ALIGN(buffer->addr, 0x10);
-    buffer->void_ptr = (void *)((ALIGN(buffer->addr, 0x10)) + sizeof(VUFNT_ANDROID));
+    font->platform_data = (void *)ALIGN(buf->addr, 0x10);
+    buf->void_ptr = (void *)((ALIGN(buf->addr, 0x10)) + sizeof(VUFNT_ANDROID));
 
     platform_font = (VUFNT_ANDROID *)font->platform_data;
     font->x_scale = &platform_font->x_scale;
@@ -60,4 +64,14 @@ int NuQFntReadPS(VUFNT *font, int tex_id, int flags, int render_plane, VARIPTR *
     font->hdr = NULL;
 
     return 0;
+}
+
+void NuQFntSetMtxRS(RNDRSTREAM *stream, NUQFNT *font, NUMTX *mtx) {
+    VUFNT *vufnt;
+    VUFNT_ANDROID *platform_font;
+
+    vufnt = (VUFNT *)font;
+    platform_font = (VUFNT_ANDROID *)vufnt->platform_data;
+
+    platform_font->mtx = *mtx;
 }

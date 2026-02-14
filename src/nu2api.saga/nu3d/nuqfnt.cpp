@@ -3,9 +3,11 @@
 #include <string.h>
 
 #include "decomp.h"
+#include "nu2api.saga/nucore/common.h"
 
-static int nuqfnt_init;
-unsigned char sysfont[] = {
+static i32 nuqfnt_init;
+
+u8 sysfont[] = {
     0x88, 0x1e, 0x00, 0x00, 0x0c, 0x00, 0x00, 0x00, 0x78, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
     0x00, 0x01, 0x00, 0x00, 0x00, 0x10, 0x08, 0x00, 0x00, 0x7b, 0x00, 0x00, 0x00, 0x7b, 0x00, 0x00, 0x00, 0x00, 0x00,
     0x90, 0x41, 0x00, 0x00, 0x50, 0x41, 0x00, 0x00, 0x80, 0x40, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xc8,
@@ -420,7 +422,22 @@ unsigned char sysfont[] = {
     0x13, 0x33, 0x13, 0xff, 0xff, 0xff, 0xff, 0x0b, 0x00, 0x00, 0x00, 0x78, 0xe1, 0xff, 0xff, 0x78, 0xe1, 0xff, 0xff,
     0xa4, 0xe1, 0xff, 0xff, 0xa4, 0xe1, 0xff, 0xff, 0xa4, 0xe1, 0xff, 0xff, 0xa4, 0xe1, 0xff, 0xff, 0xa4, 0xe1, 0xff,
     0xff, 0xa4, 0xe1, 0xff, 0xff, 0xa4, 0xe1, 0xff, 0xff, 0xa4, 0xe1, 0xff, 0xff, 0xa4, 0xe1, 0xff, 0xff, 0x4d, 0x45};
+
 NUQFNT *system_qfont;
+
+NUQFNT_CSMODE NuQFntCSMode;
+
+f32 qfnt_rezscale_w = 1.0f;
+f32 qfnt_rezscale_h = 1.0f;
+
+f32 qfnt_offscale_x;
+f32 qfnt_offscale_y;
+
+f32 qfnt_len_scale = 1.0f;
+f32 qfnt_height_scale = 1.0f;
+
+static f32 justify_stretch = 1.0f;
+static f32 justify_squash = 1.0f;
 
 void NuQFntInit(VARIPTR *buffer, VARIPTR buffer_end) {
     if (nuqfnt_init != 0) {
@@ -441,10 +458,85 @@ NUQFNT *NuQFntReadBuffer(VARIPTR *font, VARIPTR *ptr, VARIPTR buffer_end) {
     UNIMPLEMENTED();
 }
 
-void NuQFntSetICGap(NUQFNT *font, float ic_gap) {
-    if (font == NULL && (font = system_qfont, system_qfont == NULL)) {
-        return;
+NUQFNT_CSMODE NuQFntSetCoordinateSystem(NUQFNT_CSMODE mode) {
+    NUQFNT_CSMODE prev;
+
+    prev = NuQFntCSMode;
+
+    NuQFntCSMode = mode;
+
+    switch (mode) {
+        case NUQFNT_CSMODE_PIXEL:
+            qfnt_rezscale_w = 1.0f;
+            qfnt_rezscale_h = 0.5f;
+
+            qfnt_offscale_x = 1.0f;
+            qfnt_offscale_y = 1.0f;
+
+            qfnt_len_scale = 1.0f;
+            qfnt_height_scale = 1.0f;
+            break;
+        case NUQFNT_CSMODE_NORMALISED:
+            qfnt_rezscale_w = 320.0f;
+            qfnt_rezscale_h = -112.0f;
+
+            qfnt_offscale_x = 320.0f;
+            qfnt_offscale_y = 112.0f;
+
+            // Multiplicative inverses of rezscale.
+            qfnt_len_scale = 0.003125f;
+            qfnt_height_scale = -0.008928572f;
+            break;
+        case NUQFNT_CSMODE_ABSOLUTE:
+            qfnt_rezscale_w = 1.0f;
+            qfnt_rezscale_h = 1.0f;
+
+            qfnt_offscale_x = 0.0f;
+            qfnt_offscale_y = 0.0f;
+
+            qfnt_len_scale = 1.0f;
+            qfnt_height_scale = -1.0f;
+            break;
+        default:
+            qfnt_rezscale_w = 0.0625f;
+            qfnt_rezscale_h = 0.0625f;
+
+            qfnt_offscale_x = 0.0f;
+            qfnt_offscale_y = 0.0f;
+
+            // Multiplicative inverses of rezscale.
+            qfnt_len_scale = 16.0f;
+            qfnt_height_scale = 16.0f;
+            break;
     }
 
-    font->ic_gap = ic_gap;
+    return prev;
+}
+
+void NuQFntSetICGap(NUQFNT *font, f32 ic_gap) {
+    VUFNT *vufnt;
+
+    if (font == NULL) {
+        font = system_qfont;
+    }
+
+    if (font != NULL) {
+        vufnt = (VUFNT *)font;
+        vufnt->ic_gap = ic_gap;
+    }
+}
+
+void NuQFntSetJustifiedTolerances(f32 squash, f32 stretch) {
+    justify_squash = MAX(1.0f, squash);
+    justify_stretch = MAX(1.0f, stretch);
+}
+
+void NuQFntSetMtx(NUQFNT *font, NUMTX *mtx) {
+    if (font == NULL) {
+        font = system_qfont;
+    }
+
+    if (font != NULL) {
+        NuQFntSetMtxRS(NULL, font, mtx);
+    }
 }
