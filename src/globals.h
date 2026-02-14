@@ -221,7 +221,6 @@ extern "C" {
 
     extern i32 EPISODECOUNT;
     extern i32 AREACOUNT;
-    extern i32 LEVELCOUNT;
 
     extern GAMESAVE_s Game;
 

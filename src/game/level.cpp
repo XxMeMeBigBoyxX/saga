@@ -11,6 +11,8 @@ LEVELDATA *LOADGAME_LDATA = NULL;
 
 static i32 MAXLDATA = 0x64;
 
+i32 LEVELCOUNT;
+
 LEVELDATA *Levels_ConfigureList(char *file, VARIPTR *buf, VARIPTR *buf_end, i32 max_level_count, i32 *level_count_out,
                                 LEVELSETDEFAULTSFN *set_defaults_fn) {
     NUFPAR *parser;
@@ -119,15 +121,15 @@ LEVELDATA *Levels_ConfigureList(char *file, VARIPTR *buf, VARIPTR *buf_end, i32 
             cur_level->data_display.unknown_14 = 20000;
             cur_level->data_display.unknown_00 = 0.1f;
             cur_level->data_display.unknown_04 = 0.15f;
-            cur_level->data_display.level_width = 20000.0f;
-            cur_level->data_display.level_depth = 20100.0f;
-            cur_level->data_display.unknown_10 = g_isLowEndDevice ? 4.0f : 1.0f;
-            cur_level->data_display.unknown_17 = 0;
-            cur_level->data_display.unknown_16 = 0;
-            cur_level->data_display.unknown_19 = 0;
-            cur_level->data_display.unknown_18 = 0;
-            cur_level->data_display.unknown_1b = 0;
-            cur_level->data_display.unknown_1a = 0;
+            cur_level->data_display.far_clip = 20000.0f;
+            cur_level->data_display.fog_start = 20100.0f;
+            cur_level->data_display.particle_thin = g_isLowEndDevice ? 4.0f : 1.0f;
+            cur_level->data_display.bg_red_bottom = 0;
+            cur_level->data_display.bg_red_top = 0;
+            cur_level->data_display.bg_green_bottom = 0;
+            cur_level->data_display.bg_green_top = 0;
+            cur_level->data_display.bg_blue_bottom = 0;
+            cur_level->data_display.bg_blue_top = 0;
 
             cur_level->music_index = -1;
 
@@ -135,20 +137,21 @@ LEVELDATA *Levels_ConfigureList(char *file, VARIPTR *buf, VARIPTR *buf_end, i32 
             cur_level->unknown_120 = 1.0f;
 
             cur_level->unknown_0a2 = -1;
-            cur_level->unknown_0a4 = 0x80;
-            cur_level->unknown_0a6 = 0x100;
+            cur_level->max_ter_platforms = 0x80;
+            cur_level->max_ter_groups = 0x100;
             cur_level->unknown_0a8 = -1;
             cur_level->unknown_0aa = -1;
 
-            cur_level->unknown_0ac = 0x03;
-            cur_level->unknown_0ad = 0x7f;
+            cur_level->mipmap_mode = 0x03;
+            cur_level->blob_shadow_alpha = 0x7f;
             cur_level->unknown_0ae = -1;
             cur_level->unknown_0af = -1;
 
             cur_level->unknown_0b8 = 0x50;
 
-            cur_level->unknown_0b0 = 0;
-            cur_level->unknown_0b4 = 0;
+            cur_level->cam_tilt = 0.0f;
+
+            cur_level->hover_height = 0.0f;
 
             cur_level->unknown_0b9 = 0x50;
             cur_level->unknown_0ba = 0x50;
@@ -159,21 +162,21 @@ LEVELDATA *Levels_ConfigureList(char *file, VARIPTR *buf, VARIPTR *buf_end, i32 
             cur_level->unknown_0bf = 0x00;
 
             cur_level->unknown_0c0 = 0.5f;
-            cur_level->unknown_0c4 = 0.0f;
-            cur_level->unknown_0c8 = 0.0f;
+            cur_level->cam_pullback_dist = 0.0f;
+            cur_level->cam_lateral_dist = 0.0f;
             cur_level->unknown_0cc = 2e+06f;
 
             cur_level->unknown_0d4 = -1;
-            cur_level->unknown_0d5 = 5;
-            cur_level->unknown_0d6 = 10;
-            cur_level->unknown_0d7 = 5;
-            cur_level->unknown_0d8 = 5;
+            cur_level->blob_shadow_fade_near = 5;
+            cur_level->blob_shadow_fade_far = 10;
+            cur_level->cam_pos_seek = 5;
+            cur_level->cam_angle_seek = 5;
             cur_level->unknown_0d9 = 10;
             cur_level->unknown_0da = 5;
             cur_level->unknown_0db = 5;
 
-            cur_level->unknown_0dc = 0.0f;
-            cur_level->unknown_0e0 = 0.0f;
+            cur_level->conveyor_x_speed = 0.0f;
+            cur_level->conveyor_z_speed = 0.0f;
 
             for (i = 0; i < 2; i++) {
                 for (j = 0; j < 3; j++) {
@@ -205,52 +208,53 @@ LEVELDATA *Levels_ConfigureList(char *file, VARIPTR *buf, VARIPTR *buf_end, i32 
 }
 
 void Level_SetDefaults(LEVELDATA *level) {
-    level->max_antinodes = 0x100;
-    level->max_gizmo_blowups = 0x40;
-    level->max_gizmo_blowup_types = 0x40;
+    level->max_antinodes = 256;
+    level->max_gizmo_blowups = 64;
+    level->max_gizmo_blowup_types = 64;
+    level->max_pickups = 256;
+    level->max_obstacle_objs = 128;
+    level->max_buildit_objs = 128;
+    level->max_force_objs = 128;
+    level->max_bombgen_objs = 16;
 
-    level->unknown_0ea = 0x100;
-    level->unknown_0ec = 0x80;
-    level->unknown_0ee = 0x80;
-    level->unknown_0f0 = 0x80;
-    level->unknown_0f2 = 0x10;
-
-    level->field55_0xf4 = 10;
+    level->max_tightropes = 10;
     level->max_giz_timers = 8;
-    level->field57_0xf6 = 10;
-    level->field58_0xf7 = 10;
-    level->field59_0xf8 = 10;
-    level->field60_0xf9 = 10;
-    level->field61_0xfa = 10;
+    level->max_signals = 10;
+    level->max_levers = 10;
+    level->max_technos = 10;
+    level->max_zipups = 10;
+    level->max_grapples = 10;
     level->max_obstacles = 32;
-    level->field63_0xfc = 0x10;
-    level->field64_0xfd = 0x40;
-    level->field65_0xfe = 4;
-    level->field66_0xff = 8;
-    level->field67_0x100 = 2;
-    level->field68_0x101 = 0x20;
-    level->field69_0x102 = 5;
-    level->field70_0x103 = 10;
-    level->field71_0x104 = 0x20;
-    level->field72_0x105 = 0x60;
-    level->field73_0x106 = 5;
-    level->field74_0x107 = 5;
-    level->field75_0x108 = 8;
-    level->field76_0x109 = 2;
-    level->field77_0x10a = 0x20;
-    level->field78_0x10b = 0x10;
-    level->field79_0x10c = 8;
-    level->field80_0x10d = 0x10;
-    level->field81_0x10e = 4;
-    level->field82_0x10f = 8;
-    level->field83_0x110 = 2;
-    level->field84_0x111 = 0x28;
-    level->field97_0x128 = 0x44000000;
-    level->field96_0x124 = 0x40400000;
-    level->field85_0x112 = 0x20;
+    level->max_buildits = 16;
+    level->max_shards = 64;
+    level->max_spinners = 4;
+    level->max_minicuts = 8;
+    level->max_minicut_parts = 2;
+    level->max_giz_specials = 32;
+    level->max_attractos = 5;
+    level->max_climb_objs = 10;
+    level->max_guidelines = 32;
+    level->max_ledges = 96;
+    level->max_security_doors = 5;
+    level->max_tubes = 5;
+    level->max_giz_panels = 8;
+    level->max_hat_machines = 2;
+    level->max_force = 32;
+    level->max_push_blocks = 16;
+    level->max_push_block_end_pos = 8;
+    level->max_doors = 16;
+    level->max_teleports = 4;
+    level->max_giz_randoms = 8;
+    level->max_torp_machines = 2;
+    level->max_spinner_anim_objs = 40;
+
+    level->wind_size = 512.0f;
+    level->wind_speed = 3.0f;
+
+    level->max_turrets = 32;
     level->max_bombgens = 8;
-    level->field87_0x114 = 5;
-    level->field88_0x115 = 10;
+    level->max_bridges = 5;
+    level->max_plugs = 10;
 }
 
 LEVELDATA *Level_FindByName(char *name, int *idx_out) {

@@ -1,6 +1,8 @@
 #pragma once
 
-#include "game/gizmos/gizportal.h"
+#include "decomp.h"
+
+#include "nu2api.saga/nu3d/nuportal.h"
 
 typedef struct nugscn_s { /* PlaceHolder Structure */
     undefined field0_0x0;

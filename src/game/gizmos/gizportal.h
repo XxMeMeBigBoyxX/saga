@@ -2,7 +2,6 @@
 
 #include "game/gizmo.h"
 #include "game/world.h"
-#include "nu2api.saga/nu3d/nuportal.h"
 
 extern int portal_gizmotype_id;
 

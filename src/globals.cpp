@@ -26,7 +26,6 @@ CHEATSYSTEM CheatSystem = {0};
 
 i32 EPISODECOUNT = 0;
 i32 AREACOUNT = 0;
-i32 LEVELCOUNT = 0;
 
 GAMESAVE_s Game = {0};
 
