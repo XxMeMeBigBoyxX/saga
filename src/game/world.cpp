@@ -5,32 +5,28 @@
 
 #include <string.h>
 
-WORLDINFO WorldInfo;
-WORLDINFO *WORLD = &WorldInfo;
+WORLDINFO WorldInfo[2];
+WORLDINFO *WORLD = &WorldInfo[0];
 
 /// @brief Pointer to the currently loading world info
-static WORLDINFO *LWORLD = &WorldInfo;
+static WORLDINFO *LWORLD = &WorldInfo[0];
 
 void WorldInfo_Activate(void) {
+    char result;
+
     WORLD = LWORLD;
     WorldInfo_Init(LWORLD);
 
-    char result = 0;
+    result = 0;
+    if (NuIOS_IsLowEndDevice() && WORLD != NULL) {
+        LEVELDATA *current_level = WORLD->current_level;
 
-    if (NuIOS_IsLowEndDevice()) {
-        if (WORLD != NULL) {
-            LEVELDATA *current_level = WORLD->current_level;
-            if (current_level) {
-                if (current_level->data_display.level_width < 20000.0f) {
-                    result = current_level->data_display.level_depth < 20000.0f;
-                }
-            }
+        if (current_level && current_level->data_display.far_clip < 20000.0f) {
+            result = current_level->data_display.fog_start < 20000.0f;
         }
     }
 
     g_BackgroundUsedFogColour = result;
-
-    return;
 }
 
 void WorldInfo_Init(WORLDINFO *info) {
@@ -45,5 +41,5 @@ WORLDINFO *WorldInfo_CurrentlyLoading(void) {
 }
 
 void WorldInfo_InitOnce(void) {
-    memset(&WorldInfo, 0, sizeof(WorldInfo));
+    memset(WorldInfo, 0, sizeof(WorldInfo));
 }

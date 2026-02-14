@@ -1,23 +1,25 @@
 #pragma once
 
-#include "globals.h"
+#include "nu2api.saga/nu3d/nugscn.h"
+#include "nu2api.saga/nucore/common.h"
 
-struct WORLDINFO_s {
+typedef struct WORLDINFO_s {
     char filler0[0x104];
     VARIPTR giz_buffer;
     char filler1[0x20];
     struct LEVELDATA_s *current_level;
     char filler2[0x10];
-    struct nugscn_s *current_gscn;
+    NUGSCN *current_gscn;
+
     char filler3[0x4fbc];
-    struct GIZTIMER_s* giz_timers;
+
+    struct GIZTIMER_s *giz_timers;
     i32 giz_timers_count;
-    char filler4[21084];
-};
 
-typedef struct WORLDINFO_s WORLDINFO;
+    char filler4[172];
+} WORLDINFO;
 
-extern WORLDINFO WorldInfo;
+extern WORLDINFO WorldInfo[];
 
 /// @brief Global pointer to the currently active world info
 extern WORLDINFO *WORLD;
