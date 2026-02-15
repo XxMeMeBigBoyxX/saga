@@ -54,8 +54,8 @@ void NuDisableOSMenuFreeze(void) {
 i32 NuInitHardware(VARIPTR *buf, VARIPTR *buf_end, int heap_size, ...) {
     i32 hostfs = 0;
     i32 streamsize = 0x200000;
-    nupad_s *pad0 = NULL;
-    nupad_s *pad1 = NULL;
+    NUPAD *pad0 = NULL;
+    NUPAD *pad1 = NULL;
     i32 videomode = 2;
     i32 resolution_x = 0;
     i32 resolution_y = 0;

@@ -222,7 +222,7 @@ extern "C" {
     extern i32 EPISODECOUNT;
     extern i32 AREACOUNT;
 
-    extern GAMESAVE_s Game;
+    extern struct GAMESAVE_s Game;
 
     extern i32 COMPLETIONPOINTS;
     extern i32 POINTS_PER_CHARACTER;
@@ -247,8 +247,8 @@ extern "C" {
     extern i32 CompletionPointInfo[7];
 
     struct nusound_filename_info_s;
-    extern nusound_filename_info_s *MusicInfo;
-    extern nusound_filename_info_s *g_music;
+    extern struct nusound_filename_info_s *MusicInfo;
+    extern struct nusound_filename_info_s *g_music;
     extern u32 SFX_MUSIC_COUNT;
     extern u8 g_BackgroundUsedFogColour;
     extern NUCAMERA *pNuCam;

@@ -3,6 +3,7 @@
 #include "globals.h"
 #include "nu2api.saga/nu3d/nucamera.h"
 #include "nu2api.saga/nucore/common.h"
+#include "nu2api.saga/nusound/nusound.h"
 
 i32 PAL = 0;
 f32 FRAMETIME = 0;
@@ -50,8 +51,8 @@ i32 GOLDBRICKPOINTS = 0;
 
 i32 CompletionPointInfo[7] = {0};
 
-nusound_filename_info_s *MusicInfo = NULL;
-nusound_filename_info_s *g_music = NULL;
+NUSOUND_FILENAME_INFO *MusicInfo = NULL;
+NUSOUND_FILENAME_INFO *g_music = NULL;
 u8 g_BackgroundUsedFogColour = 0;
 u32 SFX_MUSIC_COUNT = 0;
 

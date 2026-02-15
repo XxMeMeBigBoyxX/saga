@@ -1,9 +1,9 @@
 #pragma once
 
 #include "globals.h"
-#include "nu2api.saga/nufile/nufile.h"
+#include "nu2api.saga/nucore/common.h"
 
-class NuSoundStreamingSample;
+struct NuSoundStreamingSample;
 
 typedef struct nusound_filename_info_s {
     const char *filename;
@@ -11,7 +11,7 @@ typedef struct nusound_filename_info_s {
     i32 index;
     i32 field3_0xc;
     u32 field1_0x4;
-    NuSoundStreamingSample *sample;
+    struct NuSoundStreamingSample *sample;
 } NUSOUND_FILENAME_INFO;
 
 typedef enum {
@@ -25,19 +25,16 @@ typedef enum {
 } NUSOUNDPLAYTOK;
 
 #ifdef __cplusplus
-NUSOUND_FILENAME_INFO *ConfigureMusic(char *file, VARIPTR *bufferStart, VARIPTR *bufferEnd);
-#endif
 
-#ifdef __cplusplus
+NUSOUND_FILENAME_INFO *ConfigureMusic(char *file, VARIPTR *bufferStart, VARIPTR *bufferEnd);
+
 extern "C" {
 #endif
-
     i32 NuSound3InitV(VARIPTR *bufferStart, VARIPTR bufferEnd, i32 zero1, i32 zero2);
     i32 NuSound3PlayStereoV(NUSOUNDPLAYTOK, ...);
 
     void NuSound3Init(i32 zero);
-    void NuSound3SetSampleTable(nusound_filename_info_s *info, variptr_u *buffer_start, variptr_u buffer_end);
-
+    void NuSound3SetSampleTable(NUSOUND_FILENAME_INFO *info, VARIPTR *buffer_start, VARIPTR buffer_end);
 #ifdef __cplusplus
 }
 #endif
