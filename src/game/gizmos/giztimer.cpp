@@ -3,7 +3,7 @@
 #include "game/level.h"
 #include "gameapi/edtools/edfile.h"
 #include "legoapi/qrand.h"
-#include "nu2api.saga/nucore/nustring.h"
+#include "nu2api/nucore/nustring.h"
 
 int giztimer_gizmotype_id = -1;
 

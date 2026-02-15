@@ -7,8 +7,9 @@
 #include "globals.h"
 #include "legogame/startup.h"
 #include "legogame/target.h"
-#include "nu2api.saga/numusic/numusic.h"
-#include "nu2api.saga/nuplatform/nuplatform.h"
+#include "nu2api/nucore/common.h"
+#include "nu2api/numusic/numusic.h"
+#include "nu2api/nuplatform/nuplatform.h"
 
 extern "C" i32 NuMain(i32 argc, char **argv) {
     InitOnce(argc, argv);

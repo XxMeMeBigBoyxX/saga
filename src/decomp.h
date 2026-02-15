@@ -2,7 +2,7 @@
 
 #include <stdint.h>
 
-#include "nu2api.saga/nucore/common.h"
+#include "nu2api/nucore/common.h"
 
 #ifndef __x86_64__
 #ifdef __cplusplus

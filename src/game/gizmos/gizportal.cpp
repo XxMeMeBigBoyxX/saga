@@ -5,7 +5,7 @@
 #include "decomp.h"
 
 #include "game/world.h"
-#include "nu2api.saga/nu3d/nugscn.h"
+#include "nu2api/nu3d/nugscn.h"
 
 int portal_gizmotype_id;
 

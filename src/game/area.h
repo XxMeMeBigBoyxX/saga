@@ -2,7 +2,7 @@
 
 #include "decomp.h"
 
-#include "nu2api.saga/nucore/common.h"
+#include "nu2api/nucore/common.h"
 
 enum {
     AREAFLAG_NONE = 0x0,

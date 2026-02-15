@@ -1,6 +1,6 @@
 #include "store.h"
 
-#include "nu2api.saga/nucore/nustring.h"
+#include "nu2api/nucore/nustring.h"
 
 STOREPACK StorePack[11] = {0};
 

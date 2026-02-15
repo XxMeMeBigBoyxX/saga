@@ -4,12 +4,12 @@
 
 #include "globals.h"
 #include "legogame/game.h"
-#include "nu2api.saga/nu3d/nucamera.h"
-#include "nu2api.saga/nuandroid/ios_graphics.h"
-#include "nu2api.saga/nuandroid/nuphoneos.h"
-#include "nu2api.saga/nucore/nuapi.h"
-#include "nu2api.saga/nucore/numemory.h"
-#include "nu2api.saga/nucore/nuvideo.h"
+#include "nu2api/nu3d/nucamera.h"
+#include "nu2api/nuandroid/ios_graphics.h"
+#include "nu2api/nuandroid/nuphoneos.h"
+#include "nu2api/nucore/nuapi.h"
+#include "nu2api/nucore/numemory.h"
+#include "nu2api/nucore/nuvideo.h"
 
 extern "C" {
     void *DVD = NULL;

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "game/world.h"
-#include "nu2api.saga/nucore/common.h"
+#include "nu2api/nucore/common.h"
 
 typedef struct leveldatadisplay_s {
     f32 unknown_00;

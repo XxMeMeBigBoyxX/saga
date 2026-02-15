@@ -5,8 +5,8 @@
 #include "game/area.h"
 #include "game/level.h"
 #include "globals.h"
-#include "nu2api.saga/nuandroid/ios_graphics.h"
-#include "nu2api.saga/nucore/nutime.h"
+#include "nu2api/nuandroid/ios_graphics.h"
+#include "nu2api/nucore/nutime.h"
 
 WORLDINFO WorldInfo[2];
 WORLDINFO *WORLD = &WorldInfo[0];

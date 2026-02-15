@@ -1,6 +1,6 @@
 #include "game/cheat.h"
 
-#include "nu2api.saga/nucore/nustring.h"
+#include "nu2api/nucore/nustring.h"
 
 void Cheat_SetArea(i32 cheat, i32 areaId) {
     if (cheat >= 0 && cheat < CheatSystem.cheats_count && areaId >= 0 && areaId < AREACOUNT) {

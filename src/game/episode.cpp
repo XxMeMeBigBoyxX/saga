@@ -2,8 +2,8 @@
 
 #include "game/area.h"
 #include "globals.h"
-#include "nu2api.saga/nucore/nustring.h"
-#include "nu2api.saga/nufile/nufpar.h"
+#include "nu2api/nucore/nustring.h"
+#include "nu2api/nufile/nufpar.h"
 
 EPISODEDATA *EDataList = NULL;
 

@@ -2,8 +2,8 @@
 
 #include "game/character.h"
 #include "game/level.h"
-#include "nu2api.saga/nucore/nustring.h"
-#include "nu2api.saga/nufile/nufpar.h"
+#include "nu2api/nucore/nustring.h"
+#include "nu2api/nufile/nufpar.h"
 
 #include <string.h>
 

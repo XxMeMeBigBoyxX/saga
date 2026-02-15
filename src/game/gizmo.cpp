@@ -28,7 +28,7 @@
 #include "game/gizmos/teleport.h"
 #include "game/gizmos/tubes.h"
 #include "game/gizmos/zipups.h"
-#include "nu2api.saga/nucore/nustring.h"
+#include "nu2api/nucore/nustring.h"
 
 #include <string.h>
 

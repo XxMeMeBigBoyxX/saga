@@ -5,11 +5,11 @@
 #include "game/episode.h"
 #include "globals.h"
 #include "legogame/game.h"
-#include "nu2api.saga/nu3d/nutex.h"
-#include "nu2api.saga/nucore/bgproc.h"
-#include "nu2api.saga/numusic/numusic.h"
-#include "nu2api.saga/numusic/sfx.h"
-#include "nu2api.saga/nusound/nusound.h"
+#include "nu2api/nu3d/nutex.h"
+#include "nu2api/nucore/bgproc.h"
+#include "nu2api/numusic/numusic.h"
+#include "nu2api/numusic/sfx.h"
+#include "nu2api/nusound/nusound.h"
 
 static void LoadPermData(BGPROCINFO *proc) {
     VARIPTR legalTex;

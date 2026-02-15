@@ -1,7 +1,7 @@
 #pragma once
 
 #include "game/timer.h"
-#include "nu2api.saga/nucore/common.h"
+#include "nu2api/nucore/common.h"
 
 typedef struct MISSIONSAVE_s {
     char data[0xc];

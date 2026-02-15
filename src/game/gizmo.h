@@ -1,7 +1,7 @@
 #pragma once
 
-#include "nu2api.saga/nucore/common.h"
-#include "nu2api.saga/numath/nuvec.h"
+#include "nu2api/nucore/common.h"
+#include "nu2api/numath/nuvec.h"
 
 typedef struct GIZMO_s {
     union {

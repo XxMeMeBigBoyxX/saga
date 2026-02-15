@@ -7,7 +7,7 @@
 #include "game/level.h"
 #include "gameframework/saveload.h"
 #include "globals.h"
-#include "nu2api.saga/nucore/nustring.h"
+#include "nu2api/nucore/nustring.h"
 
 u16 MakeSaveHash(void) {
     return Game.completion;

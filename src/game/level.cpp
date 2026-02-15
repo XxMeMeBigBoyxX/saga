@@ -1,10 +1,10 @@
 #include "game/level.h"
 
-#include "nu2api.saga/nuandroid/ios_graphics.h"
-#include "nu2api.saga/nucore/common.h"
-#include "nu2api.saga/nucore/nustring.h"
-#include "nu2api.saga/nufile/nufpar.h"
-#include "nu2api.saga/numusic/numusic.h"
+#include "nu2api/nuandroid/ios_graphics.h"
+#include "nu2api/nucore/common.h"
+#include "nu2api/nucore/nustring.h"
+#include "nu2api/nufile/nufpar.h"
+#include "nu2api/numusic/numusic.h"
 
 LEVELDATA *LDataList = NULL;
 LEVELDATA *NEWGAME_LDATA = NULL;

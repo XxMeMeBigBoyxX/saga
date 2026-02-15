@@ -1,7 +1,7 @@
 #include "game/timer.h"
 
 #include "globals.h"
-#include "nu2api.saga/numath/nufloat.h"
+#include "nu2api/numath/nufloat.h"
 
 void ResetTimer(TIMER *timer, f32 reset_time) {
     timer->last_time_elapsed = reset_time;

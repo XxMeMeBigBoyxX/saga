@@ -1,9 +1,9 @@
 #include <stddef.h>
 
 #include "globals.h"
-#include "nu2api.saga/nu3d/nucamera.h"
-#include "nu2api.saga/nucore/common.h"
-#include "nu2api.saga/nusound/nusound.h"
+#include "nu2api/nu3d/nucamera.h"
+#include "nu2api/nucore/common.h"
+#include "nu2api/nusound/nusound.h"
 
 i32 PAL = 0;
 f32 FRAMETIME = 0;

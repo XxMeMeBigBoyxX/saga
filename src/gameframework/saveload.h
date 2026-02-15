@@ -2,7 +2,7 @@
 
 #include <stddef.h>
 
-#include "nu2api.saga/nucore/common.h"
+#include "nu2api/nucore/common.h"
 
 #ifdef __cplusplus
 extern "C" {

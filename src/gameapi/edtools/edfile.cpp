@@ -2,8 +2,8 @@
 
 #include <string.h>
 
-#include "nu2api.saga/nufile/nufile.h"
-#include "nu2api.saga/nufile/nufilepak.h"
+#include "nu2api/nufile/nufile.h"
+#include "nu2api/nufile/nufilepak.h"
 
 static int edfile_media;
 int edfile_handle = -1;

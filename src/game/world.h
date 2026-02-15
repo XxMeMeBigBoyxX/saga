@@ -1,8 +1,8 @@
 #pragma once
 
-#include "nu2api.saga/nu3d/nugscn.h"
-#include "nu2api.saga/nucore/bgproc.h"
-#include "nu2api.saga/nucore/common.h"
+#include "nu2api/nu3d/nugscn.h"
+#include "nu2api/nucore/bgproc.h"
+#include "nu2api/nucore/common.h"
 
 typedef struct WORLDINFO_s {
     char filler0[0x104];

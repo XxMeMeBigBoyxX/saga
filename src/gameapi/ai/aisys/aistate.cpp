@@ -1,7 +1,7 @@
 #include "gameapi/ai/aisys/aisys.h"
 
-#include "nu2api.saga/nucore/nulist.h"
-#include "nu2api.saga/nucore/nustring.h"
+#include "nu2api/nucore/nulist.h"
+#include "nu2api/nucore/nustring.h"
 
 AISTATE *AIStateFind(char *name, AISCRIPT *script) {
     AISTATE *state;

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "nu2api.saga/numath/nuvec4.h"
+#include "nu2api/numath/nuvec4.h"
 
 typedef struct nuwind_s {
     int unk0[8];

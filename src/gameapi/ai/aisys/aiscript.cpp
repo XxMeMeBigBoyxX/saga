@@ -3,14 +3,14 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "nu2api.saga/nucore/common.h"
-#include "nu2api.saga/nucore/nulist.h"
-#include "nu2api.saga/nucore/nurdp.h"
-#include "nu2api.saga/nucore/nustring.h"
-#include "nu2api.saga/nufile/nufile.h"
-#include "nu2api.saga/nufile/nufilepak.h"
-#include "nu2api.saga/nufile/nufpar.h"
-#include "nu2api.saga/numath/nurand.h"
+#include "nu2api/nucore/common.h"
+#include "nu2api/nucore/nulist.h"
+#include "nu2api/nucore/nurdp.h"
+#include "nu2api/nucore/nustring.h"
+#include "nu2api/nufile/nufile.h"
+#include "nu2api/nufile/nufilepak.h"
+#include "nu2api/nufile/nufpar.h"
+#include "nu2api/numath/nurand.h"
 
 static void *load_pakfile;
 static char *load_path;

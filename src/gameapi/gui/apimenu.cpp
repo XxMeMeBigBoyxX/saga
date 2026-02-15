@@ -4,7 +4,7 @@
 #include <string.h>
 
 #include "decomp.h"
-#include "nu2api.saga/nu3d/numtl.h"
+#include "nu2api/nu3d/numtl.h"
 
 #define TOTAL_MENUS_COUNT 100
 #define RESERVED_MENUS_COUNT 25

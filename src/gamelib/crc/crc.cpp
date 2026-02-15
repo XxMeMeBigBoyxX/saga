@@ -1,6 +1,6 @@
 #include "gamelib/crc/crc.h"
 
-#include "nu2api.saga/nucore/nustring.h"
+#include "nu2api/nucore/nustring.h"
 
 static i32 g_crc_initialised = 0;
 i32 *g_crc_table = NULL;

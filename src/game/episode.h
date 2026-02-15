@@ -1,6 +1,6 @@
 #pragma once
 
-#include "nu2api.saga/nucore/common.h"
+#include "nu2api/nucore/common.h"
 
 struct episodedata_s {
     i16 name_id;

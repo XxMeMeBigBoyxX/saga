@@ -1,5 +1,5 @@
-#include "nu2api.saga/nufile/nufile.h"
-#include "nu2api.saga/numath/nuvec.h"
+#include "nu2api/nufile/nufile.h"
+#include "nu2api/numath/nuvec.h"
 
 #ifdef __cplusplus
 extern "C" {

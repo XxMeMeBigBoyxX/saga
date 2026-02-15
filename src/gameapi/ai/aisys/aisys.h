@@ -1,10 +1,10 @@
 #include "legoapi/apiobject.h"
-#include "nu2api.saga/nu3d/nugscn.h"
-#include "nu2api.saga/nu3d/nuspline.h"
-#include "nu2api.saga/nucore/common.h"
-#include "nu2api.saga/nucore/nulist.h"
-#include "nu2api.saga/numath/nuang.h"
-#include "nu2api.saga/numath/nuvec.h"
+#include "nu2api/nu3d/nugscn.h"
+#include "nu2api/nu3d/nuspline.h"
+#include "nu2api/nucore/common.h"
+#include "nu2api/nucore/nulist.h"
+#include "nu2api/numath/nuang.h"
+#include "nu2api/numath/nuvec.h"
 
 struct AISCRIPTACTIONDEF_s;
 struct AISCRIPTCONDITIONDEF_s;
