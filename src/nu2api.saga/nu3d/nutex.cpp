@@ -16,7 +16,7 @@ void NuChecksumAsHex(u8 *checksum, char *out) {
         i32 least_sig_digit = check_digit >> 4;
 
         out[i * 2] = hex_digits[least_sig_digit];
-        out[i * 2 + 1] = hex_digits[(check_digit - (least_sig_digit << 4)) & 0xff];
+        out[i * 2 + 1] = hex_digits[(u8)(check_digit - (least_sig_digit << 4))];
     }
 
     out[32] = '\0';
