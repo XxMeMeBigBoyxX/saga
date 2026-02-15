@@ -1,4 +1,4 @@
-#include "qrand.h"
+#include "legoapi/qrand.h"
 
 i32 qseed = 0x3039;
 

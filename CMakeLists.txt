@@ -209,7 +209,7 @@ set(SAGA_SOURCE_FILES
 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/java/jni_stub.cpp
 
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/lostandfound/qrand.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/legoapi/qrand.cpp
 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nu3d/NuRenderDevice.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nu3d/nucamera.cpp
@@ -378,7 +378,7 @@ else()
 
     set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/gamelib/nuwind/nuwind.cpp PROPERTIES COMPILE_OPTIONS "-O3")
 
-    set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/lostandfound/qrand.cpp PROPERTIES COMPILE_OPTIONS "-O3")
+    set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/legoapi/qrand.cpp PROPERTIES COMPILE_OPTIONS "-O3")
 
     set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nu3d/NuRenderDevice.cpp PROPERTIES COMPILE_OPTIONS "-O3")
     set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api.saga/nu3d/nucamera.cpp PROPERTIES COMPILE_OPTIONS "-O2")
