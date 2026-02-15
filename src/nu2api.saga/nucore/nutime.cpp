@@ -1,39 +1,64 @@
 #include "nu2api.saga/nucore/nutime.h"
 
-#include <sys/time.h>
-#include <time.h>
-
-void NuTimeGetTicksPS(u32 *low, u32 *high) {
-    struct timespec ts;
-    u64 ticks;
-
-    clock_gettime(CLOCK_REALTIME, &ts);
-
-    ticks = ts.tv_nsec / 1000 + (u64)ts.tv_sec * 1000000;
-
-    *high = ticks >> 32;
-    *low = ticks;
-}
-
-u64 NuGetCurrentTimeMilisecondsPS(void) {
-    struct timespec ts;
-
-    clock_gettime(0, &ts);
-
-    return (u64)ts.tv_nsec + (u64)ts.tv_sec * 1000;
-}
-
-static u64 g_startTime;
-
-void NuTimeInitPS(void) {
-    g_startTime = NuGetCurrentTimeMilisecondsPS();
-}
+#include "nu2api.saga/nucore/nuapi.h"
 
 void NuTimeGet(NUTIME *t) {
     NuTimeGetTicksPS(&t->low, (u32 *)&t->high);
 }
 
+f32 NuTimeGetFrameTime(void) {
+    return nuapi.frametime;
+}
+
 f32 NuTimeSeconds(NUTIME *t) {
+    u32 low;
+    u32 high;
+    f64 ticks;
+    f64 ticks_per_second;
+    f64 seconds;
+
+    NuTimeGetTicksPerSecondPS(&low, &high);
+
+    ticks = t->low + t->high * 4.294967295e+09;
+    ticks_per_second = low + high * 4.294967295e+09;
+
+    seconds = ticks / ticks_per_second;
+
+    return seconds;
+}
+
+f32 NuTimeMilliSeconds(NUTIME *t) {
+    u32 low;
+    u32 high;
+    f64 ticks;
+    f64 ticks_per_second;
+    f64 millis;
+
+    NuTimeGetTicksPerSecondPS(&low, &high);
+
+    ticks = t->low + t->high * 4.294967295e+09;
+    ticks_per_second = low + high * 4.294967295e+09;
+
+    millis = ticks / ticks_per_second * 1000.0;
+
+    return millis;
+}
+
+f32 NuTimeMicroSeconds(NUTIME *t) {
+    u32 low;
+    u32 high;
+    f64 ticks;
+    f64 ticks_per_second;
+    f64 micros;
+
+    NuTimeGetTicksPerSecondPS(&low, &high);
+
+    ticks = t->low + t->high * 4.294967295e+09;
+    ticks_per_second = low + high * 4.294967295e+09;
+
+    micros = ticks / ticks_per_second * 1000000.0;
+
+    return micros;
 }
 
 void NuTimeSub(NUTIME *t, NUTIME *a, NUTIME *b) {
