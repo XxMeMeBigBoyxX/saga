@@ -141,7 +141,7 @@ BGPROCINFO *bgPostRequest(bgprocdofn *do_fn, bgprocackfn *ack_fn, void *data, i3
     return info;
 }
 
-BGPROCINFO *bgGetProcActive() {
+BGPROCINFO *bgGetProcActive(void) {
     if (cur_pi != NULL) {
         return cur_pi;
     }

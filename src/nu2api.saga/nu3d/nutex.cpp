@@ -3,13 +3,15 @@
 
 #include "nu2api.saga/nu3d/nutex.h"
 
+#include "nu2api.saga/nu3d/android/nutex_android.h"
 #include "nu2api.saga/nucore/common.h"
 #include "nu2api.saga/nucore/nustring.h"
 
 void NuChecksumAsHex(u8 *checksum, char *out) {
+    i32 i;
     char hex_digits[] = "0123456789abcdef";
 
-    for (int i = 0; i < 16; i++) {
+    for (i = 0; i < 16; i++) {
         u8 check_digit = checksum[i];
         i32 least_sig_digit = check_digit >> 4;
 
@@ -77,21 +79,21 @@ int NuTexGetRefCount(int tex_id) {
     return 0;
 }
 
-int max_textures;
+i32 max_textures;
 static NUNATIVETEX **texture_list;
-static int *texture_order;
-static int gTextureLoadCount;
+static i32 *texture_order;
+static i32 gTextureLoadCount;
 
-void NuTexInitEx(VARIPTR *buf, int max_tex_count) {
+void NuTexInitEx(VARIPTR *buf, i32 max_tex_count) {
     max_textures = max_tex_count;
 
     texture_list = (NUNATIVETEX **)ALIGN(buf->addr, 0x4);
-    buf->void_ptr = (void *)(texture_list + max_tex_count);
+    buf->addr = (usize)texture_list + max_tex_count * sizeof(NUNATIVETEX *);
     memset(texture_list, 0, max_tex_count * sizeof(NUNATIVETEX *));
 
-    texture_order = (int *)ALIGN(buf->addr, 0x4);
-    buf->void_ptr = (void *)(texture_order + max_tex_count);
-    memset(texture_order, 0, max_tex_count * sizeof(int));
+    texture_order = (i32 *)ALIGN(buf->addr, 0x4);
+    buf->addr = (usize)texture_order + max_tex_count * sizeof(i32);
+    memset(texture_order, 0, max_tex_count * sizeof(i32));
 
     gTextureLoadCount = 0;
 }

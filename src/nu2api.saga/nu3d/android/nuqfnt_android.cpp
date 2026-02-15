@@ -54,7 +54,7 @@ i32 NuQFntReadPS(VUFNT *font, int tex_id, int flags, int render_plane, VARIPTR *
     NuMtlUpdate(font->mtl);
 
     font->platform_data = (void *)ALIGN(buf->addr, 0x10);
-    buf->void_ptr = (void *)((ALIGN(buf->addr, 0x10)) + sizeof(VUFNT_ANDROID));
+    buf->addr = ALIGN(buf->addr, 0x10) + sizeof(VUFNT_ANDROID);
 
     platform_font = (VUFNT_ANDROID *)font->platform_data;
     font->x_scale = &platform_font->x_scale;
