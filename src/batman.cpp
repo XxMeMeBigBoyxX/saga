@@ -2,9 +2,9 @@
 
 #include "decomp.h"
 
-#include "game/level.h"
 #include "gameframework/saveload.h"
 #include "globals.h"
+#include "legoapi/level.h"
 #include "legogame/startup.h"
 #include "legogame/target.h"
 #include "nu2api/nucore/common.h"

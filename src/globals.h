@@ -1,7 +1,7 @@
 #pragma once
 
 #include "decomp.h"
-#include "game/mission.h"
+#include "legoapi/mission.h"
 #include "nu2api/nu3d/nucamera.h"
 #include "nu2api/nucore/common.h"
 
