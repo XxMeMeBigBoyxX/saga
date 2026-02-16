@@ -196,20 +196,20 @@ extern "C" {
     extern char UseCorrectDeadZoning;
     extern i32 enable_touch_controls;
 
-    void NuPadInit();
+    void NuPadInit(void);
     void NuPadInitPS(NUGENERICPAD *pad);
 
     i32 NuPadRead(NUPAD *pad);
 
-    void NuPadUpdatePads();
+    void NuPadUpdatePads(void);
 
-    i32 NuPadGetMaxGamePads();
+    i32 NuPadGetMaxGamePads(void);
 
-    void NuPadRecordStart();
+    void NuPadRecordStart(void);
 
     i32 NuPad_Interface_GetMaxDevices();
     void NuPad_Interface_InputManagerUpdate(f32 unknown);
-    u8 NuPad_Interface_NuPadRead(i32 port, u8 *analog_left_x, u8 *analog_left_y, u8 *analog_right_x, u8 *analog_right_y,
+    u32 NuPad_Interface_NuPadRead(i32 port, u8 *analog_left_x, u8 *analog_left_y, u8 *analog_right_x, u8 *analog_right_y,
                                  u8 *analog_l1, u8 *analog_l2, u8 *analog_r1, u8 *analog_r2, u32 *digital_buttons,
                                  u8 *unknown, i32 *analog_button_flags);
 #ifdef __cplusplus
@@ -226,8 +226,10 @@ void NuPadProcessReadData(NUGENERICPAD *pad);
 i32 NuPadGetDeadzoneByPortPS(i32 port);
 
 void NuPadRecordPlay(NUGENERICPAD *pad);
-void NuPadRecordEnd();
+void NuPadRecordEnd(void);
 
 void NuPadRecordSave(char *filepath);
+
+void NuPad_UpdateTouchScreenData(void);
 
 #endif
