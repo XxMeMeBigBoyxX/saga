@@ -70,3 +70,15 @@ u32 NuInputManager::GetMaxDevices() const {
 NuInputDevice *NuInputManager::GetDevice(u32 port) {
     return this->devices[port];
 }
+
+NuInputDevice *NuInputManager::GetFirstDeviceByType(NUPADTYPE type) {
+    u32 i;
+
+    for (i = 0; i < this->max_devices; i++) {
+        if (this->devices[i]->GetType() == type) {
+            return this->devices[i];
+        }
+    }
+
+    return NULL;
+}

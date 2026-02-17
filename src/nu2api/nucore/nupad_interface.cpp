@@ -1,11 +1,30 @@
 #include "nu2api/nucore/NuInputDevice.h"
 #include "nu2api/nucore/NuInputManager.h"
+#include "nu2api/nucore/NuVirtualTouchDevice.h"
 #include "nu2api/nucore/nupad.h"
 
 NuInputManager *inputManager;
+NuVirtualTouchDevice *inputTouchDevice;
+bool used_touch_IDs[10];
 
-i32 NuPad_Interface_GetMaxDevices() {
-    return inputManager->GetMaxDevices();
+void NuPad_Interface_InputManagerInitialise(void) {
+    NuInputDevice *touch_dev;
+    u32 i;
+
+    inputManager = new NuInputManager();
+    inputManager->UpdateAll(0.0f);
+
+    touch_dev = inputManager->GetFirstDeviceByType(NUPADTYPE_TOUCH);
+    if (touch_dev != NULL) {
+        inputTouchDevice = new NuVirtualTouchDevice(4);
+        inputTouchDevice->CreateDefaultLayout(0);
+
+        touch_dev->AddTranslator(inputTouchDevice);
+    }
+
+    for (i = 0; i < 10; i++) {
+        used_touch_IDs[i] = false;
+    }
 }
 
 void NuPad_Interface_InputManagerUpdate(f32 delta_time) {
@@ -38,5 +57,9 @@ u32 NuPad_Interface_NuPadRead(i32 port, u8 *analog_left_x, u8 *analog_left_y, u8
     return device->IsConnected();
 }
 
-void NuPad_UpdateTouchScreenData() {
+i32 NuPad_Interface_GetMaxDevices(void) {
+    return inputManager->GetMaxDevices();
+}
+
+void NuPad_UpdateTouchScreenData(void) {
 }

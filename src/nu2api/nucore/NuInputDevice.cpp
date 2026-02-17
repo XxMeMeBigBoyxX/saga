@@ -136,6 +136,11 @@ void NuInputDevice::Update(f32 delta_time, bool emulate_touch) {
     this->volume = NuInputDevicePS::GetVolumePS(this->port);
 }
 
+void NuInputDevice::AddTranslator(NuInputDeviceTranslator *translator) {
+    this->translators[this->translator_count] = translator;
+    this->translator_count++;
+}
+
 bool NuInputDevice::IsConnected(void) const {
     return this->is_connected;
 }

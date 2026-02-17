@@ -74,7 +74,7 @@ class NuInputDeviceTranslator {
                          const float *in_analog, const float *in_motion, const NuInputTouchData *in_touch_data,
                          const NuInputMouseData *in_mouse_data, NUPADTYPE &out_pad_type,
                          NUPADATTACHMENTTYPE &out_attch_type, u32 &out_caps, u32 &out_buttons, float *out_analog,
-                         float *out_motion, NuInputTouchData *out_touch_data, NuInputMouseData *out_mouse_data);
+                         float *out_motion, NuInputTouchData *out_touch_data, NuInputMouseData *out_mouse_data) = 0;
 };
 
 class NuInputDevice {
@@ -101,6 +101,8 @@ class NuInputDevice {
     }
 
     void Update(f32 delta_time, bool emulate_touch);
+
+    void AddTranslator(NuInputDeviceTranslator *translator);
 
     bool IsConnected(void) const;
 
