@@ -43,7 +43,7 @@ project following the instructions in [README.md](README.md), you will need to
 build and run the `gonk` tool, included in the source tree. This requires an
 installation of the Rust toolchain.
 
-1. `pushd gonk/ && cargo install && popd`
+1. `pushd gonk/ && cargo install --path . && popd`
 2. `gonk split`
 
 This generates ELF objects from the original shared object corresponding to the
