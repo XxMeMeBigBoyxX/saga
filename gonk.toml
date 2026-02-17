@@ -52,6 +52,8 @@ ignore = [
     "NuWaterReset",
     "_Z16NuPs2GetLanguagev",
     "_Z15NuPs2PadDemoEndv",
+    "_ZL6InitUIv",
+    "_ZL9edrtlInitv",
     "_ZN11ClassEditor9ReadBlockEP7DATAPTR",
     "_ZN11ClassEditor10WriteBlockEi",
     "_ZN11ClassEditor10ClearLevelEi",
