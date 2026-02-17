@@ -19,6 +19,12 @@ struct CompileCommand {
     output: PathBuf,
 }
 
+#[derive(Debug, Default, serde::Deserialize)]
+struct GonkConfig {
+    #[serde(default)]
+    ignore: Vec<String>,
+}
+
 /// construct a new object file containing only the specified symbols from the original object file
 fn make_object<'a, E: object::Endian>(
     lib: &Lib<'_, '_>,
@@ -635,6 +641,13 @@ struct Lib<'data, 'file> {
 }
 
 pub fn split() -> anyhow::Result<()> {
+    let config: GonkConfig = match std::fs::read_to_string("gonk.toml") {
+        Ok(contents) => toml::from_str(&contents).context("Failed to parse gonk.toml")?,
+        Err(_) => GonkConfig::default(),
+    };
+
+    let ignore_set: HashSet<&str> = config.ignore.iter().map(|s| s.as_str()).collect();
+
     let contents = std::fs::read_to_string("build/compile_commands.json")
         .context("Failed to read compile_commands.json")?;
     let compile_commands: Vec<CompileCommand> =
@@ -647,6 +660,7 @@ pub fn split() -> anyhow::Result<()> {
     let orig_symbols: HashMap<_, _> = orig_lib_file
         .symbols()
         .filter(|sym| matches!(sym.kind(), SymbolKind::Data | SymbolKind::Text))
+        .filter(|sym| !ignore_set.contains(sym.name().unwrap_or("")))
         .map(|sym| (sym.name().unwrap(), sym))
         .collect();
 
