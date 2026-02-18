@@ -10,52 +10,36 @@
 #define NEG_35_OVER_1152 -0.0303819f
 #define MAX_SHORT_OVER_PI 10430.4f
 
+#define POW3(x) (x) * (x) * (x)
+#define POW5(x) POW3(x) * (x) * (x)
+#define POW7(x) POW5(x) * (x) * (x)
+#define POW9(x) POW7(x) * (x) * (x)
+
 static short NuASin(f32 sin) {
     f32 abs;
     f32 sqrt;
-    f32 value;
-    f32 something_else;
-    f32 transformed_sin;
+    f32 unknown_a;
+    f32 unknown_b;
+    f32 unknown_c;
+    f32 unknown_d;
 
     abs = NuFabs(sin);
     sqrt = NuFsqrt(1.0f - sin * sin);
 
-    value = MIN(sqrt, abs);
+    unknown_a = MIN(sqrt, abs);
 
-    if ((abs - 0.70710677f) * 3.40282e+38f < 1.0f && (abs - 0.70710677f) * 3.40282e+38f >= -1.0f) {
-        something_else = -1.0f;
-    } else if ((abs - 0.70710677f) * 3.40282e+38f > 1.0f) {
-        something_else = 1.0f;
-    } else {
-        something_else = (abs - 0.70710677f) * 3.40282e+38f;
-    }
+    unknown_b = CLAMP((abs - 0.70710677f) * 3.40282e+38f, -1.0f, 1.0f);
 
-    if (sin * 3.40282e+38f < 1.0f) {
-        transformed_sin = sin * 3.40282e+38f;
-    } else {
-        transformed_sin = 1.0f;
-    }
+    unknown_c = MIN(sin * 3.40282e+38f, 1.0f);
+    unknown_c = MAX(unknown_c, -1.0f);
 
-    if (sin < -1.0f) {
-        transformed_sin = -1.0f;
-    }
+    unknown_d = unknown_b * unknown_c + sin;
 
-    return (PI_OVER_4 * (something_else * transformed_sin + sin) - (something_else * transformed_sin * value) +
-            (NEG_1_OVER_6 * ((something_else * transformed_sin * value) * (something_else * transformed_sin * value) *
-                             (something_else * transformed_sin * value))) +
-            (NEG_3_OVER_40 * ((something_else * transformed_sin * value) * (something_else * transformed_sin * value) *
-                              (something_else * transformed_sin * value) * (something_else * transformed_sin * value) *
-                              (something_else * transformed_sin * value))) +
-            (NEG_5_OVER_112 * ((something_else * transformed_sin * value) * (something_else * transformed_sin * value) *
-                               (something_else * transformed_sin * value) * (something_else * transformed_sin * value) *
-                               (something_else * transformed_sin * value) * (something_else * transformed_sin * value) *
-                               (something_else * transformed_sin * value))) +
-            (NEG_35_OVER_1152 *
-             ((something_else * transformed_sin * value) * (something_else * transformed_sin * value) *
-              (something_else * transformed_sin * value) * (something_else * transformed_sin * value) *
-              (something_else * transformed_sin * value) * (something_else * transformed_sin * value) *
-              (something_else * transformed_sin * value) * (something_else * transformed_sin * value) *
-              (something_else * transformed_sin * value)))) *
+    return (unknown_d * PI_OVER_4 - (unknown_b * unknown_c * unknown_a) +
+            POW3(unknown_b * unknown_c * unknown_a) * NEG_1_OVER_6 +
+            POW5(unknown_b * unknown_c * unknown_a) * NEG_3_OVER_40 +
+            POW7(unknown_b * unknown_c * unknown_a) * NEG_5_OVER_112 +
+            POW9(unknown_b * unknown_c * unknown_a) * NEG_35_OVER_1152) *
            MAX_SHORT_OVER_PI;
 }
 
