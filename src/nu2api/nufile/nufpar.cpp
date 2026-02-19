@@ -126,6 +126,10 @@ void NuFParSuspend(NUFPAR *parser) {
         return;
     }
 
+    if (parser->file_name[0] == '\0' || parser->file_handle == 0) {
+        // Error logging goes here.
+    }
+
     NuFileClose(parser->file_handle);
 
     parser->file_handle = 0;

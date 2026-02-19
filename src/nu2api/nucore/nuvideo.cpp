@@ -9,7 +9,6 @@ int NuVideoGetMode(void) {
 void NuVideoSetMode(int mode) {
     nuapi.video_mode = mode;
 
-    // this ordering is required for a match...
     switch (nuapi.video_mode) {
         case NUVIDEOMODE_PAL:
         case NUVIDEOMODE_PALFF:
@@ -41,7 +40,8 @@ void NuVideoRollingFrameRateReset(void) {
 }
 
 void NuVideoSetBrightness(f32 brightness) {
-    nuapi.video_brightness = brightness; // this has a weird register swap issue with the matching...
+    nuapi.video_brightness = brightness;
+
     NuVideoSetBrightnessPS();
 }
 
@@ -49,12 +49,13 @@ void NuVideoSetBrightnessPS() {
 }
 
 void NuVideoSetResolution(int width, int height) {
-    // 100% asm match btw...
-    __asm__("cmp $0, %0" : : "m"(width));
-    __asm__("cmp $0, %0" : : "m"(height));
+    // It's unclear exactly what was here, but this matches and makes a sort of
+    // sense.
+    if (width == 0 | height == 0) {
+    }
 
-    ((volatile NUAPI *)&nuapi)->screen_width = width;
-    ((volatile NUAPI *)&nuapi)->screen_height = height;
+    nuapi.screen_width = width;
+    nuapi.screen_height = height;
 }
 
 void NuVideoSetSwapModePS(NUVIDEO_SWAPMODE video_swap_mode) {
