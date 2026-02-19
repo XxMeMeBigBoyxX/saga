@@ -14,6 +14,7 @@ namespace NuInputDevicePS {
     pthread_mutex_t m_touchEventQueueCriticalSection;
 
     u32 ClassInitPS(void) {
+        return 0;
     }
 
     void ClassShutdownPS(void) {
