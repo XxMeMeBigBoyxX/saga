@@ -285,7 +285,7 @@ set(SAGA_SOURCE_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api/numath/nutrig.c
     ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api/numath/nutrig.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api/numath/nutrig_gen.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api/numath/nuvec.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api/numath/nuvec.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api/numath/nuvec4.c
 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api/numusic/numusic.cpp

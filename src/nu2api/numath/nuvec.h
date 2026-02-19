@@ -222,4 +222,7 @@ extern "C" {
     void NuVecMtxTranslate(NUVEC *out, NUVEC *v, NUMTX *m);
 #ifdef __cplusplus
 }
+
+void NuVecMtxTransformBlock(NUVEC *out, NUVEC *v, NUMTX *m, i32 count);
+
 #endif

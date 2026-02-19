@@ -265,3 +265,16 @@ void NuVecMtxTranslate(NUVEC *out, NUVEC *v, NUMTX *m) {
     out->y = v->y + m->m31;
     out->z = v->z + m->m32;
 }
+
+void NuVecMtxTransformBlock(NUVEC *out, NUVEC *v, NUMTX *m, i32 count) {
+    i32 i;
+
+    for (i = 0; i < count; i++) {
+        out->x = v->x * m->m00 + v->y * m->m10 + v->z * m->m20 + m->m30;
+        out->y = v->x * m->m01 + v->y * m->m11 + v->z * m->m21 + m->m31;
+        out->z = v->x * m->m02 + v->y * m->m12 + v->z * m->m22 + m->m32;
+
+        out++;
+        v++;
+    }
+}
