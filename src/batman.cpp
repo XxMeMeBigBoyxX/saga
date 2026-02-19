@@ -33,6 +33,10 @@ extern "C" i32 NuMain(i32 argc, char **argv) {
         LOG_WARN("GamePlayMusic returned %d", result);
     }
 
+    while (true) {
+        NuThreadSleep(1);
+    }
+
     return 0;
 }
 

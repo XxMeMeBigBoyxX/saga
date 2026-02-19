@@ -7,17 +7,33 @@
 
 #include "nu2api/nucore/nuvuvec.hpp"
 
+class NuSoundStreamer;
+
 class NuSoundStreamingSample : public NuSoundSample {
   public:
     NuSoundBuffer *buffer1;
     NuSoundBuffer *buffer2;
 
+    NuSoundStreamer *streamer;
     NuSoundLoader *loader;
 
     NuSoundStreamingSample(const char *file);
+
+    i32 Open(float param_1, bool param_2, bool param_3);
+};
+
+class NuSoundWeakPtrListNode {
+  public:
+    static pthread_mutex_t sPtrListLock;
+    static pthread_mutex_t sPtrAccessLock;
+
+    NuSoundStreamingSample *streaming_sample;
+
+    virtual ~NuSoundWeakPtrListNode() = default;
 };
 
 class NuSoundStreamer {
+  public:
   public:
     static NuList<NuSoundStreamer *> sStreamers;
 
@@ -28,7 +44,10 @@ class NuSoundStreamer {
   private:
     NuThread *thread;
 
-    u8 buffer1[0x500];
+    NuSoundWeakPtrListNode queue[32];
+    i32 queue_length = 0;
+    i32 index = 0;
+
     u8 buffer2[0x500];
 
     NuThreadSemaphore semaphore1;

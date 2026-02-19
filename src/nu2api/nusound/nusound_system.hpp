@@ -7,6 +7,8 @@
 
 #include "decomp.h"
 
+#include <vorbis/vorbisfile.h>
+
 class NuSoundLoader;
 class NuSoundBus;
 class NuSoundSample;
@@ -24,7 +26,6 @@ class NuSoundSystem {
     };
 
     // "wav", "adp", "ima", "caf", "xma", "ogg",  "dsp", "msf", "vag", "gcm", "wua", "cbx"
-
     enum class FileType : u32 {
         WAV = 0,
         ADP = 1,
@@ -83,6 +84,7 @@ class NuSoundSystem {
 
   public:
     static NuSoundLoader *CreateFileLoader(FileType type);
+    static void ReleaseFileLoader(NuSoundLoader *loader);
 
     bool Initialise(i32 size);
 
@@ -130,11 +132,56 @@ class NuSoundOutOfMemCallback {
     virtual void operator()() = 0;
 };
 
-class NuSoundStreamDesc {};
+class NuSoundStreamDesc {
+  public:
+    enum class DataFormat {
+        ZERO = 0,
+        THREE = 3,
+    };
+
+  public:
+    u16 format_id;
+    u16 num_channels;
+    u32 sample_rate;
+    u32 samples_per_second;
+    u16 bits_per_channel;
+    u16 block_size;
+    u64 decoded_length_bytes;
+    u16 extended_data_size;
+    void *extended_data;
+
+    OggVorbis_File ogg_file;
+
+    u64 file_size;
+    u64 encoded_length_bytes;
+    u64 length_samples;
+    double length_seconds;
+
+  public:
+    virtual DataFormat GetDecodedDataFormat() = 0;
+    virtual u64 GetEncodedLengthBytes() = 0;
+    virtual u64 GetLengthSamples() = 0;
+    virtual double GetLengthSeconds() = 0;
+    virtual u64 GetDataOffset() = 0;
+    virtual u16 GetNumChannels() = 0;
+    virtual u32 GetSampleRate() = 0;
+    virtual u16 GetBitsPerChannel() = 0;
+    virtual u16 GetBlockSize() = 0;
+    virtual DataFormat GetEncodedDataFormat() = 0;
+    virtual u64 GetDecodedLengthBytes() = 0;
+    virtual i32 DecodeStreamOnOpen();
+    virtual i32 GetLoopStart();
+    virtual i32 GetLoopEnd();
+    virtual u16 GetInterleaveSize() = 0;
+    virtual u16 GetFormatId() = 0;
+    virtual u16 GetExtendedDataSize() = 0;
+    virtual void *GetExtendedData() = 0;
+};
 
 enum class LoadState {
     NOT_LOADED = 0,
     LOADED = 1,
+    TWO = 2,
 };
 enum class ErrorState {
     NONE = 0,

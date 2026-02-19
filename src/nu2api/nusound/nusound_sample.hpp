@@ -6,7 +6,7 @@
 #include <pthread.h>
 
 class NuSoundSample : public NuSoundSource {
-  private:
+  protected:
     NuSoundBuffer buffer;
     NuSoundSystem::FileType file_type;
 

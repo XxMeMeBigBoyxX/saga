@@ -91,9 +91,6 @@ if (BUILD_FOR_HOST)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m32 -fno-stack-protector -march=i686 -msse2 -fsanitize=address")
 
     add_compile_definitions(HOST_BUILD)
-
-    find_package(PkgConfig REQUIRED)
-    pkg_check_modules(GLES2 REQUIRED glesv2)
 else()
     message(STATUS "Building for Android x86")
 
@@ -108,7 +105,6 @@ else()
         set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fno-function-sections -fno-data-sections")
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-function-sections -fno-data-sections")
 
-        set(GLES2_LIBRARIES "GLESv2")
         set(CMAKE_SYSTEM_NAME Linux)
         set(CMAKE_SYSTEM_PROCESSOR i686)
         set(CMAKE_EXECUTABLE_SUFFIX "")
@@ -121,10 +117,7 @@ else()
 
         set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fno-function-sections -fno-data-sections")
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-function-sections -fno-data-sections")
-
-        set(GLES2_LIBRARIES "GLESv2")
     endif()
-
 endif()
 
 set(CMAKE_CXX_STANDARD 11)
@@ -302,6 +295,7 @@ set(SAGA_SOURCE_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api/nusound/nusound3_include.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api/nusound/nusound_buffer.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api/nusound/nusound_loader.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api/nusound/nusound_loader_ogg.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api/nusound/nusound_source.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api/nusound/nusound_streamer.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api/nusound/nusound_memorymanager.cpp
@@ -310,11 +304,11 @@ set(SAGA_SOURCE_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api/nusound/nusound_android.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api/nusound/nusound_system.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api/nusound/nusound_voice.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api/nusound/nusound_weakptr.cpp
 )
 
 set(SAGA_INCLUDE_DIRS
     ${CMAKE_CURRENT_SOURCE_DIR}/src
-    ${GLES2_INCLUDE_DIRS}
 )
 
 add_executable(saga ${SAGA_SOURCE_FILES})
@@ -327,8 +321,49 @@ if(CMAKE_HOST_WIN32)
     set(CMAKE_C_STANDARD_LIBRARIES "")
     set(CMAKE_CXX_STANDARD_LIBRARIES "")
 endif()
+
 target_include_directories(saga PUBLIC ${SAGA_INCLUDE_DIRS})
+
+# find dependencies
+if (CMAKE_HOST_WIN32)
+    set(GLES2_LIBRARIES "GLESv2")
+else()
+    find_package(PkgConfig REQUIRED)
+    
+    if (BUILD_FOR_HOST)
+        pkg_check_modules(VORBIS REQUIRED vorbis vorbisfile)
+        message(STATUS "Found Vorbis: ${VORBIS_LIBRARIES} (include: ${VORBIS_INCLUDE_DIRS})")
+
+        pkg_check_modules(GLES2 REQUIRED glesv2)
+    else()
+        set(GLES2_LIBRARIES "GLESv2")
+
+        # build Ogg Vorbis
+        add_custom_command(
+            OUTPUT "${CMAKE_SOURCE_DIR}/libs/ogg-vorbis/build.txt"
+            COMMAND echo "Building Ogg Vorbis for Android x86..."
+            COMMAND env bash -c "${CMAKE_SOURCE_DIR}/libs/build-ogg-vorbis.sh"
+            WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/libs"
+            COMMENT "Building Ogg Vorbis library"
+            VERBATIM
+        )
+        add_custom_target(build_ogg_vorbis ALL DEPENDS "${CMAKE_SOURCE_DIR}/libs/ogg-vorbis/build.txt")
+        add_dependencies(saga build_ogg_vorbis)
+
+        target_link_directories(saga PRIVATE "${CMAKE_SOURCE_DIR}/libs/ogg-vorbis/lib")
+        set(VORBIS_LIBRARIES
+            vorbisfile vorbis ogg
+        )
+        set(VORBIS_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/libs/ogg-vorbis/include")
+    endif()
+endif()
+
+# include & link dependencies
 target_link_libraries(saga PRIVATE ${GLES2_LIBRARIES})
+target_include_directories(saga SYSTEM PRIVATE ${GLES2_INCLUDE_DIRS})
+
+target_link_libraries(saga PRIVATE ${VORBIS_LIBRARIES})
+target_include_directories(saga SYSTEM PRIVATE ${VORBIS_INCLUDE_DIRS})
 
 # set __FILENAME__ macro to relative path from src/
 function(set_filename_macro f)

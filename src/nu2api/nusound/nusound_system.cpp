@@ -321,3 +321,19 @@ NuSoundSystem::FileType NuSoundSystem::DetermineFileType(const char *path) {
 
     return FileType::INVALID;
 }
+
+void NuSoundSystem::ReleaseFileLoader(NuSoundLoader *loader) {
+    UNIMPLEMENTED();
+}
+
+i32 NuSoundStreamDesc::DecodeStreamOnOpen() {
+    return 0;
+}
+
+i32 NuSoundStreamDesc::GetLoopStart() {
+    return 0;
+}
+
+i32 NuSoundStreamDesc::GetLoopEnd() {
+    return 0;
+}

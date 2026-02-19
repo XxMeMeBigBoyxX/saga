@@ -19,6 +19,9 @@ jobs:
             - name: Install GLESv2 libs
               run: sudo dpkg --add-architecture i386 && sudo apt-get -y update && sudo apt-get install libgles2-mesa-dev:i386
 
+            - name: Install OGG Vorbis libs
+              run: sudo apt-get install libvorbis-dev:i386
+
             - name: gcc versions
               run: |
                   gcc --version
@@ -33,4 +36,4 @@ jobs:
                   PKG_CONFIG_PATH: /usr/lib/i386-linux-gnu/pkgconfig
 
             - name: Build
-              run: cmake --build build
+              run: cmake --build build --verbose

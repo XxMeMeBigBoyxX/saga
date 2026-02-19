@@ -6,7 +6,6 @@
 
 #include "nu2api/nufile/nufile.h"
 #include "nu2api/nusound/nusound_buffer.hpp"
-#include "nu2api/nusound/nusound_system.hpp"
 
 class NuSoundLoadTrigger {
   public:
@@ -28,7 +27,7 @@ class NuSoundLoadTrigger {
 };
 
 class NuSoundLoader {
-  private:
+  protected:
     NUFILE file;
     i32 field2_0x8;
     i32 field3_0xc;
@@ -53,12 +52,12 @@ class NuSoundLoader {
     virtual NuSoundBuffer *FillStreamBuffer(NuSoundBuffer *buffer, bool param2);
 
     virtual bool SeekRawData(u64 position);
-    virtual bool SeekPCMSample(u64 sampleIndex) = 0;
+    virtual bool SeekPCMSample(u64 index) = 0;
     virtual bool SeekTime(f64 seconds) = 0;
 
     virtual bool OpenFileForStreaming(const char *path, bool unused);
     virtual void Close();
 
-    virtual void *ReadHeader(NuSoundStreamDesc *desc) = 0;
+    virtual i32 ReadHeader(NuSoundStreamDesc *desc) = 0;
     virtual u64 ReadData(void *buffer, u64 size);
 };

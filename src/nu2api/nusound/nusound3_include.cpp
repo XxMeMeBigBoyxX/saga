@@ -12,13 +12,14 @@
 #include "nu2api/nusound/nusound_android.hpp"
 #include "nu2api/nusound/nusound_buffer.hpp"
 #include "nu2api/nusound/nusound_loader.hpp"
+#include "nu2api/nusound/nusound_loader_ogg.hpp"
 #include "nu2api/nusound/nusound_streamer.hpp"
 #include "nu2api/nusound/nusound_voice.hpp"
 
 #include <new>
 #include <stdarg.h>
 
-struct NuSoundWeakPtrListNode {
+struct NuSoundStream {
     NuSoundStreamingSample *stream;
     bool paused;
     int ps2volume;
@@ -32,7 +33,7 @@ extern "C" {
 
 static NuVector<nusound_filename_info_s> g_NuSoundSamples;
 
-static NuSoundWeakPtrListNode *g_NuSoundStreams[4] = {0};
+static NuSoundStream *g_NuSoundStreams[4] = {0};
 
 static NuSoundLoadTrigger g_NuSoundLoadTrigger;
 
@@ -50,7 +51,7 @@ static pthread_mutex_t g_NuSoundLoadCriticalSection = PTHREAD_MUTEX_INITIALIZER;
 
 void NuSound3SampleLoadThread(void *arg) {
     do {
-    } while (g_NuSoundLoadBits == NULL);
+    } while (g_NuSoundLoadBits == 0);
 
     if (g_NuSoundSamples.length != 0) {
     }
@@ -81,11 +82,21 @@ NuSoundLoader *NuSoundSystem::CreateFileLoader(FileType type) {
     switch (type) {
         case FileType::WAV:
             UNIMPLEMENTED("WAV loader");
+            break;
         case FileType::OGG:
-            UNIMPLEMENTED("OGG loader");
-        default:
-            return NULL;
+
+            NuSoundLoaderOGG *ogg_loader =
+                (NuSoundLoaderOGG *)_AllocMemory(NuSoundSystem::MemoryDiscipline::SCRATCH, 0x2e8, 4,
+                                                 "i:/SagaTouch-Android_9176564/nu2api.2013/nusound/nusound.cpp:1247");
+            if (ogg_loader != NULL) {
+                new (ogg_loader) NuSoundLoaderOGG();
+                return ogg_loader;
+            }
+
+            break;
     }
+
+    return NULL;
 }
 
 void NuSound3Init(i32 zero) {
@@ -97,8 +108,7 @@ void NuSound3Init(i32 zero) {
     // NuSoundDecoder::Initialise();
 
     // NuMemoryGet()->GetThreadMem()->_BlockAlloc(0xa48, 4, 1, "", 7);
-    NuSoundStreamer *streamer =
-        (NuSoundStreamer *)NU_ALLOC(sizeof(NuSoundStreamer), 4, 1, "", NUMEMORY_CATEGORY_NUSOUND);
+    NuSoundStreamer *streamer = NU_ALLOC_T(NuSoundStreamer, 1, "", NUMEMORY_CATEGORY_NUSOUND);
     if (streamer != NULL) {
         new (streamer) NuSoundStreamer{};
     }
@@ -191,7 +201,7 @@ i32 NuSound3PlayStereoV(NUSOUNDPLAYTOK token, ...) {
 
     NuSoundStreamingSample *streaming_sample = g_NuSoundSamples.data[sample_index].sample;
     if (streaming_sample->GetThreadQueueCount() < 1) {
-        NuSoundWeakPtrListNode *stream_ptr = g_NuSoundStreams[stream_index];
+        NuSoundStream *stream_ptr = g_NuSoundStreams[stream_index];
         if (stream_ptr != NULL) {
             NuSoundStreamingSample *stream = stream_ptr->stream;
             if (stream != streaming_sample) {
@@ -209,7 +219,7 @@ i32 NuSound3PlayStereoV(NUSOUNDPLAYTOK token, ...) {
         }
 
         if (streaming_sample != NULL && streaming_sample->GetResourceCount() == 0) {
-            NuSoundWeakPtrListNode *node = new NuSoundWeakPtrListNode();
+            NuSoundStream *node = new NuSoundStream();
 
             node->status = 0;
             g_NuSoundStreams[stream_index] = node;

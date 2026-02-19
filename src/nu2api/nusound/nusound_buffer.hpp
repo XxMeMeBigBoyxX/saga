@@ -12,9 +12,8 @@ class NuSoundBuffer {
     u32 flags;
     NuSoundSystem::MemoryDiscipline memory_discipline;
 
-    bool IsAllocated() const;
+   public:
     void Free();
-
-  public:
+    bool IsAllocated() const;
     i32 Allocate(u64 size, NuSoundSystem::MemoryDiscipline disc);
 };
