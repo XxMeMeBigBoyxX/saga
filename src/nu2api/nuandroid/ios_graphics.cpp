@@ -8,6 +8,9 @@
 #include "nu2api/nu3d/NuRenderDevice.h"
 #include "nu2api/nu3d/android/nutex_ios_ex.h"
 
+i32 g_backingWidth;
+i32 g_backingHeight;
+
 void NuIOSInitOpenGLES(void) {
     BeginCriticalSectionGL("i:/SagaTouch-Android_9176564/nu2api.saga/nuandroid/ios_graphics.cpp", 308);
     NuIOS_AllocateSystemFramebuffers();

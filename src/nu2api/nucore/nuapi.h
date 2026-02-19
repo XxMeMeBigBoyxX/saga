@@ -98,4 +98,5 @@ extern "C" {
 #endif
 
 i32 NuInitHardwarePS(VARIPTR *buf, VARIPTR *buf_end, i32 heap_size);
-i32 NuInitHardwareParseArgsPS(i32 setup, char **value);
+
+i32 NuInitHardwareParseArgsPS(i32 setup_tok, char **args);

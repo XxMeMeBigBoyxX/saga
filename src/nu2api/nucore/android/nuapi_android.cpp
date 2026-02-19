@@ -1,32 +1,42 @@
-#include "nu2api/nucore/nuapi.h"
-
 #include "nu2api/nu3d/NuRenderDevice.h"
+#include "nu2api/nu3d/android/nurenderthread.h"
+#include "nu2api/nu3d/nurndr.h"
+#include "nu2api/nuandroid/ios_graphics.h"
+#include "nu2api/nucore/nuapi.h"
 #include "nu2api/nusound/nusound.h"
 
-i32 NuInitHardwarePS(VARIPTR *buffer_start, VARIPTR *buffer_end, i32 zero) {
+i32 NuInitHardwarePS(VARIPTR *buf, VARIPTR *buf_end, i32 heap_size) {
     // NuIOSThreadInit();
-    // NuIOS_IsLowEndDevice();
+
+    NuIOS_IsLowEndDevice();
+
     // g_vaoLifetimeMutex = NuThreadCreateCriticalSection();
     // g_texAnimCriticalSection = NuThreadCreateCriticalSection();
     // InitializeGLMutex();
-    // NuPad_Interface_InputManagerInitialise();
-    // BeginCriticalSectionGL("i:/SagaTouch-Android_9176564/nu2api.saga/nucore/android/nuapi_android.c", 0xf9);
+
+    NuPad_Interface_InputManagerInitialise();
+
+    BeginCriticalSectionGL("i:/SagaTouch-Android_9176564/nu2api.saga/nucore/android/nuapi_android.c", 0xf9);
     // NuIOSMtlInit();
     // NuInitDebrisRenderer(buffer_start, buffer_end->voidptr);
-    // EndCriticalSectionGL("i:/SagaTouch-Android_9176564/nu2api.saga/nucore/android/nuapi_android.c", 0xfe);
-    // NuRenderThreadCreate();
-    // BeginCriticalSectionGL("i:/SagaTouch-Android_9176564/nu2api.saga/nucore/android/nuapi_android.c", 0x103);
+    EndCriticalSectionGL("i:/SagaTouch-Android_9176564/nu2api.saga/nucore/android/nuapi_android.c", 0xfe);
+
+    NuRenderThreadCreate();
+
+    BeginCriticalSectionGL("i:/SagaTouch-Android_9176564/nu2api.saga/nucore/android/nuapi_android.c", 0x103);
     // NuShaderManagerInit(buffer_start, buffer_end->voidptr);
     // NuRenderContextInit();
-    // EndCriticalSectionGL("i:/SagaTouch-Android_9176564/nu2api.saga/nucore/android/nuapi_android.c", 0x108);
-    // nurndr_pixel_width = g_backingWidth;
-    // nurndr_pixel_height = g_backingHeight;
-    NuSound3InitV(buffer_start, *buffer_end, 0, 0);
+    EndCriticalSectionGL("i:/SagaTouch-Android_9176564/nu2api.saga/nucore/android/nuapi_android.c", 0x108);
+
+    nurndr_pixel_width = g_backingWidth;
+    nurndr_pixel_height = g_backingHeight;
+
+    NuSound3InitV(buf, *buf_end, 0, 0);
 
     return 0;
 }
 
-i32 NuInitHardwareParseArgsPS(i32 setup_tok, char **value) {
+i32 NuInitHardwareParseArgsPS(i32 setup_tok, char **args) {
     return 0;
 }
 

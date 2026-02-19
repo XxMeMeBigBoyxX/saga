@@ -4,12 +4,15 @@
 
 #include "nu2api/nucore/numemory.h"
 
-void NuRndrInitEx(int stream_buffer_size, VARIPTR *buffer) {
+i32 nurndr_pixel_width;
+i32 nurndr_pixel_height;
+
+void NuRndrInitEx(i32 stream_buffer_size, VARIPTR *buffer) {
     NuRndrStreamInit(stream_buffer_size, buffer);
 }
 
-unsigned int rndrstream_nbuffers = 2;
-int nurndr_maxstreamsize;
+u32 rndrstream_nbuffers = 2;
+i32 nurndr_maxstreamsize;
 VARIPTR rndrstream_end;
 VARIPTR rndrstream_free;
 static VARIPTR rndrstream[NURNDR_STREAM_MAX_BUFFERS];

@@ -29,7 +29,10 @@ void NuRndrStreamInit(i32 stream_buffer_size, VARIPTR *buffer);
 
 extern "C" {
 #endif
-    void NuRndrInitEx(int stream_buffer_size, VARIPTR *buffer);
+    extern i32 nurndr_pixel_width;
+    extern i32 nurndr_pixel_height;
+
+    void NuRndrInitEx(i32 stream_buffer_size, VARIPTR *buffer);
 
     i32 NuRndrSetViewMtx(NUMTX *vpcs_mtx, NUMTX *viewport_vpc_mtx, NUMTX *scissor_vpc_mtx);
 

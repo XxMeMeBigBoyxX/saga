@@ -9,6 +9,9 @@ extern "C" {
 #endif
     extern i32 g_isLowEndDevice;
 
+    extern i32 g_backingWidth;
+    extern i32 g_backingHeight;
+
     i32 NuIOS_IsLowEndDevice(void);
 
     char *NuIOS_GetDocumentsPath(void);
