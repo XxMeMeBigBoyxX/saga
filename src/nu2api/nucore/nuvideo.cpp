@@ -28,10 +28,6 @@ int NuVideoGetAspect(void) {
     return nuapi.video_aspect;
 }
 
-int NuVideoGetAspectPS(void) {
-    return 3;
-}
-
 NUVIDEO_SWAPMODE NuVideoGetSwapMode(void) {
     return nuapi.video_swap_mode;
 }
@@ -45,9 +41,6 @@ void NuVideoSetBrightness(f32 brightness) {
     NuVideoSetBrightnessPS();
 }
 
-void NuVideoSetBrightnessPS() {
-}
-
 void NuVideoSetResolution(int width, int height) {
     // It's unclear exactly what was here, but this matches and makes a sort of
     // sense.
@@ -56,9 +49,6 @@ void NuVideoSetResolution(int width, int height) {
 
     nuapi.screen_width = width;
     nuapi.screen_height = height;
-}
-
-void NuVideoSetSwapModePS(NUVIDEO_SWAPMODE video_swap_mode) {
 }
 
 NUVIDEO_SWAPMODE NuVideoSetSwapMode(NUVIDEO_SWAPMODE video_swap_mode) {

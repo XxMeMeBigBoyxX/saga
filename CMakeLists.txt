@@ -269,6 +269,7 @@ set(SAGA_SOURCE_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api/nucore/android/numemory_android.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api/nucore/android/nupad_android.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api/nucore/android/nutime_android.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api/nucore/android/nuvideo_android.cpp
 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api/nufile/nufile.c
     ${CMAKE_CURRENT_SOURCE_DIR}/src/nu2api/nufile/nufile.cpp
