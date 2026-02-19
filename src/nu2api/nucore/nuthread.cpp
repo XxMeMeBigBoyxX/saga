@@ -59,3 +59,35 @@ void NuDisableVBlank() {
 
 nuthreadenableswapfn *NuThreadEnableThreadSwap = &NuEnableVBlank;
 nuthreaddisableswapfn *NuThreadDisableThreadSwap = &NuDisableVBlank;
+
+// This section contains functions which only make sense on Android/iOS.
+// However, they are not compiled with the same optimization as what is housed
+// in `NuThread_android.cpp`, and the functions are contiguous with the other
+// functions in this file. Who knows what was going on.
+#ifdef ANDROID
+// This struct is only evidenced in size and partial composition in the unused
+// function `NuThreadCreate`.
+struct ThreadData {
+    pthread_t thread;
+
+    // Types uncertain.
+    u32 unknown_04;
+    u32 unknown_08;
+};
+
+static ThreadData NuThread_Threads[0x10];
+
+pthread_key_t g_currentThreadSpecificKey;
+
+void DataDestructor(void *data) {
+}
+
+void NuIOSThreadInit() {
+    void *data;
+
+    pthread_key_create(&g_currentThreadSpecificKey, DataDestructor);
+
+    data = NuThread_Threads;
+    pthread_setspecific(g_currentThreadSpecificKey, data);
+}
+#endif

@@ -1,18 +1,24 @@
 #include "nu2api/nu3d/NuRenderDevice.h"
+#include "nu2api/nu3d/android/nugscn_android.h"
 #include "nu2api/nu3d/android/nurenderthread.h"
 #include "nu2api/nu3d/nurndr.h"
+#include "nu2api/nu3d/nutexanm.h"
 #include "nu2api/nuandroid/ios_graphics.h"
 #include "nu2api/nucore/nuapi.h"
+#include "nu2api/nucore/nuthread.h"
 #include "nu2api/nusound/nusound.h"
 
+void InitializeGLMutex(void) {
+}
+
 i32 NuInitHardwarePS(VARIPTR *buf, VARIPTR *buf_end, i32 heap_size) {
-    // NuIOSThreadInit();
+    NuIOSThreadInit();
 
     NuIOS_IsLowEndDevice();
 
-    // g_vaoLifetimeMutex = NuThreadCreateCriticalSection();
-    // g_texAnimCriticalSection = NuThreadCreateCriticalSection();
-    // InitializeGLMutex();
+    g_vaoLifetimeMutex = NuThreadCreateCriticalSection();
+    g_texAnimCriticalSection = NuThreadCreateCriticalSection();
+    InitializeGLMutex();
 
     NuPad_Interface_InputManagerInitialise();
 

@@ -1,6 +1,5 @@
 #pragma once
 
-#include "nu2api/nucore/NuMemoryManager.h"
 #include "nu2api/nucore/common.h"
 
 typedef enum NUTHREADCAFECORE {
@@ -106,5 +105,17 @@ class NuThreadManager {
 NuThreadBase *NuThreadGetCurrentThread();
 void NuThreadSleep(i32 seconds);
 NuThread *NuThreadInitPS();
+
+#endif
+
+#ifdef ANDROID
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+  void NuIOSThreadInit(void);
+#ifdef __cplusplus
+}
+#endif
 
 #endif
