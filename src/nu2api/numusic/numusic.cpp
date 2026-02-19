@@ -132,7 +132,7 @@ void NuMusic::InitData(const char *file, VARIPTR *buffer_start, VARIPTR buffer_e
     album = (Album *)((usize)this->string_pool_end + 3U & 0xfffffffc);
     if (albumPtr == album) {
         tracksPtr = this->tracks;
-        alloced = (Track *)((uint)((usize)&albumPtr[count].name + 3U) & 0xfffffffc);
+        alloced = (Track *)((u32)((usize)&albumPtr[count].name + 3U) & 0xfffffffc);
         pTVar3 = tracksPtr;
         if (tracksPtr == alloced)
             goto LAB_003203e6;
@@ -168,7 +168,7 @@ void NuMusic::InitData(const char *file, VARIPTR *buffer_start, VARIPTR buffer_e
 
 LAB_003203e6:
     f32 *pfVar2 = this->indexes;
-    f32 *__dest = (f32 *)((uint)((usize)&tracksPtr[track_count].path + 3U) & 0xfffffffc);
+    f32 *__dest = (f32 *)((u32)((usize)&tracksPtr[track_count].path + 3U) & 0xfffffffc);
     i32 local_20;
     if (pfVar2 == __dest) {
         local_20 = this->index_count;
@@ -413,7 +413,7 @@ bool NuMusic::Voice::Load(Track *track, int trackIndex) {
 
     bVar1 = this->tracks[this->track_index] != track;
     if (bVar1) {
-        this->track_index = (uint)(track->clazz == TRACK_CLASS_8);
+        this->track_index = (u32)(track->clazz == TRACK_CLASS_8);
         NuSound3StopStereoStream(this->stream_index);
         index = this->track_index;
         this->tracks[index] = track;

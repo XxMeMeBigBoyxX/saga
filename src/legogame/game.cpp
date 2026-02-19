@@ -199,7 +199,7 @@ void InitGameAfterConfig(void) {
                                 goto LAB_0012cb40;
                             }
                             iVar4 = iVar4 + 1;
-                        } while (iVar4 < (int)(uint)area->field28_0x7d);
+                        } while (iVar4 < (i32)(u32)area->field28_0x7d);
                     }
                     areaIndex = areaIndex + 1;
                     area = area + 1;

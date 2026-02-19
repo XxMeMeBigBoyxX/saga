@@ -42,9 +42,9 @@ AREADATA *Areas_ConfigureList(char *file, VARIPTR *bufferStart, VARIPTR *bufferE
     i16 sVar5;
     nufpar_s *fp;
     int iVar6;
-    uint uVar7;
+    u32 uVar7;
     undefined4 uVar8;
-    uint uVar9;
+    u32 uVar9;
     AREADATA *area2;
     i16 index;
     AREADATA *area;
@@ -53,7 +53,7 @@ AREADATA *Areas_ConfigureList(char *file, VARIPTR *bufferStart, VARIPTR *bufferE
     undefined4 uStack_14;
     char *a;
     bool bVar2;
-    uint uVar1;
+    u32 uVar1;
 
     uStack_14 = 0x4862eb;
     fp = NuFParCreate(file);
@@ -109,7 +109,7 @@ AREADATA *Areas_ConfigureList(char *file, VARIPTR *bufferStart, VARIPTR *bufferE
                                     bVar2 = true;
                                     if (j != -1) {
                                         bVar3 = area->field28_0x7d;
-                                        uVar7 = (uint)bVar3;
+                                        uVar7 = (u32)bVar3;
                                         if (uVar7 == 0)
                                             goto LAB_004866e6;
                                         uVar9 = 0;
