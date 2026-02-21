@@ -1,230 +1,297 @@
 #pragma once
 
+/// @file
+/// @brief Functions and types related to vectors in 3-space.
+
 #include "nu2api/nucore/common.h"
 
 typedef struct numtx_s NUMTX;
 
-/// @brief A 3-dimensional vector
+/// @brief A vector in 3-dimensional space.
 typedef struct nuvec_s {
-    /// @brief The x component of the vector
+    /// @brief The x component of the vector.
     f32 x;
 
-    /// @brief The y component of the vector
+    /// @brief The y component of the vector.
     f32 y;
 
-    /// @brief The z component of the vector
+    /// @brief The z component of the vector.
     f32 z;
 } NUVEC;
 
+/// @relatesalso nuvec_s
+/// @brief The vector `(0, 0, 0)`.
 extern NUVEC v000;
+
+/// @relatesalso nuvec_s
+/// @brief The vector `(1, 0, 0)`.
 extern NUVEC v100;
+
+/// @relatesalso nuvec_s
+/// @brief The vector `(0, 1, 0)`.
 extern NUVEC v010;
+
+/// @relatesalso nuvec_s
+/// @brief The vector `(0, 0, 1)`.
 extern NUVEC v001;
+
+/// @relatesalso nuvec_s
+/// @brief The vector `(1, 1, 1)`.
 extern NUVEC v111;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-    /// @brief Negate a vector
-    /// @details Negates the vector v0 and stores the result in v.
-    /// @param v The vector to store the result in
-    /// @param v0 The vector to negate
-    /// @return void
+    /// @relatesalso nuvec_s
+    /// @brief Negates a vector.
+    /// @param[out] v The negated vector, i.e. `-v0`.
+    /// @param v0 The vector to negate.
     void NuVecNeg(NUVEC *v, NUVEC *v0);
 
-    /// @brief Add two vectors
-    /// @details Adds the vectors v0 and v1 and stores the result in v.
-    /// @param v The vector to store the result in
-    /// @param v0 The first vector to add
-    /// @param v1 The second vector to add
-    /// @return void
+    /// @relatesalso nuvec_s
+    /// @brief Adds two vectors.
+    /// @param[out] v The vector resulting from adding `v0` and `v1`, i.e.
+    ///               `v = v0 + v1`.
+    /// @param v0 The first vector to add.
+    /// @param v1 The second vector to add.
     void NuVecAdd(NUVEC *v, NUVEC *v0, NUVEC *v1);
 
-    /// @brief Subtract two vectors
-    /// @details Subtracts the vector v1 from v0 and stores the result in v.
-    /// @param v The vector to store the result in
-    /// @param v0 The vector to subtract from
-    /// @param v1 The vector to subtract
-    /// @return void
+    /// @relatesalso nuvec_s
+    /// @brief Subtracts two vectors.
+    /// @param[out] v The vector resulting from subtracting `v1` from `v0`, i.e.
+    ///               `v = v0 - v1`.
+    /// @param v0 The vector from which to subtract (the _minuend_).
+    /// @param v1 The vector to subtract (the _subtrahend_).
     void NuVecSub(NUVEC *v, NUVEC *v0, NUVEC *v1);
 
-    /// @brief Scale a vector by a scalar
-    /// @details Scales the vector v0 by the scalar k and stores the result in v.
-    /// @param v The vector to store the result in
-    /// @param v0 The vector to scale
-    /// @param k The scalar to scale the vector by
-    /// @return void
+    /// @relatesalso nuvec_s
+    /// @brief Scales a vector by a scalar value.
+    /// @param[out] v The scaled vector, i.e. `v = k * v0`.
+    /// @param v0 The vector to scale.
+    /// @param k The scalar value by which to scale `v0`.
     void NuVecScale(NUVEC *v, NUVEC *v0, f32 k);
 
-    /// @brief Add a vector scaled by a scalar to another vector
-    /// @details Adds the vector v1 scaled by the scalar k to v0 and stores the result in v.
-    /// @param v The vector to store the result in
-    /// @param v0 The vector to add to
-    /// @param v1 The vector to scale and add
-    /// @param k The scalar to scale the vector by
-    /// @return void
+    /// @relatesalso nuvec_s
+    /// @brief Scales a vector and adds it to a second vector.
+    /// @param[out] v The vector resulting from addition, i.e.
+    //                `v = v0 + k * v1`.
+    /// @param v0 The vector to add unmodified.
+    /// @param v1 The vector to scale and add.
+    /// @param k The scalar value by which to scale `v1`.
     void NuVecAddScale(NUVEC *v, NUVEC *v0, NUVEC *v1, f32 k);
 
-    /// @brief Scale a vector by a scalar and add the result to another vector
-    /// @details Scales the vector v0 by the scalar k and adds the result to v and stores the result in v.
-    /// @param v The vector to add the result to
-    /// @param v0 The vector to scale
-    /// @param k The scalar to scale the vector by
-    /// @return void
+    /// @relatesalso nuvec_s
+    /// @brief Scales a vector and adds it to a second vector.
+    /// @param[in,out] v The vector to add unmodified and the final result of
+    ///                  addition, i.e. `v += k * v0`.
+    /// @param v0 The vector to scale and add.
+    /// @param k The scalar value by which to scale `v0`.
     void NuVecScaleAccum(NUVEC *v, NUVEC *v0, f32 k);
 
-    /// @brief Inverse scale a vector by a scalar
-    /// @details Inverse scales the vector v0 by the scalar k and stores the result in v. If k is 0, v0 is scaled by 0.
-    /// @param v The vector to store the result in
-    /// @param v0 The vector to inverse scale
-    /// @param k The scalar to inverse scale the vector by
-    /// @return void
+    /// @relatesalso nuvec_s
+    /// @brief Scales a vector by the inverse of a scalar value.
+    /// @param[out] v The scaled vector, i.e. `v = (1 / k) * v0`.
+    /// @param v0 The vector to scale.
+    /// @param k The scalar value, the inverse of which to scale `v0` by. May be
+    ///          zero, in which case the vector is scaled by 0.
     void NuVecInvScale(NUVEC *v, NUVEC *v0, f32 k);
 
-    /// @brief Compute the cross product of two vectors
-    /// @details Computes the cross product of the vectors v0 and v1 and stores the result in v.
-    /// @param v The vector to store the result in
-    /// @param v0 The first vector to cross
-    /// @param v1 The second vector to cross
-    /// @return void
+    /// @relatesalso nuvec_s
+    /// @brief Computes the cross product of two vectors.
+    /// @param[out] v The value of the cross product.
+    /// @param v0 The first vector.
+    /// @param v1 The second vector.
     void NuVecCross(NUVEC *v, NUVEC *v0, NUVEC *v1);
 
-    /// @brief Compute the cross product of the two vectors formed from the difference between two points and a base
-    /// point
-    /// @details Computes the cross product of the two vectors formed from the differences between v0 and basepnt and v1
-    /// and basepnt and stores the result in v.
-    /// @param v The vector to store the result in
-    /// @param basepnt The base point to relative to
-    /// @param v0 The first point to form a vector from
-    /// @param v1 The second point to form a vector from
-    /// @return void
+    /// @relatesalso nuvec_s
+    /// @brief Computes the cross product of two vectors defined relative to a
+    ///        single point.
+    /// @details Given three points `basepnt`, `v0`, and `v1`, computes the
+    ///          cross product of `v0 - basepnt` and `v1 - basepnt`.
+    /// @param[out] v The value of the cross product.
+    /// @param basepnt The point to which `v0` and `v1` are relative.
+    /// @param v0 The first relative point.
+    /// @param v1 The second relative point.
     void NuVecCrossRel(NUVEC *v, NUVEC *basepnt, NUVEC *v0, NUVEC *v1);
 
-    /// @brief Compute the dot product of two vectors
-    /// @details Computes the dot product of the vectors v0 and v1 and returns the result.
-    /// @param v0 The first vector to dot
-    /// @param v1 The second vector to dot
-    /// @return The dot product of the two vectors
+    /// @relatesalso nuvec_s
+    /// @brief Computes the dot product of two vectors.
+    /// @param v0 The first vector.
+    /// @param v1 The second vector.
+    /// @return The dot product of the two vectors.
     f32 NuVecDot(NUVEC *v0, NUVEC *v1);
 
-    /// @brief Compute a vector formed of the maximum component from each vector
-    /// @details Computes a vector formed of the maximum component from each vector v0 and v1 and stores the result in
-    /// v.
-    /// @param v The vector to store the result in
-    /// @param v0 The first vector
-    /// @param v1 The second vector
-    /// @return void
+    /// @relatesalso nuvec_s
+    /// @brief Constructs the component-wise maximum of two vectors.
+    /// @details Each component of the resulting vector is the larger of the two
+    ///          values of the input vector, e.g. `v.x = max(v0.x, v1.x)`.
+    /// @param[out] v The constructed vector.
+    /// @param v0 The first vector.
+    /// @param v1 The second vector.
+    /// @sa NuVecMin
     void NuVecMax(NUVEC *v, NUVEC *v0, NUVEC *v1);
 
-    /// @brief Compute a vector formed of the minimum component from each vector
-    /// @details Computes a vector formed of the minimum component from each vector v0 and v1 and stores the result in
-    /// v.
-    /// @param v The vector to store the result in
-    /// @param v0 The first vector
-    /// @param v1 The second vector
-    /// @return void
+    /// @relatesalso nuvec_s
+    /// @brief Constructs the component-wise minimum of two vectors.
+    /// @details Each component of the resulting vector is the smaller of the
+    ///          two values of the input vector, e.g. `v.x = min(v0.x, v1.x)`.
+    /// @param[out] v The constructed vector.
+    /// @param v0 The first vector.
+    /// @param v1 The second vector.
+    /// @sa NuVecMax
     void NuVecMin(NUVEC *v, NUVEC *v0, NUVEC *v1);
 
-    /// @brief Compute the magnitude squared of a vector
-    /// @details Computes the magnitude squared of the vector v0 and returns the result.
-    /// @param v0 The vector to compute the magnitude squared of
-    /// @return The magnitude squared of the vector
-    f32 NuVecMagSqr(NUVEC *v0);
-
-    /// @brief Compute the magnitude of a vector
-    /// @details Computes the magnitude of the vector v0 and returns the result.
-    /// @param v0 The vector to compute the magnitude of
-    /// @return The magnitude of the vector
+    /// @relatesalso nuvec_s
+    /// @brief Computes the magnitude of a vector.
+    /// @param v0 The vector.
+    /// @return The magnitude of the vector.
+    /// @sa NuVecMagSqr
     f32 NuVecMag(NUVEC *v0);
 
-    /// @brief Compute the magnitude of only the x and z components of a vector
-    /// @details Computes the magnitude of only the x and z components of the vector v0 and returns the result.
-    /// @param v0 The vector to compute the magnitude of
-    /// @return The magnitude of the x and z components of the vector
+    /// @relatesalso nuvec_s
+    /// @brief Computes the squared magnitude of a vector.
+    /// @param v0 The vector.
+    /// @return The magnitude of the vector, squared.
+    /// @sa NuVecMag
+    f32 NuVecMagSqr(NUVEC *v0);
+
+    /// @relatesalso nuvec_s
+    /// @brief Computes the magnitude of the vector formed by the `x` and `z`
+    ///        components of a vector.
+    /// @param v0 The vector.
+    /// @return The magnitude of the 2-dimensional vector `(x, z)`.
     f32 NuVecMagXZ(NUVEC *v0);
 
-    /// @brief Compute the normalized vector of a vector and return the initial length
-    /// @details Computes the normalized vector of the vector v0, stores the result in v and returns the initial length
-    /// of the vector.
-    /// @param v The vector to store the result in
-    /// @param v0 The vector to normalize
-    /// @return The initial length of the vector
+    /// @relatesalso nuvec_s
+    /// @brief Normalizes a vector.
+    /// @param[out] v The normalized vector.
+    /// @param v0 The vector to normalize.
+    /// @return The magnitude of the vector prior to normalization.
     f32 NuVecNorm(NUVEC *v, NUVEC *v0);
 
-    /// @brief Compute the surface normal of a triangle
-    /// @details Computes the surface normal of the triangle formed by the vectors v0, v1 and v2 and stores the result
-    /// in v.
-    /// @param v The vector to store the result in
-    /// @param v0 The first vertex of the triangle
-    /// @param v1 The second vertex of the triangle
-    /// @param v2 The third vertex of the triangle
-    /// @return void
+    /// @relatesalso nuvec_s
+    /// @brief Computes the surface normal of a triangle.
+    /// @param[out] v The normal vector.
+    /// @param v0 The first vertex of the triangle.
+    /// @param v1 The second vertex of the triangle.
+    /// @param v2 The third vertex of the triangle.
     void NuVecSurfaceNormal(NUVEC *v, NUVEC *v0, NUVEC *v1, NUVEC *v2);
 
-    /// @brief Compute the distance between two point vectors
-    /// @details Computes the distance between the two point vectors v0 and v1 and returns the result. Optionally uses
-    /// the vector d as storage for the directional vector between the two points.
-    /// @param v0 The first point vector
-    /// @param v1 The second point vector
-    /// @param d The vector to store the directional vector in, can be NULL
-    /// @return The distance between the two point vectors
+    /// @relatesalso nuvec_s
+    /// @brief Computes the distance between two point vectors.
+    /// @param v0 The first point.
+    /// @param v1 The second point.
+    /// @param[out] d The vector `v0 - v1`. May be null.
+    /// @return The distance between the two points.
+    /// @sa NuVecDistSqr
     f32 NuVecDist(NUVEC *v0, NUVEC *v1, NUVEC *d);
 
-    /// @brief Compute the distance squared between two point vectors
-    /// @details Computes the distance squared between the two point vectors v0 and v1 and returns the result.
-    /// Optionally uses the vector d as storage for the directional vector between the two points.
-    /// @param v0 The first point vector
-    /// @param v1 The second point vector
-    /// @param d The vector to store the directional vector in, can be NULL
-    /// @return The distance squared between the two point vectors
+    /// @relatesalso nuvec_s
+    /// @brief Computes the squared distance between two point vectors.
+    /// @param v0 The first point.
+    /// @param v1 The second point.
+    /// @param[out] d The vector `v0 - v1`. May be null.
+    /// @return The distance between the two points, squared.
+    /// @sa NuVecDist
     f32 NuVecDistSqr(NUVEC *v0, NUVEC *v1, NUVEC *d);
 
-    /// @brief Compute the distance between only the x and z components of two point vectors
-    /// @details Computes the distance between only the x and z components of the two point vectors v0 and v1 and
-    /// returns the result. Optionally uses the vector d as storage for the directional vector between the two points.
-    /// @param v0 The first point vector
-    /// @param v1 The second point vector
-    /// @param d The vector to store the directional vector in, can be NULL
-    /// @return The distance between the two point vectors
+    /// @relatesalso nuvec_s
+    /// @brief Computes the distance between the vectors formed by the `x` and
+    //         `z` components of two vectors.
+    /// @param v0 The first point.
+    /// @param v1 The second point.
+    /// @param[out] d The vector `v0 - v1` with its `y` component set to zero.
+    //                May be null.
+    /// @return The distance between the two-dimensional vectors `(v0.x, v0.z)`
+    ///         and `(v1.x, v1.z)`.
+    /// @sa NuVecXZDistSqr
     f32 NuVecXZDist(NUVEC *v0, NUVEC *v1, NUVEC *d);
 
-    /// @brief Compute the distance squared between only the x and z components of two point vectors
-    /// @details Computes the distance squared between only the x and z components of the two point vectors v0 and v1
-    /// and returns the result. Optionally uses the vector d as storage for the directional vector between the two
-    /// points.
-    /// @param v0 The first point vector
-    /// @param v1 The second point vector
-    /// @param d The vector to store the directional vector in, can be NULL
-    /// @return The distance squared between the two point vectors
+    /// @relatesalso nuvec_s
+    /// @brief Computes the squared distance between the vectors formed by the
+    ///        `x` and `z` components of two vectors.
+    /// @param v0 The first point.
+    /// @param v1 The second point.
+    /// @param[out] d The vector `v0 - v1` with its `y` component set to zero.
+    //                May be null.
+    /// @return The distance between the two-dimensional vectors `(v0.x, v0.z)`
+    ///         and `(v1.x, v1.z)`, squared.
+    /// @sa NuVecXZDist
     f32 NuVecXZDistSqr(NUVEC *v0, NUVEC *v1, NUVEC *d);
 
-    /// @brief Compute the linear interpolation between two point vectors at a given ratio
-    /// @details Computes the linear interpolation between the two point vectors v0 and v1 at the ratio t and stores the
-    /// result in vt.
-    /// @param vt The vector to store the result in
-    /// @param v1 The second point vector
-    /// @param v0 The first point vector
-    /// @param t The ratio to interpolate at
-    /// @return void
+    /// @relatesalso nuvec_s
+    /// @brief Computes the linear interpolation of two points at a given ratio.
+    /// @param[out] vt The vector to store the result in
+    /// @param v0 The first point.
+    /// @param v1 The second point.
+    /// @param t The interpolation ratio.
     void NuVecLerp(NUVEC *vt, NUVEC *v1, NUVEC *v0, f32 t);
 
-    /// @brief Compare two vectors with a tolerance
-    /// @details Compares the two vectors a and b with a tolerance and returns 1 if they are equal, 0 otherwise.
-    /// @param a The first vector to compare
-    /// @param b The second vector to compare
-    /// @param tolerance The tolerance to compare the vectors with
-    /// @return 1 if the vectors are equal, 0 otherwise
+    /// @relatesalso nuvec_s
+    /// @brief Compares two vectors for equivalence with a specified tolerance.
+    /// @param a The first vector.
+    /// @param b The second vector.
+    /// @param tolerance The difference in values vector components may exhibit
+    ///                  and still be considered equivalent.
+    /// @return 1 if the vectors are equivalent, 0 otherwise.
     int NuVecCompareTolerance(NUVEC *a, NUVEC *b, f32 tolerance);
 
+    /// @relatesalso nuvec_s
+    /// @relatesalso numtx_s
+    /// @brief Transforms a vector with the given transformation matrix.
+    /// @param[out] out The transformed vector.
+    /// @param v The vector to transform.
+    /// @param m The transformation matrix.
+    /// @sa NuVecMtxRotate, NuVecMtxScale, NuVecMtxTranslate,
+    //      NuVecMtxTransformBlock
     void NuVecMtxTransform(NUVEC *out, NUVEC *v, NUMTX *m);
+
+    /// @relatesalso nuvec_s
+    /// @relatesalso numtx_s
+    /// @brief Rotates a vector with the given transformation matrix.
+    /// @param[out] out The rotated vector.
+    /// @param v The vector to rotate.
+    /// @param m The transformation matrix.
+    /// @sa NuVecMtxTransform
     void NuVecMtxRotate(NUVEC *out, NUVEC *v, NUMTX *m);
+
+    /// @relatesalso nuvec_s
+    /// @relatesalso numtx_s
+    /// @brief Scales a vector with the given transformation matrix.
+    /// @param[out] out The scaled vector.
+    /// @param v The vector to scale.
+    /// @param m The transformation matrix.
+    /// @sa NuVecMtxTransform
     void NuVecMtxScale(NUVEC *out, NUVEC *v, NUMTX *m);
+
+    /// @relatesalso nuvec_s
+    /// @relatesalso numtx_s
+    /// @brief Translates a vector with the given transformation matrix.
+    /// @param[out] out The translated vector.
+    /// @param v The vector to translate.
+    /// @param m The transformation matrix.
+    /// @sa NuVecMtxTransform
     void NuVecMtxTranslate(NUVEC *out, NUVEC *v, NUMTX *m);
 
+    /// @relatesalso nuvec_s
+    /// @brief Computes the intersection of two lines, if any.
+    /// @param pnt0,v0 The definition of the first line as point and direction.
+    /// @param pnt1,v1 The definition of the second line as point and direction.
+    /// @param[out] s The `x` coordinate of the intersection, if any.
+    /// @param[out] t The `y` coordinate of the intersection, if any.
+    /// @return 1 if the lines intersect, 0 otherwise.
     i32 NuLineLineIntersect(NUVEC *pnt0, NUVEC *v0, NUVEC *pnt1, NUVEC *v1, f32 *s, f32 *t);
 #ifdef __cplusplus
 }
 
+/// @relatesalso nuvec_s
+/// @relatesalso numtx_s
+/// @brief Transforms `count` vectors with the given transformation matrix.
+/// @param[out] out An array of `count` transformed vectors.
+/// @param v An array of `count` vectors to transform.
+/// @param m The transformation matrix.
+/// @param count The number of vectors in the arrays `out` and `v`.
+/// @sa NuVecMtxTransform
 void NuVecMtxTransformBlock(NUVEC *out, NUVEC *v, NUMTX *m, i32 count);
 
 #endif

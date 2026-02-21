@@ -1,5 +1,9 @@
-res/libTTapp.so
-res/main.1060.com.wb.lego.tcs.obb
+# Generated documentation.
+doc/html/*
+
+# Binary resources.
+res/*
+
 build/
 .cache/
 ndk/
