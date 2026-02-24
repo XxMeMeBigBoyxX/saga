@@ -9,7 +9,7 @@
 #include "nu2api/numath/nutrig.h"
 #include "nu2api/numath/nuvec.h"
 #include "nu2api/numath/nuvec4.h"
-
+#include "nu2api/nu3d/nurndr.h"
 NUCAMERA global_camera;
 
 NUMTX clip_planes = {
@@ -337,4 +337,26 @@ void NuCameraBuildClipPlanes(void) {
     ClipPlanes.abs_scissor_planes.m31 = 0.0f;
     ClipPlanes.abs_scissor_planes.m32 = 0.0f;
     ClipPlanes.abs_scissor_planes.m33 = 0.0f;
+}
+
+int SetCameraMatrices() {
+    NUVEC v1; 
+    NUMTX v2;
+    static float LC2_1 = 0x3f000000;
+    NuRndrLightingStateCurrent.unk_60 = 1;
+    NuRndrLightingStateCurrent.unk_74 = 0;
+    NuRndrSetSpecularLightPS(0, 0);
+    v1.x = LC2_1;
+    v1.y = LC2_1;
+    v1.z = LC2_1;
+    NuMtxInvR(&v2, &global_camera.mtx);
+    NuMtxScale(&v2, &v1);
+    v2.m30 = LC2_1;
+    v2.m31 = LC2_1;
+    v2.m32 = 0.0f;
+    v2.m33 = 1.0f;
+    v2.m23 = 0.0f;
+    v2.m13 = 0.0f;
+    v2.m03 = 0.0f;
+    return NuRndrSetFxMtx();
 }

@@ -1,5 +1,6 @@
 #include "nu2api/nu3d/nurndr.h"
-
+#include "nu2api/numath/nuvec.h"
+#include "decomp.h"
 #include <string.h>
 
 #include "nu2api/nucore/numemory.h"
@@ -15,7 +16,8 @@ VARIPTR rndrstream_free;
 static VARIPTR rndrstream[NURNDR_STREAM_MAX_BUFFERS];
 
 static i32 rndrstream_buffid;
-
+extern RENDERSTATE render_state;
+LIGHTSTATE NuRndrLightingStateCurrent;
 void NuRndrStreamInit(i32 stream_buffer_size, VARIPTR *buffer) {
     i32 i;
 
@@ -40,3 +42,16 @@ void NuRndrStreamInit(i32 stream_buffer_size, VARIPTR *buffer) {
     rndrstream_end.addr = rndrstream[0].addr + stream_buffer_size;
     rndrstream_free.addr = ALIGN(rndrstream[0].addr, 16);
 }
+
+char *NuRndrEndScene() {
+  UNIMPLEMENTED();
+}
+
+char *NuRndrEndSceneEx() {
+  return NuRndrEndScene();
+}
+
+int NuRndrSetSpecularLightPS(int *a1, int *a2) {
+    UNIMPLEMENTED();
+}
+

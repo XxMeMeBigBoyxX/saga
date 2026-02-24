@@ -4,7 +4,7 @@
 #include "nu2api/nu3d/nucamera.h"
 #include "nu2api/nucore/common.h"
 #include "nu2api/nusound/nusound.h"
-
+#include "nu2api/nu3d/nurndr.h"
 i32 PAL = 0;
 f32 FRAMETIME = 0;
 f32 DEFAULTFPS = 0;
@@ -17,6 +17,8 @@ VARIPTR original_permbuffer_base;
 VARIPTR superbuffer_end;
 VARIPTR permbuffer_ptr;
 VARIPTR permbuffer_end;
+
+RENDERSTATE render_state;
 
 char prodcode[16] = {0};
 char *iconname = "lego.ico";

@@ -23,6 +23,22 @@ typedef struct nucolour4_s {
     f32 a;
 } NUCOLOUR4;
 
+typedef struct renderstate_s {
+    char padding[0x1b0];
+} RENDERSTATE;
+
+
+
+typedef struct lightstate_s  {
+    u8 pad_00[0x60]; 
+    i32 unk_60;       
+    u8 pad_64[0x10]; 
+    i32 unk_74;       
+} LIGHTSTATE;
+
+extern LIGHTSTATE NuRndrLightingStateCurrent;
+
+
 #ifdef __cplusplus
 
 void NuRndrStreamInit(i32 stream_buffer_size, VARIPTR *buffer);
@@ -34,6 +50,12 @@ extern "C" {
     i32 NuRndrSetViewMtx(NUMTX *vpcs_mtx, NUMTX *viewport_vpc_mtx, NUMTX *scissor_vpc_mtx);
 
     void FaceYDirStream(i32 y_angle);
+    void NuRndrDither();    
+    int NuRndrSetFxMtx();
+    char *NuRndrEndSceneEx();
+    char *NuRndrEndScene();
+    void *NuRndrStateInit();
+    int NuRndrSetSpecularLightPS(int *a1, int *a2);
 #ifdef __cplusplus
 }
 #endif

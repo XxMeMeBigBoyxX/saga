@@ -9,3 +9,17 @@ i32 NuRndrSetViewMtx(NUMTX *vpcs_mtx, NUMTX *viewport_vpc_mtx, NUMTX *scissor_vp
 
 void FaceYDirStream(i32 y_angle) {
 }
+
+int NuRndrSetFxMtx() {
+  return 1;
+}
+
+void NuRndrDither() {
+    
+}
+
+extern RENDERSTATE render_state;
+
+void *NuRndrStateInit() {
+  return memset(&render_state, 0, sizeof(render_state));
+}
