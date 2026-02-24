@@ -7,13 +7,13 @@
 typedef struct AI_s {
 } AI;
 
-typedef struct {
+typedef struct aigizmodef_s {
     char pad[8];
     char *name_ptr; 
 } AIGIZMODEF;
 
 
-typedef struct {
+typedef struct aigizmointernal_s {
     char name_buffer[0x14]; 
 
     AIGIZMODEF *def;
