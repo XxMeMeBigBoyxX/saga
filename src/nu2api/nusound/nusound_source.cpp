@@ -1,6 +1,7 @@
 #include "nu2api/nusound/nusound_source.hpp"
 
 #include "nu2api/nucore/numemory.h"
+#include "nu2api/nusound/nusound_loader.hpp"
 
 #include "globals.h"
 #include <cstring>
@@ -34,4 +35,13 @@ NuSoundSource::NuSoundSource(const char *name, SourceType source_type, FeedType 
 
 const char *NuSoundSource::GetName() const {
     return this->name;
+}
+
+void NuSoundSource::SetStreamDesc(NuSoundStreamDesc *desc) {
+    if (desc != NULL && this->source_type != SourceType::ZERO) {
+        // (*(code *)desc->vtable->get_decoded_data_format)(desc);
+        desc->GetDecodedDataFormat();
+    }
+
+    this->stream_desc = desc;
 }

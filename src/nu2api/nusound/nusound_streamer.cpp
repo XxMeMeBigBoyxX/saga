@@ -91,14 +91,22 @@ i32 NuSoundStreamingSample::Open(float param_1, bool param_2, bool param_3) {
         }
     }
 
-    loader = NuSoundSystem::CreateFileLoader(file_type);
+    this->loader = NuSoundSystem::CreateFileLoader(file_type);
     {
-        NuSoundStreamDesc *desc = loader->CreateHeader();
+        NuSoundStreamDesc *desc = this->loader->CreateHeader();
 
         if (desc == NULL) {
-            NuSoundSystem::ReleaseFileLoader(loader);
-            loader = NULL;
+            NuSoundSystem::ReleaseFileLoader(this->loader);
+            this->loader = NULL;
             return 3;
+        }
+
+        SetStreamDesc(desc);
+
+        if (this->loader->OpenForStreaming(this->name, param_1, desc, param_3) == 1) {
+            this->loader->FillStreamBuffer(buffer1, param_2);
+        } else {
+            UNIMPLEMENTED("");
         }
     }
 

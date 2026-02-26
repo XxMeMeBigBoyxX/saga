@@ -37,28 +37,32 @@ template <typename T> class NuSoundWeakPtrObj {
     void Link(NuSoundWeakPtrListNode *node) {
         NuSoundWeakPtrListNode::sPtrListLock.Lock();
 
-        /*
         NuSoundWeakPtrListNode *list = this->tail;
 
-        NuSoundWeakPtrListNode::Payload *node_payload = node != NULL ? &node->payload : NULL;
+        NuSoundWeakPtrListNode *node_prev = node;
         if (node == NULL) {
-            node = END;
+            node = (NuSoundWeakPtrListNode *)-4;
         }
 
-        NuSoundWeakPtrListNode::Payload *list_payload = list != NULL ? &list->payload : NULL;
+        NuSoundWeakPtrListNode *prev = list;
         if (list == NULL) {
-            list = END;
+            list = (NuSoundWeakPtrListNode *)-4;
         }
 
-        NuSoundWeakPtrListNode::Payload *prev_payload =
-            list_payload->prev != NULL ? &list_payload->prev->payload : NULL;
+        NuSoundWeakPtrListNode *ppNVar1 = prev->prev == NULL ? NULL : prev->next;
 
-        list_payload->prev = node_payload != NULL ? node : NULL;
-        node_payload->prev = prev_payload != NULL ? (NuSoundWeakPtrListNode *)((usize)prev_payload - 4) : NULL;
+        NuSoundWeakPtrListNode *pNVar1 = node_prev == NULL ? NULL : node;
 
-        prev_payload->next = node;
-        node_payload->next = list;
-        */
+        prev->prev = pNVar1;
+
+        NuSoundWeakPtrListNode **pNVar2 = NULL;
+        if (ppNVar1 != NULL) {
+            pNVar2 = &ppNVar1->prev;
+        }
+
+        node_prev->prev = (NuSoundWeakPtrListNode *)pNVar2;
+        ppNVar1->prev = node;
+        node_prev->next = list;
 
         this->weak_count++;
 
@@ -70,39 +74,19 @@ template <typename T> class NuSoundWeakPtrObj {
 
         NuSoundWeakPtrListNode::sPtrListLock.Lock();
 
-        NuSoundWeakPtrListNode *next = node->next;
-        NuSoundWeakPtrListNode *prev;
-
-        if (next == NULL) {
-            prev = node->prev;
-            if (prev != NULL) {
-                this->weak_count--;
-            LAB_0033010b:
-                prev->next = NULL;
-                goto LAB_003300ba;
-            }
-        } else {
+        if (node->prev != NULL || node->next != NULL) {
             this->weak_count--;
-
-            prev = node->prev;
-
-            if (prev == NULL) {
-                if ((usize)next == -4) {
-                    goto LAB_003300ba;
-                }
-            } else {
-                if ((usize)next == -4) {
-                    goto LAB_0033010b;
-                }
-                prev->next = next;
-            }
-
-            next->prev = prev;
-
-        LAB_003300ba:
-            node->next = NULL;
-            node->prev = NULL;
         }
+
+        if (node->prev != NULL) {
+            node->prev->next = node->next;
+        }
+        if (node->next != NULL) {
+            node->next->prev = node->prev;
+        }
+
+        node->prev = NULL;
+        node->next = NULL;
 
         NuSoundWeakPtrListNode::sPtrListLock.Unlock();
     }

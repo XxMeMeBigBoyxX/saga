@@ -17,7 +17,7 @@ class NuSoundSource {
 
     };
 
-  private:
+  protected:
     FeedType feed_type;
     SourceType source_type;
     const char *name;
@@ -25,5 +25,8 @@ class NuSoundSource {
 
   public:
     NuSoundSource(const char *file, SourceType source_type, FeedType feed_type);
+
     const char *GetName() const;
+
+    void SetStreamDesc(NuSoundStreamDesc *desc);
 };

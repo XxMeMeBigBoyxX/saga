@@ -1,9 +1,12 @@
 #include "nu2api/nusound/nusound_memorymanager.hpp"
 
+#include "nu2api/nucore/nuthread.h"
 #include "nu2api/nusound/nusound_system.hpp"
 
 #include <cstring>
 #include <new>
+
+pthread_mutex_t NuSoundMemoryBuffer::s_cs = PTHREAD_MUTEX_INITIALIZER;
 
 void NuSoundMemoryBuffer::SetNext(NuSoundMemoryBuffer *next) {
     this->next = next;
@@ -76,4 +79,27 @@ NuSoundMemoryBuffer *NuSoundMemoryManager::Alloc(u32 size) {
     LOG_WARN("NuSoundMemoryManager::Alloc is not implemented");
     return (NuSoundMemoryBuffer *)malloc(size);
 #endif
+}
+
+void *NuSoundMemoryBuffer::Lock(const char *name) {
+    BeginCriticalSection();
+
+    u8 c = this->flags;
+    while (c < 0) {
+        EndCriticalSection();
+        NuThreadSleep(0);
+        BeginCriticalSection();
+        c = this->flags;
+    }
+    this->flags = c | 0x80;
+
+    EndCriticalSection();
+
+    return this->address;
+}
+
+void NuSoundMemoryBuffer::Unlock() {
+    BeginCriticalSection();
+    this->flags = this->flags & 0x7f;
+    EndCriticalSection();
 }

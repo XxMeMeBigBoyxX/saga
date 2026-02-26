@@ -107,7 +107,7 @@ class NuThreadManager {
 class NuCriticalSection {
     pthread_mutex_t mutex;
 
-    public:
+  public:
     NuCriticalSection(const char *name) {
         pthread_mutexattr_t attr;
 

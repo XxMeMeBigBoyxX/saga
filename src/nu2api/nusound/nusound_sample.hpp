@@ -1,6 +1,7 @@
 #pragma once
 
 #include "nu2api/nusound/nusound_buffer.hpp"
+#include "nu2api/nusound/nusound_loader.hpp"
 #include "nu2api/nusound/nusound_source.hpp"
 
 #include <pthread.h>

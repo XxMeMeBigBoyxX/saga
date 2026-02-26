@@ -2,6 +2,8 @@
 
 #include "nu2api/nucore/common.h"
 
+#include <pthread.h>
+
 class NuSoundMemoryBuffer {
     void *address;
     u8 size_l;
@@ -11,10 +13,22 @@ class NuSoundMemoryBuffer {
     u32 field4_0x8;
     NuSoundMemoryBuffer *next;
 
+  private:
+    static pthread_mutex_t s_cs;
+
+    void BeginCriticalSection() {
+        pthread_mutex_lock(&s_cs);
+    }
+    void EndCriticalSection() {
+        pthread_mutex_unlock(&s_cs);
+    }
+
   public:
     void SetNext(NuSoundMemoryBuffer *next);
     void SetSize(u32 size);
     void SetAddress(void *address);
+    void *Lock(const char *name);
+    void Unlock();
 };
 
 class NuSoundMemoryManager {
