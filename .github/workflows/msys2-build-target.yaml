@@ -26,11 +26,11 @@ jobs:
                   path: ndk
                   key: android-ndk-r8e
             
-            - name: Cache built libraries
+            - name: Cache vorbis
               uses: actions/cache@v4
               with:
-                  path: libs
-                  key: libs-${{ hashFiles('**/CMakeLists.txt') }}
+                  path: libs/ogg-vorbis
+                  key: vorbis-${{ hashFiles('**/CMakeLists.txt') }}
             
             - name: Configure CMake
               shell: msys2 {0}
