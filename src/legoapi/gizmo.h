@@ -13,6 +13,7 @@ typedef struct GIZMO_s {
     u8 type_id;         
     u8 _pad_to_60[0x59]; 
     u8 output; 
+    u8 _unexplored_data[0x7B];
 } GIZMO;
 
 typedef struct GIZMOSET_s {

@@ -1,6 +1,6 @@
 #include "legoapi/gizmos/ai.h"
-#include "legoapi/world.h"
 #include "decomp.h"
+#include "legoapi/world.h"
 #include "nu2api/nucore/nustring.h"
 
 static int AI_GetMaxGizmos(void *ai) {
@@ -8,20 +8,11 @@ static int AI_GetMaxGizmos(void *ai) {
 }
 
 static void AI_AddGizmos(GIZMOSYS *gizmo_sys, int gizmo_type, void *world_base_ptr, void *unused) {
-    int current_offset;
-    usize index;
-
-    if ((world_base_ptr != (void *)0xffffd510) && (0 < WORLD->something)) {
-        index = 0;
-        do {
-            current_offset = index * 0xdc;
-            // (91.66% match)
-            //__asm__("" : "+r" (index));
-            current_offset = current_offset + (usize)world_base_ptr;
-            index = index + 1;
-            void *gizmo_addr = (void *)(current_offset + 0x2af0);
-            AddGizmo(gizmo_sys, gizmo_type, NULL, gizmo_addr);
-        } while (index < WORLD->something);
+    if ((world_base_ptr != INVALID_WORLD_PTR) && (0 < WORLD->gizmo_count)) {
+        WORLDINFO *local_world = (WORLDINFO *)world_base_ptr;
+        for (int index = 0; index < WORLD->gizmo_count; index++) {
+            AddGizmo(gizmo_sys, gizmo_type, NULL, &local_world->gizmos[index]);
+        }
     }
     return;
 }
@@ -83,7 +74,7 @@ static int AI_GetOutput(GIZMO *gizmo, int param_2, int param_3) {
     if (gizmo && (gizmo = *(GIZMO **)gizmo)) {
         return ((gizmo->output) >> 1 ^ 1) & 1;
     }
-    //increases accuracy to 100%
+    // increases accuracy to 100%
     //__asm__("");
 
     return 0;
@@ -99,7 +90,7 @@ static int AI_GetNumOutputs(GIZMO *gizmo) {
 }
 
 void AI_Activate(GIZMO *gizmo, int param_2) {
-    GIZMO* gizmo_internal;
+    GIZMO *gizmo_internal;
 
     if ((gizmo) && (gizmo_internal = gizmo)) {
         int flag = (param_2 == 0);
