@@ -1,4 +1,4 @@
-name: Target build
+name: MSYS2 Target build
 
 on:
     push:
@@ -8,15 +8,21 @@ on:
 
 jobs:
     build:
-        runs-on: ubuntu-latest
+        runs-on: windows-latest
 
         steps:
             - uses: actions/checkout@v4
+            
+            - name: Setup MSYS2
 
-            - name: Install CMake 4.x
-              uses: lukka/get-cmake@latest
-
+              uses: msys2/setup-msys2@v2
+              with:
+                msystem: UCRT64
+                update: true
+                install: base-devel mingw-w64-ucrt-x86_64-toolchain mingw-w64-ucrt-x86_64-cmake mingw-w64-ucrt-x86_64-libvorbis
+            
             - name: Configure CMake
+              shell: msys2 {0}
               run: cmake -B build .
 
             - name: Cache Android NDK
@@ -24,11 +30,13 @@ jobs:
               with:
                   path: ndk
                   key: android-ndk-r8e
-              
+            
             - name: Cache built libraries
               uses: actions/cache@v4
               with:
                   path: libs
                   key: libs-${{ hashFiles('**/CMakeLists.txt') }}
+
             - name: Build
+              shell: msys2 {0}
               run: cmake --build build --verbose
