@@ -1,5 +1,6 @@
 #pragma once
 
+#include "legoapi/gizmos/ai.h"
 #include "nu2api/nu3d/nugscn.h"
 #include "nu2api/nucore/bgproc.h"
 #include "nu2api/nucore/common.h"
@@ -9,22 +10,28 @@ typedef struct WORLDINFO_s {
 
     VARIPTR giz_buffer;
 
-    VARIPTR unknown_108;
-    i32 unknown_10c;
+    VARIPTR unknown_0108;
+    i32 unknown_010c;
 
-    i32 unknown_110;
+    i32 unknown_0110;
 
     char filler1[0x8];
 
-    i32 unknown_11c;
-    i32 unknown_120;
-    i32 unknown_124;
+    i32 unknown_011c;
+    i32 unknown_0120;
+    i32 unknown_0124;
 
     struct LEVELDATA_s *current_level;
     char filler2[0x10];
     NUGSCN *current_gscn;
 
-    char filler3[0x4fbc];
+    char unknown_0140[0x29a8];
+
+    AISYS *ai_sys;
+    i32 processor_count;
+    LEVELSCRIPTPROCESS processors[32];
+
+    char unknown_4670[0xa8c];
 
     struct GIZTIMER_s *giz_timers;
     i32 giz_timers_count;

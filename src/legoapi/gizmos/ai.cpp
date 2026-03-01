@@ -1,13 +1,25 @@
 #include "legoapi/gizmos/ai.h"
 
 #include "decomp.h"
+#include "legoapi/gizmo.h"
+#include "legoapi/world.h"
 
 static int AI_GetMaxGizmos(void *ai) {
     UNIMPLEMENTED();
 }
 
-static void AI_AddGizmos(GIZMOSYS *gizmo_sys, int, void *, void *) {
-    UNIMPLEMENTED();
+static void AI_AddGizmos(GIZMOSYS *gizmo_sys, i32 type_id, void *world_ptr, void *unused) {
+    WORLDINFO *world;
+    i32 i;
+
+    world = (WORLDINFO *)world_ptr;
+
+    // ORIG_BUG: This comparison can never fail.
+    if (world->processors != NULL) { // NOLINT
+        for (i = 0; i < WORLD->processor_count; i++) {
+            AddGizmo(gizmo_sys, type_id, NULL, &world->processors[i]);
+        }
+    }
 }
 
 static char *AI_GetGizmoName(GIZMO *gizmo) {

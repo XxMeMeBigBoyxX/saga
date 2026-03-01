@@ -69,7 +69,7 @@ void WorldInfo_StreamLevel(BGPROCINFO *bg_info) {
 
     waiting_for_level = -1;
 
-    if (LWORLD->unknown_110 != 0) {
+    if (LWORLD->unknown_0110 != 0) {
         level_already_loaded = next_level;
     }
 
