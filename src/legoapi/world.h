@@ -6,7 +6,6 @@
 #include "nu2api/nucore/common.h"
 
 
-#define INVALID_WORLD_PTR (WORLDINFO *)0xffffd510
 
 typedef struct WORLDINFO_s {
     char filler0[0x104];

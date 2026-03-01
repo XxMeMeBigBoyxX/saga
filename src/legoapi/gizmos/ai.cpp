@@ -8,9 +8,9 @@ static int AI_GetMaxGizmos(void *ai) {
 }
 
 static void AI_AddGizmos(GIZMOSYS *gizmo_sys, int gizmo_type, void *world_base_ptr, void *unused) {
-    if ((world_base_ptr != INVALID_WORLD_PTR) && (0 < WORLD->gizmo_count)) {
+    if (world_base_ptr != (void*)(-offsetof(WORLDINFO,gizmo_count)-4) && 0 < WORLD->gizmo_count) {
         WORLDINFO *local_world = (WORLDINFO *)world_base_ptr;
-        for (int index = 0; index < WORLD->gizmo_count; index++) {
+        for (i32 index = 0; index < WORLD->gizmo_count; index++) {
             AddGizmo(gizmo_sys, gizmo_type, NULL, &local_world->gizmos[index]);
         }
     }
@@ -18,7 +18,7 @@ static void AI_AddGizmos(GIZMOSYS *gizmo_sys, int gizmo_type, void *world_base_p
 }
 
 static char *AI_GetGizmoName(GIZMO *gizmo) {
-    if (!gizmo || !gizmo->object.void_ptr) {
+    if (gizmo != NULL || !gizmo->object.void_ptr) {
         return 0;
     }
 
@@ -71,7 +71,7 @@ static char *AI_GetGizmoName(GIZMO *gizmo) {
 }
 
 static int AI_GetOutput(GIZMO *gizmo, int param_2, int param_3) {
-    if (gizmo && (gizmo = *(GIZMO **)gizmo)) {
+    if (gizmo && (gizmo = (GIZMO*)gizmo->object.void_ptr)) {
         return ((gizmo->output) >> 1 ^ 1) & 1;
     }
     // increases accuracy to 100%
