@@ -144,6 +144,8 @@ set(SAGA_SOURCE_FILES
 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/gameframework/saveload.cpp
 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/gamelib/NewTerrain.cpp
+
     ${CMAKE_CURRENT_SOURCE_DIR}/src/gamelib/crc/crc.cpp
 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/gamelib/nuwind/nuwind.cpp
@@ -438,6 +440,8 @@ else()
     set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/gameapi/edtools/edfile.cpp PROPERTIES COMPILE_OPTIONS "-O3")
 
     set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/gameapi/gui/apimenu.cpp PROPERTIES COMPILE_OPTIONS "-O3")
+
+    set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/gamelib/NewTerrain.cpp PROPERTIES COMPILE_OPTIONS "-O2")
 
     set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/gamelib/crc/crc.cpp PROPERTIES COMPILE_OPTIONS "-O3")
 
