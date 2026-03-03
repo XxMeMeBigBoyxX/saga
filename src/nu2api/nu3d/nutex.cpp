@@ -167,8 +167,17 @@ enum NUTEXFORMAT : unsigned int {
     NUTEX_ATC = 25      // 0x19 (ATC)
 };
 
+enum DDSCaps2 : u32 {
+    DDSCAPS2_CUBEMAP           = 0x200, // Required for a cubemap
+    DDSCAPS2_CUBEMAP_POSITIVEX = 0x400,
+    DDSCAPS2_CUBEMAP_NEGATIVEX = 0x800,
+    DDSCAPS2_CUBEMAP_POSITIVEY = 0x1000,
+    DDSCAPS2_CUBEMAP_NEGATIVEY = 0x2000,
+    DDSCAPS2_CUBEMAP_POSITIVEZ = 0x4000,
+    DDSCAPS2_CUBEMAP_NEGATIVEZ = 0x8000
+};
 
-i32 NuDDSGetTextureDescription(const char *dds_data, NUTEXFORMAT &out_format, int &out_width, int &out_height, int &out_pitch_or_linear_size, int &out_mip_count, bool &out_is_cube_map, bool *out_has_four_cc)
+i32 NuDDSGetTextureDescription(const char *dds_data, NUTEXFORMAT &out_format, i32 &out_width, i32 &out_height, i32 &out_pitch_or_linear_size, i32 &out_mip_count, bool &out_is_cube_map, bool *out_has_four_cc)
 
 {
     if (dds_data[0] != 'D')
@@ -178,7 +187,7 @@ i32 NuDDSGetTextureDescription(const char *dds_data, NUTEXFORMAT &out_format, in
     if (dds_data[2] != 'S')
         return 0;
 
-    uint32_t fourCC = *(uint32_t *)(dds_data + 0x54);
+    u32 fourCC = *(u32 *)(dds_data + 0x54);
     *out_has_four_cc = (fourCC != 0);
 
     if ((dds_data[0x50] & 0x40) == 0) {
@@ -246,14 +255,14 @@ i32 NuDDSGetTextureDescription(const char *dds_data, NUTEXFORMAT &out_format, in
                     out_format = NUTEX_ATC;
                     break;
                 case 0:
-                    out_format = (NUTEXFORMAT)((*(uint32_t *)(dds_data + 0x58) != 0x20) * 8 + 7);
+                    out_format = (NUTEXFORMAT)((*(u32 *)(dds_data + 0x58) != 0x20) * 8 + 7);
                     break;
                 default:
                     break;
             }
         }
     } else {
-        out_format = (NUTEXFORMAT)((*(uint32_t *)(dds_data + 0x58) == 0x18) * 8 + 7);
+        out_format = (NUTEXFORMAT)((*(u32 *)(dds_data + 0x58) == 0x18) * 8 + 7);
     }
 
     out_is_cube_map = false;
@@ -268,8 +277,8 @@ i32 NuDDSGetTextureDescription(const char *dds_data, NUTEXFORMAT &out_format, in
         out_pitch_or_linear_size = *(int *)(dds_data + 0x18);
     }
 
-    uint32_t mipCountVal = *(uint32_t *)(dds_data + 0x1C);
-    uint32_t caps2 = *(uint32_t *)(dds_data + 0x70);
+    u32 mipCountVal = *(u32 *)(dds_data + 0x1C);
+    u32 caps2 = *(u32 *)(dds_data + 0x70);
 
     if (mipCountVal == 0) {
         mipCountVal = (dds_data[10] & 2) == 0;
@@ -278,19 +287,19 @@ i32 NuDDSGetTextureDescription(const char *dds_data, NUTEXFORMAT &out_format, in
 
     if ((dds_data[0x6C] & 8) == 0)
         return 1;
-    if ((caps2 & 0x200) == 0)
+    if ((caps2 & DDSCAPS2_CUBEMAP) == 0)
         return 1;
-    if ((caps2 & 0x1000) == 0)
+    if ((caps2 & DDSCAPS2_CUBEMAP_POSITIVEY) == 0)
         return 1;
-    if ((caps2 & 0x400) == 0)
+    if ((caps2 & DDSCAPS2_CUBEMAP_POSITIVEX) == 0)
         return 1;
-    if ((caps2 & 0x800) == 0)
+    if ((caps2 & DDSCAPS2_CUBEMAP_NEGATIVEX) == 0)
         return 1;
-    if ((caps2 & 0x4000) == 0)
+    if ((caps2 & DDSCAPS2_CUBEMAP_POSITIVEZ) == 0)
         return 1;
-    if ((caps2 & 0x8000) == 0)
+    if ((caps2 & DDSCAPS2_CUBEMAP_NEGATIVEZ) == 0)
         return 1;
-    if ((caps2 & 0x2000) == 0)
+    if ((caps2 & DDSCAPS2_CUBEMAP_NEGATIVEY) == 0)
         return 1;
 
     out_is_cube_map = true;
