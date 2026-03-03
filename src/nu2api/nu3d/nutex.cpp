@@ -168,115 +168,115 @@ enum NUTEXFORMAT : unsigned int {
 };
 
 
-i32 NuDDSGetTextureDescription(const char *ddsData, NUTEXFORMAT &outFormat, int &outWidth, int &outHeight, int &outPitchOrLinearSize, int &outMipCount, bool &outIsCubeMap, bool *outHasFourCC)
+i32 NuDDSGetTextureDescription(const char *dds_data, NUTEXFORMAT &out_format, int &out_width, int &out_height, int &out_pitch_or_linear_size, int &out_mip_count, bool &out_is_cube_map, bool *out_has_four_cc)
 
 {
-    if (ddsData[0] != 'D')
+    if (dds_data[0] != 'D')
         return 0;
-    if (ddsData[1] != 'D')
+    if (dds_data[1] != 'D')
         return 0;
-    if (ddsData[2] != 'S')
+    if (dds_data[2] != 'S')
         return 0;
 
-    uint32_t fourCC = *(uint32_t *)(ddsData + 0x54);
-    *outHasFourCC = (fourCC != 0);
+    uint32_t fourCC = *(uint32_t *)(dds_data + 0x54);
+    *out_has_four_cc = (fourCC != 0);
 
-    if ((ddsData[0x50] & 0x40) == 0) {
-        if ((ddsData[0x50] & 0x20) != 0) {
-            outFormat = NUTEX_PAL8;
-        } else if ((ddsData[0x50] & 0x8) != 0) {
-            outFormat = NUTEX_PAL4;
+    if ((dds_data[0x50] & 0x40) == 0) {
+        if ((dds_data[0x50] & 0x20) != 0) {
+            out_format = NUTEX_PAL8;
+        } else if ((dds_data[0x50] & 0x8) != 0) {
+            out_format = NUTEX_PAL4;
         } else {
             switch (fourCC) {
                 case 0x31545844:
-                    outFormat = NUTEX_DXT1;
+                    out_format = NUTEX_DXT1;
                     break;
                 case 0x41315844:
-                    outFormat = NUTEX_DX1A;
+                    out_format = NUTEX_DX1A;
                     break;
                 case 0x32545844:
-                    outFormat = NUTEX_DXT2;
+                    out_format = NUTEX_DXT2;
                     break;
                 case 0x33545844:
-                    outFormat = NUTEX_DXT3;
+                    out_format = NUTEX_DXT3;
                     break;
                 case 0x34545844:
-                    outFormat = NUTEX_DXT4;
+                    out_format = NUTEX_DXT4;
                     break;
                 case 0x35545844:
-                    outFormat = NUTEX_DXT5;
+                    out_format = NUTEX_DXT5;
                     break;
                 case 0x00000071:
-                    outFormat = NUTEX_FLOAT16;
+                    out_format = NUTEX_FLOAT16;
                     break;
                 case 0x00000074:
-                    outFormat = NUTEX_FLOAT32;
+                    out_format = NUTEX_FLOAT32;
                     break;
                 case 0x344c4150:
-                    outFormat = NUTEX_PAL4;
+                    out_format = NUTEX_PAL4;
                     break;
                 case 0x384c4150:
-                    outFormat = NUTEX_PAL8;
+                    out_format = NUTEX_PAL8;
                     break;
                 case 0x4e4e4142:
-                    outFormat = NUTEX_BANN;
+                    out_format = NUTEX_BANN;
                     break;
                 case 0x31435445:
-                    outFormat = NUTEX_ETC1;
+                    out_format = NUTEX_ETC1;
                     break;
                 case 0x41435445:
-                    outFormat = NUTEX_ETCA;
+                    out_format = NUTEX_ETCA;
                     break;
                 case 0x31325450:
-                    outFormat = NUTEX_PVRTC2;
+                    out_format = NUTEX_PVRTC2;
                     break;
                 case 0x41325450:
-                    outFormat = NUTEX_PVRTC2A;
+                    out_format = NUTEX_PVRTC2A;
                     break;
                 case 0x31435450:
-                    outFormat = NUTEX_PVRTC4;
+                    out_format = NUTEX_PVRTC4;
                     break;
                 case 0x41435450:
-                    outFormat = NUTEX_PVRTC4A;
+                    out_format = NUTEX_PVRTC4A;
                     break;
                 case 0x41435441:
-                    outFormat = NUTEX_ATCA;
+                    out_format = NUTEX_ATCA;
                     break;
                 case 0x20435441:
-                    outFormat = NUTEX_ATC;
+                    out_format = NUTEX_ATC;
                     break;
                 case 0:
-                    outFormat = (NUTEXFORMAT)((*(uint32_t *)(ddsData + 0x58) != 0x20) * 8 + 7);
+                    out_format = (NUTEXFORMAT)((*(uint32_t *)(dds_data + 0x58) != 0x20) * 8 + 7);
                     break;
                 default:
                     break;
             }
         }
     } else {
-        outFormat = (NUTEXFORMAT)((*(uint32_t *)(ddsData + 0x58) == 0x18) * 8 + 7);
+        out_format = (NUTEXFORMAT)((*(uint32_t *)(dds_data + 0x58) == 0x18) * 8 + 7);
     }
 
-    outIsCubeMap = false;
-    outWidth = 0;
-    outHeight = 0;
-    outPitchOrLinearSize = 0;
+    out_is_cube_map = false;
+    out_width = 0;
+    out_height = 0;
+    out_pitch_or_linear_size = 0;
 
-    outWidth = *(int *)(ddsData + 0x10);
-    outHeight = *(int *)(ddsData + 0x0C);
+    out_width = *(int *)(dds_data + 0x10);
+    out_height = *(int *)(dds_data + 0x0C);
 
-    if ((ddsData[10] & 0x80) != 0) {
-        outPitchOrLinearSize = *(int *)(ddsData + 0x18);
+    if ((dds_data[10] & 0x80) != 0) {
+        out_pitch_or_linear_size = *(int *)(dds_data + 0x18);
     }
 
-    uint32_t mipCountVal = *(uint32_t *)(ddsData + 0x1C);
-    uint32_t caps2 = *(uint32_t *)(ddsData + 0x70);
+    uint32_t mipCountVal = *(uint32_t *)(dds_data + 0x1C);
+    uint32_t caps2 = *(uint32_t *)(dds_data + 0x70);
 
     if (mipCountVal == 0) {
-        mipCountVal = (ddsData[10] & 2) == 0;
+        mipCountVal = (dds_data[10] & 2) == 0;
     }
-    outMipCount = mipCountVal;
+    out_mip_count = mipCountVal;
 
-    if ((ddsData[0x6C] & 8) == 0)
+    if ((dds_data[0x6C] & 8) == 0)
         return 1;
     if ((caps2 & 0x200) == 0)
         return 1;
@@ -293,6 +293,6 @@ i32 NuDDSGetTextureDescription(const char *ddsData, NUTEXFORMAT &outFormat, int 
     if ((caps2 & 0x2000) == 0)
         return 1;
 
-    outIsCubeMap = true;
+    out_is_cube_map = true;
     return 1;
 }
