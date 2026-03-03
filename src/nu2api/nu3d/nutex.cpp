@@ -143,7 +143,7 @@ int NuTexHeight(int tex_id) {
     return texture_list[tex_id - 1]->height;
 }
 
-enum NUTEXFORMAT : unsigned int {
+enum NUTEXFORMAT : i32 {
     NUTEX_DXT1 = 1,
     NUTEX_DX1A = 2, // DXT1 with Alpha (A1XD)
     NUTEX_DXT2 = 3,
@@ -273,11 +273,11 @@ i32 NuDDSGetTextureDescription(const char *dds_data, NUTEXFORMAT &out_format, i3
     out_height = 0;
     out_pitch_or_linear_size = 0;
 
-    out_width = *(int *)(dds_data + 0x10);
-    out_height = *(int *)(dds_data + 0x0C);
+    out_width = *(i32 *)(dds_data + 0x10);
+    out_height = *(i32 *)(dds_data + 0x0C);
 
     if ((dds_data[10] & 0x80) != 0) {
-        out_pitch_or_linear_size = *(int *)(dds_data + 0x18);
+        out_pitch_or_linear_size = *(i32 *)(dds_data + 0x18);
     }
 
     u32 mipCountVal = *(u32 *)(dds_data + 0x1C);
