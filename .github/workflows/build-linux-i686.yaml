@@ -22,7 +22,7 @@ jobs:
             # add Ubuntu 25.10 questing mirror to get SDL3 packages
             - name: Install SDL3
               run: >
-                  echo "deb http://archive.ubuntu.com/ubuntu/ questing main multiverse" | sudo tee /etc/apt/sources.list.d/questing.list &&
+                  echo "deb http://archive.ubuntu.com/ubuntu/ questing universe" | sudo tee /etc/apt/sources.list.d/questing.list &&
                   sudo apt-get -y update &&
                   sudo apt-get install libsdl3-dev:i386
 
