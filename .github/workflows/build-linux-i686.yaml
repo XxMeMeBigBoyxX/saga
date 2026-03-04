@@ -19,8 +19,12 @@ jobs:
                   sudo apt-get -y update &&
                   sudo apt-get install wget gcc-multilib g++-multilib libgles2-mesa-dev:i386 libvorbis-dev:i386
 
+            # add Ubuntu 25.10 questing mirror to get SDL3 packages
             - name: Install SDL3
-              run: wget "http://mirrors.kernel.org/ubuntu/pool/universe/libs/libsdl3/libsdl3-dev_3.2.20+ds-2_i386.deb" && sudo dpkg -i libsdl3-dev_3.2.20+ds-2_i386.deb
+              run: >
+                  echo "deb http://archive.ubuntu.com/ubuntu/ questing main multiverse" | sudo tee /etc/apt/sources.list.d/questing.list &&
+                  sudo apt-get -y update &&
+                  sudo apt-get install libsdl3-dev:i386
 
             - name: Install CMake 4.x
               uses: lukka/get-cmake@latest
