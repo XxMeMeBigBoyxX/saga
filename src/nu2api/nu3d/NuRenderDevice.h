@@ -45,8 +45,6 @@ class NuRenderDevice : NuRenderDeviceGen {
 
     u32 width, height;
 
-    u8 enabled_extensions[26];
-
     bool oes_packed_depth_stencil;
     bool oes_depth24;
     bool oes_depth_texture;
@@ -75,6 +73,7 @@ class NuRenderDevice : NuRenderDeviceGen {
 
     void InitialiseOpenGLContext(ANativeWindow *window);
     void CheckForRenderWindowInitialisation();
+    u8 enabled_extensions[26]; // NEEDS TO BE AT 0x28
 };
 
 extern NuRenderDevice g_renderDevice;
